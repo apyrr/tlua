@@ -2743,8 +2743,17 @@ func (b *NodeBuilderImpl) createAnonymousTypeNodeEx(t *Type, forceClassExpansion
 		} else {
 			return b.visitAndTransformType(t, (*NodeBuilderImpl).createTypeNodeFromObjectType)
 		}
+	} else if isMetatableType(t) {
+		// A pairing has no symbol but can be circular: a colon method's self parameter is
+		// the paired table, whose members include that method. Guard it by type identity
+		// the way symbol-bearing anonymous types are guarded; pairings are interned, so
+		// the identity is stable.
+		if b.ctx.visitedTypes.Has(typeId) {
+			return b.createElidedInformationPlaceholder()
+		}
+		return b.visitAndTransformType(t, (*NodeBuilderImpl).createTypeNodeFromObjectType)
 	} else {
-		// Anonymous types without a symbol are never circular.
+		// Anonymous types without a symbol are otherwise never circular.
 		return b.createTypeNodeFromObjectType(t)
 	}
 }

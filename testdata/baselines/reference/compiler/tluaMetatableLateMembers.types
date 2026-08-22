@@ -1,0 +1,250 @@
+//// [tests/cases/compiler/tluaMetatableLateMembers.tlua] ////
+
+=== tluaMetatableLateMembers.tlua ===
+// setmetatable returns its table, so a local initialized with the call is the
+// table: members written to it afterward -- the prototype idiom -- are members of
+// the table, and reads through the pairing still see them.
+local Builder = { build = function(self: { name: string }) return self.name end }
+>Builder : { build: (self: { name: string; }) => string; }
+>{ build = function(self: { name: string }) return self.name end } : { build: (self: { name: string; }) => string; }
+>build : (self: { name: string; }) => string
+>function(self: { name: string }) return self.name end : (self: { name: string; }) => string
+>self : { name: string; }
+>name : string
+>self.name : string
+>self : { name: string; }
+>name : string
+
+local Panel = setmetatable({}, { __index = Builder })
+>Panel : { build: (self: { name: string; }) => string; panel(self: table): number; }
+>setmetatable({}, { __index = Builder }) : { build: (self: { name: string; }) => string; panel(self: table): number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : { panel(self: table): number; }
+>{ __index = Builder } : { __index: { build: (self: { name: string; }) => string; }; }
+>__index : { build: (self: { name: string; }) => string; }
+>Builder : { build: (self: { name: string; }) => string; }
+
+function Panel.panel(self: table) return 1 end
+>Panel : { build: (self: { name: string; }) => string; panel(self: table): number; }
+>panel : (self: table) => number
+>self : table
+>1 : 1
+
+local Stack = setmetatable({}, { __index = Panel })
+>Stack : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }
+>setmetatable({}, { __index = Panel }) : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : { stack(self: table): number; }
+>{ __index = Panel } : { __index: { build: (self: { name: string; }) => string; panel(self: table): number; }; }
+>__index : { build: (self: { name: string; }) => string; panel(self: table): number; }
+>Panel : { build: (self: { name: string; }) => string; panel(self: table): number; }
+
+function Stack.stack(self: table) return 2 end
+>Stack : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }
+>stack : (self: table) => number
+>self : table
+>2 : 2
+
+Stack.count = 0 -- a store, not a declaration: checked against the pairing
+>Stack.count = 0 : 0
+>Stack.count : any
+>Stack : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }
+>count : any
+>0 : 0
+
+local s = setmetatable({ name = "x" }, { __index = Stack })
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>setmetatable({ name = "x" }, { __index = Stack }) : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ name = "x" } : { name: string; }
+>name : string
+>"x" : "x"
+>{ __index = Stack } : { __index: { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }; }
+>__index : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }
+>Stack : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }
+
+local a: string = s.build(s)
+>a : string
+>s.build(s) : string
+>s.build : (self: { name: string; }) => string
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>build : (self: { name: string; }) => string
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+
+local b: number = s.panel(s)
+>b : number
+>s.panel(s) : number
+>s.panel : (self: table) => number
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>panel : (self: table) => number
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+
+local c: number = s.stack(s)
+>c : number
+>s.stack(s) : number
+>s.stack : (self: table) => number
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>stack : (self: table) => number
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+
+local d: number = s.count -- still missing: a store through a pairing declares nothing
+>d : number
+>s.count : any
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>count : any
+
+local e: string = s.stack(s)
+>e : string
+>s.stack(s) : number
+>s.stack : (self: table) => number
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>stack : (self: table) => number
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+
+local _ = s.missing
+>_ : any
+>s.missing : any
+>s : { build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }
+>missing : any
+
+// The same through a parenthesized or asserted call.
+local Wrapped = (setmetatable({}, { __index = Builder }))
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>(setmetatable({}, { __index = Builder })) : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>setmetatable({}, { __index = Builder }) : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>{ __index = Builder } : { __index: { build: (self: { name: string; }) => string; }; }
+>__index : { build: (self: { name: string; }) => string; }
+>Builder : { build: (self: { name: string; }) => string; }
+
+function Wrapped.extra(self: table) return true end
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>extra : (self: table) => boolean
+>self : table
+>true : true
+
+local w: boolean = Wrapped.extra(Wrapped)
+>w : boolean
+>Wrapped.extra(Wrapped) : boolean
+>Wrapped.extra : (self: table) => boolean
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>extra : (self: table) => boolean
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+
+// A colon method, a method declared through an alias, and a method that shadows what
+// __index answers all attach to the table behind the call.
+function Wrapped:colon(x: number) return x end
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number) => number
+>x : number
+>x : number
+
+local Alias = Wrapped
+>Alias : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+
+function Alias.viaAlias() return true end
+>Alias : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>viaAlias : () => boolean
+>true : true
+
+function Wrapped.build(self: table) return 42 end
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>build : (self: table) => number
+>self : table
+>42 : 42
+
+local inst = setmetatable({}, { __index = Wrapped })
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>setmetatable({}, { __index = Wrapped }) : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = Wrapped } : { __index: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }; }
+>__index : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+
+local i1: number = inst:colon(1)
+>i1 : number
+>inst:colon(1) : number
+>inst:colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number) => number
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number) => number
+>1 : 1
+
+local i2: number = inst.build(inst)
+>i2 : number
+>inst.build(inst) : number
+>inst.build : (self: table) => number
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>build : (self: table) => number
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+
+local i3: boolean = inst.viaAlias()
+>i3 : boolean
+>inst.viaAlias() : boolean
+>inst.viaAlias : () => boolean
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>viaAlias : () => boolean
+
+// A typed local behind the call is sealed: nothing attaches.
+local Typed: { n: number } = { n = 1 }
+>Typed : { n: number; }
+>n : number
+>{ n = 1 } : { n: number; }
+>n : number
+>1 : 1
+
+local Sealed = setmetatable(Typed, { __index = Builder })
+>Sealed : { build: (self: { name: string; }) => string; n: number; }
+>setmetatable(Typed, { __index = Builder }) : { build: (self: { name: string; }) => string; n: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>Typed : { n: number; }
+>{ __index = Builder } : { __index: { build: (self: { name: string; }) => string; }; }
+>__index : { build: (self: { name: string; }) => string; }
+>Builder : { build: (self: { name: string; }) => string; }
+
+function Sealed.late() return 1 end
+>Sealed : { build: (self: { name: string; }) => string; n: number; }
+>late : () => number
+>1 : 1
+
+// A malformed call has no table to look through.
+local Broken = setmetatable()
+>Broken : table
+>setmetatable() : table
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+
+function Broken.m() return 1 end
+>Broken : table
+>m : () => number
+>1 : 1
+
+// A colon method's self is the paired table, whose members include the method: the
+// pairing is circular, and printing it must terminate (statement form too).
+local Circular = {}
+>Circular : { ring(self: { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }, x: number): number; }
+>{} : { ring(self: { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }, x: number): number; }
+
+setmetatable(Circular, { __index = Builder })
+>setmetatable(Circular, { __index = Builder }) : { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>Circular : { ring(self: { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }, x: number): number; }
+>{ __index = Builder } : { __index: { build: (self: { name: string; }) => string; }; }
+>__index : { build: (self: { name: string; }) => string; }
+>Builder : { build: (self: { name: string; }) => string; }
+
+function Circular:ring(x: number) return x end
+>Circular : { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }
+>ring : (self: { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }, x: number) => number
+>x : number
+>x : number
+
+local ring: number = Circular:ring(1)
+>ring : number
+>Circular:ring(1) : number
+>Circular:ring : (self: { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }, x: number) => number
+>Circular : { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }
+>ring : (self: { build: (self: { name: string; }) => string; ring(self: any, x: number): number; }, x: number) => number
+>1 : 1
+

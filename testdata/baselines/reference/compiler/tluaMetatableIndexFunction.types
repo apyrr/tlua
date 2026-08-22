@@ -263,6 +263,75 @@ local proxy: Proxy = setmetatable({}, { __index = function(_, key: "x" | "y") re
 >build : (key: string) => any
 >key : "x" | "y"
 
+// A handler generic in its key is a mapped type spelled as a function: each key of the
+// constraint is answered with the return type instantiated at that key.
+interface Client<P extends string> { ping(self: Client<P>): P; pong(self: Client<P>): number }
+>ping : (self: Client<P>) => P
+>self : Client<P>
+>pong : (self: Client<P>) => number
+>self : Client<P>
+
+declare callerFor: <K extends string>(name: K) => any
+>callerFor : <K extends string>(name: K) => any
+>name : K
+
+function connect<P extends string>(prefix: P): Client<P>
+>connect : <P extends string>(prefix: P) => Client<P>
+>prefix : P
+
+    return setmetatable({}, {
+>setmetatable({}, {        __index = function<K extends keyof Client<P>>(_: table, key: K): Client<P>[K]            return callerFor(key)        end,    }) : { ping: (self: Client<P>) => P; pong: (self: Client<P>) => number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{        __index = function<K extends keyof Client<P>>(_: table, key: K): Client<P>[K]            return callerFor(key)        end,    } : { __index: <K extends keyof Client<P>>(_: table, key: K) => Client<P>[K]; }
+
+        __index = function<K extends keyof Client<P>>(_: table, key: K): Client<P>[K]
+>__index : <K extends keyof Client<P>>(_: table, key: K) => Client<P>[K]
+>function<K extends keyof Client<P>>(_: table, key: K): Client<P>[K]            return callerFor(key)        end : <K extends keyof Client<P>>(_: table, key: K) => Client<P>[K]
+>_ : table
+>key : K
+
+            return callerFor(key)
+>callerFor(key) : any
+>callerFor : <K_1 extends string>(name: K_1) => any
+>key : K
+
+        end,
+    })
+end
+local client = connect("svc")
+>client : Client<"svc">
+>connect("svc") : Client<"svc">
+>connect : <P extends string>(prefix: P) => Client<P>
+>"svc" : "svc"
+
+local c1: "svc" = client:ping()
+>c1 : "svc"
+>client:ping() : "svc"
+>client:ping : (self: Client<"svc">) => "svc"
+>client : Client<"svc">
+>ping : (self: Client<"svc">) => "svc"
+
+local c2: number = client:pong()
+>c2 : number
+>client:pong() : number
+>client:pong : (self: Client<"svc">) => number
+>client : Client<"svc">
+>pong : (self: Client<"svc">) => number
+
+local c3: string = client:pong()
+>c3 : string
+>client:pong() : number
+>client:pong : (self: Client<"svc">) => number
+>client : Client<"svc">
+>pong : (self: Client<"svc">) => number
+
+local _ = client.nope
+>_ : any
+>client.nope : any
+>client : Client<"svc">
+>nope : any
+
 // The table's own members still win: a function __index only runs on a miss.
 local own = setmetatable({ n = 1 }, anyMt);
 >own : { [x: string]: string; [x: number]: string; n: number; }

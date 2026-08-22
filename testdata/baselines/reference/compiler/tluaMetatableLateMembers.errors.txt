@@ -1,0 +1,75 @@
+tluaMetatableLateMembers.tlua(9,7): error TLUA2339: Property 'count' does not exist on type '{ build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }'.
+tluaMetatableLateMembers.tlua(15,21): error TLUA2339: Property 'count' does not exist on type '{ build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }'.
+tluaMetatableLateMembers.tlua(16,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaMetatableLateMembers.tlua(17,13): error TLUA2339: Property 'missing' does not exist on type '{ build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }'.
+tluaMetatableLateMembers.tlua(38,17): error TLUA2339: Property 'late' does not exist on type '{ build: (self: { name: string; }) => string; n: number; }'.
+tluaMetatableLateMembers.tlua(41,16): error TLUA2554: Expected 2 arguments, but got 0.
+tluaMetatableLateMembers.tlua(42,17): error TLUA2339: Property 'm' does not exist on type 'table'.
+
+
+==== tluaMetatableLateMembers.tlua (7 errors) ====
+    // setmetatable returns its table, so a local initialized with the call is the
+    // table: members written to it afterward -- the prototype idiom -- are members of
+    // the table, and reads through the pairing still see them.
+    local Builder = { build = function(self: { name: string }) return self.name end }
+    local Panel = setmetatable({}, { __index = Builder })
+    function Panel.panel(self: table) return 1 end
+    local Stack = setmetatable({}, { __index = Panel })
+    function Stack.stack(self: table) return 2 end
+    Stack.count = 0 -- a store, not a declaration: checked against the pairing
+          ~~~~~
+!!! error TLUA2339: Property 'count' does not exist on type '{ build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; }'.
+    
+    local s = setmetatable({ name = "x" }, { __index = Stack })
+    local a: string = s.build(s)
+    local b: number = s.panel(s)
+    local c: number = s.stack(s)
+    local d: number = s.count -- still missing: a store through a pairing declares nothing
+                        ~~~~~
+!!! error TLUA2339: Property 'count' does not exist on type '{ build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }'.
+    local e: string = s.stack(s)
+          ~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    local _ = s.missing
+                ~~~~~~~
+!!! error TLUA2339: Property 'missing' does not exist on type '{ build: (self: { name: string; }) => string; panel(self: table): number; stack(self: table): number; name: string; }'.
+    
+    // The same through a parenthesized or asserted call.
+    local Wrapped = (setmetatable({}, { __index = Builder }))
+    function Wrapped.extra(self: table) return true end
+    local w: boolean = Wrapped.extra(Wrapped)
+    
+    // A colon method, a method declared through an alias, and a method that shadows what
+    // __index answers all attach to the table behind the call.
+    function Wrapped:colon(x: number) return x end
+    local Alias = Wrapped
+    function Alias.viaAlias() return true end
+    function Wrapped.build(self: table) return 42 end
+    local inst = setmetatable({}, { __index = Wrapped })
+    local i1: number = inst:colon(1)
+    local i2: number = inst.build(inst)
+    local i3: boolean = inst.viaAlias()
+    
+    // A typed local behind the call is sealed: nothing attaches.
+    local Typed: { n: number } = { n = 1 }
+    local Sealed = setmetatable(Typed, { __index = Builder })
+    function Sealed.late() return 1 end
+                    ~~~~
+!!! error TLUA2339: Property 'late' does not exist on type '{ build: (self: { name: string; }) => string; n: number; }'.
+    
+    // A malformed call has no table to look through.
+    local Broken = setmetatable()
+                   ~~~~~~~~~~~~
+!!! error TLUA2554: Expected 2 arguments, but got 0.
+!!! related TLUA6210 lib.luajit.d.tlua:174:48: An argument for 'value' was not provided.
+    function Broken.m() return 1 end
+                    ~
+!!! error TLUA2339: Property 'm' does not exist on type 'table'.
+    
+    // A colon method's self is the paired table, whose members include the method: the
+    // pairing is circular, and printing it must terminate (statement form too).
+    local Circular = {}
+    setmetatable(Circular, { __index = Builder })
+    function Circular:ring(x: number) return x end
+    local ring: number = Circular:ring(1)
+    

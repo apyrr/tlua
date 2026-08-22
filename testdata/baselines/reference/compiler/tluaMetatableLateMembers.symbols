@@ -1,0 +1,197 @@
+//// [tests/cases/compiler/tluaMetatableLateMembers.tlua] ////
+
+=== tluaMetatableLateMembers.tlua ===
+// setmetatable returns its table, so a local initialized with the call is the
+// table: members written to it afterward -- the prototype idiom -- are members of
+// the table, and reads through the pairing still see them.
+local Builder = { build = function(self: { name: string }) return self.name end }
+>Builder : Symbol(Builder, Decl(tluaMetatableLateMembers.tlua, 3, 5))
+>build : Symbol(build, Decl(tluaMetatableLateMembers.tlua, 3, 17))
+>self : Symbol(self, Decl(tluaMetatableLateMembers.tlua, 3, 35))
+>name : Symbol(name, Decl(tluaMetatableLateMembers.tlua, 3, 42))
+>self.name : Symbol(name, Decl(tluaMetatableLateMembers.tlua, 3, 42))
+>self : Symbol(self, Decl(tluaMetatableLateMembers.tlua, 3, 35))
+>name : Symbol(name, Decl(tluaMetatableLateMembers.tlua, 3, 42))
+
+local Panel = setmetatable({}, { __index = Builder })
+>Panel : Symbol(Panel, Decl(tluaMetatableLateMembers.tlua, 4, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 4, 32))
+>Builder : Symbol(Builder, Decl(tluaMetatableLateMembers.tlua, 3, 5))
+
+function Panel.panel(self: table) return 1 end
+>Panel : Symbol(Panel, Decl(tluaMetatableLateMembers.tlua, 4, 5))
+>panel : Symbol(panel, Decl(tluaMetatableLateMembers.tlua, 4, 53))
+>self : Symbol(self, Decl(tluaMetatableLateMembers.tlua, 5, 21))
+
+local Stack = setmetatable({}, { __index = Panel })
+>Stack : Symbol(Stack, Decl(tluaMetatableLateMembers.tlua, 6, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 6, 32))
+>Panel : Symbol(Panel, Decl(tluaMetatableLateMembers.tlua, 4, 5))
+
+function Stack.stack(self: table) return 2 end
+>Stack : Symbol(Stack, Decl(tluaMetatableLateMembers.tlua, 6, 5))
+>stack : Symbol(stack, Decl(tluaMetatableLateMembers.tlua, 6, 51))
+>self : Symbol(self, Decl(tluaMetatableLateMembers.tlua, 7, 21))
+
+Stack.count = 0 -- a store, not a declaration: checked against the pairing
+>Stack : Symbol(Stack, Decl(tluaMetatableLateMembers.tlua, 6, 5))
+
+local s = setmetatable({ name = "x" }, { __index = Stack })
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>name : Symbol(name, Decl(tluaMetatableLateMembers.tlua, 10, 24))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 10, 40))
+>Stack : Symbol(Stack, Decl(tluaMetatableLateMembers.tlua, 6, 5))
+
+local a: string = s.build(s)
+>a : Symbol(a, Decl(tluaMetatableLateMembers.tlua, 11, 5))
+>s.build : Symbol(build, Decl(tluaMetatableLateMembers.tlua, 3, 17))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+>build : Symbol(build, Decl(tluaMetatableLateMembers.tlua, 3, 17))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+
+local b: number = s.panel(s)
+>b : Symbol(b, Decl(tluaMetatableLateMembers.tlua, 12, 5))
+>s.panel : Symbol(panel, Decl(tluaMetatableLateMembers.tlua, 4, 53))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+>panel : Symbol(panel, Decl(tluaMetatableLateMembers.tlua, 4, 53))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+
+local c: number = s.stack(s)
+>c : Symbol(c, Decl(tluaMetatableLateMembers.tlua, 13, 5))
+>s.stack : Symbol(stack, Decl(tluaMetatableLateMembers.tlua, 6, 51))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+>stack : Symbol(stack, Decl(tluaMetatableLateMembers.tlua, 6, 51))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+
+local d: number = s.count -- still missing: a store through a pairing declares nothing
+>d : Symbol(d, Decl(tluaMetatableLateMembers.tlua, 14, 5))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+
+local e: string = s.stack(s)
+>e : Symbol(e, Decl(tluaMetatableLateMembers.tlua, 15, 5))
+>s.stack : Symbol(stack, Decl(tluaMetatableLateMembers.tlua, 6, 51))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+>stack : Symbol(stack, Decl(tluaMetatableLateMembers.tlua, 6, 51))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+
+local _ = s.missing
+>_ : Symbol(_, Decl(tluaMetatableLateMembers.tlua, 16, 5))
+>s : Symbol(s, Decl(tluaMetatableLateMembers.tlua, 10, 5))
+
+// The same through a parenthesized or asserted call.
+local Wrapped = (setmetatable({}, { __index = Builder }))
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 19, 35))
+>Builder : Symbol(Builder, Decl(tluaMetatableLateMembers.tlua, 3, 5))
+
+function Wrapped.extra(self: table) return true end
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+>extra : Symbol(extra, Decl(tluaMetatableLateMembers.tlua, 19, 57))
+>self : Symbol(self, Decl(tluaMetatableLateMembers.tlua, 20, 23))
+
+local w: boolean = Wrapped.extra(Wrapped)
+>w : Symbol(w, Decl(tluaMetatableLateMembers.tlua, 21, 5))
+>Wrapped.extra : Symbol(extra, Decl(tluaMetatableLateMembers.tlua, 19, 57))
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+>extra : Symbol(extra, Decl(tluaMetatableLateMembers.tlua, 19, 57))
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+
+// A colon method, a method declared through an alias, and a method that shadows what
+// __index answers all attach to the table behind the call.
+function Wrapped:colon(x: number) return x end
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+>colon : Symbol(colon, Decl(tluaMetatableLateMembers.tlua, 21, 41))
+>x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 25, 23))
+>x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 25, 23))
+
+local Alias = Wrapped
+>Alias : Symbol(Alias, Decl(tluaMetatableLateMembers.tlua, 26, 5))
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+
+function Alias.viaAlias() return true end
+>Alias : Symbol(Alias, Decl(tluaMetatableLateMembers.tlua, 26, 5))
+>viaAlias : Symbol(viaAlias, Decl(tluaMetatableLateMembers.tlua, 26, 21))
+
+function Wrapped.build(self: table) return 42 end
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+>build : Symbol(build, Decl(tluaMetatableLateMembers.tlua, 27, 41))
+>self : Symbol(self, Decl(tluaMetatableLateMembers.tlua, 28, 23))
+
+local inst = setmetatable({}, { __index = Wrapped })
+>inst : Symbol(inst, Decl(tluaMetatableLateMembers.tlua, 29, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 29, 31))
+>Wrapped : Symbol(Wrapped, Decl(tluaMetatableLateMembers.tlua, 19, 5))
+
+local i1: number = inst:colon(1)
+>i1 : Symbol(i1, Decl(tluaMetatableLateMembers.tlua, 30, 5))
+>inst:colon : Symbol(colon, Decl(tluaMetatableLateMembers.tlua, 21, 41))
+>inst : Symbol(inst, Decl(tluaMetatableLateMembers.tlua, 29, 5))
+>colon : Symbol(colon, Decl(tluaMetatableLateMembers.tlua, 21, 41))
+
+local i2: number = inst.build(inst)
+>i2 : Symbol(i2, Decl(tluaMetatableLateMembers.tlua, 31, 5))
+>inst.build : Symbol(build, Decl(tluaMetatableLateMembers.tlua, 27, 41))
+>inst : Symbol(inst, Decl(tluaMetatableLateMembers.tlua, 29, 5))
+>build : Symbol(build, Decl(tluaMetatableLateMembers.tlua, 27, 41))
+>inst : Symbol(inst, Decl(tluaMetatableLateMembers.tlua, 29, 5))
+
+local i3: boolean = inst.viaAlias()
+>i3 : Symbol(i3, Decl(tluaMetatableLateMembers.tlua, 32, 5))
+>inst.viaAlias : Symbol(viaAlias, Decl(tluaMetatableLateMembers.tlua, 26, 21))
+>inst : Symbol(inst, Decl(tluaMetatableLateMembers.tlua, 29, 5))
+>viaAlias : Symbol(viaAlias, Decl(tluaMetatableLateMembers.tlua, 26, 21))
+
+// A typed local behind the call is sealed: nothing attaches.
+local Typed: { n: number } = { n = 1 }
+>Typed : Symbol(Typed, Decl(tluaMetatableLateMembers.tlua, 35, 5))
+>n : Symbol(n, Decl(tluaMetatableLateMembers.tlua, 35, 14))
+>n : Symbol(n, Decl(tluaMetatableLateMembers.tlua, 35, 30))
+
+local Sealed = setmetatable(Typed, { __index = Builder })
+>Sealed : Symbol(Sealed, Decl(tluaMetatableLateMembers.tlua, 36, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Typed : Symbol(Typed, Decl(tluaMetatableLateMembers.tlua, 35, 5))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 36, 36))
+>Builder : Symbol(Builder, Decl(tluaMetatableLateMembers.tlua, 3, 5))
+
+function Sealed.late() return 1 end
+>Sealed : Symbol(Sealed, Decl(tluaMetatableLateMembers.tlua, 36, 5))
+>late : Symbol(late, Decl(tluaMetatableLateMembers.tlua, 36, 57))
+
+// A malformed call has no table to look through.
+local Broken = setmetatable()
+>Broken : Symbol(Broken, Decl(tluaMetatableLateMembers.tlua, 40, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+function Broken.m() return 1 end
+>Broken : Symbol(Broken, Decl(tluaMetatableLateMembers.tlua, 40, 5))
+>m : Symbol(m, Decl(tluaMetatableLateMembers.tlua, 40, 29))
+
+// A colon method's self is the paired table, whose members include the method: the
+// pairing is circular, and printing it must terminate (statement form too).
+local Circular = {}
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
+
+setmetatable(Circular, { __index = Builder })
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 46, 24))
+>Builder : Symbol(Builder, Decl(tluaMetatableLateMembers.tlua, 3, 5))
+
+function Circular:ring(x: number) return x end
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
+>ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 46, 45))
+>x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 47, 23))
+>x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 47, 23))
+
+local ring: number = Circular:ring(1)
+>ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 48, 5))
+>Circular:ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 46, 45))
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
+>ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 46, 45))
+

@@ -1149,34 +1149,49 @@ func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 	}
 	var shape luaIndexShape
 	memberTypes := make(map[string]*Type)
+	addKey := func(unitKeyType *Type, valueType *Type) {
+		if unitKeyType.flags&TypeFlagsStringOrNumberLiteral != 0 {
+			name := getPropertyNameFromType(unitKeyType)
+			if existing, ok := memberTypes[name]; ok {
+				memberTypes[name] = c.getUnionType([]*Type{existing, valueType})
+				return
+			}
+			memberTypes[name] = valueType
+			shape.members = append(shape.members, c.newSymbol(ast.SymbolFlagsProperty, name))
+			return
+		}
+		c.forEachObjectLiteralIndexKeyType(unitKeyType, func(indexKeyType *Type) {
+			// Overloads that answer the same key both apply: a read of such a key gets
+			// whichever one Lua dispatches to. The infos are ours until they are published,
+			// so widening one in place is safe.
+			if existing := findIndexInfo(shape.indexInfos, indexKeyType); existing != nil {
+				existing.valueType = c.getUnionType([]*Type{existing.valueType, valueType})
+				return
+			}
+			shape.indexInfos = append(shape.indexInfos, c.newIndexInfo(indexKeyType, valueType, false /*isReadonly*/, nil /*declaration*/, nil /*components*/))
+		})
+	}
 	for _, signature := range c.getSignaturesOfType(d.indexSource, SignatureKindCall) {
 		keyType := c.getTypeAtPosition(signature, 1)
+		returnType := c.adjustMultiReturn(c.getReturnTypeOfSignature(signature))
+		// A handler generic in its key -- `function<K extends keyof T>(_, k: K): T[K]` -- answers
+		// each key of the constraint with the return type at that key. That is a mapped type
+		// spelled as a function, and the shape is its expansion: one member per unit key, the
+		// return type instantiated with K at that key.
+		if keyType.flags&TypeFlagsTypeParameter != 0 && slices.Contains(signature.typeParameters, keyType) {
+			constraint := c.getConstraintOfTypeParameter(keyType)
+			if constraint == nil || !c.isValidIndexArgumentType(constraint) {
+				continue
+			}
+			c.forEachIndexKeyType(constraint, func(unitKeyType *Type) {
+				addKey(unitKeyType, c.instantiateType(returnType, newTypeMapper([]*Type{keyType}, []*Type{unitKeyType})))
+			})
+			continue
+		}
 		if !c.isValidIndexArgumentType(keyType) {
 			continue
 		}
-		valueType := c.adjustMultiReturn(c.getReturnTypeOfSignature(signature))
-		c.forEachIndexKeyType(keyType, func(unitKeyType *Type) {
-			if unitKeyType.flags&TypeFlagsStringOrNumberLiteral != 0 {
-				name := getPropertyNameFromType(unitKeyType)
-				if existing, ok := memberTypes[name]; ok {
-					memberTypes[name] = c.getUnionType([]*Type{existing, valueType})
-					return
-				}
-				memberTypes[name] = valueType
-				shape.members = append(shape.members, c.newSymbol(ast.SymbolFlagsProperty, name))
-				return
-			}
-			c.forEachObjectLiteralIndexKeyType(unitKeyType, func(indexKeyType *Type) {
-				// Overloads that answer the same key both apply: a read of such a key gets
-				// whichever one Lua dispatches to. The infos are ours until they are published,
-				// so widening one in place is safe.
-				if existing := findIndexInfo(shape.indexInfos, indexKeyType); existing != nil {
-					existing.valueType = c.getUnionType([]*Type{existing.valueType, valueType})
-					return
-				}
-				shape.indexInfos = append(shape.indexInfos, c.newIndexInfo(indexKeyType, valueType, false /*isReadonly*/, nil /*declaration*/, nil /*components*/))
-			})
-		})
+		c.forEachIndexKeyType(keyType, func(unitKeyType *Type) { addKey(unitKeyType, returnType) })
 	}
 	for _, member := range shape.members {
 		c.valueSymbolLinks.Get(member).resolvedType = memberTypes[member.Name]

@@ -62,7 +62,16 @@ func (r *luaConstructorResolver) parentArms(item luaAugmentation) ([]*ast.Symbol
 	if receiver == nil {
 		return nil, false
 	}
-	return r.initializerArms(receiver)
+	r.paired = false
+	arms, known := r.initializerArms(receiver)
+	// `setmetatable(t, mt)` is t, so a method declared on the result is declared
+	// on t. A `=` store is different: whether it raw-sets t or runs __newindex
+	// depends on the pairing, which attachment runs too early to read, so the
+	// store stays a write checked against the paired type rather than a member.
+	if r.paired && !ast.IsFunctionDeclaration(item.Source) {
+		return nil, false
+	}
+	return arms, known
 }
 
 // resolveLuaConstructors returns the shared resolver. Arm resolution is a
@@ -89,8 +98,9 @@ func (c *Checker) hasLuaConstructorArms(symbol *ast.Symbol) bool {
 }
 
 type luaConstructorArms struct {
-	arms  []*ast.Symbol
-	known bool
+	arms   []*ast.Symbol
+	known  bool
+	paired bool
 }
 
 // luaConstructorResolver maps a symbol to the constructors its storage can
@@ -101,6 +111,9 @@ type luaConstructorResolver struct {
 	checker   *Checker
 	cache     map[*ast.Symbol]luaConstructorArms
 	resolving collections.Set[*ast.Symbol]
+	// paired accumulates, over the current query, whether any arm was reached
+	// by looking through a setmetatable call. Cached entries replay it.
+	paired bool
 }
 
 func newLuaConstructorResolver(c *Checker) *luaConstructorResolver {
@@ -117,18 +130,23 @@ func (r *luaConstructorResolver) armsAt(symbol *ast.Symbol) ([]*ast.Symbol, bool
 		return nil, false
 	}
 	if resolved, ok := r.cache[symbol]; ok {
+		r.paired = r.paired || resolved.paired
 		return resolved.arms, resolved.known
 	}
 	if !r.resolving.AddIfAbsent(symbol) {
 		return nil, false
 	}
+	outerPaired := r.paired
+	r.paired = false
 	arms, known := r.computeArms(symbol)
+	paired := r.paired
+	r.paired = outerPaired || paired
 	r.resolving.Delete(symbol)
 	if known {
 		// Only a resolved answer is a function of the program alone. An unknown
 		// one means a member this pass has yet to attach, so caching it would let
 		// the shared resolver answer from candidate order rather than the program.
-		r.cache[symbol] = luaConstructorArms{arms: arms, known: known}
+		r.cache[symbol] = luaConstructorArms{arms: arms, known: known, paired: paired}
 	}
 	return arms, known
 }
@@ -207,6 +225,14 @@ func (r *luaConstructorResolver) assignmentInitializerArms(assignment luaAugment
 
 func (r *luaConstructorResolver) initializerArms(initializer *ast.Node) ([]*ast.Symbol, bool) {
 	c := r.checker
+	// `setmetatable(t, mt)` returns t itself, so the call is a wrapper around
+	// its table operand for constructor-arm purposes; the pairing it installs
+	// is folded in when the arm's type is resolved. parentArms decides which
+	// writes may attach through it.
+	if call := skipLuaRuntimeTransparentWrappers(initializer); c.getLuaMetatableCall(call).isSet() && len(call.Arguments()) != 0 {
+		r.paired = true
+		return r.initializerArms(call.Arguments()[0])
+	}
 	if constructor := luaObjectLiteralConstructor(initializer); constructor != nil {
 		if constructor.Symbol() == nil {
 			return nil, false
