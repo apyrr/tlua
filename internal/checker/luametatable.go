@@ -142,10 +142,10 @@ func (c *Checker) checkLuaMetatableIndexHandlerKeys(metatableArg *ast.Node, meta
 		return
 	}
 	for _, signature := range c.getSignaturesOfType(indexSource, SignatureKindCall) {
-		keyType := c.getTypeAtPosition(signature, 1)
+		keyType, keyParameter := c.getLuaIndexHandlerKey(signature)
 		domain := keyType
-		if keyType.flags&TypeFlagsTypeParameter != 0 && slices.Contains(signature.typeParameters, keyType) {
-			domain = c.getConstraintOfTypeParameter(keyType)
+		if keyParameter != nil {
+			domain = c.getConstraintOfTypeParameter(keyParameter)
 			if domain == nil {
 				domain = c.unknownType
 			}
@@ -1213,7 +1213,7 @@ func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 		})
 	}
 	for _, signature := range c.getSignaturesOfType(d.indexSource, SignatureKindCall) {
-		keyType := c.getTypeAtPosition(signature, 1)
+		keyType, keyParameter := c.getLuaIndexHandlerKey(signature)
 		returnType := c.adjustMultiReturn(c.getReturnTypeOfSignature(signature))
 		// A handler generic in its key -- `function<K extends keyof T>(_, k: K): T[K]` -- is a
 		// mapped type spelled as a function, and the shape is its expansion by the mapped-type
@@ -1222,8 +1222,8 @@ func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 		// contributes nothing -- a generic mapped type grows no K-keyed index either -- and
 		// resolves once the pairing is instantiated (instantiateMetatableType re-pairs with the
 		// instantiated handler).
-		if keyType.flags&TypeFlagsTypeParameter != 0 && slices.Contains(signature.typeParameters, keyType) {
-			constraint := c.getConstraintOfTypeParameter(keyType)
+		if keyParameter != nil {
+			constraint := c.getConstraintOfTypeParameter(keyParameter)
 			if constraint == nil || !c.isValidIndexArgumentType(constraint) {
 				// checkLuaMetatableCall reported the invalid domain.
 				continue
@@ -1248,6 +1248,17 @@ func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 		c.valueSymbolLinks.Get(member).resolvedType = memberTypes[member.Name]
 	}
 	return shape
+}
+
+// getLuaIndexHandlerKey returns the key a function-form __index signature answers for -- its
+// second parameter, after the table -- and, when that key is the signature's own type
+// parameter (`function<K extends C>(_, k: K)`), the parameter itself.
+func (c *Checker) getLuaIndexHandlerKey(signature *Signature) (keyType *Type, keyParameter *Type) {
+	keyType = c.getTypeAtPosition(signature, 1)
+	if keyType.flags&TypeFlagsTypeParameter != 0 && slices.Contains(signature.typeParameters, keyType) {
+		return keyType, keyType
+	}
+	return keyType, nil
 }
 
 // getMetatableFallthroughSymbol merges a table member that may be nil with what __index answers
