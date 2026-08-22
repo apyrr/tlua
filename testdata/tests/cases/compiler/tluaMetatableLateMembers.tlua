@@ -40,6 +40,10 @@ local Typed: { n: number } = { n = 1 }
 local Sealed = setmetatable(Typed, { __index = Builder })
 function Sealed.late() return 1 end
 
+// An assertion replaces the pairing's type, so nothing attaches behind it.
+local Asserted = setmetatable({}, { __index = Builder }) as table
+function Asserted.late() return 1 end
+
 // A malformed call has no table to look through.
 local Broken = setmetatable()
 function Broken.m() return 1 end

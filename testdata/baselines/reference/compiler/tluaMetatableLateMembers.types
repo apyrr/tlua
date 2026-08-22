@@ -209,6 +209,22 @@ function Sealed.late() return 1 end
 >late : () => number
 >1 : 1
 
+// An assertion replaces the pairing's type, so nothing attaches behind it.
+local Asserted = setmetatable({}, { __index = Builder }) as table
+>Asserted : table
+>setmetatable({}, { __index = Builder }) as table : table
+>setmetatable({}, { __index = Builder }) : { build: (self: { name: string; }) => string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = Builder } : { __index: { build: (self: { name: string; }) => string; }; }
+>__index : { build: (self: { name: string; }) => string; }
+>Builder : { build: (self: { name: string; }) => string; }
+
+function Asserted.late() return 1 end
+>Asserted : table
+>late : () => number
+>1 : 1
+
 // A malformed call has no table to look through.
 local Broken = setmetatable()
 >Broken : table

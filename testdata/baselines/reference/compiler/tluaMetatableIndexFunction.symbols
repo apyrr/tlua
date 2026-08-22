@@ -333,3 +333,74 @@ local merged: number | string = fallsThrough.v;
 >fallsThrough : Symbol(fallsThrough, Decl(tluaMetatableIndexFunction.tlua, 81, 5))
 >v : Symbol(v, Decl(tluaMetatableIndexFunction.tlua, 80, 18))
 
+// A key constraint that is still generic inside the body contributes nothing, as a generic
+// mapped type does: it resolves once the pairing is instantiated. The body cannot prove the
+// deferred shape, so the declared return type needs an assertion there.
+type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
+>Names : Symbol(Names, Decl(tluaMetatableIndexFunction.tlua, 82, 47))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 87, 11))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 87, 11))
+
+type Deferred<P extends string> = { [N in Names<P>]: number }
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexFunction.tlua, 87, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 88, 14))
+>N : Symbol(N, Decl(tluaMetatableIndexFunction.tlua, 88, 37))
+>Names : Symbol(Names, Decl(tluaMetatableIndexFunction.tlua, 82, 47))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 88, 14))
+
+function deferred<P extends string>(prefix: P): Deferred<P>
+>deferred : Symbol(deferred, Decl(tluaMetatableIndexFunction.tlua, 88, 61))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 89, 18))
+>prefix : Symbol(prefix, Decl(tluaMetatableIndexFunction.tlua, 89, 36))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 89, 18))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexFunction.tlua, 87, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 89, 18))
+
+    return setmetatable({}, {
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]
+>__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 90, 29))
+>K : Symbol(K, Decl(tluaMetatableIndexFunction.tlua, 91, 27))
+>Names : Symbol(Names, Decl(tluaMetatableIndexFunction.tlua, 82, 47))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 89, 18))
+>_ : Symbol(_, Decl(tluaMetatableIndexFunction.tlua, 91, 56))
+>key : Symbol(key, Decl(tluaMetatableIndexFunction.tlua, 91, 65))
+>K : Symbol(K, Decl(tluaMetatableIndexFunction.tlua, 91, 27))
+>Deferred : Symbol(Deferred, Decl(tluaMetatableIndexFunction.tlua, 87, 72))
+>P : Symbol(P, Decl(tluaMetatableIndexFunction.tlua, 89, 18))
+>K : Symbol(K, Decl(tluaMetatableIndexFunction.tlua, 91, 27))
+
+            return callerFor(key)
+>callerFor : Symbol(callerFor, Decl(tluaMetatableIndexFunction.tlua, 60, 7))
+>key : Symbol(key, Decl(tluaMetatableIndexFunction.tlua, 91, 65))
+
+        end,
+    })
+end
+local d1: number = deferred("svc").ping
+>d1 : Symbol(d1, Decl(tluaMetatableIndexFunction.tlua, 96, 5))
+>deferred("svc").ping : Symbol(ping)
+>deferred : Symbol(deferred, Decl(tluaMetatableIndexFunction.tlua, 88, 61))
+>ping : Symbol(ping)
+
+// Key domains that cannot index -- unknown, nil, an optional key -- are reported on the key,
+// as an index signature parameter of that type is, instead of answering nothing silently.
+local badUnknown = setmetatable({}, { __index = function(_: table, k: unknown): number return 1 end })
+>badUnknown : Symbol(badUnknown, Decl(tluaMetatableIndexFunction.tlua, 100, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 100, 37))
+>_ : Symbol(_, Decl(tluaMetatableIndexFunction.tlua, 100, 57))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 100, 66))
+
+local badOptional = setmetatable({}, { __index = function(_: table, k?: "a"): number return 1 end })
+>badOptional : Symbol(badOptional, Decl(tluaMetatableIndexFunction.tlua, 101, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableIndexFunction.tlua, 101, 38))
+>_ : Symbol(_, Decl(tluaMetatableIndexFunction.tlua, 101, 58))
+>k : Symbol(k, Decl(tluaMetatableIndexFunction.tlua, 101, 67))
+
+local b1: string = badOptional
+>b1 : Symbol(b1, Decl(tluaMetatableIndexFunction.tlua, 102, 5))
+>badOptional : Symbol(badOptional, Decl(tluaMetatableIndexFunction.tlua, 101, 5))
+

@@ -228,8 +228,10 @@ func (r *luaConstructorResolver) initializerArms(initializer *ast.Node) ([]*ast.
 	// `setmetatable(t, mt)` returns t itself, so the call is a wrapper around
 	// its table operand for constructor-arm purposes; the pairing it installs
 	// is folded in when the arm's type is resolved. parentArms decides which
-	// writes may attach through it.
-	if call := skipLuaRuntimeTransparentWrappers(initializer); c.getLuaMetatableCall(call).isSet() && len(call.Arguments()) != 0 {
+	// writes may attach through it. An assertion is not looked through: it
+	// replaces the pairing's type, so a member attached behind it would be
+	// declared into a type the variable never has.
+	if call := ast.SkipParentheses(initializer); c.getLuaMetatableCall(call).isSet() && len(call.Arguments()) != 0 {
 		r.paired = true
 		return r.initializerArms(call.Arguments()[0])
 	}

@@ -86,3 +86,23 @@ local o2: string = own.n;
 declare partial: { v?: number };
 local fallsThrough = setmetatable(partial, anyMt);
 local merged: number | string = fallsThrough.v;
+
+// A key constraint that is still generic inside the body contributes nothing, as a generic
+// mapped type does: it resolves once the pairing is instantiated. The body cannot prove the
+// deferred shape, so the declared return type needs an assertion there.
+type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
+type Deferred<P extends string> = { [N in Names<P>]: number }
+function deferred<P extends string>(prefix: P): Deferred<P>
+    return setmetatable({}, {
+        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]
+            return callerFor(key)
+        end,
+    })
+end
+local d1: number = deferred("svc").ping
+
+// Key domains that cannot index -- unknown, nil, an optional key -- are reported on the key,
+// as an index signature parameter of that type is, instead of answering nothing silently.
+local badUnknown = setmetatable({}, { __index = function(_: table, k: unknown): number return 1 end })
+local badOptional = setmetatable({}, { __index = function(_: table, k?: "a"): number return 1 end })
+local b1: string = badOptional

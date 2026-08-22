@@ -163,35 +163,46 @@ function Sealed.late() return 1 end
 >Sealed : Symbol(Sealed, Decl(tluaMetatableLateMembers.tlua, 36, 5))
 >late : Symbol(late, Decl(tluaMetatableLateMembers.tlua, 36, 57))
 
+// An assertion replaces the pairing's type, so nothing attaches behind it.
+local Asserted = setmetatable({}, { __index = Builder }) as table
+>Asserted : Symbol(Asserted, Decl(tluaMetatableLateMembers.tlua, 40, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 40, 35))
+>Builder : Symbol(Builder, Decl(tluaMetatableLateMembers.tlua, 3, 5))
+
+function Asserted.late() return 1 end
+>Asserted : Symbol(Asserted, Decl(tluaMetatableLateMembers.tlua, 40, 5))
+>late : Symbol(late, Decl(tluaMetatableLateMembers.tlua, 40, 65))
+
 // A malformed call has no table to look through.
 local Broken = setmetatable()
->Broken : Symbol(Broken, Decl(tluaMetatableLateMembers.tlua, 40, 5))
+>Broken : Symbol(Broken, Decl(tluaMetatableLateMembers.tlua, 44, 5))
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
 
 function Broken.m() return 1 end
->Broken : Symbol(Broken, Decl(tluaMetatableLateMembers.tlua, 40, 5))
->m : Symbol(m, Decl(tluaMetatableLateMembers.tlua, 40, 29))
+>Broken : Symbol(Broken, Decl(tluaMetatableLateMembers.tlua, 44, 5))
+>m : Symbol(m, Decl(tluaMetatableLateMembers.tlua, 44, 29))
 
 // A colon method's self is the paired table, whose members include the method: the
 // pairing is circular, and printing it must terminate (statement form too).
 local Circular = {}
->Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 49, 5))
 
 setmetatable(Circular, { __index = Builder })
 >setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
->Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
->__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 46, 24))
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 49, 5))
+>__index : Symbol(__index, Decl(tluaMetatableLateMembers.tlua, 50, 24))
 >Builder : Symbol(Builder, Decl(tluaMetatableLateMembers.tlua, 3, 5))
 
 function Circular:ring(x: number) return x end
->Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
->ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 46, 45))
->x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 47, 23))
->x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 47, 23))
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 49, 5))
+>ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 50, 45))
+>x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 51, 23))
+>x : Symbol(x, Decl(tluaMetatableLateMembers.tlua, 51, 23))
 
 local ring: number = Circular:ring(1)
->ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 48, 5))
->Circular:ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 46, 45))
->Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 45, 5))
->ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 46, 45))
+>ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 52, 5))
+>Circular:ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 50, 45))
+>Circular : Symbol(Circular, Decl(tluaMetatableLateMembers.tlua, 49, 5))
+>ring : Symbol(ring, Decl(tluaMetatableLateMembers.tlua, 50, 45))
 

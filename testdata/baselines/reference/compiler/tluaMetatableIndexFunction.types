@@ -372,3 +372,74 @@ local merged: number | string = fallsThrough.v;
 >fallsThrough : { [x: string]: string; [x: number]: string; v: string | number; }
 >v : string | number
 
+// A key constraint that is still generic inside the body contributes nothing, as a generic
+// mapped type does: it resolves once the pairing is instantiated. The body cannot prove the
+// deferred shape, so the declared return type needs an assertion there.
+type Names<P extends string> = P extends "svc" ? "ping" | "pong" : never
+>Names : Names<P>
+
+type Deferred<P extends string> = { [N in Names<P>]: number }
+>Deferred : Deferred<P>
+
+function deferred<P extends string>(prefix: P): Deferred<P>
+>deferred : <P extends string>(prefix: P) => Deferred<P>
+>prefix : P
+
+    return setmetatable({}, {
+>setmetatable({}, {        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]            return callerFor(key)        end,    }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]            return callerFor(key)        end,    } : { __index: <K extends Names<P> & string>(_: table, key: K) => Deferred<P>[K]; }
+
+        __index = function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]
+>__index : <K extends Names<P> & string>(_: table, key: K) => Deferred<P>[K]
+>function<K extends Names<P> & string>(_: table, key: K): Deferred<P>[K]            return callerFor(key)        end : <K extends Names<P> & string>(_: table, key: K) => Deferred<P>[K]
+>_ : table
+>key : K
+
+            return callerFor(key)
+>callerFor(key) : any
+>callerFor : <K_1 extends string>(name: K_1) => any
+>key : K
+
+        end,
+    })
+end
+local d1: number = deferred("svc").ping
+>d1 : number
+>deferred("svc").ping : number
+>deferred("svc") : Deferred<"svc">
+>deferred : <P extends string>(prefix: P) => Deferred<P>
+>"svc" : "svc"
+>ping : number
+
+// Key domains that cannot index -- unknown, nil, an optional key -- are reported on the key,
+// as an index signature parameter of that type is, instead of answering nothing silently.
+local badUnknown = setmetatable({}, { __index = function(_: table, k: unknown): number return 1 end })
+>badUnknown : {}
+>setmetatable({}, { __index = function(_: table, k: unknown): number return 1 end }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = function(_: table, k: unknown): number return 1 end } : { __index: (_: table, k: unknown) => number; }
+>__index : (_: table, k: unknown) => number
+>function(_: table, k: unknown): number return 1 end : (_: table, k: unknown) => number
+>_ : table
+>k : unknown
+>1 : 1
+
+local badOptional = setmetatable({}, { __index = function(_: table, k?: "a"): number return 1 end })
+>badOptional : {}
+>setmetatable({}, { __index = function(_: table, k?: "a"): number return 1 end }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __index = function(_: table, k?: "a"): number return 1 end } : { __index: (_: table, k?: "a") => number; }
+>__index : (_: table, k?: "a") => number
+>function(_: table, k?: "a"): number return 1 end : (_: table, k?: "a") => number
+>_ : table
+>k : "a" | nil
+>1 : 1
+
+local b1: string = badOptional
+>b1 : string
+>badOptional : {}
+

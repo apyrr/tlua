@@ -118,6 +118,7 @@ func (c *Checker) checkLuaMetatableCall(node *ast.Node, returnType *Type) *Type 
 		c.beginLuaPairingArgumentRead(node)
 		metatableType := c.getLuaMetatableArgumentType(args[1])
 		c.endLuaPairingArgumentRead(node)
+		c.checkLuaMetatableIndexHandlerKeys(args[1], metatableType)
 		return c.getSetmetatableResultType(returnType, metatableType)
 	case kind.isGet():
 		if len(args) < 1 {
@@ -126,6 +127,42 @@ func (c *Checker) checkLuaMetatableCall(node *ast.Node, returnType *Type) *Type 
 		return c.getGetmetatableResultType(c.checkExpressionCached(args[0]), kind == luaMetatableCallDebugGet)
 	}
 	return nil
+}
+
+// checkLuaMetatableIndexHandlerKeys reports a function-form __index whose key parameter is not
+// an index domain -- nil, unknown, or an optional key -- the way an index signature parameter
+// of that type is reported. getMetatableIndexShape silently answers nothing for such a handler,
+// so the report has to come from here, where the call is checked exactly once.
+func (c *Checker) checkLuaMetatableIndexHandlerKeys(metatableArg *ast.Node, metatableType *Type) {
+	if c.isErrorType(metatableType) || !c.canCarryMetatableMembers(metatableType) {
+		return
+	}
+	indexSource, indexIsFunction := c.getMetatableSource(metatableType, "__index", true /*allowOptional*/)
+	if indexSource == nil || !indexIsFunction {
+		return
+	}
+	for _, signature := range c.getSignaturesOfType(indexSource, SignatureKindCall) {
+		keyType := c.getTypeAtPosition(signature, 1)
+		domain := keyType
+		if keyType.flags&TypeFlagsTypeParameter != 0 && slices.Contains(signature.typeParameters, keyType) {
+			domain = c.getConstraintOfTypeParameter(keyType)
+			if domain == nil {
+				domain = c.unknownType
+			}
+		}
+		if c.isValidIndexArgumentType(domain) {
+			continue
+		}
+		errorNode := metatableArg
+		if signature.declaration != nil && len(signature.parameters) > 1 {
+			if decl := signature.parameters[1].ValueDeclaration; decl != nil && decl.Type() != nil {
+				errorNode = decl.Type()
+			} else if decl != nil {
+				errorNode = decl
+			}
+		}
+		c.error(errorNode, diagnostics.Type_0_cannot_be_used_as_an_index_type, c.TypeToString(domain))
+	}
 }
 
 // getLuaMetatableArgumentType is the metatable operand as the pairing sees it: read from the
@@ -1150,6 +1187,10 @@ func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 	var shape luaIndexShape
 	memberTypes := make(map[string]*Type)
 	addKey := func(unitKeyType *Type, valueType *Type) {
+		if unitKeyType.flags&TypeFlagsNever != 0 {
+			// No key at all, as `[K in never]` has none.
+			return
+		}
 		if unitKeyType.flags&TypeFlagsStringOrNumberLiteral != 0 {
 			name := getPropertyNameFromType(unitKeyType)
 			if existing, ok := memberTypes[name]; ok {
@@ -1174,21 +1215,31 @@ func (c *Checker) getMetatableIndexShape(d *MetatableType) luaIndexShape {
 	for _, signature := range c.getSignaturesOfType(d.indexSource, SignatureKindCall) {
 		keyType := c.getTypeAtPosition(signature, 1)
 		returnType := c.adjustMultiReturn(c.getReturnTypeOfSignature(signature))
-		// A handler generic in its key -- `function<K extends keyof T>(_, k: K): T[K]` -- answers
-		// each key of the constraint with the return type at that key. That is a mapped type
-		// spelled as a function, and the shape is its expansion: one member per unit key, the
-		// return type instantiated with K at that key.
+		// A handler generic in its key -- `function<K extends keyof T>(_, k: K): T[K]` -- is a
+		// mapped type spelled as a function, and the shape is its expansion by the mapped-type
+		// rule (resolveMappedTypeMembers): one member per unit key of the constraint's lower
+		// bound, the return type instantiated with K at that key. A unit that is still generic
+		// contributes nothing -- a generic mapped type grows no K-keyed index either -- and
+		// resolves once the pairing is instantiated (instantiateMetatableType re-pairs with the
+		// instantiated handler).
 		if keyType.flags&TypeFlagsTypeParameter != 0 && slices.Contains(signature.typeParameters, keyType) {
 			constraint := c.getConstraintOfTypeParameter(keyType)
 			if constraint == nil || !c.isValidIndexArgumentType(constraint) {
+				// checkLuaMetatableCall reported the invalid domain.
 				continue
 			}
-			c.forEachIndexKeyType(constraint, func(unitKeyType *Type) {
-				addKey(unitKeyType, c.instantiateType(returnType, newTypeMapper([]*Type{keyType}, []*Type{unitKeyType})))
+			forEachType(c.getLowerBoundOfKeyType(constraint), func(unitKeyType *Type) {
+				if c.isGenericType(unitKeyType) {
+					return
+				}
+				c.forEachIndexKeyType(unitKeyType, func(unitKeyType *Type) {
+					addKey(unitKeyType, c.instantiateType(returnType, newTypeMapper([]*Type{keyType}, []*Type{unitKeyType})))
+				})
 			})
 			continue
 		}
 		if !c.isValidIndexArgumentType(keyType) {
+			// checkLuaMetatableCall reported the invalid domain.
 			continue
 		}
 		c.forEachIndexKeyType(keyType, func(unitKeyType *Type) { addKey(unitKeyType, returnType) })
