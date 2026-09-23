@@ -14,12 +14,9 @@ import {
     createFunctionDeclaration,
     createIdentifier,
     createIfStatement,
-    createJsxAttributes,
-    createJsxClosingElement,
-    createJsxElement,
-    createJsxOpeningElement,
     createNumericLiteral,
     createPrefixUnaryExpression,
+    createReturnStatement,
     createSourceFile,
     createToken,
     createVariableDeclaration,
@@ -207,38 +204,19 @@ describe("Encoder", () => {
     });
 
     test("single-child node with no children returns undefined", () => {
-        // JsxAttributes is a single-child node (property: "properties").
-        // When the properties NodeList is empty, the encoder skips it,
-        // so JsxAttributes has zero encoded children. Accessing .properties
-        // must return undefined, not throw "Expected only one child".
-        const tagName = createIdentifier("div");
-        const emptyAttrs = createJsxAttributes([]);
-        const opening = createJsxOpeningElement(tagName, undefined, emptyAttrs);
-        const closing = createJsxClosingElement(createIdentifier("div"));
-        const jsx = createJsxElement(opening, [], closing);
-        const stmt = createVariableStatement(
-            undefined,
-            createVariableDeclarationList([createVariableDeclaration(createIdentifier("x"), undefined, undefined, jsx)], 0),
-        );
-        const sf = makeSF("local x = <div></div>;", "/test.tsx", [stmt]);
+        // ReturnStatement is a single-child node (property: "expression"). A bare
+        // `return` has no expression, so the node has zero encoded children.
+        // Accessing .expression must return undefined, not throw "Expected only
+        // one child". (An empty NodeList does not exercise this: like the Go
+        // encoder, a non-nil list is encoded even when empty.)
+        const sf = makeSF("return", "/test.ts", [createReturnStatement(undefined)]);
 
         const encoded = encodeSourceFile(sf);
         const decoded = decode(encoded);
 
-        // Walk to JsxOpeningElement → attributes (JsxAttributes)
-        const varStmt = decoded.statements!.at(0)!;
-        const declList = varStmt.declarationList!;
-        const declarationsNode = declList.declarations!;
-        assert.ok(declarationsNode instanceof RemoteNodeList);
-        const varDecl = declarationsNode.at(0)!;
-        const jsxElem = varDecl.initializer!;
-        assert.strictEqual(jsxElem.kind, SyntaxKind.JsxElement);
-        const openingElem = jsxElem.openingElement!;
-        assert.strictEqual(openingElem.kind, SyntaxKind.JsxOpeningElement);
-        const attrs = openingElem.attributes! as RemoteNode;
-        assert.strictEqual(attrs.kind, SyntaxKind.JsxAttributes);
-        // Empty properties should return undefined, not throw
-        assert.strictEqual(jsxElem.typeArguments, undefined);
+        const ret = decoded.statements!.at(0)! as RemoteNode;
+        assert.strictEqual(ret.kind, SyntaxKind.ReturnStatement);
+        assert.strictEqual(ret.expression, undefined);
     });
 
     test("NodeList element access is consistent across forward, backward, and random order", () => {

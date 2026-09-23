@@ -189,7 +189,6 @@ func generateTSConfig(options *collections.OrderedMap[string, any], locale local
 
 	emitHeader(diagnostics.Recommended_Options)
 	emitOption("strict" /*defaultValue*/, true, commentedNever)
-	emitOption("jsx", core.JsxEmitReactJSX, commentedNever)
 	emitOption("isolatedModules" /*defaultValue*/, true, commentedNever)
 	emitOption("noUncheckedSideEffectImports" /*defaultValue*/, true, commentedNever)
 	emitOption("skipLibCheck" /*defaultValue*/, true, commentedNever)

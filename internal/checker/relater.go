@@ -369,7 +369,7 @@ func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, rel
 			break
 		}
 		fallthrough
-	case ast.KindJsxExpression, ast.KindParenthesizedExpression:
+	case ast.KindParenthesizedExpression:
 		return c.elaborateError(node.Expression(), source, target, relation, headMessage, diagnosticOutput)
 	case ast.KindBinaryExpression:
 		switch node.AsBinaryExpression().OperatorToken.Kind {
@@ -382,8 +382,6 @@ func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, rel
 		return c.elaborateArrayLiteral(node, source, target, relation, diagnosticOutput)
 	case ast.KindArrowFunction:
 		return c.elaborateArrowFunction(node, source, target, relation, diagnosticOutput)
-	case ast.KindJsxAttributes:
-		return c.elaborateJsxComponents(node, source, target, relation, diagnosticOutput)
 	}
 	return false
 }
@@ -435,7 +433,7 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 			// getBestMatchIndexedAccessTypeOrUndefined so the relation's own
 			// arity diagnostic surfaces.
 			indexNameType := c.getNumberLiteralType(jsnum.Number(tableEntryLuaIndex(prop)))
-			reportedError = c.elaborateElement(source, target, relation, prop, prop.Expression(), indexNameType, nil, nil, diagnosticOutput) || reportedError
+			reportedError = c.elaborateElement(source, target, relation, prop, prop.Expression(), indexNameType, nil, diagnosticOutput) || reportedError
 			continue
 		}
 		nameType := c.getLiteralTypeFromProperty(c.getSymbolOfDeclaration(prop), TypeFlagsStringOrNumberLiteralOrUnique, false)
@@ -445,7 +443,7 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 		switch prop.Kind {
 		case ast.KindPropertyAssignment:
 			message := core.IfElse(ast.IsComputedNonLiteralName(prop.Name()), diagnostics.Type_of_computed_property_s_value_is_0_which_is_not_assignable_to_type_1, nil)
-			reportedError = c.elaborateElement(source, target, relation, prop.Name(), prop.Initializer(), nameType, message, nil, diagnosticOutput) || reportedError
+			reportedError = c.elaborateElement(source, target, relation, prop.Name(), prop.Initializer(), nameType, message, diagnosticOutput) || reportedError
 		}
 	}
 	return reportedError
@@ -471,12 +469,12 @@ func (c *Checker) elaborateArrayLiteral(node *ast.Node, source *Type, target *Ty
 		}
 		nameType := c.getNumberLiteralTypeForPosition(i)
 		checkNode := c.getEffectiveCheckNode(element)
-		reportedError = c.elaborateElement(source, target, relation, checkNode, checkNode, nameType, nil, nil, diagnosticOutput) || reportedError
+		reportedError = c.elaborateElement(source, target, relation, checkNode, checkNode, nameType, nil, diagnosticOutput) || reportedError
 	}
 	return reportedError
 }
 
-func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relation, prop *ast.Node, next *ast.Node, nameType *Type, errorMessage *diagnostics.Message, diagnosticFactory func(prop *ast.Node) *ast.Diagnostic, diagnosticOutput *[]*ast.Diagnostic) bool {
+func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relation, prop *ast.Node, next *ast.Node, nameType *Type, errorMessage *diagnostics.Message, diagnosticOutput *[]*ast.Diagnostic) bool {
 	targetPropType := c.getBestMatchIndexedAccessTypeOrUndefined(source, target, nameType)
 	if targetPropType == nil || targetPropType.flags&TypeFlagsIndexedAccess != 0 {
 		// Don't elaborate on indexes on generic variables
@@ -497,10 +495,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 	if next != nil {
 		specificSource = c.checkExpressionForMutableLocationWithContextualType(next, sourcePropType)
 	}
-	if diagnosticFactory != nil {
-		// Use the custom diagnostic factory if provided (e.g., for JSX text children with dynamic error messages)
-		diags = append(diags, diagnosticFactory(prop))
-	} else if c.exactOptionalPropertyTypes && c.isExactOptionalPropertyMismatch(specificSource, targetPropType) {
+	if c.exactOptionalPropertyTypes && c.isExactOptionalPropertyMismatch(specificSource, targetPropType) {
 		diags = append(diags, createDiagnosticForNode(prop, diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target, c.TypeToString(specificSource), c.TypeToString(targetPropType)))
 	} else {
 		propName := c.getPropertyNameFromIndex(nameType, nil /*accessNode*/)
@@ -557,8 +552,8 @@ func (c *Checker) getBestMatchIndexedAccessTypeOrUndefined(source *Type, target 
 	// A number key no tuple constituent admits (see tupleAdmitsNumberKey) has
 	// no match: the tuple relation's own diagnostics report it, and resolving
 	// the access would surface the phantom `nil` an out-of-range tuple read
-	// produces, manufacturing nonsense per-element errors. Table entries,
-	// array literals and JSX children all elaborate through here, so the rule
+	// produces, manufacturing nonsense per-element errors. Table entries
+	// and array literals both elaborate through here, so the rule
 	// lives in this one place. Keys in a variable part ARE admitted -- they
 	// keep precise per-entry elaboration against the rest slice -- and
 	// non-tuple targets keep full resolution: an applicable number index
@@ -653,9 +648,9 @@ func (c *Checker) isWeakType(t *Type) bool {
 	return false
 }
 
-func (c *Checker) hasCommonProperties(source *Type, target *Type, isComparingJsxAttributes bool) bool {
+func (c *Checker) hasCommonProperties(source *Type, target *Type) bool {
 	for _, prop := range c.getPropertiesOfType(source) {
-		if c.isKnownProperty(target, prop.Name, isComparingJsxAttributes) {
+		if c.isKnownProperty(target, prop.Name) {
 			return true
 		}
 	}
@@ -673,9 +668,8 @@ func (c *Checker) hasCommonProperties(source *Type, target *Type, isComparingJsx
  *    a property is considered known if it is known in any constituent type.
  * @param targetType a type to search a given name in
  * @param name a property name to search
- * @param isComparingJsxAttributes a boolean flag indicating whether we are searching in JsxAttributesType
  */
-func (c *Checker) isKnownProperty(targetType *Type, name string, isComparingJsxAttributes bool) bool {
+func (c *Checker) isKnownProperty(targetType *Type, name string) bool {
 	if targetType.flags&TypeFlagsObject != 0 {
 		// A tuple knows only its element keys (see tupleAdmitsNumberKey): the
 		// number index signature inherited from its table base must not admit
@@ -692,27 +686,21 @@ func (c *Checker) isKnownProperty(targetType *Type, name string, isComparingJsxA
 		// we should remove this exception.
 		if c.getPropertyOfObjectType(targetType, name) != nil ||
 			c.getApplicableIndexInfoForName(targetType, name) != nil ||
-			isLateBoundName(name) && c.getIndexInfoOfType(targetType, c.stringType) != nil ||
-			isComparingJsxAttributes && isHyphenatedJsxName(name) {
-			// For JSXAttributes, if the attribute has a hyphenated name, consider that the attribute to be known.
+			isLateBoundName(name) && c.getIndexInfoOfType(targetType, c.stringType) != nil {
 			return true
 		}
 	}
 	if targetType.flags&TypeFlagsSubstitution != 0 {
-		return c.isKnownProperty(targetType.AsSubstitutionType().baseType, name, isComparingJsxAttributes)
+		return c.isKnownProperty(targetType.AsSubstitutionType().baseType, name)
 	}
 	if targetType.flags&TypeFlagsUnionOrIntersection != 0 && isExcessPropertyCheckTarget(targetType) {
 		for _, t := range targetType.Types() {
-			if c.isKnownProperty(t, name, isComparingJsxAttributes) {
+			if c.isKnownProperty(t, name) {
 				return true
 			}
 		}
 	}
 	return false
-}
-
-func isHyphenatedJsxName(name string) bool {
-	return strings.Contains(name, "-")
 }
 
 func isExcessPropertyCheckTarget(t *Type) bool {
@@ -2732,8 +2720,7 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 			intersectionState&IntersectionStateTarget == 0 &&
 			source.flags&(TypeFlagsPrimitive|TypeFlagsObject|TypeFlagsIntersection) != 0 &&
 			target.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && r.c.isWeakType(target) && (len(r.c.getPropertiesOfType(source)) > 0 || r.c.typeHasCallOrConstructSignatures(source))
-		isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
-		if isPerformingCommonPropertyChecks && !r.c.hasCommonProperties(source, target, isComparingJsxAttributes) {
+		if isPerformingCommonPropertyChecks && !r.c.hasCommonProperties(source, target) {
 			if reportErrors {
 				sourceString := r.c.TypeToString(core.IfElse(originalSource.alias != nil, originalSource, source))
 				targetString := r.c.TypeToString(core.IfElse(originalTarget.alias != nil, originalTarget, target))
@@ -2772,8 +2759,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 		// Disable excess property checks on JS literals to simulate having an implicit "index signature" - but only outside of noImplicitAny
 		return false
 	}
-	isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
-	if (r.relation == r.c.assignableRelation || r.relation == r.c.comparableRelation) && !isComparingJsxAttributes && r.c.isEmptyObjectType(target) {
+	if (r.relation == r.c.assignableRelation || r.relation == r.c.comparableRelation) && r.c.isEmptyObjectType(target) {
 		return false
 	}
 	reducedTarget := target
@@ -2786,8 +2772,8 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 		checkTypes = reducedTarget.Distributed()
 	}
 	for _, prop := range r.c.getPropertiesOfType(source) {
-		if shouldCheckAsExcessProperty(prop, source.symbol) && !isIgnoredJsxProperty(source, prop) {
-			if !r.c.isKnownProperty(reducedTarget, prop.Name, isComparingJsxAttributes) {
+		if shouldCheckAsExcessProperty(prop, source.symbol) {
+			if !r.c.isKnownProperty(reducedTarget, prop.Name) {
 				if reportErrors {
 					// Report error in terms of object types in the target as those are the only ones
 					// we check in isKnownProperty.
@@ -2798,46 +2784,29 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					if r.errorNode == nil {
 						panic("No errorNode in hasExcessProperties")
 					}
-					if ast.IsJsxAttributes(r.errorNode) || ast.IsJsxOpeningLikeElement(r.errorNode) || ast.IsJsxOpeningLikeElement(r.errorNode.Parent) {
-						// JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
-						// However, using an object-literal error message will be very confusing to the users so we give different a message.
-						if prop.ValueDeclaration != nil && ast.IsJsxAttribute(prop.ValueDeclaration) && ast.GetSourceFileOfNode(r.errorNode) == ast.GetSourceFileOfNode(prop.ValueDeclaration.Name()) {
-							// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
-							// since `children` is a Kind.PropertySignature instead of a Kind.JsxAttribute.
-							r.errorNode = prop.ValueDeclaration.Name()
-						}
-						propName := r.c.symbolToString(prop)
-						suggestionSymbol := r.c.getSuggestedSymbolForNonexistentJSXAttribute(propName, errorTarget)
-						if suggestionSymbol != nil {
-							r.reportError(diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, r.c.TypeToString(errorTarget), r.c.symbolToString(suggestionSymbol))
-						} else {
-							r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, propName, r.c.TypeToString(errorTarget))
-						}
-					} else {
-						// use the property's value declaration if the property is assigned inside the literal itself
-						var objectLiteralDeclaration *ast.Node
-						if source.symbol != nil {
-							objectLiteralDeclaration = core.FirstOrNil(source.symbol.Declarations)
-						}
-						var suggestion string
-						if prop.ValueDeclaration != nil && ast.IsObjectLiteralElement(prop.ValueDeclaration) &&
-							ast.FindAncestor(prop.ValueDeclaration, func(d *ast.Node) bool { return d == objectLiteralDeclaration }) != nil &&
-							ast.GetSourceFileOfNode(objectLiteralDeclaration) == ast.GetSourceFileOfNode(r.errorNode) {
-							if name := prop.ValueDeclaration.Name(); name != nil {
-								r.errorNode = name
-								if ast.IsIdentifier(name) {
-									suggestion = r.c.getSuggestionForNonexistentProperty(name.Text(), errorTarget)
-								}
-							} else {
-								// A Lua positional entry has no name node; point at the entry.
-								r.errorNode = prop.ValueDeclaration
+					// use the property's value declaration if the property is assigned inside the literal itself
+					var objectLiteralDeclaration *ast.Node
+					if source.symbol != nil {
+						objectLiteralDeclaration = core.FirstOrNil(source.symbol.Declarations)
+					}
+					var suggestion string
+					if prop.ValueDeclaration != nil && ast.IsObjectLiteralElement(prop.ValueDeclaration) &&
+						ast.FindAncestor(prop.ValueDeclaration, func(d *ast.Node) bool { return d == objectLiteralDeclaration }) != nil &&
+						ast.GetSourceFileOfNode(objectLiteralDeclaration) == ast.GetSourceFileOfNode(r.errorNode) {
+						if name := prop.ValueDeclaration.Name(); name != nil {
+							r.errorNode = name
+							if ast.IsIdentifier(name) {
+								suggestion = r.c.getSuggestionForNonexistentProperty(name.Text(), errorTarget)
 							}
-						}
-						if suggestion != "" {
-							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2, r.c.symbolToString(prop), r.c.TypeToString(errorTarget), suggestion)
 						} else {
-							r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, r.c.symbolToString(prop), r.c.TypeToString(errorTarget))
+							// A Lua positional entry has no name node; point at the entry.
+							r.errorNode = prop.ValueDeclaration
 						}
+					}
+					if suggestion != "" {
+						r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_but_0_does_not_exist_in_type_1_Did_you_mean_to_write_2, r.c.symbolToString(prop), r.c.TypeToString(errorTarget), suggestion)
+					} else {
+						r.reportError(diagnostics.Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1, r.c.symbolToString(prop), r.c.TypeToString(errorTarget))
 					}
 				}
 				return true
@@ -2881,10 +2850,6 @@ func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
 
 func shouldCheckAsExcessProperty(prop *ast.Symbol, container *ast.Symbol) bool {
 	return prop.ValueDeclaration != nil && container.ValueDeclaration != nil && prop.ValueDeclaration.Parent == container.ValueDeclaration
-}
-
-func isIgnoredJsxProperty(source *Type, sourceProp *ast.Symbol) bool {
-	return source.objectFlags&ObjectFlagsJsxAttributes != 0 && isHyphenatedJsxName(sourceProp.Name)
 }
 
 func (c *Checker) isTypeSubsetOf(source *Type, target *Type) bool {
@@ -4697,10 +4662,6 @@ func (r *Relater) membersRelatedToIndexInfo(source *Type, targetInfo *IndexInfo,
 		props = r.c.getPropertiesOfObjectType(source)
 	}
 	for _, prop := range props {
-		// Skip over ignored JSX and symbol-named members
-		if isIgnoredJsxProperty(source, prop) {
-			continue
-		}
 		if r.c.isApplicableIndexType(r.c.getLiteralTypeFromProperty(prop, TypeFlagsStringOrNumberLiteralOrUnique, false), keyType) {
 			propType := r.c.getNonMissingTypeOfSymbol(prop)
 			var t *Type
@@ -4775,13 +4736,6 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 		r.tryElaborateErrorsForPrimitivesAndObjects(source, target)
 	// The upstream "Object type is assignable to very few other types" elaboration is gone
 	// with the Object global: the sentinel has no symbol and no declaration can alias it.
-	case source.objectFlags&ObjectFlagsJsxAttributes != 0 && target.flags&TypeFlagsIntersection != 0:
-		targetTypes := target.Types()
-		intrinsicAttributes := r.c.getJsxType(JsxNames.IntrinsicAttributes, r.errorNode)
-		intrinsicClassAttributes := r.c.getJsxType(JsxNames.IntrinsicClassAttributes, r.errorNode)
-		if !r.c.isErrorType(intrinsicAttributes) && !r.c.isErrorType(intrinsicClassAttributes) && (slices.Contains(targetTypes, intrinsicAttributes) || slices.Contains(targetTypes, intrinsicClassAttributes)) {
-			return
-		}
 	case originalTarget.flags&TypeFlagsIntersection != 0 && originalTarget.objectFlags&ObjectFlagsIsNeverIntersection != 0:
 		message := diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents
 		prop := core.Find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), r.c.isDiscriminantWithNeverType)
@@ -4990,10 +4944,7 @@ func getPropertyNameArg(arg any) string {
 func isConversionOrInterfaceImplementationMessage(message *diagnostics.Message) bool {
 	return message == diagnostics.Class_0_incorrectly_implements_interface_1 ||
 		message == diagnostics.Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass ||
-		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first ||
-		message == diagnostics.Its_instance_type_0_is_not_a_valid_JSX_element ||
-		message == diagnostics.Its_return_type_0_is_not_a_valid_JSX_element ||
-		message == diagnostics.Its_element_type_0_is_not_a_valid_JSX_element
+		message == diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first
 }
 
 func chainDepth(chain *ErrorChain) int {

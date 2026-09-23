@@ -603,7 +603,7 @@ func (s *snapshotFSBuilder) isRelevantFileName(uri lsproto.DocumentUri) bool {
 		return false
 	}
 	switch string(path)[i:] {
-	case tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJson:
+	case tspath.ExtensionJs, tspath.ExtensionTs, tspath.ExtensionJson:
 		return true
 	}
 	return false

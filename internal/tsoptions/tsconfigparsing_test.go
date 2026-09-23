@@ -254,7 +254,6 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     "noImplicitAny": true,
     "target": "ES2017",
     "module": "ESNext",
-    "jsx": "react",
 	"maxNodeModuleJsDepth": 1
   },
   "files": ["/apath/src/index.tlua", "/apath/src/app.tlua"],
@@ -488,8 +487,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			jsonText: `{
 			    "compilerOptions": {
 				"target": "invalid value",
-				"removeComments": "should be a boolean",
-				"jsx": "invalid value"
+				"removeComments": "should be a boolean"
 			    }
 			}`,
 			configFileName: "tluaconfig.json",

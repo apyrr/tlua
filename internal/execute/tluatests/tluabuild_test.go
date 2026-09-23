@@ -179,26 +179,6 @@ func TestBuildClean(t *testing.T) {
 			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--b", "--clean"},
 		},
-		{
-			subScenario: "tsx with dts emit",
-			files: FileMap{
-				"/home/src/workspaces/solution/project/src/main.tsx": "local x = 10;",
-				"/home/src/workspaces/solution/project/tluaconfig.json": stringtestutil.Dedent(`
-				{
-					"compilerOptions": { "declaration": true },
-					"include": ["src/**/*.tsx", "src/**/*.tlua"]
-				}`),
-			},
-			cwd:             "/home/src/workspaces/solution",
-			commandLineArgs: []string{"--b", "project", "-v", "--explainFiles"},
-			edits: []*tluaEdit{
-				noChange,
-				{
-					caption:         "clean build",
-					commandLineArgs: []string{"-b", "project", "--clean"},
-				},
-			},
-		},
 	}
 
 	for _, test := range testCases {

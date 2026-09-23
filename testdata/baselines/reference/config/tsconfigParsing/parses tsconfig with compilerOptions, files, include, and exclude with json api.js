@@ -19,7 +19,6 @@ Fs::
     "noImplicitAny": true,
     "target": "ES2017",
     "module": "ESNext",
-    "jsx": "react",
 	"maxNodeModuleJsDepth": 1
   },
   "files": ["/apath/src/index.tlua", "/apath/src/app.tlua"],
@@ -31,7 +30,6 @@ Fs::
 configFileName:: /apath/tluaconfig.json
 CompilerOptions::
 {
-  "jsx": 3,
   "module": 99,
   "noImplicitAny": true,
   "outDir": "/apath/dist",

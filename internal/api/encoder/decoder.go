@@ -269,8 +269,7 @@ func (d *astDecoder) decodeExtendedData_SourceFile(data uint32, childIndices []i
 		FileName: fileName,
 		Path:     tspath.Path(path),
 		ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{
-			JSX:   parseOpts&1 != 0,
-			Force: parseOpts&2 != 0,
+			Force: parseOpts&1 != 0,
 		},
 	}
 

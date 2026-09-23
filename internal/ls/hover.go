@@ -793,9 +793,6 @@ func getNodeForQuickInfo(node *ast.Node) *ast.Node {
 	if ast.IsNamedTupleMember(node.Parent) && node.Pos() == node.Parent.Pos() {
 		return node.Parent
 	}
-	if ast.IsJsxNamespacedName(node.Parent) {
-		return node.Parent
-	}
 	return node
 }
 

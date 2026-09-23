@@ -248,8 +248,6 @@ func hasDotDotDotToken(node *ast.Node) bool {
 		return node.AsBindingElement().DotDotDotToken != nil
 	case ast.KindNamedTupleMember:
 		return node.AsNamedTupleMember().DotDotDotToken != nil
-	case ast.KindJsxExpression:
-		return node.AsJsxExpression().DotDotDotToken != nil
 	}
 	return false
 }
@@ -944,10 +942,6 @@ func isCallChain(node *ast.Node) bool {
 	return ast.IsCallExpression(node) && node.Flags&ast.NodeFlagsOptionalChain != 0
 }
 
-func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return ast.IsCallExpression(node) || ast.IsJsxOpeningLikeElement(node)
-}
-
 func isSuperCall(n *ast.Node) bool {
 	return ast.IsCallExpression(n) && n.Expression().Kind == ast.KindSuperKeyword
 }
@@ -969,10 +963,6 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 
 	return node.Parent.Kind == ast.KindImportEqualsDeclaration && node.Parent.AsImportEqualsDeclaration().ModuleReference == node ||
 		node.Parent.Kind == ast.KindExportAssignment && node.Parent.Expression() == node
-}
-
-func isJsxIntrinsicTagName(tagName *ast.Node) bool {
-	return ast.IsIdentifier(tagName) && scanner.IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
 }
 
 func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
@@ -1355,8 +1345,6 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 		}
 	case ast.IsIdentifier(expr):
 		return expr.Text()
-	case ast.IsJsxNamespacedName(expr):
-		return entityNameToString(expr)
 	}
 	return ""
 }
@@ -1506,7 +1494,7 @@ func nodeStartsNewLexicalEnvironment(node *ast.Node) bool {
 func (c *Checker) isUncheckedJSSuggestion(node *ast.Node, suggestion *ast.Symbol, excludeClasses bool) bool {
 	file := ast.GetSourceFileOfNode(node)
 	if file != nil {
-		if file.CheckJsDirective == nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) {
+		if file.CheckJsDirective == nil && file.ScriptKind == core.ScriptKindJS {
 			var declarationFile *ast.SourceFile
 			if suggestion != nil {
 				if firstDeclaration := core.FirstOrNil(suggestion.Declarations); firstDeclaration != nil {

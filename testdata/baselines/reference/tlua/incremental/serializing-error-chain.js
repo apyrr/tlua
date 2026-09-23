@@ -1,24 +1,17 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
-//// [/home/src/workspaces/project/index.tsx] *new* 
-interface JsxElementChildrenAttribute { children: {}; }
-interface JsxIntrinsicElements { div: {} }
-
-declare React: any;
-
-declare function Component(props: never): any;
-declare function Component(props: { children?: number }): any;
-local _ = (<Component>
-    <div />
-    <div />
-</Component>)
+//// [/home/src/workspaces/project/index.tlua] *new* 
+declare f: {
+    (x: never): any;
+    (x: { a?: number }): any;
+}
+f({ a = "s" })
 //// [/home/src/workspaces/project/tluaconfig.json] *new* 
 {
     "compilerOptions": {
         "incremental": true,
         "strict": true,
-        "jsx": "react",
         "module": "esnext",
     },
 }
@@ -26,24 +19,23 @@ local _ = (<Component>
 tlua 
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
-[96mindex.tsx[0m:[93m8[0m:[93m13[0m - [91merror[0m[90m TLUA2746: [0mThis JSX tag's 'children' prop expects a single child of type 'number | nil', but multiple children were provided.
-
-[7m8[0m local _ = (<Component>
-[7m [0m [91m            ~~~~~~~~~[0m
-
-[96mindex.tsx[0m:[93m8[0m:[93m13[0m - [91merror[0m[90m TLUA2769: [0mNo overload matches this call.
+[96mindex.tlua[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TLUA2769: [0mNo overload matches this call.
   The last overload gave the following error.
-    This JSX tag's 'children' prop expects a single child of type 'number | nil', but multiple children were provided.
+    Type 'string' is not assignable to type 'number'.
 
-[7m8[0m local _ = (<Component>
-[7m [0m [91m            ~~~~~~~~~[0m
+[7m5[0m f({ a = "s" })
+[7m [0m [91m    ~[0m
 
-  [96mindex.tsx[0m:[93m7[0m:[93m18[0m - The last overload is declared here.
-    [7m7[0m declare function Component(props: { children?: number }): any;
-    [7m [0m [96m                 ~~~~~~~~~[0m
+  [96mindex.tlua[0m:[93m3[0m:[93m11[0m - The expected type comes from property 'a' which is declared here on type '{ a?: number | nil; }'
+    [7m3[0m     (x: { a?: number }): any;
+    [7m [0m [96m          ~[0m
+
+  [96mindex.tlua[0m:[93m3[0m:[93m5[0m - The last overload is declared here.
+    [7m3[0m     (x: { a?: number }): any;
+    [7m [0m [96m    ~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
 
-Found 2 errors in the same file, starting at: index.tsx[90m:8[0m
+Found 1 error in index.tlua[90m:5[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.luajit.d.tlua] *Lib*
 /// <reference no-default-lib="true"/>
@@ -70,26 +62,24 @@ interface Symbol {
 declare console: { log(msg: any): void; };
 declare function require(module: string): any;
 //// [/home/src/workspaces/project/index.lua] *new* 
-local _ = (React.createElement(Component, nil,
-  React.createElement("div", nil),
-  React.createElement("div", nil)));
+f({ a = "s" });
 
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./index.tsx"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"4cb60e88e6c63eb9e6281a3381414689-interface JsxElementChildrenAttribute { children: {}; }\ninterface JsxIntrinsicElements { div: {} }\n\ndeclare React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\nlocal _ = (<Component>\n    <div />\n    <div />\n</Component>)"],"options":{"jsx":3,"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":243,"end":252,"code":2746,"category":1,"messageKey":"This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided_2746","messageArgs":["children","number | nil"]},{"pos":243,"end":252,"code":2769,"category":1,"messageKey":"No_overload_matches_this_call_2769","messageChain":[{"pos":243,"end":252,"code":2770,"category":1,"messageKey":"The_last_overload_gave_the_following_error_2770","messageChain":[{"pos":243,"end":252,"code":2746,"category":1,"messageKey":"This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided_2746","messageArgs":["children","number | nil"]}]}],"relatedInformation":[{"pos":185,"end":194,"code":2771,"category":1,"messageKey":"The_last_overload_is_declared_here_2771"}]}]]]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","./index.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"d1bc5398368c44fc59077ddc45f7771f-declare f: {\n    (x: never): any;\n    (x: { a?: number }): any;\n}\nf({ a = \"s\" })"],"options":{"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":70,"end":71,"code":2769,"category":1,"messageKey":"No_overload_matches_this_call_2769","messageChain":[{"pos":70,"end":71,"code":2770,"category":1,"messageKey":"The_last_overload_gave_the_following_error_2770","messageChain":[{"pos":70,"end":71,"code":2322,"category":1,"messageKey":"Type_0_is_not_assignable_to_type_1_2322","messageArgs":["string","number"],"relatedInformation":[{"pos":44,"end":45,"code":6500,"category":3,"messageKey":"The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500","messageArgs":["a","{ a?: number | nil; }"]}]}],"relatedInformation":[{"pos":44,"end":45,"code":6500,"category":3,"messageKey":"The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500","messageArgs":["a","{ a?: number | nil; }"]}]}],"relatedInformation":[{"pos":44,"end":45,"code":6500,"category":3,"messageKey":"The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500","messageArgs":["a","{ a?: number | nil; }"]},{"pos":38,"end":63,"code":2771,"category":1,"messageKey":"The_last_overload_is_declared_here_2771"}]}]]]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
   "root": [
     {
       "files": [
-        "./index.tsx"
+        "./index.tlua"
       ],
       "original": 2
     }
   ],
   "fileNames": [
     "lib.luajit.d.tlua",
-    "./index.tsx"
+    "./index.tlua"
   ],
   "fileInfos": [
     {
@@ -105,55 +95,69 @@ local _ = (React.createElement(Component, nil,
       }
     },
     {
-      "fileName": "./index.tsx",
-      "version": "4cb60e88e6c63eb9e6281a3381414689-interface JsxElementChildrenAttribute { children: {}; }\ninterface JsxIntrinsicElements { div: {} }\n\ndeclare React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\nlocal _ = (<Component>\n    <div />\n    <div />\n</Component>)",
-      "signature": "4cb60e88e6c63eb9e6281a3381414689-interface JsxElementChildrenAttribute { children: {}; }\ninterface JsxIntrinsicElements { div: {} }\n\ndeclare React: any;\n\ndeclare function Component(props: never): any;\ndeclare function Component(props: { children?: number }): any;\nlocal _ = (<Component>\n    <div />\n    <div />\n</Component>)",
+      "fileName": "./index.tlua",
+      "version": "d1bc5398368c44fc59077ddc45f7771f-declare f: {\n    (x: never): any;\n    (x: { a?: number }): any;\n}\nf({ a = \"s\" })",
+      "signature": "d1bc5398368c44fc59077ddc45f7771f-declare f: {\n    (x: never): any;\n    (x: { a?: number }): any;\n}\nf({ a = \"s\" })",
       "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
-    "jsx": 3,
     "module": 99,
     "strict": true
   },
   "semanticDiagnosticsPerFile": [
     [
-      "./index.tsx",
+      "./index.tlua",
       [
         {
-          "pos": 243,
-          "end": 252,
-          "code": 2746,
-          "category": 1,
-          "messageKey": "This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided_2746",
-          "messageArgs": [
-            "children",
-            "number | nil"
-          ]
-        },
-        {
-          "pos": 243,
-          "end": 252,
+          "pos": 70,
+          "end": 71,
           "code": 2769,
           "category": 1,
           "messageKey": "No_overload_matches_this_call_2769",
           "messageChain": [
             {
-              "pos": 243,
-              "end": 252,
+              "pos": 70,
+              "end": 71,
               "code": 2770,
               "category": 1,
               "messageKey": "The_last_overload_gave_the_following_error_2770",
               "messageChain": [
                 {
-                  "pos": 243,
-                  "end": 252,
-                  "code": 2746,
+                  "pos": 70,
+                  "end": 71,
+                  "code": 2322,
                   "category": 1,
-                  "messageKey": "This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided_2746",
+                  "messageKey": "Type_0_is_not_assignable_to_type_1_2322",
                   "messageArgs": [
-                    "children",
-                    "number | nil"
+                    "string",
+                    "number"
+                  ],
+                  "relatedInformation": [
+                    {
+                      "pos": 44,
+                      "end": 45,
+                      "code": 6500,
+                      "category": 3,
+                      "messageKey": "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500",
+                      "messageArgs": [
+                        "a",
+                        "{ a?: number | nil; }"
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "relatedInformation": [
+                {
+                  "pos": 44,
+                  "end": 45,
+                  "code": 6500,
+                  "category": 3,
+                  "messageKey": "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500",
+                  "messageArgs": [
+                    "a",
+                    "{ a?: number | nil; }"
                   ]
                 }
               ]
@@ -161,8 +165,19 @@ local _ = (React.createElement(Component, nil,
           ],
           "relatedInformation": [
             {
-              "pos": 185,
-              "end": 194,
+              "pos": 44,
+              "end": 45,
+              "code": 6500,
+              "category": 3,
+              "messageKey": "The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1_6500",
+              "messageArgs": [
+                "a",
+                "{ a?: number | nil; }"
+              ]
+            },
+            {
+              "pos": 38,
+              "end": 63,
               "code": 2771,
               "category": 1,
               "messageKey": "The_last_overload_is_declared_here_2771"
@@ -172,13 +187,13 @@ local _ = (React.createElement(Component, nil,
       ]
     ]
   ],
-  "size": 2094
+  "size": 2192
 }
 
 tluaconfig.json::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.luajit.d.tlua
-*refresh*    /home/src/workspaces/project/index.tsx
+*refresh*    /home/src/workspaces/project/index.tlua
 Signatures::
 
 
@@ -187,24 +202,23 @@ Edit [0]:: no change
 tlua 
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
-[96mindex.tsx[0m:[93m8[0m:[93m13[0m - [91merror[0m[90m TLUA2746: [0mThis JSX tag's 'children' prop expects a single child of type 'number | nil', but multiple children were provided.
-
-[7m8[0m local _ = (<Component>
-[7m [0m [91m            ~~~~~~~~~[0m
-
-[96mindex.tsx[0m:[93m8[0m:[93m13[0m - [91merror[0m[90m TLUA2769: [0mNo overload matches this call.
+[96mindex.tlua[0m:[93m5[0m:[93m5[0m - [91merror[0m[90m TLUA2769: [0mNo overload matches this call.
   The last overload gave the following error.
-    This JSX tag's 'children' prop expects a single child of type 'number | nil', but multiple children were provided.
+    Type 'string' is not assignable to type 'number'.
 
-[7m8[0m local _ = (<Component>
-[7m [0m [91m            ~~~~~~~~~[0m
+[7m5[0m f({ a = "s" })
+[7m [0m [91m    ~[0m
 
-  [96mindex.tsx[0m:[93m7[0m:[93m18[0m - The last overload is declared here.
-    [7m7[0m declare function Component(props: { children?: number }): any;
-    [7m [0m [96m                 ~~~~~~~~~[0m
+  [96mindex.tlua[0m:[93m3[0m:[93m11[0m - The expected type comes from property 'a' which is declared here on type '{ a?: number | nil; }'
+    [7m3[0m     (x: { a?: number }): any;
+    [7m [0m [96m          ~[0m
+
+  [96mindex.tlua[0m:[93m3[0m:[93m5[0m - The last overload is declared here.
+    [7m3[0m     (x: { a?: number }): any;
+    [7m [0m [96m    ~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
 
-Found 2 errors in the same file, starting at: index.tsx[90m:8[0m
+Found 1 error in index.tlua[90m:5[0m
 
 
 tluaconfig.json::

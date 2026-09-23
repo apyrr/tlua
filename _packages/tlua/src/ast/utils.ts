@@ -62,7 +62,6 @@ export function cloneSourceFileData(sourceFile: SourceFile): Record<string, unkn
         text: sourceFile.text,
         fileName: sourceFile.fileName,
         path: sourceFile.path,
-        languageVariant: sourceFile.languageVariant,
         scriptKind: sourceFile.scriptKind,
         isDeclarationFile: sourceFile.isDeclarationFile,
         referencedFiles: sourceFile.referencedFiles,

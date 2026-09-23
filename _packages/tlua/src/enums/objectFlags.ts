@@ -13,7 +13,6 @@ export var ObjectFlags: any;
     ObjectFlags[ObjectFlags["EvolvingArray"] = 256] = "EvolvingArray";
     ObjectFlags[ObjectFlags["ObjectLiteralPatternWithComputedProperties"] = 512] = "ObjectLiteralPatternWithComputedProperties";
     ObjectFlags[ObjectFlags["ReverseMapped"] = 1024] = "ReverseMapped";
-    ObjectFlags[ObjectFlags["JsxAttributes"] = 2048] = "JsxAttributes";
     ObjectFlags[ObjectFlags["JSLiteral"] = 4096] = "JSLiteral";
     ObjectFlags[ObjectFlags["FreshLiteral"] = 8192] = "FreshLiteral";
     ObjectFlags[ObjectFlags["ArrayLiteral"] = 16384] = "ArrayLiteral";

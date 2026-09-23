@@ -6,8 +6,7 @@ Fs::
 {
 			    "compilerOptions": {
 				"target": "invalid value",
-				"removeComments": "should be a boolean",
-				"jsx": "invalid value"
+				"removeComments": "should be a boolean"
 			    }
 			}
 

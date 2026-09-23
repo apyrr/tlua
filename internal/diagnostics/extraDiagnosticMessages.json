@@ -259,17 +259,9 @@
         "category": "Error",
         "code": 100048
     },
-    "JSX element implicitly has type 'any' because the global type 'JsxElement' does not exist.": {
-        "category": "Error",
-        "code": 100049
-    },
     "The global type '{0}' may not have more than one property.": {
         "category": "Error",
         "code": 100050
-    },
-    "JSX element implicitly has type 'any' because no interface '{0}' exists.": {
-        "category": "Error",
-        "code": 100051
     },
     "A 'break' statement can only be used within an enclosing iteration statement.": {
         "category": "Error",

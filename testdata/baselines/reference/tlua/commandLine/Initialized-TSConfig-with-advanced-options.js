@@ -43,7 +43,6 @@ You can learn more at https://aka.ms/tsconfig
 
     // Recommended Options
     "strict": true,
-    "jsx": "react-jsx",
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,

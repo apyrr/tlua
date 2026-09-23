@@ -6,13 +6,8 @@ import (
 	"unicode/utf8"
 
 	"github.com/apyrr/tlua/internal/ast"
-	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/debug"
 )
-
-func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
-	return token >= ast.KindIdentifier
-}
 
 func IdentifierToKeywordKind(node *ast.Identifier) ast.Kind {
 	return textToKeyword[node.Text]
@@ -85,25 +80,21 @@ func DeclarationNameToString(name *ast.Node) string {
 // IsIdentifierText alone: `and`, `or` and `not` are identifier-shaped but scan
 // as operators, so a bare `t.and`, `and: number` or `import { and }` does not
 // parse.
-func IsBareWritableName(name string, languageVariant core.LanguageVariant) bool {
-	return IsIdentifierText(name, languageVariant) && !IsWordOperatorText(name)
+func IsBareWritableName(name string) bool {
+	return IsIdentifierText(name) && !IsWordOperatorText(name)
 }
 
-func IsIdentifierText(name string, languageVariant core.LanguageVariant) bool {
+func IsIdentifierText(name string) bool {
 	ch, size := utf8.DecodeRuneInString(name)
 	if !IsIdentifierStart(ch) {
 		return false
 	}
 	for i := size; i < len(name); {
 		ch, size = utf8.DecodeRuneInString(name[i:])
-		if !IsIdentifierPartEx(ch, languageVariant) {
+		if !IsIdentifierPart(ch) {
 			return false
 		}
 		i += size
 	}
 	return true
-}
-
-func IsIntrinsicJsxName(name string) bool {
-	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
 }

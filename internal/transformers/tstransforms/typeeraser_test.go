@@ -17,7 +17,6 @@ func TestTypeEraser(t *testing.T) {
 		title  string
 		input  string
 		output string
-		jsx    bool
 	}{
 		{title: "InterfaceDeclaration", input: "interface I { }", output: ""},
 		{title: "TypeAliasDeclaration", input: "type T = U;", output: ""},
@@ -36,14 +35,12 @@ func TestTypeEraser(t *testing.T) {
 		{title: "AsExpression#2", input: "local _ = (x as T).c", output: "local _ = x.c;"},
 		{title: "SatisfiesExpression#1", input: "local _ = x satisfies T", output: "local _ = x;"},
 		{title: "SatisfiesExpression#2", input: "local _ = (x satisfies T).c", output: "local _ = x.c;"},
-		{title: "JsxSelfClosingElement", input: "local _ = <x<T> />", output: "local _ = <x />;", jsx: true},
-		{title: "JsxOpeningElement", input: "local _ = <x<T>></x>", output: "local _ = <x></x>;", jsx: true},
 	}
 
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
-			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
+			file := parsetestutil.ParseTypeScript(rec.input)
 			parsetestutil.CheckDiagnostics(t, file)
 			compilerOptions := &core.CompilerOptions{}
 			emittestutil.CheckEmit(t, nil, tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: printer.NewEmitContext()}).TransformSourceFile(file), rec.output)

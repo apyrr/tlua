@@ -23,7 +23,6 @@ import (
 const (
 	autoImportsCmd              baselineCommand = "Auto Imports"
 	callHierarchyCmd            baselineCommand = "Call Hierarchy"
-	closingTagCmd               baselineCommand = "Closing Tag"
 	documentHighlightsCmd       baselineCommand = "documentHighlights"
 	findAllReferencesCmd        baselineCommand = "findAllReferences"
 	vsFindAllReferencesCmd      baselineCommand = "vsFindAllReferences"
@@ -35,7 +34,6 @@ const (
 	nonSuggestionDiagnosticsCmd baselineCommand = "Syntax and Semantic Diagnostics"
 	quickInfoCmd                baselineCommand = "QuickInfo"
 	vsQuickInfoCmd              baselineCommand = "VSQuickInfo"
-	linkedEditingCmd            baselineCommand = "linkedEditing"
 	renameCmd                   baselineCommand = "findRenameLocations"
 	signatureHelpCmd            baselineCommand = "SignatureHelp"
 	smartSelectionCmd           baselineCommand = "Smart Selection"
@@ -80,14 +78,12 @@ func getBaselineFileName(t *testing.T, command baselineCommand) string {
 
 func getBaselineExtension(command baselineCommand) string {
 	switch command {
-	case quickInfoCmd, vsQuickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd, closingTagCmd, vsFindAllReferencesCmd:
+	case quickInfoCmd, vsQuickInfoCmd, signatureHelpCmd, smartSelectionCmd, inlayHintsCmd, nonSuggestionDiagnosticsCmd, documentSymbolsCmd, vsFindAllReferencesCmd:
 		return "baseline"
 	case callHierarchyCmd:
 		return "callHierarchy.txt"
 	case autoImportsCmd:
 		return "baseline.md"
-	case linkedEditingCmd:
-		return "linkedEditing.txt"
 	default:
 		return "baseline.jsonc"
 	}

@@ -73,16 +73,6 @@ import type {
     JSDocTypeTag,
     JSDocUnknownTag,
     JSDocVariadicType,
-    JsxAttribute,
-    JsxAttributes,
-    JsxClosingElement,
-    JsxElement,
-    JsxExpression,
-    JsxFragment,
-    JsxNamespacedName,
-    JsxOpeningElement,
-    JsxSelfClosingElement,
-    JsxSpreadAttribute,
     LabelStatement,
     LiteralTypeNode,
     MappedTypeNode,
@@ -214,16 +204,6 @@ import {
     updateJSDocTypeTag,
     updateJSDocUnknownTag,
     updateJSDocVariadicType,
-    updateJsxAttribute,
-    updateJsxAttributes,
-    updateJsxClosingElement,
-    updateJsxElement,
-    updateJsxExpression,
-    updateJsxFragment,
-    updateJsxNamespacedName,
-    updateJsxOpeningElement,
-    updateJsxSelfClosingElement,
-    updateJsxSpreadAttribute,
     updateLabelStatement,
     updateLiteralTypeNode,
     updateMappedTypeNode,
@@ -302,14 +282,6 @@ import {
     isIdentifier,
     isImportClause,
     isJSDocFullName,
-    isJsxAttributeName,
-    isJsxAttributes,
-    isJsxAttributeValue,
-    isJsxClosingElement,
-    isJsxClosingFragment,
-    isJsxOpeningElement,
-    isJsxOpeningFragment,
-    isJsxTagNameExpression,
     isMemberName,
     isModuleBody,
     isModuleExportName,
@@ -873,57 +845,6 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     [SyntaxKind.PartiallyEmittedExpression]: (node: PartiallyEmittedExpression, visitor: Visitor): PartiallyEmittedExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);
         return updatePartiallyEmittedExpression(node, _expression);
-    },
-    [SyntaxKind.JsxElement]: (node: JsxElement, visitor: Visitor): JsxElement => {
-        const _openingElement = visitNode(node.openingElement, visitor, isJsxOpeningElement);
-        const _children = visitNodes(node.children, visitor);
-        const _closingElement = visitNode(node.closingElement, visitor, isJsxClosingElement);
-        return updateJsxElement(node, _openingElement, _children, _closingElement);
-    },
-    [SyntaxKind.JsxAttributes]: (node: JsxAttributes, visitor: Visitor): JsxAttributes => {
-        const _properties = visitNodes(node.properties, visitor);
-        return updateJsxAttributes(node, _properties);
-    },
-    [SyntaxKind.JsxNamespacedName]: (node: JsxNamespacedName, visitor: Visitor): JsxNamespacedName => {
-        const _namespace = visitNode(node.namespace, visitor, isIdentifier);
-        const _name = visitNode(node.name, visitor, isIdentifier);
-        return updateJsxNamespacedName(node, _namespace, _name);
-    },
-    [SyntaxKind.JsxOpeningElement]: (node: JsxOpeningElement, visitor: Visitor): JsxOpeningElement => {
-        const _tagName = visitNode(node.tagName, visitor, isJsxTagNameExpression);
-        const _typeArguments = visitNodes(node.typeArguments, visitor);
-        const _attributes = visitNode(node.attributes, visitor, isJsxAttributes);
-        return updateJsxOpeningElement(node, _tagName, _typeArguments, _attributes);
-    },
-    [SyntaxKind.JsxSelfClosingElement]: (node: JsxSelfClosingElement, visitor: Visitor): JsxSelfClosingElement => {
-        const _tagName = visitNode(node.tagName, visitor, isJsxTagNameExpression);
-        const _typeArguments = visitNodes(node.typeArguments, visitor);
-        const _attributes = visitNode(node.attributes, visitor, isJsxAttributes);
-        return updateJsxSelfClosingElement(node, _tagName, _typeArguments, _attributes);
-    },
-    [SyntaxKind.JsxFragment]: (node: JsxFragment, visitor: Visitor): JsxFragment => {
-        const _openingFragment = visitNode(node.openingFragment, visitor, isJsxOpeningFragment);
-        const _children = visitNodes(node.children, visitor);
-        const _closingFragment = visitNode(node.closingFragment, visitor, isJsxClosingFragment);
-        return updateJsxFragment(node, _openingFragment, _children, _closingFragment);
-    },
-    [SyntaxKind.JsxAttribute]: (node: JsxAttribute, visitor: Visitor): JsxAttribute => {
-        const _name = visitNode(node.name, visitor, isJsxAttributeName);
-        const _initializer = visitNode(node.initializer, visitor, isJsxAttributeValue);
-        return updateJsxAttribute(node, _name, _initializer);
-    },
-    [SyntaxKind.JsxSpreadAttribute]: (node: JsxSpreadAttribute, visitor: Visitor): JsxSpreadAttribute => {
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateJsxSpreadAttribute(node, _expression);
-    },
-    [SyntaxKind.JsxClosingElement]: (node: JsxClosingElement, visitor: Visitor): JsxClosingElement => {
-        const _tagName = visitNode(node.tagName, visitor, isJsxTagNameExpression);
-        return updateJsxClosingElement(node, _tagName);
-    },
-    [SyntaxKind.JsxExpression]: (node: JsxExpression, visitor: Visitor): JsxExpression => {
-        const _dotDotDotToken = visitNode(node.dotDotDotToken, visitor, isDotDotDotToken);
-        const _expression = visitNode(node.expression, visitor, isExpression);
-        return updateJsxExpression(node, _dotDotDotToken, _expression);
     },
     [SyntaxKind.SyntaxList]: (node: SyntaxList, visitor: Visitor): SyntaxList => {
         const _children = visitNodesArray(node.children, visitor);

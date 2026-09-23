@@ -1619,16 +1619,14 @@ func hasFileWithHigherPriorityExtension(file string, extensions [][]string, hasF
 		return false
 	}
 	for _, ext := range extensionGroup {
-		// d.ts files match with .ts extension and with case sensitive sorting the file order for same files with ts tsx and dts extension is
-		// d.ts, .ts, .tsx in that order so we need to handle tsx and dts of same same name case here and in remove files with same extensions
-		// So dont match .d.ts files with .ts extension
+		// d.ts files match with .ts extension, so dont match .d.ts files with .ts extension
 		if tspath.FileExtensionIs(file, ext) && (ext != tspath.ExtensionTs || !tspath.FileExtensionIs(file, tspath.ExtensionDts)) {
 			return false
 		}
 		if hasFile(tspath.ChangeExtension(file, ext)) {
-			if ext == tspath.ExtensionDts && (tspath.FileExtensionIs(file, tspath.ExtensionJs) || tspath.FileExtensionIs(file, tspath.ExtensionJsx)) {
+			if ext == tspath.ExtensionDts && tspath.FileExtensionIs(file, tspath.ExtensionJs) {
 				// LEGACY BEHAVIOR: An off-by-one bug somewhere in the extension priority system for wildcard module loading allowed declaration
-				// files to be loaded alongside their js(x) counterparts. We regard this as generally undesirable, but retain the behavior to
+				// files to be loaded alongside their js counterparts. We regard this as generally undesirable, but retain the behavior to
 				// prevent breakage.
 				continue
 			}

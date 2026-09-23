@@ -59,7 +59,7 @@ func DoSourcemapBaseline(
 			sourceMapCode = sourceMapCodeBuilder.String()
 		}
 
-		if tspath.FileExtensionIsOneOf(baselinePath, []string{tspath.ExtensionTs, tspath.ExtensionTsx}) {
+		if tspath.FileExtensionIs(baselinePath, tspath.ExtensionTs) {
 			baselinePath = tspath.ChangeExtension(baselinePath, tspath.ExtensionJs+".map")
 		}
 

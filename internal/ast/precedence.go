@@ -131,7 +131,6 @@ const (
 	//     MetaProperty
 	//     `new` MemberExpression Arguments
 	OperatorPrecedenceMember
-	// TODO: JSXElement?
 	// PrimaryExpression:
 	//     `this`
 	//     IdentifierReference
@@ -251,9 +250,6 @@ func GetOperatorPrecedence(nodeKind Kind, operatorKind Kind, flags OperatorPrece
 		KindTemplateExpression,
 		KindOmittedExpression,
 		KindVarargExpression,
-		KindJsxElement,
-		KindJsxSelfClosingElement,
-		KindJsxFragment,
 		KindMissingDeclaration:
 		return OperatorPrecedencePrimary
 

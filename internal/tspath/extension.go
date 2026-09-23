@@ -7,26 +7,23 @@ import (
 
 // tlua sources are .tlua, declarations .d.tlua, and emit output .lua. The Go
 // identifiers keep their upstream names so ported code stays greppable.
-// (.tsx is deliberately unchanged for now.)
 const (
 	ExtensionTs          = ".tlua"
-	ExtensionTsx         = ".tsx"
 	ExtensionDts         = ".d.tlua"
 	ExtensionJs          = ".lua"
-	ExtensionJsx         = ".jsx"
 	ExtensionJson        = ".json"
 	ExtensionTsBuildInfo = ".tluabuildinfo"
 )
 
 var (
 	SupportedDeclarationExtensions                 = []string{ExtensionDts}
-	SupportedTSImplementationExtensions            = []string{ExtensionTs, ExtensionTsx}
-	supportedTSExtensionsForExtractExtension       = []string{ExtensionDts, ExtensionTs, ExtensionTsx}
-	AllSupportedExtensions                         = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts, ExtensionJs, ExtensionJsx}}
-	SupportedTSExtensions                          = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts}}
-	SupportedTSExtensionsFlat                      = []string{ExtensionTs, ExtensionTsx, ExtensionDts}
-	SupportedJSExtensions                          = [][]string{{ExtensionJs, ExtensionJsx}}
-	SupportedJSExtensionsFlat                      = []string{ExtensionJs, ExtensionJsx}
+	SupportedTSImplementationExtensions            = []string{ExtensionTs}
+	supportedTSExtensionsForExtractExtension       = []string{ExtensionDts, ExtensionTs}
+	AllSupportedExtensions                         = [][]string{{ExtensionTs, ExtensionDts, ExtensionJs}}
+	SupportedTSExtensions                          = [][]string{{ExtensionTs, ExtensionDts}}
+	SupportedTSExtensionsFlat                      = []string{ExtensionTs, ExtensionDts}
+	SupportedJSExtensions                          = [][]string{{ExtensionJs}}
+	SupportedJSExtensionsFlat                      = []string{ExtensionJs}
 	AllSupportedExtensionsWithJson                 = slices.Concat(AllSupportedExtensions, [][]string{{ExtensionJson}})
 	SupportedTSExtensionsWithJson                  = slices.Concat(SupportedTSExtensions, [][]string{{ExtensionJson}})
 	SupportedTSExtensionsWithJsonFlat              = slices.Concat(SupportedTSExtensionsFlat, []string{ExtensionJson})
@@ -35,11 +32,11 @@ var (
 
 func ExtensionIsTs(ext string) bool {
 	// The last clause matches custom declaration extensions (".d.<inner>.tlua").
-	return ext == ExtensionTs || ext == ExtensionTsx || ext == ExtensionDts ||
+	return ext == ExtensionTs || ext == ExtensionDts ||
 		len(ext) > len(".d.")+len(ExtensionTs) && strings.HasPrefix(ext, ".d.") && strings.HasSuffix(ext, ExtensionTs)
 }
 
-var extensionsToRemove = []string{ExtensionDts, ExtensionTs, ExtensionJs, ExtensionTsx, ExtensionJsx, ExtensionJson}
+var extensionsToRemove = []string{ExtensionDts, ExtensionTs, ExtensionJs, ExtensionJson}
 
 func RemoveFileExtension(path string) string {
 	// Remove any known extension even if it has more than one dot
@@ -125,7 +122,7 @@ func GetDeclarationFileExtension(fileName string) string {
 
 func GetDeclarationEmitExtensionForPath(path string) string {
 	switch {
-	case FileExtensionIsOneOf(path, []string{ExtensionTs, ExtensionTsx, ExtensionJs, ExtensionJsx}):
+	case FileExtensionIsOneOf(path, []string{ExtensionTs, ExtensionJs}):
 		return ExtensionDts
 	default:
 		ext := GetAnyExtensionFromPath(path, nil, false)
@@ -183,5 +180,5 @@ func GetPossibleOriginalInputExtensionForExtension(path string) []string {
 		inner := ext[len(".d.") : len(ext)-len(ExtensionTs)]
 		return []string{"." + inner}
 	}
-	return []string{ExtensionTsx, ExtensionTs, ExtensionJsx, ExtensionJs}
+	return []string{ExtensionTs, ExtensionJs}
 }

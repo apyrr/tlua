@@ -70,7 +70,7 @@ Directory watches::
 Diff:: incremental reports config read error while clean build without tsconfig prints usage help
 --- nonIncremental.output.txt
 +++ incremental.output.txt
-@@ -1,129 +1,1 @@
+@@ -1,124 +1,1 @@
 -Version FakeTSVersion
 -tlua: The Lua Compiler - Version FakeTSVersion
 -
@@ -172,11 +172,6 @@ Diff:: incremental reports config read error while clean build without tsconfig 
 -[94m--lib[39m
 -Specify a set of bundled library declaration files that describe the target runtime environment.
 -one or more: luajit
--default: undefined
--
--[94m--jsx[39m
--Specify what JSX code is generated.
--one of: preserve, react-native, react-jsx, react-jsxdev, react
 -default: undefined
 -
 -[94m--outFile[39m

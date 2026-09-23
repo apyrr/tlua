@@ -11,7 +11,6 @@ const (
 	// - Flags used to indicate that a node or subtree contains syntax relevant to a specific transform
 
 	SubtreeContainsTypeScript SubtreeFacts = 1 << iota
-	SubtreeContainsJsx
 	SubtreeContainsUsing
 	SubtreeContainsClassStaticBlocks
 	SubtreeContainsESClassFields

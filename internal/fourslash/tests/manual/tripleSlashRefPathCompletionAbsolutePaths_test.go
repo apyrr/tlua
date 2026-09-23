@@ -19,14 +19,10 @@ func TestTripleSlashRefPathCompletionAbsolutePaths(t *testing.T) {
 /// <reference path="/tests/cases/fourslash//*2*/
 // @Filename: /tests/cases/fourslash/f1.tlua
 /*f1*/
-// @Filename: /tests/cases/fourslash/f2.tsx
-/*f2*/
 // @Filename: /tests/cases/fourslash/folder/f1.tlua
 /*subf1*/
 // @Filename: /tests/cases/fourslash/f3.lua
 /*f3*/
-// @Filename: /tests/cases/fourslash/f4.jsx
-/*f4*/
 // @Filename: /tests/cases/fourslash/e1.tlua
 /*e1*/
 // @Filename: /tests/cases/fourslash/e2.lua
@@ -55,7 +51,6 @@ func TestTripleSlashRefPathCompletionAbsolutePaths(t *testing.T) {
 			Exact: []fourslash.CompletionsExpectedItem{
 				"e1.tlua",
 				"f1.tlua",
-				"f2.tsx",
 				"folder",
 				"tests",
 			},

@@ -18,7 +18,6 @@ func NewDefaultUserPreferences() UserPreferences {
 
 		IncludeCompletionsForModuleExports:    core.TSTrue,
 		IncludeCompletionsForImportStatements: core.TSTrue,
-		EnableAutoClosingTags:                 core.TSTrue,
 		EnableJSDocCompletions:                core.TSTrue,
 		GenerateReturnInDocTemplate:           core.TSTrue,
 
@@ -73,11 +72,9 @@ type UserPreferences struct {
 	// to the regular completion entry containing just the method name.
 	// E.g., `const objectLiteral: T = { f| }` could be completed to `const objectLiteral: T = { foo(): void {} }`,
 	// in addition to `const objectLiteral: T = { foo }`.
-	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate               `raw:"includeCompletionsWithObjectLiteralMethodSnippets" config:"suggest.objectLiteralMethodSnippets.enabled"` // !!!
-	JsxAttributeCompletionStyle                       JsxAttributeCompletionStyle `raw:"jsxAttributeCompletionStyle" config:"preferences.jsxAttributeCompletionStyle"`
-	EnableAutoClosingTags                             core.Tristate               `raw:"autoClosingTags" config:"autoClosingTags.enabled" fallbackConfig:"autoClosingTags"`
-	EnableJSDocCompletions                            core.Tristate               `raw:"completeJSDocs" config:"suggest.jsdoc.enabled" fallbackConfig:"suggest.completeJSDocs"`
-	GenerateReturnInDocTemplate                       core.Tristate               `raw:"generateReturnInDocTemplate" config:"suggest.jsdoc.generateReturns"`
+	IncludeCompletionsWithObjectLiteralMethodSnippets core.Tristate `raw:"includeCompletionsWithObjectLiteralMethodSnippets" config:"suggest.objectLiteralMethodSnippets.enabled"` // !!!
+	EnableJSDocCompletions                            core.Tristate `raw:"completeJSDocs" config:"suggest.jsdoc.enabled" fallbackConfig:"suggest.completeJSDocs"`
+	GenerateReturnInDocTemplate                       core.Tristate `raw:"generateReturnInDocTemplate" config:"suggest.jsdoc.generateReturns"`
 
 	// ------- AutoImports --------
 
@@ -230,15 +227,6 @@ const (
 	QuotePreferenceSingle  QuotePreference = "single"
 )
 
-type JsxAttributeCompletionStyle string
-
-const (
-	JsxAttributeCompletionStyleUnknown JsxAttributeCompletionStyle = ""
-	JsxAttributeCompletionStyleAuto    JsxAttributeCompletionStyle = "auto"
-	JsxAttributeCompletionStyleBraces  JsxAttributeCompletionStyle = "braces"
-	JsxAttributeCompletionStyleNone    JsxAttributeCompletionStyle = "none"
-)
-
 type IncludeInlayParameterNameHints string
 
 const (
@@ -312,17 +300,6 @@ var typeParsers = map[reflect.Type]func(any) any{
 			}
 		}
 		return QuotePreferenceUnknown
-	},
-	reflect.TypeFor[JsxAttributeCompletionStyle](): func(val any) any {
-		if s, ok := val.(string); ok {
-			switch strings.ToLower(s) {
-			case "braces":
-				return JsxAttributeCompletionStyleBraces
-			case "none":
-				return JsxAttributeCompletionStyleNone
-			}
-		}
-		return JsxAttributeCompletionStyleAuto
 	},
 	reflect.TypeFor[IncludeInlayParameterNameHints](): func(val any) any {
 		if s, ok := val.(string); ok {
@@ -472,23 +449,12 @@ var typeSerializers = map[reflect.Type]func(any) any{
 	// whose default already is their zero value, like the OrganizeImports* ones,
 	// round-trip without this.)
 	//
-	// TODO: These three are the only parsers whose fallback is a non-zero value;
+	// TODO: These two are the only parsers whose fallback is a non-zero value;
 	// every other parser returns its zero value as the fallback. They should be
 	// made consistent: change the parser fallback to return the zero value and
 	// remove this serializer (relying on the default string serialization, which
-	// already omits ""). The consumer must then treat the zero value as the
-	// effective default. The two module-specifier enums are safe to convert (all
-	// read sites already treat the "" zero identically to the promoted default).
-	reflect.TypeFor[JsxAttributeCompletionStyle](): func(val any) any {
-		// TODO: make consistent with other enums (see note above). Unlike the
-		// module-specifier enums, the consumer in completions.go distinguishes
-		// JsxAttributeCompletionStyleUnknown from ...Auto, so converting this one
-		// requires updating that consumer to treat the zero value as "auto".
-		if v := val.(JsxAttributeCompletionStyle); v != JsxAttributeCompletionStyleUnknown {
-			return string(v)
-		}
-		return nil
-	},
+	// already omits ""). Both are safe to convert (all read sites already treat
+	// the "" zero identically to the promoted default).
 	reflect.TypeFor[modulespecifiers.ImportModuleSpecifierPreference](): func(val any) any {
 		// TODO: make consistent with other enums (see note above): have the parser
 		// return the zero value (None) as its fallback and drop this serializer.

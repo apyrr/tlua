@@ -222,8 +222,6 @@ var Line_break_not_permitted_here = &Message{code: 1142, category: CategoryError
 
 var X_or_expected = &Message{code: 1144, category: CategoryError, key: "or_expected_1144", text: "'{' or ';' expected."}
 
-var X_or_JSX_element_expected = &Message{code: 1145, category: CategoryError, key: "or_JSX_element_expected_1145", text: "'{' or JSX element expected."}
-
 var Declaration_expected = &Message{code: 1146, category: CategoryError, key: "Declaration_expected_1146", text: "Declaration expected."}
 
 var Import_declarations_in_a_namespace_cannot_reference_a_module = &Message{code: 1147, category: CategoryError, key: "Import_declarations_in_a_namespace_cannot_reference_a_module_1147", text: "Import declarations in a namespace cannot reference a module."}
@@ -648,10 +646,6 @@ var Imported_via_0_from_file_1_to_import_importHelpers_as_specified_in_compilerO
 
 var Imported_via_0_from_file_1_with_packageId_2_to_import_importHelpers_as_specified_in_compilerOptions = &Message{code: 1396, category: CategoryMessage, key: "Imported_via_0_from_file_1_with_packageId_2_to_import_importHelpers_as_specified_in_compilerOptions_1396", text: "Imported via {0} from file '{1}' with packageId '{2}' to import 'importHelpers' as specified in compilerOptions"}
 
-var Imported_via_0_from_file_1_to_import_jsx_and_jsxs_factory_functions = &Message{code: 1397, category: CategoryMessage, key: "Imported_via_0_from_file_1_to_import_jsx_and_jsxs_factory_functions_1397", text: "Imported via {0} from file '{1}' to import 'jsx' and 'jsxs' factory functions"}
-
-var Imported_via_0_from_file_1_with_packageId_2_to_import_jsx_and_jsxs_factory_functions = &Message{code: 1398, category: CategoryMessage, key: "Imported_via_0_from_file_1_with_packageId_2_to_import_jsx_and_jsxs_factory_functions_1398", text: "Imported via {0} from file '{1}' with packageId '{2}' to import 'jsx' and 'jsxs' factory functions"}
-
 var File_is_included_via_import_here = &Message{code: 1399, category: CategoryMessage, key: "File_is_included_via_import_here_1399", text: "File is included via import here."}
 
 var Referenced_via_0_from_file_1 = &Message{code: 1400, category: CategoryMessage, key: "Referenced_via_0_from_file_1_1400", text: "Referenced via '{0}' from file '{1}'"}
@@ -783,8 +777,6 @@ var An_import_declaration_can_only_be_used_at_the_top_level_of_a_module = &Messa
 var An_export_declaration_can_only_be_used_at_the_top_level_of_a_module = &Message{code: 1474, category: CategoryError, key: "An_export_declaration_can_only_be_used_at_the_top_level_of_a_module_1474", text: "An export declaration can only be used at the top level of a module."}
 
 var Control_what_method_is_used_to_detect_module_format_JS_files = &Message{code: 1475, category: CategoryMessage, key: "Control_what_method_is_used_to_detect_module_format_JS_files_1475", text: "Control what method is used to detect module-format JS files."}
-
-var X_auto_Colon_Treat_files_with_imports_exports_import_meta_jsx_with_jsx_Colon_react_jsx_or_esm_format_with_module_Colon_node16_as_modules = &Message{code: 1476, category: CategoryMessage, key: "auto_Colon_Treat_files_with_imports_exports_import_meta_jsx_with_jsx_Colon_react_jsx_or_esm_format_w_1476", text: "\"auto\": Treat files with imports, exports, import.meta, jsx (with jsx: react-jsx), or esm format (with module: node16+) as modules."}
 
 var An_instantiation_expression_cannot_be_followed_by_a_property_access = &Message{code: 1477, category: CategoryError, key: "An_instantiation_expression_cannot_be_followed_by_a_property_access_1477", text: "An instantiation expression cannot be followed by a property access."}
 
@@ -1496,19 +1488,7 @@ var X_0_can_only_be_imported_by_using_a_require_call_or_by_using_a_default_impor
 
 var X_0_can_only_be_imported_by_using_a_require_call_or_by_turning_on_the_esModuleInterop_flag_and_using_a_default_import = &Message{code: 2598, category: CategoryError, key: "_0_can_only_be_imported_by_using_a_require_call_or_by_turning_on_the_esModuleInterop_flag_and_using__2598", text: "'{0}' can only be imported by using a 'require' call or by turning on the 'esModuleInterop' flag and using a default import."}
 
-var JSX_element_implicitly_has_type_any_because_the_global_type_JSX_Element_does_not_exist = &Message{code: 2602, category: CategoryError, key: "JSX_element_implicitly_has_type_any_because_the_global_type_JSX_Element_does_not_exist_2602", text: "JSX element implicitly has type 'any' because the global type 'JSX.Element' does not exist."}
-
 var Property_0_in_type_1_is_not_assignable_to_type_2 = &Message{code: 2603, category: CategoryError, key: "Property_0_in_type_1_is_not_assignable_to_type_2_2603", text: "Property '{0}' in type '{1}' is not assignable to type '{2}'."}
-
-var JSX_element_type_0_does_not_have_any_construct_or_call_signatures = &Message{code: 2604, category: CategoryError, key: "JSX_element_type_0_does_not_have_any_construct_or_call_signatures_2604", text: "JSX element type '{0}' does not have any construct or call signatures."}
-
-var Property_0_of_JSX_spread_attribute_is_not_assignable_to_target_property = &Message{code: 2606, category: CategoryError, key: "Property_0_of_JSX_spread_attribute_is_not_assignable_to_target_property_2606", text: "Property '{0}' of JSX spread attribute is not assignable to target property."}
-
-var JSX_element_class_does_not_support_attributes_because_it_does_not_have_a_0_property = &Message{code: 2607, category: CategoryError, key: "JSX_element_class_does_not_support_attributes_because_it_does_not_have_a_0_property_2607", text: "JSX element class does not support attributes because it does not have a '{0}' property."}
-
-var The_global_type_JSX_0_may_not_have_more_than_one_property = &Message{code: 2608, category: CategoryError, key: "The_global_type_JSX_0_may_not_have_more_than_one_property_2608", text: "The global type 'JSX.{0}' may not have more than one property."}
-
-var JSX_spread_child_must_be_an_array_type = &Message{code: 2609, category: CategoryError, key: "JSX_spread_child_must_be_an_array_type_2609", text: "JSX spread child must be an array type."}
 
 var X_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property = &Message{code: 2610, category: CategoryError, key: "_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property_2610", text: "'{0}' is defined as an accessor in class '{1}', but is overridden here in '{2}' as an instance property."}
 
@@ -1554,8 +1534,6 @@ var Cannot_assign_to_0_because_it_is_a_namespace = &Message{code: 2631, category
 
 var Cannot_assign_to_0_because_it_is_an_import = &Message{code: 2632, category: CategoryError, key: "Cannot_assign_to_0_because_it_is_an_import_2632", text: "Cannot assign to '{0}' because it is an import."}
 
-var JSX_property_access_expressions_cannot_include_JSX_namespace_names = &Message{code: 2633, category: CategoryError, key: "JSX_property_access_expressions_cannot_include_JSX_namespace_names_2633", text: "JSX property access expressions cannot include JSX namespace names"}
-
 var X_0_index_signatures_are_incompatible = &Message{code: 2634, category: CategoryError, key: "_0_index_signatures_are_incompatible_2634", text: "'{0}' index signatures are incompatible."}
 
 var Type_0_has_no_signatures_for_which_the_type_argument_list_is_applicable = &Message{code: 2635, category: CategoryError, key: "Type_0_has_no_signatures_for_which_the_type_argument_list_is_applicable_2635", text: "Type '{0}' has no signatures for which the type argument list is applicable."}
@@ -1565,8 +1543,6 @@ var Type_0_is_not_assignable_to_type_1_as_implied_by_variance_annotation = &Mess
 var Variance_annotations_are_only_supported_in_type_aliases_for_object_function_constructor_and_mapped_types = &Message{code: 2637, category: CategoryError, key: "Variance_annotations_are_only_supported_in_type_aliases_for_object_function_constructor_and_mapped_t_2637", text: "Variance annotations are only supported in type aliases for object, function, constructor, and mapped types."}
 
 var Type_0_may_represent_a_primitive_value_which_is_not_permitted_as_the_right_operand_of_the_in_operator = &Message{code: 2638, category: CategoryError, key: "Type_0_may_represent_a_primitive_value_which_is_not_permitted_as_the_right_operand_of_the_in_operato_2638", text: "Type '{0}' may represent a primitive value, which is not permitted as the right operand of the 'in' operator."}
-
-var React_components_cannot_include_JSX_namespace_names = &Message{code: 2639, category: CategoryError, key: "React_components_cannot_include_JSX_namespace_names_2639", text: "React components cannot include JSX namespace names"}
 
 var Cannot_augment_module_0_with_value_exports_because_it_resolves_to_a_non_module_entity = &Message{code: 2649, category: CategoryError, key: "Cannot_augment_module_0_with_value_exports_because_it_resolves_to_a_non_module_entity_2649", text: "Cannot augment module '{0}' with value exports because it resolves to a non-module entity."}
 
@@ -1583,8 +1559,6 @@ var Non_abstract_class_0_is_missing_implementations_for_the_following_members_of
 var Non_abstract_class_0_is_missing_implementations_for_the_following_members_of_1_Colon_2_and_3_more = &Message{code: 2655, category: CategoryError, key: "Non_abstract_class_0_is_missing_implementations_for_the_following_members_of_1_Colon_2_and_3_more_2655", text: "Non-abstract class '{0}' is missing implementations for the following members of '{1}': {2} and {3} more."}
 
 var Non_abstract_class_expression_is_missing_implementations_for_the_following_members_of_0_Colon_1 = &Message{code: 2656, category: CategoryError, key: "Non_abstract_class_expression_is_missing_implementations_for_the_following_members_of_0_Colon_1_2656", text: "Non-abstract class expression is missing implementations for the following members of '{0}': {1}."}
-
-var JSX_expressions_must_have_one_parent_element = &Message{code: 2657, category: CategoryError, key: "JSX_expressions_must_have_one_parent_element_2657", text: "JSX expressions must have one parent element."}
 
 var Type_0_provides_no_match_for_the_signature_1 = &Message{code: 2658, category: CategoryError, key: "Type_0_provides_no_match_for_the_signature_1_2658", text: "Type '{0}' provides no match for the signature '{1}'."}
 
@@ -1756,12 +1730,6 @@ var No_overload_expects_0_type_arguments_but_overloads_do_exist_that_expect_eith
 
 var Type_parameter_defaults_can_only_reference_previously_declared_type_parameters = &Message{code: 2744, category: CategoryError, key: "Type_parameter_defaults_can_only_reference_previously_declared_type_parameters_2744", text: "Type parameter defaults can only reference previously declared type parameters."}
 
-var This_JSX_tag_s_0_prop_expects_type_1_which_requires_multiple_children_but_only_a_single_child_was_provided = &Message{code: 2745, category: CategoryError, key: "This_JSX_tag_s_0_prop_expects_type_1_which_requires_multiple_children_but_only_a_single_child_was_pr_2745", text: "This JSX tag's '{0}' prop expects type '{1}' which requires multiple children, but only a single child was provided."}
-
-var This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided = &Message{code: 2746, category: CategoryError, key: "This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided_2746", text: "This JSX tag's '{0}' prop expects a single child of type '{1}', but multiple children were provided."}
-
-var X_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_type_of_1_is_2 = &Message{code: 2747, category: CategoryError, key: "_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_t_2747", text: "'{0}' components don't accept text as child elements. Text in JSX has the type 'string', but the expected type of '{1}' is '{2}'."}
-
 var Cannot_access_ambient_const_enums_when_0_is_enabled = &Message{code: 2748, category: CategoryError, key: "Cannot_access_ambient_const_enums_when_0_is_enabled_2748", text: "Cannot access ambient const enums when '{0}' is enabled."}
 
 var X_0_refers_to_a_value_but_is_being_used_as_a_type_here_Did_you_mean_typeof_0 = &Message{code: 2749, category: CategoryError, key: "_0_refers_to_a_value_but_is_being_used_as_a_type_here_Did_you_mean_typeof_0_2749", text: "'{0}' refers to a value, but is being used as a type here. Did you mean 'typeof {0}'?"}
@@ -1837,14 +1805,6 @@ var X_0_is_specified_more_than_once_so_this_usage_will_be_overwritten = &Message
 var X_get_and_set_accessors_cannot_declare_this_parameters = &Message{code: 2784, category: CategoryError, key: "get_and_set_accessors_cannot_declare_this_parameters_2784", text: "'get' and 'set' accessors cannot declare 'this' parameters."}
 
 var This_spread_always_overwrites_this_property = &Message{code: 2785, category: CategoryError, key: "This_spread_always_overwrites_this_property_2785", text: "This spread always overwrites this property."}
-
-var X_0_cannot_be_used_as_a_JSX_component = &Message{code: 2786, category: CategoryError, key: "_0_cannot_be_used_as_a_JSX_component_2786", text: "'{0}' cannot be used as a JSX component."}
-
-var Its_return_type_0_is_not_a_valid_JSX_element = &Message{code: 2787, category: CategoryError, key: "Its_return_type_0_is_not_a_valid_JSX_element_2787", text: "Its return type '{0}' is not a valid JSX element."}
-
-var Its_instance_type_0_is_not_a_valid_JSX_element = &Message{code: 2788, category: CategoryError, key: "Its_instance_type_0_is_not_a_valid_JSX_element_2788", text: "Its instance type '{0}' is not a valid JSX element."}
-
-var Its_element_type_0_is_not_a_valid_JSX_element = &Message{code: 2789, category: CategoryError, key: "Its_element_type_0_is_not_a_valid_JSX_element_2789", text: "Its element type '{0}' is not a valid JSX element."}
 
 var The_operand_of_a_delete_operator_must_be_optional = &Message{code: 2790, category: CategoryError, key: "The_operand_of_a_delete_operator_must_be_optional_2790", text: "The operand of a 'delete' operator must be optional."}
 
@@ -1990,17 +1950,11 @@ var This_kind_of_expression_is_always_truthy = &Message{code: 2872, category: Ca
 
 var This_kind_of_expression_is_always_falsy = &Message{code: 2873, category: CategoryError, key: "This_kind_of_expression_is_always_falsy_2873", text: "This kind of expression is always falsy."}
 
-var This_JSX_tag_requires_0_to_be_in_scope_but_it_could_not_be_found = &Message{code: 2874, category: CategoryError, key: "This_JSX_tag_requires_0_to_be_in_scope_but_it_could_not_be_found_2874", text: "This JSX tag requires '{0}' to be in scope, but it could not be found."}
-
-var This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Make_sure_you_have_types_for_the_appropriate_package_installed = &Message{code: 2875, category: CategoryError, key: "This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Make_sure_you_have_types_fo_2875", text: "This JSX tag requires the module path '{0}' to exist, but none could be found. Make sure you have types for the appropriate package installed."}
-
 var This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0 = &Message{code: 2876, category: CategoryError, key: "This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolv_2876", text: "This relative import path is unsafe to rewrite because it looks like a file name, but actually resolves to \"{0}\"."}
 
 var This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path = &Message{code: 2877, category: CategoryError, key: "This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emi_2877", text: "This import uses a '{0}' extension to resolve to an input tlua file, but will not be rewritten during emit because it is not a relative path."}
 
 var This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_between_the_projects_output_files_is_not_the_same_as_the_relative_path_between_its_input_files = &Message{code: 2878, category: CategoryError, key: "This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_b_2878", text: "This import path is unsafe to rewrite because it resolves to another project, and the relative path between the projects' output files is not the same as the relative path between its input files."}
-
-var Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found = &Message{code: 2879, category: CategoryError, key: "Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found_2879", text: "Using JSX fragments requires fragment factory '{0}' to be in scope, but it could not be found."}
 
 var Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert = &Message{code: 2880, category: CategoryError, key: "Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert_2880", text: "Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'."}
 
@@ -2272,8 +2226,6 @@ var Cannot_find_a_tluaconfig_json_file_at_the_specified_directory_Colon_0 = &Mes
 
 var The_specified_path_does_not_exist_Colon_0 = &Message{code: 5058, category: CategoryError, key: "The_specified_path_does_not_exist_Colon_0_5058", text: "The specified path does not exist: '{0}'."}
 
-var Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier = &Message{code: 5059, category: CategoryError, key: "Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier_5059", text: "Invalid value for '--reactNamespace'. '{0}' is not a valid identifier."}
-
 var Pattern_0_can_have_at_most_one_Asterisk_character = &Message{code: 5061, category: CategoryError, key: "Pattern_0_can_have_at_most_one_Asterisk_character_5061", text: "Pattern '{0}' can have at most one '*' character."}
 
 var Substitution_0_in_pattern_1_can_have_at_most_one_Asterisk_character = &Message{code: 5062, category: CategoryError, key: "Substitution_0_in_pattern_1_can_have_at_most_one_Asterisk_character_5062", text: "Substitution '{0}' in pattern '{1}' can have at most one '*' character."}
@@ -2285,8 +2237,6 @@ var Substitution_0_for_pattern_1_has_incorrect_type_expected_string_got_2 = &Mes
 var File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0 = &Message{code: 5065, category: CategoryError, key: "File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildca_5065", text: "File specification cannot contain a parent directory ('..') that appears after a recursive directory wildcard ('**'): '{0}'."}
 
 var Substitutions_for_pattern_0_shouldn_t_be_an_empty_array = &Message{code: 5066, category: CategoryError, key: "Substitutions_for_pattern_0_shouldn_t_be_an_empty_array_5066", text: "Substitutions for pattern '{0}' shouldn't be an empty array."}
-
-var Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name = &Message{code: 5067, category: CategoryError, key: "Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name_5067", text: "Invalid value for 'jsxFactory'. '{0}' is not a valid identifier or qualified-name."}
 
 var Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig = &Message{code: 5068, category: CategoryError, key: "Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_5068", text: "Adding a tluaconfig.json file will help organize projects that contain both Lua and JavaScript files. Learn more at https://aka.ms/tsconfig."}
 
@@ -2327,8 +2277,6 @@ var A_labeled_tuple_element_is_declared_as_optional_with_a_question_mark_after_t
 var A_labeled_tuple_element_is_declared_as_rest_with_a_before_the_name_rather_than_before_the_type = &Message{code: 5087, category: CategoryError, key: "A_labeled_tuple_element_is_declared_as_rest_with_a_before_the_name_rather_than_before_the_type_5087", text: "A labeled tuple element is declared as rest with a '...' before the name, rather than before the type."}
 
 var The_inferred_type_of_0_references_a_type_with_a_cyclic_structure_which_cannot_be_trivially_serialized_A_type_annotation_is_necessary = &Message{code: 5088, category: CategoryError, key: "The_inferred_type_of_0_references_a_type_with_a_cyclic_structure_which_cannot_be_trivially_serialize_5088", text: "The inferred type of '{0}' references a type with a cyclic structure which cannot be trivially serialized. A type annotation is necessary."}
-
-var Option_0_cannot_be_specified_when_option_jsx_is_1 = &Message{code: 5089, category: CategoryError, key: "Option_0_cannot_be_specified_when_option_jsx_is_1_5089", text: "Option '{0}' cannot be specified when option 'jsx' is '{1}'."}
 
 var Non_relative_paths_are_not_allowed_Did_you_forget_a_leading_Slash = &Message{code: 5090, category: CategoryError, key: "Non_relative_paths_are_not_allowed_Did_you_forget_a_leading_Slash_5090", text: "Non-relative paths are not allowed. Did you forget a leading './'?"}
 
@@ -2502,13 +2450,9 @@ var Disallow_inconsistently_cased_references_to_the_same_file = &Message{code: 6
 
 var Specify_library_files_to_be_included_in_the_compilation = &Message{code: 6079, category: CategoryMessage, key: "Specify_library_files_to_be_included_in_the_compilation_6079", text: "Specify library files to be included in the compilation."}
 
-var Specify_JSX_code_generation = &Message{code: 6080, category: CategoryMessage, key: "Specify_JSX_code_generation_6080", text: "Specify JSX code generation."}
-
 var Only_amd_and_system_modules_are_supported_alongside_0 = &Message{code: 6082, category: CategoryError, key: "Only_amd_and_system_modules_are_supported_alongside_0_6082", text: "Only 'amd' and 'system' modules are supported alongside --{0}."}
 
 var Base_directory_to_resolve_non_absolute_module_names = &Message{code: 6083, category: CategoryMessage, key: "Base_directory_to_resolve_non_absolute_module_names_6083", text: "Base directory to resolve non-absolute module names."}
-
-var Deprecated_Use_jsxFactory_instead_Specify_the_object_invoked_for_createElement_when_targeting_react_JSX_emit = &Message{code: 6084, category: CategoryMessage, key: "Deprecated_Use_jsxFactory_instead_Specify_the_object_invoked_for_createElement_when_targeting_react__6084", text: "[Deprecated] Use '--jsxFactory' instead. Specify the object invoked for createElement when targeting 'react' JSX emit"}
 
 var Enable_tracing_of_the_name_resolution_process = &Message{code: 6085, category: CategoryMessage, key: "Enable_tracing_of_the_name_resolution_process_6085", text: "Enable tracing of the name resolution process."}
 
@@ -2616,11 +2560,7 @@ var Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_
 
 var Parse_in_strict_mode_and_emit_use_strict_for_each_source_file = &Message{code: 6141, category: CategoryMessage, key: "Parse_in_strict_mode_and_emit_use_strict_for_each_source_file_6141", text: "Parse in strict mode and emit \"use strict\" for each source file."}
 
-var Module_0_was_resolved_to_1_but_jsx_is_not_set = &Message{code: 6142, category: CategoryError, key: "Module_0_was_resolved_to_1_but_jsx_is_not_set_6142", text: "Module '{0}' was resolved to '{1}', but '--jsx' is not set."}
-
 var Module_0_was_resolved_as_locally_declared_ambient_module_in_file_1 = &Message{code: 6144, category: CategoryMessage, key: "Module_0_was_resolved_as_locally_declared_ambient_module_in_file_1_6144", text: "Module '{0}' was resolved as locally declared ambient module in file '{1}'."}
-
-var Specify_the_JSX_factory_function_to_use_when_targeting_react_JSX_emit_e_g_React_createElement_or_h = &Message{code: 6146, category: CategoryMessage, key: "Specify_the_JSX_factory_function_to_use_when_targeting_react_JSX_emit_e_g_React_createElement_or_h_6146", text: "Specify the JSX factory function to use when targeting 'react' JSX emit, e.g. 'React.createElement' or 'h'."}
 
 var Resolution_for_module_0_was_found_in_cache_from_location_1 = &Message{code: 6147, category: CategoryMessage, key: "Resolution_for_module_0_was_found_in_cache_from_location_1_6147", text: "Resolution for module '{0}' was found in cache from location '{1}'."}
 
@@ -2764,8 +2704,6 @@ var Specify_strategy_for_watching_directory_on_platforms_that_don_t_support_recu
 
 var Specify_strategy_for_creating_a_polling_watch_when_it_fails_to_create_using_file_system_events_Colon_FixedInterval_default_PriorityInterval_DynamicPriority_FixedChunkSize = &Message{code: 6227, category: CategoryMessage, key: "Specify_strategy_for_creating_a_polling_watch_when_it_fails_to_create_using_file_system_events_Colon_6227", text: "Specify strategy for creating a polling watch when it fails to create using file system events: 'FixedInterval' (default), 'PriorityInterval', 'DynamicPriority', 'FixedChunkSize'."}
 
-var Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3 = &Message{code: 6229, category: CategoryError, key: "Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3_6229", text: "Tag '{0}' expects at least '{1}' arguments, but the JSX factory '{2}' provides at most '{3}'."}
-
 var Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line = &Message{code: 6230, category: CategoryError, key: "Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line_6230", text: "Option '{0}' can only be specified in 'tluaconfig.json' file or set to 'false' or 'null' on command line."}
 
 var Could_not_resolve_the_path_0_with_the_extensions_Colon_1 = &Message{code: 6231, category: CategoryError, key: "Could_not_resolve_the_path_0_with_the_extensions_Colon_1_6231", text: "Could not resolve the path '{0}' with the extensions: {1}."}
@@ -2781,8 +2719,6 @@ var Disable_loading_referenced_projects = &Message{code: 6235, category: Categor
 var Arguments_for_the_rest_parameter_0_were_not_provided = &Message{code: 6236, category: CategoryError, key: "Arguments_for_the_rest_parameter_0_were_not_provided_6236", text: "Arguments for the rest parameter '{0}' were not provided."}
 
 var Generates_an_event_trace_and_a_list_of_types = &Message{code: 6237, category: CategoryMessage, key: "Generates_an_event_trace_and_a_list_of_types_6237", text: "Generates an event trace and a list of types."}
-
-var Specify_the_module_specifier_to_be_used_to_import_the_jsx_and_jsxs_factory_functions_from_eg_react = &Message{code: 6238, category: CategoryError, key: "Specify_the_module_specifier_to_be_used_to_import_the_jsx_and_jsxs_factory_functions_from_eg_react_6238", text: "Specify the module specifier to be used to import the 'jsx' and 'jsxs' factory functions from. eg, react"}
 
 var File_0_exists_according_to_earlier_cached_lookups = &Message{code: 6239, category: CategoryMessage, key: "File_0_exists_according_to_earlier_cached_lookups_6239", text: "File '{0}' exists according to earlier cached lookups."}
 
@@ -3136,14 +3072,6 @@ var Include_source_code_in_the_sourcemaps_inside_the_emitted_JavaScript = &Messa
 
 var Ensure_that_each_file_can_be_safely_transpiled_without_relying_on_other_imports = &Message{code: 6645, category: CategoryMessage, key: "Ensure_that_each_file_can_be_safely_transpiled_without_relying_on_other_imports_6645", text: "Ensure that each file can be safely transpiled without relying on other imports."}
 
-var Specify_what_JSX_code_is_generated = &Message{code: 6646, category: CategoryMessage, key: "Specify_what_JSX_code_is_generated_6646", text: "Specify what JSX code is generated."}
-
-var Specify_the_JSX_factory_function_used_when_targeting_React_JSX_emit_e_g_React_createElement_or_h = &Message{code: 6647, category: CategoryMessage, key: "Specify_the_JSX_factory_function_used_when_targeting_React_JSX_emit_e_g_React_createElement_or_h_6647", text: "Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'."}
-
-var Specify_the_JSX_Fragment_reference_used_for_fragments_when_targeting_React_JSX_emit_e_g_React_Fragment_or_Fragment = &Message{code: 6648, category: CategoryMessage, key: "Specify_the_JSX_Fragment_reference_used_for_fragments_when_targeting_React_JSX_emit_e_g_React_Fragme_6648", text: "Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'."}
-
-var Specify_module_specifier_used_to_import_the_JSX_factory_functions_when_using_jsx_Colon_react_jsx_Asterisk = &Message{code: 6649, category: CategoryMessage, key: "Specify_module_specifier_used_to_import_the_JSX_factory_functions_when_using_jsx_Colon_react_jsx_Ast_6649", text: "Specify module specifier used to import the JSX factory functions when using 'jsx: react-jsx*'."}
-
 var Make_keyof_only_return_strings_instead_of_string_numbers_or_symbols_Legacy_option = &Message{code: 6650, category: CategoryMessage, key: "Make_keyof_only_return_strings_instead_of_string_numbers_or_symbols_Legacy_option_6650", text: "Make keyof only return strings instead of string, numbers or symbols. Legacy option."}
 
 var Specify_a_set_of_bundled_library_declaration_files_that_describe_the_target_runtime_environment = &Message{code: 6651, category: CategoryMessage, key: "Specify_a_set_of_bundled_library_declaration_files_that_describe_the_target_runtime_environment_6651", text: "Specify a set of bundled library declaration files that describe the target runtime environment."}
@@ -3215,8 +3143,6 @@ var Disable_resolving_symlinks_to_their_realpath_This_correlates_to_the_same_fla
 var Disable_wiping_the_console_in_watch_mode = &Message{code: 6684, category: CategoryMessage, key: "Disable_wiping_the_console_in_watch_mode_6684", text: "Disable wiping the console in watch mode."}
 
 var Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read = &Message{code: 6685, category: CategoryMessage, key: "Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read_6685", text: "Enable color and formatting in tlua's output to make compiler errors easier to read."}
-
-var Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit = &Message{code: 6686, category: CategoryMessage, key: "Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit_6686", text: "Specify the object invoked for 'createElement'. This only applies when targeting 'react' JSX emit."}
 
 var Specify_an_array_of_objects_that_specify_paths_for_projects_Used_in_project_references = &Message{code: 6687, category: CategoryMessage, key: "Specify_an_array_of_objects_that_specify_paths_for_projects_Used_in_project_references_6687", text: "Specify an array of objects that specify paths for projects. Used in project references."}
 
@@ -3395,8 +3321,6 @@ var X_0_implicitly_has_return_type_any_because_it_does_not_have_a_return_type_an
 var Function_implicitly_has_return_type_any_because_it_does_not_have_a_return_type_annotation_and_is_referenced_directly_or_indirectly_in_one_of_its_return_expressions = &Message{code: 7024, category: CategoryError, key: "Function_implicitly_has_return_type_any_because_it_does_not_have_a_return_type_annotation_and_is_ref_7024", text: "Function implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions."}
 
 var Generator_implicitly_has_yield_type_0_Consider_supplying_a_return_type_annotation = &Message{code: 7025, category: CategoryError, key: "Generator_implicitly_has_yield_type_0_Consider_supplying_a_return_type_annotation_7025", text: "Generator implicitly has yield type '{0}'. Consider supplying a return type annotation."}
-
-var JSX_element_implicitly_has_type_any_because_no_interface_JSX_0_exists = &Message{code: 7026, category: CategoryError, key: "JSX_element_implicitly_has_type_any_because_no_interface_JSX_0_exists_7026", text: "JSX element implicitly has type 'any' because no interface 'JSX.{0}' exists."}
 
 var Unreachable_code_detected = &Message{code: 7027, category: CategoryError, key: "Unreachable_code_detected_7027", text: "Unreachable code detected.", reportsUnnecessary: true}
 
@@ -3610,21 +3534,11 @@ var Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_
 
 var Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations = &Message{code: 9039, category: CategoryError, key: "Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations_9039", text: "Type containing private name '{0}' can't be used with --isolatedDeclarations."}
 
-var JSX_attributes_must_only_be_assigned_a_non_empty_expression = &Message{code: 17000, category: CategoryError, key: "JSX_attributes_must_only_be_assigned_a_non_empty_expression_17000", text: "JSX attributes must only be assigned a non-empty 'expression'."}
-
-var JSX_elements_cannot_have_multiple_attributes_with_the_same_name = &Message{code: 17001, category: CategoryError, key: "JSX_elements_cannot_have_multiple_attributes_with_the_same_name_17001", text: "JSX elements cannot have multiple attributes with the same name."}
-
-var Expected_corresponding_JSX_closing_tag_for_0 = &Message{code: 17002, category: CategoryError, key: "Expected_corresponding_JSX_closing_tag_for_0_17002", text: "Expected corresponding JSX closing tag for '{0}'."}
-
-var Cannot_use_JSX_unless_the_jsx_flag_is_provided = &Message{code: 17004, category: CategoryError, key: "Cannot_use_JSX_unless_the_jsx_flag_is_provided_17004", text: "Cannot use JSX unless the '--jsx' flag is provided."}
-
 var A_constructor_cannot_contain_a_super_call_when_its_class_extends_null = &Message{code: 17005, category: CategoryError, key: "A_constructor_cannot_contain_a_super_call_when_its_class_extends_null_17005", text: "A constructor cannot contain a 'super' call when its class extends 'null'."}
 
 var An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses = &Message{code: 17006, category: CategoryError, key: "An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_ex_17006", text: "An unary expression with the '{0}' operator is not allowed in the left-hand side of an exponentiation expression. Consider enclosing the expression in parentheses."}
 
 var A_type_assertion_expression_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses = &Message{code: 17007, category: CategoryError, key: "A_type_assertion_expression_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Con_17007", text: "A type assertion expression is not allowed in the left-hand side of an exponentiation expression. Consider enclosing the expression in parentheses."}
-
-var JSX_element_0_has_no_corresponding_closing_tag = &Message{code: 17008, category: CategoryError, key: "JSX_element_0_has_no_corresponding_closing_tag_17008", text: "JSX element '{0}' has no corresponding closing tag."}
 
 var X_super_must_be_called_before_accessing_this_in_the_constructor_of_a_derived_class = &Message{code: 17009, category: CategoryError, key: "super_must_be_called_before_accessing_this_in_the_constructor_of_a_derived_class_17009", text: "'super' must be called before accessing 'this' in the constructor of a derived class."}
 
@@ -3635,14 +3549,6 @@ var X_super_must_be_called_before_accessing_a_property_of_super_in_the_construct
 var X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2 = &Message{code: 17012, category: CategoryError, key: "_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2_17012", text: "'{0}' is not a valid meta-property for keyword '{1}'. Did you mean '{2}'?"}
 
 var Meta_property_0_is_only_allowed_in_the_body_of_a_function_declaration_function_expression_or_constructor = &Message{code: 17013, category: CategoryError, key: "Meta_property_0_is_only_allowed_in_the_body_of_a_function_declaration_function_expression_or_constru_17013", text: "Meta-property '{0}' is only allowed in the body of a function declaration, function expression, or constructor."}
-
-var JSX_fragment_has_no_corresponding_closing_tag = &Message{code: 17014, category: CategoryError, key: "JSX_fragment_has_no_corresponding_closing_tag_17014", text: "JSX fragment has no corresponding closing tag."}
-
-var Expected_corresponding_closing_tag_for_JSX_fragment = &Message{code: 17015, category: CategoryError, key: "Expected_corresponding_closing_tag_for_JSX_fragment_17015", text: "Expected corresponding closing tag for JSX fragment."}
-
-var The_jsxFragmentFactory_compiler_option_must_be_provided_to_use_JSX_fragments_with_the_jsxFactory_compiler_option = &Message{code: 17016, category: CategoryError, key: "The_jsxFragmentFactory_compiler_option_must_be_provided_to_use_JSX_fragments_with_the_jsxFactory_com_17016", text: "The 'jsxFragmentFactory' compiler option must be provided to use JSX fragments with the 'jsxFactory' compiler option."}
-
-var An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments = &Message{code: 17017, category: CategoryError, key: "An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments_17017", text: "An @jsxFrag pragma is required when using an @jsx pragma with JSX fragments."}
 
 var Unknown_type_acquisition_option_0_Did_you_mean_1 = &Message{code: 17018, category: CategoryError, key: "Unknown_type_acquisition_option_0_Did_you_mean_1_17018", text: "Unknown type acquisition option '{0}'. Did you mean '{1}'?"}
 
@@ -3661,8 +3567,6 @@ var No_inputs_were_found_in_config_file_0_Specified_include_paths_were_1_and_exc
 var No_value_exists_in_scope_for_the_shorthand_property_0_Either_declare_one_or_provide_an_initializer = &Message{code: 18004, category: CategoryError, key: "No_value_exists_in_scope_for_the_shorthand_property_0_Either_declare_one_or_provide_an_initializer_18004", text: "No value exists in scope for the shorthand property '{0}'. Either declare one or provide an initializer."}
 
 var Classes_may_not_have_a_field_named_constructor = &Message{code: 18006, category: CategoryError, key: "Classes_may_not_have_a_field_named_constructor_18006", text: "Classes may not have a field named 'constructor'."}
-
-var JSX_expressions_may_not_use_the_comma_operator_Did_you_mean_to_write_an_array = &Message{code: 18007, category: CategoryError, key: "JSX_expressions_may_not_use_the_comma_operator_Did_you_mean_to_write_an_array_18007", text: "JSX expressions may not use the comma operator. Did you mean to write an array?"}
 
 var Private_identifiers_cannot_be_used_as_parameters = &Message{code: 18009, category: CategoryError, key: "Private_identifiers_cannot_be_used_as_parameters_18009", text: "Private identifiers cannot be used as parameters."}
 
@@ -3704,10 +3608,6 @@ var The_intersection_0_was_reduced_to_never_because_property_1_exists_in_multipl
 
 var Type_0_is_not_assignable_to_type_1_as_required_for_computed_enum_member_values = &Message{code: 18033, category: CategoryError, key: "Type_0_is_not_assignable_to_type_1_as_required_for_computed_enum_member_values_18033", text: "Type '{0}' is not assignable to type '{1}' as required for computed enum member values."}
 
-var Specify_the_JSX_fragment_factory_function_to_use_when_targeting_react_JSX_emit_with_jsxFactory_compiler_option_is_specified_e_g_Fragment = &Message{code: 18034, category: CategoryMessage, key: "Specify_the_JSX_fragment_factory_function_to_use_when_targeting_react_JSX_emit_with_jsxFactory_compi_18034", text: "Specify the JSX fragment factory function to use when targeting 'react' JSX emit with 'jsxFactory' compiler option is specified, e.g. 'Fragment'."}
-
-var Invalid_value_for_jsxFragmentFactory_0_is_not_a_valid_identifier_or_qualified_name = &Message{code: 18035, category: CategoryError, key: "Invalid_value_for_jsxFragmentFactory_0_is_not_a_valid_identifier_or_qualified_name_18035", text: "Invalid value for 'jsxFragmentFactory'. '{0}' is not a valid identifier or qualified-name."}
-
 var Class_decorators_can_t_be_used_with_static_private_identifier_Consider_removing_the_experimental_decorator = &Message{code: 18036, category: CategoryError, key: "Class_decorators_can_t_be_used_with_static_private_identifier_Consider_removing_the_experimental_dec_18036", text: "Class decorators can't be used with static private identifier. Consider removing the experimental decorator."}
 
 var X_await_expression_cannot_be_used_inside_a_class_static_block = &Message{code: 18037, category: CategoryError, key: "await_expression_cannot_be_used_inside_a_class_static_block_18037", text: "'await' expression cannot be used inside a class static block."}
@@ -3737,8 +3637,6 @@ var X_0_is_possibly_null_or_undefined = &Message{code: 18049, category: Category
 var The_value_0_cannot_be_used_here = &Message{code: 18050, category: CategoryError, key: "The_value_0_cannot_be_used_here_18050", text: "The value '{0}' cannot be used here."}
 
 var Compiler_option_0_cannot_be_given_an_empty_string = &Message{code: 18051, category: CategoryError, key: "Compiler_option_0_cannot_be_given_an_empty_string_18051", text: "Compiler option '{0}' cannot be given an empty string."}
-
-var Its_type_0_is_not_a_valid_JSX_element_type = &Message{code: 18053, category: CategoryError, key: "Its_type_0_is_not_a_valid_JSX_element_type_18053", text: "Its type '{0}' is not a valid JSX element type."}
 
 var X_await_using_statements_cannot_be_used_inside_a_class_static_block = &Message{code: 18054, category: CategoryError, key: "await_using_statements_cannot_be_used_inside_a_class_static_block_18054", text: "'await using' statements cannot be used inside a class static block."}
 
@@ -4056,8 +3954,6 @@ var Remove_unnecessary_await = &Message{code: 95086, category: CategoryMessage, 
 
 var Remove_all_unnecessary_uses_of_await = &Message{code: 95087, category: CategoryMessage, key: "Remove_all_unnecessary_uses_of_await_95087", text: "Remove all unnecessary uses of 'await'"}
 
-var Enable_the_jsx_flag_in_your_configuration_file = &Message{code: 95088, category: CategoryMessage, key: "Enable_the_jsx_flag_in_your_configuration_file_95088", text: "Enable the '--jsx' flag in your configuration file"}
-
 var Add_await_to_initializers = &Message{code: 95089, category: CategoryMessage, key: "Add_await_to_initializers_95089", text: "Add 'await' to initializers"}
 
 var Extract_to_interface = &Message{code: 95090, category: CategoryMessage, key: "Extract_to_interface_95090", text: "Extract to interface"}
@@ -4115,10 +4011,6 @@ var Move_labeled_tuple_element_modifiers_to_labels = &Message{code: 95117, categ
 var Convert_overload_list_to_single_signature = &Message{code: 95118, category: CategoryMessage, key: "Convert_overload_list_to_single_signature_95118", text: "Convert overload list to single signature"}
 
 var Generate_get_and_set_accessors_for_all_overriding_properties = &Message{code: 95119, category: CategoryMessage, key: "Generate_get_and_set_accessors_for_all_overriding_properties_95119", text: "Generate 'get' and 'set' accessors for all overriding properties"}
-
-var Wrap_in_JSX_fragment = &Message{code: 95120, category: CategoryMessage, key: "Wrap_in_JSX_fragment_95120", text: "Wrap in JSX fragment"}
-
-var Wrap_all_unparented_JSX_in_JSX_fragment = &Message{code: 95121, category: CategoryMessage, key: "Wrap_all_unparented_JSX_in_JSX_fragment_95121", text: "Wrap all unparented JSX in JSX fragment"}
 
 var Convert_arrow_function_or_function_expression = &Message{code: 95122, category: CategoryMessage, key: "Convert_arrow_function_or_function_expression_95122", text: "Convert arrow function or function expression"}
 
@@ -4368,11 +4260,7 @@ var A_generic_pack_argument_can_only_be_supplied_for_a_generic_pack_parameter = 
 
 var A_type_argument_for_an_index_key_type_parameter_cannot_include_nil = &Message{code: 100048, category: CategoryError, key: "A_type_argument_for_an_index_key_type_parameter_cannot_include_nil_100048", text: "A type argument for an index-key type parameter cannot include 'nil'."}
 
-var JSX_element_implicitly_has_type_any_because_the_global_type_JsxElement_does_not_exist = &Message{code: 100049, category: CategoryError, key: "JSX_element_implicitly_has_type_any_because_the_global_type_JsxElement_does_not_exist_100049", text: "JSX element implicitly has type 'any' because the global type 'JsxElement' does not exist."}
-
 var The_global_type_0_may_not_have_more_than_one_property = &Message{code: 100050, category: CategoryError, key: "The_global_type_0_may_not_have_more_than_one_property_100050", text: "The global type '{0}' may not have more than one property."}
-
-var JSX_element_implicitly_has_type_any_because_no_interface_0_exists = &Message{code: 100051, category: CategoryError, key: "JSX_element_implicitly_has_type_any_because_no_interface_0_exists_100051", text: "JSX element implicitly has type 'any' because no interface '{0}' exists."}
 
 var A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement = &Message{code: 100052, category: CategoryError, key: "A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement_100052", text: "A 'break' statement can only be used within an enclosing iteration statement."}
 
@@ -4612,8 +4500,6 @@ func keyToMessage(key Key) *Message {
 		return Line_break_not_permitted_here
 	case "or_expected_1144":
 		return X_or_expected
-	case "or_JSX_element_expected_1145":
-		return X_or_JSX_element_expected
 	case "Declaration_expected_1146":
 		return Declaration_expected
 	case "Import_declarations_in_a_namespace_cannot_reference_a_module_1147":
@@ -5038,10 +4924,6 @@ func keyToMessage(key Key) *Message {
 		return Imported_via_0_from_file_1_to_import_importHelpers_as_specified_in_compilerOptions
 	case "Imported_via_0_from_file_1_with_packageId_2_to_import_importHelpers_as_specified_in_compilerOptions_1396":
 		return Imported_via_0_from_file_1_with_packageId_2_to_import_importHelpers_as_specified_in_compilerOptions
-	case "Imported_via_0_from_file_1_to_import_jsx_and_jsxs_factory_functions_1397":
-		return Imported_via_0_from_file_1_to_import_jsx_and_jsxs_factory_functions
-	case "Imported_via_0_from_file_1_with_packageId_2_to_import_jsx_and_jsxs_factory_functions_1398":
-		return Imported_via_0_from_file_1_with_packageId_2_to_import_jsx_and_jsxs_factory_functions
 	case "File_is_included_via_import_here_1399":
 		return File_is_included_via_import_here
 	case "Referenced_via_0_from_file_1_1400":
@@ -5174,8 +5056,6 @@ func keyToMessage(key Key) *Message {
 		return An_export_declaration_can_only_be_used_at_the_top_level_of_a_module
 	case "Control_what_method_is_used_to_detect_module_format_JS_files_1475":
 		return Control_what_method_is_used_to_detect_module_format_JS_files
-	case "auto_Colon_Treat_files_with_imports_exports_import_meta_jsx_with_jsx_Colon_react_jsx_or_esm_format_w_1476":
-		return X_auto_Colon_Treat_files_with_imports_exports_import_meta_jsx_with_jsx_Colon_react_jsx_or_esm_format_with_module_Colon_node16_as_modules
 	case "An_instantiation_expression_cannot_be_followed_by_a_property_access_1477":
 		return An_instantiation_expression_cannot_be_followed_by_a_property_access
 	case "Identifier_or_string_literal_expected_1478":
@@ -5886,20 +5766,8 @@ func keyToMessage(key Key) *Message {
 		return X_0_can_only_be_imported_by_using_a_require_call_or_by_using_a_default_import
 	case "_0_can_only_be_imported_by_using_a_require_call_or_by_turning_on_the_esModuleInterop_flag_and_using__2598":
 		return X_0_can_only_be_imported_by_using_a_require_call_or_by_turning_on_the_esModuleInterop_flag_and_using_a_default_import
-	case "JSX_element_implicitly_has_type_any_because_the_global_type_JSX_Element_does_not_exist_2602":
-		return JSX_element_implicitly_has_type_any_because_the_global_type_JSX_Element_does_not_exist
 	case "Property_0_in_type_1_is_not_assignable_to_type_2_2603":
 		return Property_0_in_type_1_is_not_assignable_to_type_2
-	case "JSX_element_type_0_does_not_have_any_construct_or_call_signatures_2604":
-		return JSX_element_type_0_does_not_have_any_construct_or_call_signatures
-	case "Property_0_of_JSX_spread_attribute_is_not_assignable_to_target_property_2606":
-		return Property_0_of_JSX_spread_attribute_is_not_assignable_to_target_property
-	case "JSX_element_class_does_not_support_attributes_because_it_does_not_have_a_0_property_2607":
-		return JSX_element_class_does_not_support_attributes_because_it_does_not_have_a_0_property
-	case "The_global_type_JSX_0_may_not_have_more_than_one_property_2608":
-		return The_global_type_JSX_0_may_not_have_more_than_one_property
-	case "JSX_spread_child_must_be_an_array_type_2609":
-		return JSX_spread_child_must_be_an_array_type
 	case "_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property_2610":
 		return X_0_is_defined_as_an_accessor_in_class_1_but_is_overridden_here_in_2_as_an_instance_property
 	case "_0_is_defined_as_a_property_in_class_1_but_is_overridden_here_in_2_as_an_accessor_2611":
@@ -5944,8 +5812,6 @@ func keyToMessage(key Key) *Message {
 		return Cannot_assign_to_0_because_it_is_a_namespace
 	case "Cannot_assign_to_0_because_it_is_an_import_2632":
 		return Cannot_assign_to_0_because_it_is_an_import
-	case "JSX_property_access_expressions_cannot_include_JSX_namespace_names_2633":
-		return JSX_property_access_expressions_cannot_include_JSX_namespace_names
 	case "_0_index_signatures_are_incompatible_2634":
 		return X_0_index_signatures_are_incompatible
 	case "Type_0_has_no_signatures_for_which_the_type_argument_list_is_applicable_2635":
@@ -5956,8 +5822,6 @@ func keyToMessage(key Key) *Message {
 		return Variance_annotations_are_only_supported_in_type_aliases_for_object_function_constructor_and_mapped_types
 	case "Type_0_may_represent_a_primitive_value_which_is_not_permitted_as_the_right_operand_of_the_in_operato_2638":
 		return Type_0_may_represent_a_primitive_value_which_is_not_permitted_as_the_right_operand_of_the_in_operator
-	case "React_components_cannot_include_JSX_namespace_names_2639":
-		return React_components_cannot_include_JSX_namespace_names
 	case "Cannot_augment_module_0_with_value_exports_because_it_resolves_to_a_non_module_entity_2649":
 		return Cannot_augment_module_0_with_value_exports_because_it_resolves_to_a_non_module_entity
 	case "Non_abstract_class_expression_is_missing_implementations_for_the_following_members_of_0_Colon_1_and__2650":
@@ -5974,8 +5838,6 @@ func keyToMessage(key Key) *Message {
 		return Non_abstract_class_0_is_missing_implementations_for_the_following_members_of_1_Colon_2_and_3_more
 	case "Non_abstract_class_expression_is_missing_implementations_for_the_following_members_of_0_Colon_1_2656":
 		return Non_abstract_class_expression_is_missing_implementations_for_the_following_members_of_0_Colon_1
-	case "JSX_expressions_must_have_one_parent_element_2657":
-		return JSX_expressions_must_have_one_parent_element
 	case "Type_0_provides_no_match_for_the_signature_1_2658":
 		return Type_0_provides_no_match_for_the_signature_1
 	case "super_is_only_allowed_in_members_of_object_literal_expressions_when_option_target_is_ES2015_or_highe_2659":
@@ -6146,12 +6008,6 @@ func keyToMessage(key Key) *Message {
 		return No_overload_expects_0_type_arguments_but_overloads_do_exist_that_expect_either_1_or_2_type_arguments
 	case "Type_parameter_defaults_can_only_reference_previously_declared_type_parameters_2744":
 		return Type_parameter_defaults_can_only_reference_previously_declared_type_parameters
-	case "This_JSX_tag_s_0_prop_expects_type_1_which_requires_multiple_children_but_only_a_single_child_was_pr_2745":
-		return This_JSX_tag_s_0_prop_expects_type_1_which_requires_multiple_children_but_only_a_single_child_was_provided
-	case "This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided_2746":
-		return This_JSX_tag_s_0_prop_expects_a_single_child_of_type_1_but_multiple_children_were_provided
-	case "_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_t_2747":
-		return X_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_type_of_1_is_2
 	case "Cannot_access_ambient_const_enums_when_0_is_enabled_2748":
 		return Cannot_access_ambient_const_enums_when_0_is_enabled
 	case "_0_refers_to_a_value_but_is_being_used_as_a_type_here_Did_you_mean_typeof_0_2749":
@@ -6228,14 +6084,6 @@ func keyToMessage(key Key) *Message {
 		return X_get_and_set_accessors_cannot_declare_this_parameters
 	case "This_spread_always_overwrites_this_property_2785":
 		return This_spread_always_overwrites_this_property
-	case "_0_cannot_be_used_as_a_JSX_component_2786":
-		return X_0_cannot_be_used_as_a_JSX_component
-	case "Its_return_type_0_is_not_a_valid_JSX_element_2787":
-		return Its_return_type_0_is_not_a_valid_JSX_element
-	case "Its_instance_type_0_is_not_a_valid_JSX_element_2788":
-		return Its_instance_type_0_is_not_a_valid_JSX_element
-	case "Its_element_type_0_is_not_a_valid_JSX_element_2789":
-		return Its_element_type_0_is_not_a_valid_JSX_element
 	case "The_operand_of_a_delete_operator_must_be_optional_2790":
 		return The_operand_of_a_delete_operator_must_be_optional
 	case "Exponentiation_cannot_be_performed_on_bigint_values_unless_the_target_option_is_set_to_es2016_or_lat_2791":
@@ -6380,18 +6228,12 @@ func keyToMessage(key Key) *Message {
 		return This_kind_of_expression_is_always_truthy
 	case "This_kind_of_expression_is_always_falsy_2873":
 		return This_kind_of_expression_is_always_falsy
-	case "This_JSX_tag_requires_0_to_be_in_scope_but_it_could_not_be_found_2874":
-		return This_JSX_tag_requires_0_to_be_in_scope_but_it_could_not_be_found
-	case "This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Make_sure_you_have_types_fo_2875":
-		return This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Make_sure_you_have_types_for_the_appropriate_package_installed
 	case "This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolv_2876":
 		return This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0
 	case "This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emi_2877":
 		return This_import_uses_a_0_extension_to_resolve_to_an_input_tlua_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path
 	case "This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_b_2878":
 		return This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_between_the_projects_output_files_is_not_the_same_as_the_relative_path_between_its_input_files
-	case "Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found_2879":
-		return Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found
 	case "Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert_2880":
 		return Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert
 	case "This_expression_is_never_nullish_2881":
@@ -6662,8 +6504,6 @@ func keyToMessage(key Key) *Message {
 		return Cannot_find_a_tluaconfig_json_file_at_the_specified_directory_Colon_0
 	case "The_specified_path_does_not_exist_Colon_0_5058":
 		return The_specified_path_does_not_exist_Colon_0
-	case "Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier_5059":
-		return Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier
 	case "Pattern_0_can_have_at_most_one_Asterisk_character_5061":
 		return Pattern_0_can_have_at_most_one_Asterisk_character
 	case "Substitution_0_in_pattern_1_can_have_at_most_one_Asterisk_character_5062":
@@ -6676,8 +6516,6 @@ func keyToMessage(key Key) *Message {
 		return File_specification_cannot_contain_a_parent_directory_that_appears_after_a_recursive_directory_wildcard_Asterisk_Asterisk_Colon_0
 	case "Substitutions_for_pattern_0_shouldn_t_be_an_empty_array_5066":
 		return Substitutions_for_pattern_0_shouldn_t_be_an_empty_array
-	case "Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name_5067":
-		return Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name
 	case "Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_5068":
 		return Adding_a_tluaconfig_json_file_will_help_organize_projects_that_contain_both_Lua_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig
 	case "Option_0_cannot_be_specified_without_specifying_option_1_or_option_2_5069":
@@ -6718,8 +6556,6 @@ func keyToMessage(key Key) *Message {
 		return A_labeled_tuple_element_is_declared_as_rest_with_a_before_the_name_rather_than_before_the_type
 	case "The_inferred_type_of_0_references_a_type_with_a_cyclic_structure_which_cannot_be_trivially_serialize_5088":
 		return The_inferred_type_of_0_references_a_type_with_a_cyclic_structure_which_cannot_be_trivially_serialized_A_type_annotation_is_necessary
-	case "Option_0_cannot_be_specified_when_option_jsx_is_1_5089":
-		return Option_0_cannot_be_specified_when_option_jsx_is_1
 	case "Non_relative_paths_are_not_allowed_Did_you_forget_a_leading_Slash_5090":
 		return Non_relative_paths_are_not_allowed_Did_you_forget_a_leading_Slash
 	case "Option_preserveConstEnums_cannot_be_disabled_when_0_is_enabled_5091":
@@ -6892,14 +6728,10 @@ func keyToMessage(key Key) *Message {
 		return Disallow_inconsistently_cased_references_to_the_same_file
 	case "Specify_library_files_to_be_included_in_the_compilation_6079":
 		return Specify_library_files_to_be_included_in_the_compilation
-	case "Specify_JSX_code_generation_6080":
-		return Specify_JSX_code_generation
 	case "Only_amd_and_system_modules_are_supported_alongside_0_6082":
 		return Only_amd_and_system_modules_are_supported_alongside_0
 	case "Base_directory_to_resolve_non_absolute_module_names_6083":
 		return Base_directory_to_resolve_non_absolute_module_names
-	case "Deprecated_Use_jsxFactory_instead_Specify_the_object_invoked_for_createElement_when_targeting_react__6084":
-		return Deprecated_Use_jsxFactory_instead_Specify_the_object_invoked_for_createElement_when_targeting_react_JSX_emit
 	case "Enable_tracing_of_the_name_resolution_process_6085":
 		return Enable_tracing_of_the_name_resolution_process
 	case "Resolving_module_0_from_1_6086":
@@ -7006,12 +6838,8 @@ func keyToMessage(key Key) *Message {
 		return Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_pass_for_module_1_using_cache_location_2
 	case "Parse_in_strict_mode_and_emit_use_strict_for_each_source_file_6141":
 		return Parse_in_strict_mode_and_emit_use_strict_for_each_source_file
-	case "Module_0_was_resolved_to_1_but_jsx_is_not_set_6142":
-		return Module_0_was_resolved_to_1_but_jsx_is_not_set
 	case "Module_0_was_resolved_as_locally_declared_ambient_module_in_file_1_6144":
 		return Module_0_was_resolved_as_locally_declared_ambient_module_in_file_1
-	case "Specify_the_JSX_factory_function_to_use_when_targeting_react_JSX_emit_e_g_React_createElement_or_h_6146":
-		return Specify_the_JSX_factory_function_to_use_when_targeting_react_JSX_emit_e_g_React_createElement_or_h
 	case "Resolution_for_module_0_was_found_in_cache_from_location_1_6147":
 		return Resolution_for_module_0_was_found_in_cache_from_location_1
 	case "Directory_0_does_not_exist_skipping_all_lookups_in_it_6148":
@@ -7154,8 +6982,6 @@ func keyToMessage(key Key) *Message {
 		return Specify_strategy_for_watching_directory_on_platforms_that_don_t_support_recursive_watching_natively_Colon_UseFsEvents_default_FixedPollingInterval_DynamicPriorityPolling_FixedChunkSizePolling
 	case "Specify_strategy_for_creating_a_polling_watch_when_it_fails_to_create_using_file_system_events_Colon_6227":
 		return Specify_strategy_for_creating_a_polling_watch_when_it_fails_to_create_using_file_system_events_Colon_FixedInterval_default_PriorityInterval_DynamicPriority_FixedChunkSize
-	case "Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3_6229":
-		return Tag_0_expects_at_least_1_arguments_but_the_JSX_factory_2_provides_at_most_3
 	case "Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line_6230":
 		return Option_0_can_only_be_specified_in_tluaconfig_json_file_or_set_to_false_or_null_on_command_line
 	case "Could_not_resolve_the_path_0_with_the_extensions_Colon_1_6231":
@@ -7172,8 +6998,6 @@ func keyToMessage(key Key) *Message {
 		return Arguments_for_the_rest_parameter_0_were_not_provided
 	case "Generates_an_event_trace_and_a_list_of_types_6237":
 		return Generates_an_event_trace_and_a_list_of_types
-	case "Specify_the_module_specifier_to_be_used_to_import_the_jsx_and_jsxs_factory_functions_from_eg_react_6238":
-		return Specify_the_module_specifier_to_be_used_to_import_the_jsx_and_jsxs_factory_functions_from_eg_react
 	case "File_0_exists_according_to_earlier_cached_lookups_6239":
 		return File_0_exists_according_to_earlier_cached_lookups
 	case "File_0_does_not_exist_according_to_earlier_cached_lookups_6240":
@@ -7526,14 +7350,6 @@ func keyToMessage(key Key) *Message {
 		return Include_source_code_in_the_sourcemaps_inside_the_emitted_JavaScript
 	case "Ensure_that_each_file_can_be_safely_transpiled_without_relying_on_other_imports_6645":
 		return Ensure_that_each_file_can_be_safely_transpiled_without_relying_on_other_imports
-	case "Specify_what_JSX_code_is_generated_6646":
-		return Specify_what_JSX_code_is_generated
-	case "Specify_the_JSX_factory_function_used_when_targeting_React_JSX_emit_e_g_React_createElement_or_h_6647":
-		return Specify_the_JSX_factory_function_used_when_targeting_React_JSX_emit_e_g_React_createElement_or_h
-	case "Specify_the_JSX_Fragment_reference_used_for_fragments_when_targeting_React_JSX_emit_e_g_React_Fragme_6648":
-		return Specify_the_JSX_Fragment_reference_used_for_fragments_when_targeting_React_JSX_emit_e_g_React_Fragment_or_Fragment
-	case "Specify_module_specifier_used_to_import_the_JSX_factory_functions_when_using_jsx_Colon_react_jsx_Ast_6649":
-		return Specify_module_specifier_used_to_import_the_JSX_factory_functions_when_using_jsx_Colon_react_jsx_Asterisk
 	case "Make_keyof_only_return_strings_instead_of_string_numbers_or_symbols_Legacy_option_6650":
 		return Make_keyof_only_return_strings_instead_of_string_numbers_or_symbols_Legacy_option
 	case "Specify_a_set_of_bundled_library_declaration_files_that_describe_the_target_runtime_environment_6651":
@@ -7606,8 +7422,6 @@ func keyToMessage(key Key) *Message {
 		return Disable_wiping_the_console_in_watch_mode
 	case "Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read_6685":
 		return Enable_color_and_formatting_in_tlua_s_output_to_make_compiler_errors_easier_to_read
-	case "Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit_6686":
-		return Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit
 	case "Specify_an_array_of_objects_that_specify_paths_for_projects_Used_in_project_references_6687":
 		return Specify_an_array_of_objects_that_specify_paths_for_projects_Used_in_project_references
 	case "Disable_emitting_comments_6688":
@@ -7786,8 +7600,6 @@ func keyToMessage(key Key) *Message {
 		return Function_implicitly_has_return_type_any_because_it_does_not_have_a_return_type_annotation_and_is_referenced_directly_or_indirectly_in_one_of_its_return_expressions
 	case "Generator_implicitly_has_yield_type_0_Consider_supplying_a_return_type_annotation_7025":
 		return Generator_implicitly_has_yield_type_0_Consider_supplying_a_return_type_annotation
-	case "JSX_element_implicitly_has_type_any_because_no_interface_JSX_0_exists_7026":
-		return JSX_element_implicitly_has_type_any_because_no_interface_JSX_0_exists
 	case "Unreachable_code_detected_7027":
 		return Unreachable_code_detected
 	case "Unused_label_7028":
@@ -8000,22 +7812,12 @@ func keyToMessage(key Key) *Message {
 		return Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations
 	case "Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations_9039":
 		return Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations
-	case "JSX_attributes_must_only_be_assigned_a_non_empty_expression_17000":
-		return JSX_attributes_must_only_be_assigned_a_non_empty_expression
-	case "JSX_elements_cannot_have_multiple_attributes_with_the_same_name_17001":
-		return JSX_elements_cannot_have_multiple_attributes_with_the_same_name
-	case "Expected_corresponding_JSX_closing_tag_for_0_17002":
-		return Expected_corresponding_JSX_closing_tag_for_0
-	case "Cannot_use_JSX_unless_the_jsx_flag_is_provided_17004":
-		return Cannot_use_JSX_unless_the_jsx_flag_is_provided
 	case "A_constructor_cannot_contain_a_super_call_when_its_class_extends_null_17005":
 		return A_constructor_cannot_contain_a_super_call_when_its_class_extends_null
 	case "An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_ex_17006":
 		return An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses
 	case "A_type_assertion_expression_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Con_17007":
 		return A_type_assertion_expression_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses
-	case "JSX_element_0_has_no_corresponding_closing_tag_17008":
-		return JSX_element_0_has_no_corresponding_closing_tag
 	case "super_must_be_called_before_accessing_this_in_the_constructor_of_a_derived_class_17009":
 		return X_super_must_be_called_before_accessing_this_in_the_constructor_of_a_derived_class
 	case "Unknown_type_acquisition_option_0_17010":
@@ -8026,14 +7828,6 @@ func keyToMessage(key Key) *Message {
 		return X_0_is_not_a_valid_meta_property_for_keyword_1_Did_you_mean_2
 	case "Meta_property_0_is_only_allowed_in_the_body_of_a_function_declaration_function_expression_or_constru_17013":
 		return Meta_property_0_is_only_allowed_in_the_body_of_a_function_declaration_function_expression_or_constructor
-	case "JSX_fragment_has_no_corresponding_closing_tag_17014":
-		return JSX_fragment_has_no_corresponding_closing_tag
-	case "Expected_corresponding_closing_tag_for_JSX_fragment_17015":
-		return Expected_corresponding_closing_tag_for_JSX_fragment
-	case "The_jsxFragmentFactory_compiler_option_must_be_provided_to_use_JSX_fragments_with_the_jsxFactory_com_17016":
-		return The_jsxFragmentFactory_compiler_option_must_be_provided_to_use_JSX_fragments_with_the_jsxFactory_compiler_option
-	case "An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments_17017":
-		return An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments
 	case "Unknown_type_acquisition_option_0_Did_you_mean_1_17018":
 		return Unknown_type_acquisition_option_0_Did_you_mean_1
 	case "_0_at_the_end_of_a_type_is_not_valid_tlua_syntax_Did_you_mean_to_write_1_17019":
@@ -8052,8 +7846,6 @@ func keyToMessage(key Key) *Message {
 		return No_value_exists_in_scope_for_the_shorthand_property_0_Either_declare_one_or_provide_an_initializer
 	case "Classes_may_not_have_a_field_named_constructor_18006":
 		return Classes_may_not_have_a_field_named_constructor
-	case "JSX_expressions_may_not_use_the_comma_operator_Did_you_mean_to_write_an_array_18007":
-		return JSX_expressions_may_not_use_the_comma_operator_Did_you_mean_to_write_an_array
 	case "Private_identifiers_cannot_be_used_as_parameters_18009":
 		return Private_identifiers_cannot_be_used_as_parameters
 	case "An_accessibility_modifier_cannot_be_used_with_a_private_identifier_18010":
@@ -8094,10 +7886,6 @@ func keyToMessage(key Key) *Message {
 		return The_intersection_0_was_reduced_to_never_because_property_1_exists_in_multiple_constituents_and_is_private_in_some
 	case "Type_0_is_not_assignable_to_type_1_as_required_for_computed_enum_member_values_18033":
 		return Type_0_is_not_assignable_to_type_1_as_required_for_computed_enum_member_values
-	case "Specify_the_JSX_fragment_factory_function_to_use_when_targeting_react_JSX_emit_with_jsxFactory_compi_18034":
-		return Specify_the_JSX_fragment_factory_function_to_use_when_targeting_react_JSX_emit_with_jsxFactory_compiler_option_is_specified_e_g_Fragment
-	case "Invalid_value_for_jsxFragmentFactory_0_is_not_a_valid_identifier_or_qualified_name_18035":
-		return Invalid_value_for_jsxFragmentFactory_0_is_not_a_valid_identifier_or_qualified_name
 	case "Class_decorators_can_t_be_used_with_static_private_identifier_Consider_removing_the_experimental_dec_18036":
 		return Class_decorators_can_t_be_used_with_static_private_identifier_Consider_removing_the_experimental_decorator
 	case "await_expression_cannot_be_used_inside_a_class_static_block_18037":
@@ -8128,8 +7916,6 @@ func keyToMessage(key Key) *Message {
 		return The_value_0_cannot_be_used_here
 	case "Compiler_option_0_cannot_be_given_an_empty_string_18051":
 		return Compiler_option_0_cannot_be_given_an_empty_string
-	case "Its_type_0_is_not_a_valid_JSX_element_type_18053":
-		return Its_type_0_is_not_a_valid_JSX_element_type
 	case "await_using_statements_cannot_be_used_inside_a_class_static_block_18054":
 		return X_await_using_statements_cannot_be_used_inside_a_class_static_block
 	case "_0_has_a_string_type_but_must_have_syntactically_recognizable_string_syntax_when_isolatedModules_is__18055":
@@ -8446,8 +8232,6 @@ func keyToMessage(key Key) *Message {
 		return Remove_unnecessary_await
 	case "Remove_all_unnecessary_uses_of_await_95087":
 		return Remove_all_unnecessary_uses_of_await
-	case "Enable_the_jsx_flag_in_your_configuration_file_95088":
-		return Enable_the_jsx_flag_in_your_configuration_file
 	case "Add_await_to_initializers_95089":
 		return Add_await_to_initializers
 	case "Extract_to_interface_95090":
@@ -8506,10 +8290,6 @@ func keyToMessage(key Key) *Message {
 		return Convert_overload_list_to_single_signature
 	case "Generate_get_and_set_accessors_for_all_overriding_properties_95119":
 		return Generate_get_and_set_accessors_for_all_overriding_properties
-	case "Wrap_in_JSX_fragment_95120":
-		return Wrap_in_JSX_fragment
-	case "Wrap_all_unparented_JSX_in_JSX_fragment_95121":
-		return Wrap_all_unparented_JSX_in_JSX_fragment
 	case "Convert_arrow_function_or_function_expression_95122":
 		return Convert_arrow_function_or_function_expression
 	case "Convert_to_anonymous_function_95123":
@@ -8758,12 +8538,8 @@ func keyToMessage(key Key) *Message {
 		return A_generic_pack_argument_can_only_be_supplied_for_a_generic_pack_parameter
 	case "A_type_argument_for_an_index_key_type_parameter_cannot_include_nil_100048":
 		return A_type_argument_for_an_index_key_type_parameter_cannot_include_nil
-	case "JSX_element_implicitly_has_type_any_because_the_global_type_JsxElement_does_not_exist_100049":
-		return JSX_element_implicitly_has_type_any_because_the_global_type_JsxElement_does_not_exist
 	case "The_global_type_0_may_not_have_more_than_one_property_100050":
 		return The_global_type_0_may_not_have_more_than_one_property
-	case "JSX_element_implicitly_has_type_any_because_no_interface_0_exists_100051":
-		return JSX_element_implicitly_has_type_any_because_no_interface_0_exists
 	case "A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement_100052":
 		return A_break_statement_can_only_be_used_within_an_enclosing_iteration_statement
 	case "A_top_level_return_must_be_the_last_statement_of_its_block_100053":

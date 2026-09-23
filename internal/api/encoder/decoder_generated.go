@@ -17,9 +17,6 @@ func (d *astDecoder) createStringNode(kind ast.Kind, data uint32, commonData uin
 		return d.factory.NewIdentifier(text), nil
 	case ast.KindPrivateIdentifier:
 		return d.factory.NewPrivateIdentifier(text), nil
-	case ast.KindJsxText:
-		containsOnlyTriviaWhiteSpaces := commonData&1 != 0
-		return d.factory.NewJsxText(text, containsOnlyTriviaWhiteSpaces), nil
 	case ast.KindJSDocText:
 		return d.factory.NewJSDocText([]string{text}), nil
 	case ast.KindJSDocLink:
@@ -70,8 +67,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindNonTextFileMarkerTrivia,
 		ast.KindNumericLiteral,
 		ast.KindStringLiteral,
-		ast.KindJsxText,
-		ast.KindJsxTextAllWhiteSpaces,
 		ast.KindRegularExpressionLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindTemplateHead,
@@ -89,7 +84,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		ast.KindCommaToken,
 		ast.KindQuestionDotToken,
 		ast.KindLessThanToken,
-		ast.KindLessThanSlashToken,
 		ast.KindGreaterThanToken,
 		ast.KindLessThanEqualsToken,
 		ast.KindGreaterThanEqualsToken,
@@ -626,55 +620,6 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewSyntheticExpression(typeNode, isSpread, d.singleChild(childIndices)), nil
 	case ast.KindPartiallyEmittedExpression:
 		return d.factory.NewPartiallyEmittedExpression(d.singleChild(childIndices)), nil
-	case ast.KindJsxElement:
-		it := newChildIter(childIndices)
-		openingElement := d.nodeAt(it.nextIf(mask, 0))
-		children := d.nodeListAt(it.nextIf(mask, 1))
-		closingElement := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewJsxElement(openingElement, children, closingElement), nil
-	case ast.KindJsxAttributes:
-		return d.factory.NewJsxAttributes(d.singleNodeListChild(childIndices)), nil
-	case ast.KindJsxNamespacedName:
-		it := newChildIter(childIndices)
-		namespace := d.nodeAt(it.nextIf(mask, 0))
-		name := d.nodeAt(it.nextIf(mask, 1))
-		return d.factory.NewJsxNamespacedName(namespace, name), nil
-	case ast.KindJsxOpeningElement:
-		it := newChildIter(childIndices)
-		tagName := d.nodeAt(it.nextIf(mask, 0))
-		typeArguments := d.nodeListAt(it.nextIf(mask, 1))
-		attributes := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewJsxOpeningElement(tagName, typeArguments, attributes), nil
-	case ast.KindJsxSelfClosingElement:
-		it := newChildIter(childIndices)
-		tagName := d.nodeAt(it.nextIf(mask, 0))
-		typeArguments := d.nodeListAt(it.nextIf(mask, 1))
-		attributes := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewJsxSelfClosingElement(tagName, typeArguments, attributes), nil
-	case ast.KindJsxFragment:
-		it := newChildIter(childIndices)
-		openingFragment := d.nodeAt(it.nextIf(mask, 0))
-		children := d.nodeListAt(it.nextIf(mask, 1))
-		closingFragment := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewJsxFragment(openingFragment, children, closingFragment), nil
-	case ast.KindJsxOpeningFragment:
-		return d.factory.NewJsxOpeningFragment(), nil
-	case ast.KindJsxClosingFragment:
-		return d.factory.NewJsxClosingFragment(), nil
-	case ast.KindJsxAttribute:
-		it := newChildIter(childIndices)
-		name := d.nodeAt(it.nextIf(mask, 0))
-		initializer := d.nodeAt(it.nextIf(mask, 1))
-		return d.factory.NewJsxAttribute(name, initializer), nil
-	case ast.KindJsxSpreadAttribute:
-		return d.factory.NewJsxSpreadAttribute(d.singleChild(childIndices)), nil
-	case ast.KindJsxClosingElement:
-		return d.factory.NewJsxClosingElement(d.singleChild(childIndices)), nil
-	case ast.KindJsxExpression:
-		it := newChildIter(childIndices)
-		dotDotDotToken := d.nodeAt(it.nextIf(mask, 0))
-		expression := d.nodeAt(it.nextIf(mask, 1))
-		return d.factory.NewJsxExpression(dotDotDotToken, expression), nil
 	case ast.KindSyntaxList:
 		nodes := d.allocNodeSlice(len(childIndices))
 		for i, ci := range childIndices {

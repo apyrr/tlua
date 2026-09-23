@@ -63,7 +63,7 @@ func (l *LanguageService) provideDefinitionWorker(
 
 	declarations := getDeclarationsFromLocation(c, node)
 	calledDeclaration := tryGetSignatureDeclaration(c, node)
-	if calledDeclaration != nil && !(ast.IsJsxOpeningLikeElement(node.Parent) && isJsxConstructorLike(calledDeclaration)) {
+	if calledDeclaration != nil {
 		symbol := c.GetSymbolAtLocation(getDeclarationNameForKeyword(node))
 		if symbol != nil && core.Some(c.GetRootSymbols(symbol), func(rootSymbol *ast.Symbol) bool {
 			return symbolMatchesSignature(rootSymbol, calledDeclaration)
@@ -289,7 +289,7 @@ func getAncestorCallLikeExpression(node *ast.Node) *ast.Node {
 		return !ast.IsRightSideOfPropertyAccess(n)
 	})
 	callLike := target.Parent
-	if callLike != nil && ast.IsCallLikeExpression(callLike) && ast.GetInvokedExpression(callLike) == target {
+	if callLike != nil && ast.IsCallExpression(callLike) && ast.GetInvokedExpression(callLike) == target {
 		return callLike
 	}
 	return nil
@@ -312,15 +312,6 @@ func tryGetSignatureDeclaration(typeChecker *checker.Checker, node *ast.Node) *a
 	return nil
 }
 
-func isJsxConstructorLike(node *ast.Node) bool {
-	switch {
-	case ast.IsCallSignatureDeclaration(node):
-		return true
-	default:
-		return false
-	}
-}
-
 func symbolMatchesSignature(symbol *ast.Symbol, calledDeclaration *ast.Node) bool {
 	if symbol == nil || calledDeclaration == nil {
 		return false
@@ -331,7 +322,7 @@ func symbolMatchesSignature(symbol *ast.Symbol, calledDeclaration *ast.Node) boo
 	}
 	parent := calledDeclaration.Parent
 	return parent != nil && (ast.IsAssignmentExpression(parent, false /*excludeCompoundAssignment*/) ||
-		!ast.IsCallLikeExpression(parent) && ast.CanHaveSymbol(parent) && symbol == parent.Symbol())
+		!ast.IsCallExpression(parent) && ast.CanHaveSymbol(parent) && symbol == parent.Symbol())
 }
 
 func getTypeOfSymbolAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) *checker.Type {

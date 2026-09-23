@@ -457,7 +457,7 @@ const astBuiltinTypeNames = new Set([
 // unions and lists recurse into their members; kinds and type parameters emit
 // `SyntaxKind.*` / locally-scoped names and contribute nothing. Names the
 // schema cannot resolve fall back to a PrimitiveType whose name is the raw
-// reference (e.g. a hand-written `ast.ts` type such as JsxTagNamePropertyAccess).
+// reference (e.g. a hand-written `ast.ts` type such as EntityNameExpression).
 function collectTypeReferences(type: Type, into: Set<string>): void {
     switch (type.kind) {
         case "node":
@@ -581,7 +581,6 @@ function generateFactory(): string {
         const name of [
             "fileName",
             "path",
-            "languageVariant",
             "scriptKind",
             "isDeclarationFile",
             "referencedFiles",

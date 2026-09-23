@@ -40,7 +40,7 @@ func (o *OutputPaths) DeclarationMapPath() string {
 }
 
 func GetOutputPathsFor(sourceFile *ast.SourceFile, options *core.CompilerOptions, host OutputPathsHost, forceDtsEmit bool) *OutputPaths {
-	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), options, host, GetOutputExtension(sourceFile.FileName(), options.Jsx))
+	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), options, host, GetOutputExtension(sourceFile.FileName()))
 	isJsonFile := ast.IsJsonSourceFile(sourceFile)
 	// If json file emits to the same location skip writing it, if emitDeclarationOnly skip writing it
 	isJsonEmittedToSameLocation := isJsonFile &&
@@ -91,7 +91,7 @@ func GetOutputJSFileName(inputFileName string, options *core.CompilerOptions, ho
 func GetOutputJSFileNameWorker(inputFileName string, options *core.CompilerOptions, host OutputPathsHost) string {
 	return tspath.ChangeExtension(
 		getOutputPathWithoutChangingExtension(inputFileName, options.OutDir, host),
-		GetOutputExtension(inputFileName, options.Jsx),
+		GetOutputExtension(inputFileName),
 	)
 }
 
@@ -106,15 +106,11 @@ func GetOutputDeclarationFileNameWorker(inputFileName string, options *core.Comp
 	)
 }
 
-func GetOutputExtension(fileName string, jsx core.JsxEmit) string {
-	switch {
-	case tspath.FileExtensionIs(fileName, tspath.ExtensionJson):
+func GetOutputExtension(fileName string) string {
+	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return tspath.ExtensionJson
-	case jsx == core.JsxEmitPreserve && tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionJsx, tspath.ExtensionTsx}):
-		return tspath.ExtensionJsx
-	default:
-		return tspath.ExtensionJs
 	}
+	return tspath.ExtensionJs
 }
 
 func GetDeclarationEmitOutputFilePath(file string, options *core.CompilerOptions, host OutputPathsHost) string {

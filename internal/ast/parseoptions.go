@@ -12,7 +12,6 @@ type SourceFileParseOptions struct {
 }
 
 type ExternalModuleIndicatorOptions struct {
-	JSX   bool
 	Force bool
 }
 

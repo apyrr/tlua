@@ -256,7 +256,7 @@ func TestGeneratedNameForIdentifier1(t *testing.T) {
 
 	ec := printer.NewEmitContext()
 
-	file := parsetestutil.ParseTypeScript("function f() {}", false /*jsx*/)
+	file := parsetestutil.ParseTypeScript("function f() {}")
 	binder.BindSourceFile(file)
 
 	n := file.Statements.Nodes[0].Name()
@@ -273,7 +273,7 @@ func TestGeneratedNameForIdentifier2(t *testing.T) {
 
 	ec := printer.NewEmitContext()
 
-	file := parsetestutil.ParseTypeScript("function f() {}", false /*jsx*/)
+	file := parsetestutil.ParseTypeScript("function f() {}")
 	binder.BindSourceFile(file)
 
 	n := file.Statements.Nodes[0].Name()
@@ -293,7 +293,7 @@ func TestGeneratedNameForIdentifier3(t *testing.T) {
 
 	ec := printer.NewEmitContext()
 
-	file := parsetestutil.ParseTypeScript("function f() {}", false /*jsx*/)
+	file := parsetestutil.ParseTypeScript("function f() {}")
 	binder.BindSourceFile(file)
 
 	n := file.Statements.Nodes[0].Name()
@@ -315,7 +315,7 @@ func TestGeneratedNameForNodeCached(t *testing.T) {
 
 	ec := printer.NewEmitContext()
 
-	file := parsetestutil.ParseTypeScript("function foo() { local foo; }", false /*jsx*/)
+	file := parsetestutil.ParseTypeScript("function foo() { local foo; }")
 	binder.BindSourceFile(file)
 
 	ns1 := file.Statements.Nodes[0]
@@ -336,7 +336,7 @@ func TestGeneratedNameForComputedPropertyName(t *testing.T) {
 	ec := printer.NewEmitContext()
 
 	// object-literal computed property name (KindComputedPropertyName)
-	file := parsetestutil.ParseTypeScript("({ [x]: 0 })", false /*jsx*/)
+	file := parsetestutil.ParseTypeScript("({ [x]: 0 })")
 	binder.BindSourceFile(file)
 
 	n := file.Statements.Nodes[0].Expression().Expression().AsObjectLiteralExpression().Properties.Nodes[0].Name()
@@ -353,7 +353,7 @@ func TestGeneratedNameForOther(t *testing.T) {
 
 	ec := printer.NewEmitContext()
 
-	file := parsetestutil.ParseTypeScript("interface C {}", false /*jsx*/)
+	file := parsetestutil.ParseTypeScript("interface C {}")
 	binder.BindSourceFile(file)
 
 	n := ec.Factory.NewObjectLiteralExpression(

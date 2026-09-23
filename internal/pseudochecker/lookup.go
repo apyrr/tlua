@@ -575,6 +575,6 @@ func isContextuallyTyped(node *ast.Node) bool {
 		if (ast.IsVariableParameterOrProperty(n) || ast.IsAssertionExpression(n)) && n.Type() != nil && !ast.IsConstAssertion(n) {
 			return true
 		}
-		return ast.IsJsxElement(n) || ast.IsJsxExpression(n)
+		return false
 	}) != nil
 }

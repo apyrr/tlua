@@ -65,14 +65,6 @@ var moduleOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 	{Key: "preserve", Value: core.ModuleKindPreserve},
 })
 
-var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
-	{Key: "preserve", Value: core.JsxEmitPreserve},
-	{Key: "react-native", Value: core.JsxEmitReactNative},
-	{Key: "react-jsx", Value: core.JsxEmitReactJSX},
-	{Key: "react-jsxdev", Value: core.JsxEmitReactJSXDev},
-	{Key: "react", Value: core.JsxEmitReact},
-})
-
 var newLineOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[string, any]{
 	{Key: "crlf", Value: core.NewLineKindCRLF},
 	{Key: "lf", Value: core.NewLineKindLF},

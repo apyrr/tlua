@@ -323,7 +323,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 		if ast.IsPrivateIdentifier(name) {
 			return ast.InternalSymbolNameMissing
 		}
-		if ast.IsPropertyNameLiteral(name) || ast.IsJsxNamespacedName(name) {
+		if ast.IsPropertyNameLiteral(name) {
 			// Numeric literal names denote Lua number keys, a namespace
 			// distinct from string keys (t[1] != t["1"]).
 			if name.Kind == ast.KindNumericLiteral {
@@ -427,7 +427,7 @@ func (b *Binder) declareSymbolAndAddToSymbolTable(node *ast.Node, symbolFlags as
 		return b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	case ast.KindSourceFile:
 		return b.declareSourceFileMember(node, symbolFlags, symbolExcludes)
-	case ast.KindTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration, ast.KindJsxAttributes:
+	case ast.KindTypeLiteral, ast.KindObjectLiteralExpression, ast.KindInterfaceDeclaration:
 		return b.declareSymbol(ast.GetMembers(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
 	case ast.KindFunctionType,
 		ast.KindCallSignature,
@@ -681,10 +681,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindModuleDeclaration(node)
 	case ast.KindSourceFile:
 		b.bindSourceFileIfExternalModule()
-	case ast.KindJsxAttributes:
-		b.bindJsxAttributes(node)
-	case ast.KindJsxAttribute:
-		b.bindJsxAttribute(node, ast.SymbolFlagsProperty, ast.SymbolFlagsPropertyExcludes)
 	}
 	// Then we recurse into the children of the node to bind them as well. For certain
 	// symbols we do specialized work when we recurse. For example, we'll keep track of
@@ -755,14 +751,6 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 func (b *Binder) declareModuleSymbol(node *ast.Node) {
 	instantiated := ast.IsInstantiatedModule(node)
 	b.declareSymbolAndAddToSymbolTable(node, core.IfElse(instantiated, ast.SymbolFlagsValueModule, ast.SymbolFlagsNamespaceModule), core.IfElse(instantiated, ast.SymbolFlagsValueModuleExcludes, ast.SymbolFlagsNamespaceModuleExcludes))
-}
-
-func (b *Binder) bindJsxAttributes(node *ast.Node) {
-	b.bindAnonymousDeclaration(node, ast.SymbolFlagsObjectLiteral, ast.InternalSymbolNameJSXAttributes)
-}
-
-func (b *Binder) bindJsxAttribute(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) {
-	b.declareSymbolAndAddToSymbolTable(node, symbolFlags, symbolExcludes)
 }
 
 func (b *Binder) setExportContextFlag(node *ast.Node) {
@@ -2354,8 +2342,8 @@ func SetValueDeclaration(symbol *ast.Symbol, node *ast.Node) {
 
 func GetContainerFlags(node *ast.Node) ContainerFlags {
 	switch node.Kind {
-	case ast.KindObjectLiteralExpression, ast.KindTypeLiteral,
-		ast.KindJsxAttributes:
+	case ast.KindObjectLiteralExpression,
+		ast.KindTypeLiteral:
 		return ContainerFlagsIsContainer
 	case ast.KindInterfaceDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsInterface

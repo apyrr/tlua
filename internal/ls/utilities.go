@@ -786,10 +786,15 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 
 func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 	switch node.Kind {
-	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindBindingElement,
-		ast.KindPropertySignature, ast.KindPropertyAssignment,
+	case ast.KindVariableDeclaration,
+		ast.KindParameter,
+		ast.KindBindingElement,
+		ast.KindPropertySignature,
+		ast.KindPropertyAssignment,
 		ast.KindMethodSignature,
-		ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindJsxAttribute:
+		ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression,
+		ast.KindArrowFunction:
 		return ast.SemanticMeaningValue
 
 	case ast.KindTypeParameter, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral:
@@ -1058,9 +1063,6 @@ func findContainingList(node *ast.Node, file *ast.SourceFile) *ast.NodeList {
 }
 
 func getLeadingCommentRangesOfNode(node *ast.Node, file *ast.SourceFile) iter.Seq[ast.CommentRange] {
-	if node.Kind == ast.KindJsxText {
-		return nil
-	}
 	return scanner.GetLeadingCommentRanges(&ast.NodeFactory{}, file.Text(), node.Pos())
 }
 
@@ -1108,7 +1110,7 @@ func getChildrenFromNonJSDocNode(node *ast.Node, sourceFile *ast.SourceFile) []*
 // Returns the containing object literal property declaration given a possible name node, e.g. "a" in x = { "a": 1 }
 func getContainingObjectLiteralElement(node *ast.Node) *ast.Node {
 	element := getContainingObjectLiteralElementWorker(node)
-	if element != nil && (ast.IsObjectLiteralExpression(element.Parent) || ast.IsJsxAttributes(element.Parent)) {
+	if element != nil && ast.IsObjectLiteralExpression(element.Parent) {
 		return element
 	}
 	return nil
@@ -1118,22 +1120,18 @@ func getContainingObjectLiteralElementWorker(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral:
 		if node.Parent.Kind == ast.KindComputedPropertyName {
-			if isObjectLiteralOrJsxElement(node.Parent.Parent) {
+			if ast.IsObjectLiteralElement(node.Parent.Parent) {
 				return node.Parent.Parent
 			}
 			return nil
 		}
 		fallthrough
-	case ast.KindIdentifier, ast.KindJsxNamespacedName:
-		if isObjectLiteralOrJsxElement(node.Parent) && (node.Parent.Parent.Kind == ast.KindObjectLiteralExpression || node.Parent.Parent.Kind == ast.KindJsxAttributes) && node.Parent.Name() == node {
+	case ast.KindIdentifier:
+		if ast.IsObjectLiteralElement(node.Parent) && node.Parent.Parent.Kind == ast.KindObjectLiteralExpression && node.Parent.Name() == node {
 			return node.Parent
 		}
 	}
 	return nil
-}
-
-func isObjectLiteralOrJsxElement(node *ast.Node) bool {
-	return ast.IsObjectLiteralElement(node) || ast.IsJsxAttribute(node) || ast.IsJsxSpreadAttribute(node)
 }
 
 // Return a function that returns true if the given node has not been seen

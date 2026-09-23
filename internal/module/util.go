@@ -123,13 +123,6 @@ func ComparePatternKeys(a, b string) int {
 // The DiagnosticMessage's parameters are the imported module name, and the filename it resolved to.
 // This returns a diagnostic even if the module will be an untyped module.
 func GetResolutionDiagnostic(options *core.CompilerOptions, resolvedModule *ResolvedModule, file *ast.SourceFile) *diagnostics.Message {
-	needJsx := func() *diagnostics.Message {
-		if options.Jsx != core.JsxEmitNone {
-			return nil
-		}
-		return diagnostics.Module_0_was_resolved_to_1_but_jsx_is_not_set
-	}
-
 	needAllowJs := func() *diagnostics.Message {
 		if !options.NoImplicitAny.DefaultIfUnknown(options.Strict).IsTrue() {
 			return nil
@@ -155,13 +148,6 @@ func GetResolutionDiagnostic(options *core.CompilerOptions, resolvedModule *Reso
 	case tspath.ExtensionTs, tspath.ExtensionDts:
 		// These are always allowed.
 		return nil
-	case tspath.ExtensionTsx:
-		return needJsx()
-	case tspath.ExtensionJsx:
-		if message := needJsx(); message != nil {
-			return message
-		}
-		return needAllowJs()
 	case tspath.ExtensionJs:
 		return needAllowJs()
 	case tspath.ExtensionJson:
@@ -173,17 +159,12 @@ func GetResolutionDiagnostic(options *core.CompilerOptions, resolvedModule *Reso
 
 // TryGetJSExtensionForFile maps TS/JS/DTS extensions to the output JS-side extension.
 // Returns an empty string if the extension is unsupported.
-func TryGetJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
+func TryGetJSExtensionForFile(fileName string) string {
 	ext := tspath.TryGetExtensionFromPath(fileName)
 	switch ext {
 	case tspath.ExtensionTs, tspath.ExtensionDts:
 		return tspath.ExtensionJs
-	case tspath.ExtensionTsx:
-		if options.Jsx == core.JsxEmitPreserve {
-			return tspath.ExtensionJsx
-		}
-		return tspath.ExtensionJs
-	case tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionJson:
+	case tspath.ExtensionJs, tspath.ExtensionJson:
 		return ext
 	default:
 		return ""

@@ -39,7 +39,7 @@ func (p *Parser) addTransformedReparse(newNode *ast.Node, old *ast.Node) *ast.No
 }
 
 func (p *Parser) checkNonIdentifierName(name *ast.Node) *ast.Node {
-	if ast.IsIdentifier(name) && !scanner.IsValidIdentifier(name.AsIdentifier().Text) {
+	if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.AsIdentifier().Text) {
 		errLoc := name.Loc
 		if errLoc.Len() == 0 { // missing name, emit error on the character before the missing name node
 			errLoc = core.NewTextRange(name.Loc.Pos()-1, name.Loc.Pos())
@@ -176,7 +176,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 				// rest, a form no longer accepted, and declaration emit would then
 				// write a .d.ts this compiler cannot read back.
 				name = p.addTransformedReparse(p.factory.NewIdentifier(ast.VarargParameterName), name)
-			case ast.IsIdentifier(name) && !scanner.IsValidIdentifier(name.AsIdentifier().Text):
+			case ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.AsIdentifier().Text):
 				// drop invalid chars for _, if empty, write _0, etc., so we have a valid param name to emit later
 				result := strings.Builder{}
 				for i, ch := range name.AsIdentifier().Text {
@@ -237,7 +237,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 			if name.Kind == ast.KindQualifiedName {
 				name = name.AsQualifiedName().Right
 			}
-			if ast.IsIdentifier(name) && !scanner.IsValidIdentifier(name.AsIdentifier().Text) {
+			if ast.IsIdentifier(name) && !scanner.IsIdentifierText(name.AsIdentifier().Text) {
 				name = p.addTransformedReparse(p.factory.NewStringLiteral(name.AsIdentifier().Text, ast.TokenFlagsNone), name)
 			} else {
 				name = p.addDeepCloneReparse(name)

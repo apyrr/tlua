@@ -95,7 +95,7 @@ const (
 // | 0           | uint8     | Protocol version                                  |
 // | 1-3         |           | Reserved                                          |
 // | 4-19        | uint128   | Source file content hash (xxh3, LE)               |
-// | 20-23       | uint32    | Parse options (bitmask; bit 0: JSX, bit 1: Force) |
+// | 20-23       | uint32    | Parse options (bitmask; bit 0: Force)             |
 // | 24-27       | uint32    | Byte offset to string offsets section             |
 // | 28-31       | uint32    | Byte offset to string data section                |
 // | 32-35       | uint32    | Byte offset to extended node data section         |
@@ -139,15 +139,14 @@ const (
 // | 0-4         | uint32 | Index of `text` in the string offsets section                  |
 // | 4-8         | uint32 | Index of `fileName` in the string offsets section              |
 // | 8-12        | uint32 | Index of `path` in the string offsets section                  |
-// | 12-16       | uint32 | Value of `languageVariant`                                    |
-// | 16-20       | uint32 | Value of `scriptKind`                                         |
-// | 20-24       | uint32 | Byte offset of `referencedFiles` in structured data section   |
-// | 24-28       | uint32 | Byte offset of `typeReferenceDirectives` in structured data   |
-// | 28-32       | uint32 | Byte offset of `libReferenceDirectives` in structured data    |
-// | 32-36       | uint32 | Byte offset of `imports` node index array in structured data  |
-// | 36-40       | uint32 | Byte offset of `moduleAugmentations` node index array         |
-// | 40-44       | uint32 | Byte offset of `ambientModuleNames` string array              |
-// | 44-48       | uint32 | Node index of `externalModuleIndicator` (0 = nil)             |
+// | 12-16       | uint32 | Value of `scriptKind`                                          |
+// | 16-20       | uint32 | Byte offset of `referencedFiles` in structured data section    |
+// | 20-24       | uint32 | Byte offset of `typeReferenceDirectives` in structured data    |
+// | 24-28       | uint32 | Byte offset of `libReferenceDirectives` in structured data     |
+// | 28-32       | uint32 | Byte offset of `imports` node index array in structured data   |
+// | 32-36       | uint32 | Byte offset of `moduleAugmentations` node index array          |
+// | 36-40       | uint32 | Byte offset of `ambientModuleNames` string array               |
+// | 40-44       | uint32 | Node index of `externalModuleIndicator` (0 = nil)              |
 //
 // Structured data (variable)
 // --------------------------
@@ -214,7 +213,6 @@ const (
 // | `Block`                      | Bit 0: `multiline`                    |                                |
 // | `ArrayLiteralExpression`     | Bit 0: `multiline`                    |                                |
 // | `ObjectLiteralExpression`    | Bit 0: `multiline`                    |                                |
-// | `JsxText`                    | Bit 0: `containsOnlyTriviaWhiteSpaces`|                                |
 // | `JSDocTypeLiteral`           | Bit 0: `isArrayType`                  |                                |
 // | `JsDocPropertyTag`           | Bit 0: `isBracketed`, Bit 1: `isNameFirst` |                           |
 // | `JsDocParameterTag`          | Bit 0: `isBracketed`, Bit 1: `isNameFirst` |                           |
@@ -286,11 +284,8 @@ func SourceFileHash(sourceFile *ast.SourceFile) string {
 // encodeParseOptions encodes the per-file ExternalModuleIndicatorOptions as a uint32 bitmask.
 func encodeParseOptions(opts ast.ExternalModuleIndicatorOptions) uint32 {
 	var bits uint32
-	if opts.JSX {
-		bits |= 1
-	}
 	if opts.Force {
-		bits |= 2
+		bits |= 1
 	}
 	return bits
 }
@@ -565,11 +560,11 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, *NodeIn
 		importsOffset := encodeNodeIndexArray(sf.Imports(), nodeIndexMap, &structuredData)
 		moduleAugmentationsOffset := encodeModuleAugmentations(sf.ModuleAugmentations, nodeIndexMap, &structuredData)
 		ambientModuleNamesOffset := encodeStringArray(sf.AmbientModuleNames, &structuredData)
-		// Patch the 3 placeholder uint32s at sfExtendedDataOffset + 32, 36, 40
-		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+32:], importsOffset)
-		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+36:], moduleAugmentationsOffset)
-		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+40:], ambientModuleNamesOffset)
-		// Patch externalModuleIndicator node index at offset 44
+		// Patch the 3 placeholder uint32s at sfExtendedDataOffset + 28, 32, 36
+		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+28:], importsOffset)
+		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+32:], moduleAugmentationsOffset)
+		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+36:], ambientModuleNamesOffset)
+		// Patch externalModuleIndicator node index at offset 40
 		var externalModuleIndicatorIndex uint32
 		if sf.ExternalModuleIndicator != nil {
 			if sf.ExternalModuleIndicator == rootNode {
@@ -578,7 +573,7 @@ func encodeTree(rootNode *ast.Node, sourceFile *ast.SourceFile) ([]byte, *NodeIn
 				externalModuleIndicatorIndex = nodeIndexMap[sf.ExternalModuleIndicator]
 			}
 		}
-		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+44:], externalModuleIndicatorIndex)
+		binary.LittleEndian.PutUint32(extendedData[sfExtendedDataOffset+40:], externalModuleIndicatorIndex)
 	}
 
 	metadata := uint32(ProtocolVersion) << 24
@@ -646,7 +641,7 @@ func recordExtendedData_SourceFile(node *ast.Node, strs *stringTable, positionMa
 	libRefDirectivesOffset := encodeFileReferences(sf.LibReferenceDirectives, positionMap, structuredData)
 	// imports, moduleAugmentations, ambientModuleNames offsets are placeholders;
 	// they will be patched after the tree walk when node indices are known.
-	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.LanguageVariant), uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0)
+	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, pathIndex, uint32(sf.ScriptKind), referencedFilesOffset, typeRefDirectivesOffset, libRefDirectivesOffset, noStructuredData, noStructuredData, noStructuredData, 0)
 }
 
 func recordExtendedData_TemplateHead(node *ast.Node, strs *stringTable, positionMap *ast.PositionMap, extendedData *[]byte, structuredData *[]byte) {

@@ -220,11 +220,6 @@ func (c *Checker) GetResolvedSignature(node *ast.Node) *Signature {
 	return c.getResolvedSignature(node, nil, CheckModeNormal)
 }
 
-// Return the type of the given property in the given type, or nil if no such property exists
-func (c *Checker) GetTypeOfPropertyOfType(t *Type, name string) *Type {
-	return c.getTypeOfPropertyOfType(t, name)
-}
-
 func (c *Checker) GetContextualTypeForArgumentAtIndex(node *ast.Node, argIndex int) *Type {
 	return c.getContextualTypeForArgumentAtIndex(node, argIndex)
 }
@@ -235,18 +230,6 @@ func (c *Checker) GetIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
 
 func (c *Checker) GetResolvedSymbol(node *ast.Node) *ast.Symbol {
 	return c.getResolvedSymbol(node)
-}
-
-func (c *Checker) GetJsxNamespace(location *ast.Node) string {
-	return c.getJsxNamespace(location)
-}
-
-func (c *Checker) GetJsxFragmentFactory(location *ast.Node) string {
-	entity := c.getJsxFragmentFactoryEntity(location)
-	if entity != nil {
-		return ast.GetFirstIdentifier(entity).Text()
-	}
-	return ""
 }
 
 func (c *Checker) ResolveName(name string, location *ast.Node, meaning ast.SymbolFlags, excludeGlobals bool) *ast.Symbol {

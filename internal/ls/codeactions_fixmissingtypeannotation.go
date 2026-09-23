@@ -256,7 +256,7 @@ func (f *isolatedDeclarationsFixer) createNamespaceForExpandoProperties(expandoF
 	for _, symbol := range elements {
 		// Word-operator names are skipped with the other non-identifier names:
 		// the fix would insert a bare `export var and`, which does not parse.
-		if !scanner.IsBareWritableName(symbol.Name, core.LanguageVariantStandard) {
+		if !scanner.IsBareWritableName(symbol.Name) {
 			continue
 		}
 		// skip symbols that already have a variable declaration
@@ -1218,16 +1218,29 @@ func findBestFittingNode(node *ast.Node, span core.TextRange) *ast.Node {
 // while TS's isDeclaration only returns true for specific named declaration kinds.
 func isNamedDeclarationKind(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindArrowFunction, ast.KindBindingElement,
-		ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
-		ast.KindImportClause, ast.KindImportEqualsDeclaration,
-		ast.KindImportSpecifier, ast.KindInterfaceDeclaration, ast.KindJsxAttribute,
-		ast.KindMethodSignature, ast.KindModuleDeclaration,
-		ast.KindNamespaceExportDeclaration, ast.KindNamespaceImport, ast.KindNamespaceExport,
-		ast.KindParameter, ast.KindPropertyAssignment,
+	case ast.KindArrowFunction,
+		ast.KindBindingElement,
+		ast.KindExportSpecifier,
+		ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression,
+		ast.KindImportClause,
+		ast.KindImportEqualsDeclaration,
+		ast.KindImportSpecifier,
+		ast.KindInterfaceDeclaration,
+		ast.KindMethodSignature,
+		ast.KindModuleDeclaration,
+		ast.KindNamespaceExportDeclaration,
+		ast.KindNamespaceImport,
+		ast.KindNamespaceExport,
+		ast.KindParameter,
+		ast.KindPropertyAssignment,
 		ast.KindPropertySignature,
-		ast.KindTypeAliasDeclaration, ast.KindTypeParameter, ast.KindVariableDeclaration,
-		ast.KindJSDocTypedefTag, ast.KindJSDocCallbackTag, ast.KindJSDocPropertyTag,
+		ast.KindTypeAliasDeclaration,
+		ast.KindTypeParameter,
+		ast.KindVariableDeclaration,
+		ast.KindJSDocTypedefTag,
+		ast.KindJSDocCallbackTag,
+		ast.KindJSDocPropertyTag,
 		ast.KindNamedTupleMember:
 		return true
 	}

@@ -69,12 +69,8 @@ func LanguageKindToScriptKind(languageID lsproto.LanguageKind) core.ScriptKind {
 	switch languageID {
 	case "typescript":
 		return core.ScriptKindTS
-	case "typescriptreact":
-		return core.ScriptKindTSX
 	case "javascript":
 		return core.ScriptKindJS
-	case "javascriptreact":
-		return core.ScriptKindJSX
 	case "json":
 		return core.ScriptKindJSON
 	default:

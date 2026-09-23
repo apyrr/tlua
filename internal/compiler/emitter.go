@@ -13,7 +13,6 @@ import (
 	"github.com/apyrr/tlua/internal/transformers"
 	"github.com/apyrr/tlua/internal/transformers/declarations"
 	"github.com/apyrr/tlua/internal/transformers/estransforms"
-	"github.com/apyrr/tlua/internal/transformers/jsxtransforms"
 	"github.com/apyrr/tlua/internal/transformers/tstransforms"
 	"github.com/apyrr/tlua/internal/tsoptions"
 	"github.com/apyrr/tlua/internal/tspath"
@@ -80,8 +79,6 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	var tx []*transformers.Transformer
 	options := host.Options()
 
-	jsxTransformEnabled := options.GetJSXTransformEnabled() && sourceFile.LanguageVariant == core.LanguageVariantJSX
-
 	emitResolver := host.GetEmitResolver()
 	referenceResolver := binder.ReferenceResolver(emitResolver)
 
@@ -101,10 +98,6 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 		// transform `namespace` (classes and their decorators are
 		// removed in tlua, so parameter properties and decorator lowering are gone)
 		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(&opts))
-	}
-
-	if jsxTransformEnabled {
-		tx = append(tx, jsxtransforms.NewJSXTransformer(&opts))
 	}
 
 	downleveler := estransforms.GetESTransformer(&opts)

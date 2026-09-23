@@ -288,8 +288,6 @@ func (n *Node) Text() string {
 		return n.AsTemplateMiddle().Text
 	case KindTemplateTail:
 		return n.AsTemplateTail().Text
-	case KindJsxNamespacedName:
-		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().name.Text()
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
 	case KindJSDocText:
@@ -352,10 +350,6 @@ func (n *Node) Expression() *Node {
 		return n.AsExternalModuleReference().Expression
 	case KindExportAssignment:
 		return n.AsExportAssignment().Expression
-	case KindJsxExpression:
-		return n.AsJsxExpression().Expression
-	case KindJsxSpreadAttribute:
-		return n.AsJsxSpreadAttribute().Expression
 	}
 	panic("Unhandled case in Node.Expression: " + n.Kind.String())
 }
@@ -421,10 +415,6 @@ func (m *MutableNode) SetExpression(expr *Node) {
 		n.AsExternalModuleReference().Expression = expr
 	case KindExportAssignment:
 		n.AsExportAssignment().Expression = expr
-	case KindJsxExpression:
-		n.AsJsxExpression().Expression = expr
-	case KindJsxSpreadAttribute:
-		n.AsJsxSpreadAttribute().Expression = expr
 	default:
 		panic("Unhandled case in mutableNode.SetExpression: " + n.Kind.String())
 	}
@@ -458,10 +448,6 @@ func (n *Node) TypeArgumentList() *NodeList {
 		return n.AsImportTypeNode().TypeArguments
 	case KindTypeQuery:
 		return n.AsTypeQueryNode().TypeArguments
-	case KindJsxOpeningElement:
-		return n.AsJsxOpeningElement().TypeArguments
-	case KindJsxSelfClosingElement:
-		return n.AsJsxSelfClosingElement().TypeArguments
 	}
 	panic("Unhandled case in Node.TypeArguments")
 }
@@ -696,8 +682,6 @@ func (n *Node) Initializer() *Node {
 		return n.AsForOfStatement().Initializer
 	case KindNumericForStatement:
 		return n.AsNumericForStatement().Initializer
-	case KindJsxAttribute:
-		return n.AsJsxAttribute().Initializer
 	}
 	panic("Unhandled case in Node.Initializer")
 }
@@ -717,8 +701,6 @@ func (m *MutableNode) SetInitializer(initializer *Node) {
 		n.AsPropertyAssignment().Initializer = initializer
 	case KindForOfStatement:
 		n.AsForOfStatement().Initializer = initializer
-	case KindJsxAttribute:
-		n.AsJsxAttribute().Initializer = initializer
 	default:
 		panic("Unhandled case in mutableNode.SetInitializer")
 	}
@@ -726,12 +708,6 @@ func (m *MutableNode) SetInitializer(initializer *Node) {
 
 func (n *Node) TagName() *Node {
 	switch n.Kind {
-	case KindJsxOpeningElement:
-		return n.AsJsxOpeningElement().TagName
-	case KindJsxClosingElement:
-		return n.AsJsxClosingElement().TagName
-	case KindJsxSelfClosingElement:
-		return n.AsJsxSelfClosingElement().TagName
 	case KindJSDocUnknownTag:
 		return n.AsJSDocUnknownTag().TagName
 	case KindJSDocAugmentsTag:
@@ -883,26 +859,6 @@ func (n *Node) Label() *Node {
 	panic("Unhandled case in Node.Label: " + n.Kind.String())
 }
 
-func (n *Node) Attributes() *Node {
-	switch n.Kind {
-	case KindJsxOpeningElement:
-		return n.AsJsxOpeningElement().Attributes
-	case KindJsxSelfClosingElement:
-		return n.AsJsxSelfClosingElement().Attributes
-	}
-	panic("Unhandled case in Node.Attributes: " + n.Kind.String())
-}
-
-func (n *Node) Children() *NodeList {
-	switch n.Kind {
-	case KindJsxElement:
-		return n.AsJsxElement().Children
-	case KindJsxFragment:
-		return n.AsJsxFragment().Children
-	}
-	panic("Unhandled case in Node.Children: " + n.Kind.String())
-}
-
 func (n *Node) ModuleSpecifier() *Expression {
 	switch n.Kind {
 	case KindImportDeclaration, KindJSImportDeclaration:
@@ -941,8 +897,6 @@ func (n *Node) PropertyList() *NodeList {
 	switch n.Kind {
 	case KindObjectLiteralExpression:
 		return n.AsObjectLiteralExpression().Properties
-	case KindJsxAttributes:
-		return n.AsJsxAttributes().Properties
 	}
 	panic("Unhandled case in Node.PropertyList: " + n.Kind.String())
 }
@@ -1243,7 +1197,6 @@ func declarationIsWriteAccess(decl *Node) bool {
 		KindInterfaceDeclaration,
 		KindJSDocCallbackTag,
 		KindJSDocTypedefTag,
-		KindJsxAttribute,
 		KindModuleDeclaration,
 		KindNamespaceExportDeclaration,
 		KindNamespaceImport,
@@ -1878,73 +1831,6 @@ func (node *TemplateTail) computeSubtreeFacts() SubtreeFacts {
 	return SubtreeFactsNone
 }
 
-func (node *JsxElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.OpeningElement) |
-		propagateNodeListSubtreeFacts(node.Children, propagateSubtreeFacts) |
-		propagateSubtreeFacts(node.ClosingElement) |
-		SubtreeContainsJsx
-}
-
-func (node *JsxAttributes) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Properties, propagateSubtreeFacts) |
-		SubtreeContainsJsx
-}
-
-func (node *JsxNamespacedName) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Namespace) |
-		propagateSubtreeFacts(node.name) |
-		SubtreeContainsJsx
-}
-
-func (node *JsxOpeningElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.TagName) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateSubtreeFacts(node.Attributes) |
-		SubtreeContainsJsx
-}
-
-func (node *JsxSelfClosingElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.TagName) |
-		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
-		propagateSubtreeFacts(node.Attributes) |
-		SubtreeContainsJsx
-}
-
-func (node *JsxFragment) computeSubtreeFacts() SubtreeFacts {
-	return propagateNodeListSubtreeFacts(node.Children, propagateSubtreeFacts) |
-		SubtreeContainsJsx
-}
-
-func (node *JsxOpeningFragment) computeSubtreeFacts() SubtreeFacts {
-	return SubtreeContainsJsx
-}
-
-func (node *JsxClosingFragment) computeSubtreeFacts() SubtreeFacts {
-	return SubtreeContainsJsx
-}
-
-func (node *JsxAttribute) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		propagateSubtreeFacts(node.Initializer) |
-		SubtreeContainsJsx
-}
-
-func (node *JsxSpreadAttribute) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
-}
-
-func (node *JsxClosingElement) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.TagName) | SubtreeContainsJsx
-}
-
-func (node *JsxExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
-}
-
-func (node *JsxText) computeSubtreeFacts() SubtreeFacts {
-	return SubtreeContainsJsx
-}
-
 /// JSDoc nodes ///
 
 // JSDoc
@@ -2068,7 +1954,6 @@ type SourceFile struct {
 	diagnostics                 []*Diagnostic
 	jsDiagnostics               []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
-	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
 	ContainsNonASCII            bool
@@ -2252,7 +2137,6 @@ func (node *SourceFile) IsJS() bool {
 
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
-	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile
 	node.ContainsNonASCII = other.ContainsNonASCII
@@ -2406,8 +2290,6 @@ func createToken(kind Kind, file *SourceFile, pos, end int, flags TokenFlags) *N
 		return file.tokenFactory.NewNumericLiteral(text, flags)
 	case KindStringLiteral:
 		return file.tokenFactory.NewStringLiteral(text, flags)
-	case KindJsxText, KindJsxTextAllWhiteSpaces:
-		return file.tokenFactory.NewJsxText(text, kind == KindJsxTextAllWhiteSpaces)
 	case KindRegularExpressionLiteral:
 		return file.tokenFactory.NewRegularExpressionLiteral(text, flags)
 	case KindNoSubstitutionTemplateLiteral:

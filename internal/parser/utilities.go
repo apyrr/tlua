@@ -4,18 +4,8 @@ import (
 	"slices"
 
 	"github.com/apyrr/tlua/internal/ast"
-	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/scanner"
 )
-
-func getLanguageVariant(scriptKind core.ScriptKind) core.LanguageVariant {
-	switch scriptKind {
-	case core.ScriptKindTSX, core.ScriptKindJSX, core.ScriptKindJS, core.ScriptKindJSON:
-		// .tsx and .jsx files are treated as jsx language variant.
-		return core.LanguageVariantJSX
-	}
-	return core.LanguageVariantStandard
-}
 
 func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
 	return token >= ast.KindIdentifier

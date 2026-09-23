@@ -204,8 +204,6 @@ func (l *LanguageService) collectSemanticTokens(ctx context.Context, c *checker.
 func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *checker.Checker, file *ast.SourceFile, program *compiler.Program, spanStart, spanEnd int) []semanticToken {
 	tokens := []semanticToken{}
 
-	inJSXElement := false
-
 	var visit func(*ast.Node) bool
 	visit = func(node *ast.Node) bool {
 		// Check for cancellation
@@ -224,14 +222,7 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 			return false
 		}
 
-		prevInJSXElement := inJSXElement
-		if ast.IsJsxElement(node) || ast.IsJsxSelfClosingElement(node) {
-			inJSXElement = true
-		} else if ast.IsJsxExpression(node) {
-			inJSXElement = false
-		}
-
-		if ast.IsIdentifier(node) && node.Text() != "" && !inJSXElement && !isInImportClause(node) && !isInfinityOrNaNString(node.Text()) {
+		if ast.IsIdentifier(node) && node.Text() != "" && !isInImportClause(node) && !isInfinityOrNaNString(node.Text()) {
 			symbol := c.GetSymbolAtLocation(node)
 			if symbol != nil {
 				// Resolve aliases
@@ -303,7 +294,6 @@ func (l *LanguageService) collectSemanticTokensInRange(ctx context.Context, c *c
 		}
 
 		node.ForEachChild(visit)
-		inJSXElement = prevInJSXElement
 		return false
 	}
 

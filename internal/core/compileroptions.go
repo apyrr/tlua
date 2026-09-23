@@ -47,10 +47,6 @@ type CompilerOptions struct {
 	InlineSources                             Tristate     `json:"inlineSources,omitzero"`
 	Init                                      Tristate     `json:"init,omitzero"`
 	Incremental                               Tristate     `json:"incremental,omitzero"`
-	Jsx                                       JsxEmit      `json:"jsx,omitzero"`
-	JsxFactory                                string       `json:"jsxFactory,omitzero"`
-	JsxFragmentFactory                        string       `json:"jsxFragmentFactory,omitzero"`
-	JsxImportSource                           string       `json:"jsxImportSource,omitzero"`
 	Lib                                       []string     `json:"lib,omitzero"`
 	LibReplacement                            Tristate     `json:"libReplacement,omitzero"`
 	Locale                                    string       `json:"locale,omitzero"`
@@ -78,7 +74,6 @@ type CompilerOptions struct {
 	ResolvePackageJsonExports                 Tristate     `json:"resolvePackageJsonExports,omitzero"`
 	ResolvePackageJsonImports                 Tristate     `json:"resolvePackageJsonImports,omitzero"`
 	RemoveComments                            Tristate     `json:"removeComments,omitzero"`
-	ReactNamespace                            string       `json:"reactNamespace,omitzero"`
 	RootDir                                   string       `json:"rootDir,omitzero"`
 	SkipLibCheck                              Tristate     `json:"skipLibCheck,omitzero"`
 	StableTypeOrdering                        Tristate     `json:"stableTypeOrdering,omitzero"`
@@ -224,11 +219,6 @@ func (options *CompilerOptions) GetResolveJsonModule() bool {
 		return true
 	}
 	return options.GetModuleResolutionKind() == ModuleResolutionKindBundler
-}
-
-func (options *CompilerOptions) GetJSXTransformEnabled() bool {
-	jsx := options.Jsx
-	return jsx == JsxEmitReact || jsx == JsxEmitReactJSX || jsx == JsxEmitReactJSXDev
 }
 
 func (options *CompilerOptions) GetStrictOptionValue(value Tristate) bool {
@@ -452,33 +442,3 @@ const (
 	ScriptTargetLatest         ScriptTarget = ScriptTargetESNext
 	ScriptTargetLatestStandard ScriptTarget = ScriptTargetES2025
 )
-
-type JsxEmit int32
-
-const (
-	JsxEmitNone        JsxEmit = 0
-	JsxEmitPreserve    JsxEmit = 1
-	JsxEmitReactNative JsxEmit = 2
-	JsxEmitReact       JsxEmit = 3
-	JsxEmitReactJSX    JsxEmit = 4
-	JsxEmitReactJSXDev JsxEmit = 5
-)
-
-func (j JsxEmit) String() string {
-	switch j {
-	case JsxEmitNone:
-		panic("should not use zero value of JsxEmit")
-	case JsxEmitPreserve:
-		return "preserve"
-	case JsxEmitReactNative:
-		return "react-native"
-	case JsxEmitReact:
-		return "react"
-	case JsxEmitReactJSX:
-		return "react-jsx"
-	case JsxEmitReactJSXDev:
-		return "react-jsxdev"
-	default:
-		panic("unhandled case in JsxEmit.String")
-	}
-}

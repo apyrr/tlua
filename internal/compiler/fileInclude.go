@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/apyrr/tlua/internal/ast"
+	"github.com/apyrr/tlua/internal/debug"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/module"
 	"github.com/apyrr/tlua/internal/scanner"
@@ -219,17 +220,13 @@ func (r *FileIncludeReason) computeReferenceFileDiagnostic(program *Program, toF
 			} else {
 				return ast.NewCompilerDiagnostic(diagnostics.Imported_via_0_from_file_1, referenceText, toFileName(referenceLocation.file.FileName()))
 			}
-		} else if specifier, ok := program.importHelpersImportSpecifiers[referenceLocation.file.Path()]; ok && specifier == referenceLocation.node {
+		} else {
+			// The importHelpers import is the only synthetic import.
+			debug.Assert(program.importHelpersImportSpecifiers[referenceLocation.file.Path()] == referenceLocation.node, "unexpected synthetic import")
 			if referenceLocation.packageId.Name != "" {
 				return ast.NewCompilerDiagnostic(diagnostics.Imported_via_0_from_file_1_with_packageId_2_to_import_importHelpers_as_specified_in_compilerOptions, referenceText, toFileName(referenceLocation.file.FileName()), referenceLocation.packageId.String())
 			} else {
 				return ast.NewCompilerDiagnostic(diagnostics.Imported_via_0_from_file_1_to_import_importHelpers_as_specified_in_compilerOptions, referenceText, toFileName(referenceLocation.file.FileName()))
-			}
-		} else {
-			if referenceLocation.packageId.Name != "" {
-				return ast.NewCompilerDiagnostic(diagnostics.Imported_via_0_from_file_1_with_packageId_2_to_import_jsx_and_jsxs_factory_functions, referenceText, toFileName(referenceLocation.file.FileName()), referenceLocation.packageId.String())
-			} else {
-				return ast.NewCompilerDiagnostic(diagnostics.Imported_via_0_from_file_1_to_import_jsx_and_jsxs_factory_functions, referenceText, toFileName(referenceLocation.file.FileName()))
 			}
 		}
 	case fileIncludeKindReferenceFile:

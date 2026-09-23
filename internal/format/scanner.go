@@ -40,10 +40,9 @@ type formattingScanner struct {
 	wasNewLine       bool
 }
 
-func newFormattingScanner(text string, languageVariant core.LanguageVariant, startPos int, endPos int, worker *formatSpanWorker) []core.TextChange {
+func newFormattingScanner(text string, startPos int, endPos int, worker *formatSpanWorker) []core.TextChange {
 	scan := scanner.NewScanner()
 	scan.SetSkipTrivia(false)
-	scan.SetLanguageVariant(languageVariant)
 	scan.SetText(text)
 	scan.ResetTokenState(startPos)
 
@@ -100,50 +99,6 @@ func shouldRescanGreaterThanToken(node *ast.Node) bool {
 	return node.Kind == ast.KindGreaterThanEqualsToken
 }
 
-func shouldRescanJsxIdentifier(node *ast.Node) bool {
-	if node.Parent != nil {
-		switch node.Parent.Kind {
-		case ast.KindJsxAttribute,
-			ast.KindJsxOpeningElement,
-			ast.KindJsxClosingElement,
-			ast.KindJsxSelfClosingElement,
-			ast.KindJsxNamespacedName:
-			// May parse an identifier like `module-layout`; that will be scanned as a keyword at first, but we should parse the whole thing to get an identifier.
-			return ast.IsKeywordKind(node.Kind) || node.Kind == ast.KindIdentifier
-		case ast.KindPropertyAccessExpression:
-			// The leftmost name of a dotted JSX tag name (e.g. `a-b` in `<a-b.c>`) may contain hyphens, so rescan it as a JSX identifier.
-			return (ast.IsKeywordKind(node.Kind) || node.Kind == ast.KindIdentifier) && isLeftmostJsxTagName(node)
-		}
-	}
-	return false
-}
-
-func isLeftmostJsxTagName(node *ast.Node) bool {
-	return ast.FindAncestorOrQuit(node, func(n *ast.Node) ast.FindAncestorResult {
-		switch {
-		case n.Parent == nil:
-			return ast.FindAncestorQuit
-		case ast.IsJsxTagName(n):
-			return ast.FindAncestorTrue
-		case ast.IsPropertyAccessExpression(n.Parent) && n.Parent.Expression() == n:
-			return ast.FindAncestorFalse
-		default:
-			return ast.FindAncestorQuit
-		}
-	}) != nil
-}
-
-func (s *formattingScanner) shouldRescanJsxText(node *ast.Node) bool {
-	if ast.IsJsxText(node) {
-		return true
-	}
-	if !ast.IsJsxElement(node) || s.hasLastTokenInfo == false {
-		return false
-	}
-
-	return s.lastTokenInfo.token.Kind == ast.KindJsxText
-}
-
 func shouldRescanSlashToken(container *ast.Node) bool {
 	return container.Kind == ast.KindRegularExpressionLiteral
 }
@@ -151,10 +106,6 @@ func shouldRescanSlashToken(container *ast.Node) bool {
 func shouldRescanTemplateToken(container *ast.Node) bool {
 	return container.Kind == ast.KindTemplateMiddle ||
 		container.Kind == ast.KindTemplateTail
-}
-
-func shouldRescanJsxAttributeValue(node *ast.Node) bool {
-	return node.Parent != nil && ast.IsJsxAttribute(node.Parent) && node.Parent.Initializer() == node
 }
 
 func startsWithSlashToken(t ast.Kind) bool {
@@ -168,9 +119,6 @@ const (
 	actionRescanGreaterThanToken
 	actionRescanSlashToken
 	actionRescanTemplateToken
-	actionRescanJsxIdentifier
-	actionRescanJsxText
-	actionRescanJsxAttributeValue
 )
 
 func fixTokenKind(tokenInfo tokenInfo, container *ast.Node) tokenInfo {
@@ -193,12 +141,6 @@ func (s *formattingScanner) readTokenInfo(n *ast.Node) tokenInfo {
 		expectedScanAction = actionRescanSlashToken
 	} else if shouldRescanTemplateToken(n) {
 		expectedScanAction = actionRescanTemplateToken
-	} else if shouldRescanJsxIdentifier(n) {
-		expectedScanAction = actionRescanJsxIdentifier
-	} else if s.shouldRescanJsxText(n) {
-		expectedScanAction = actionRescanJsxText
-	} else if shouldRescanJsxAttributeValue(n) {
-		expectedScanAction = actionRescanJsxAttributeValue
 	} else {
 		expectedScanAction = actionScan
 	}
@@ -284,15 +226,6 @@ func (s *formattingScanner) getNextToken(n *ast.Node, expectedScanAction scanAct
 			s.lastScanAction = actionRescanTemplateToken
 			return s.s.ReScanTemplateToken()
 		}
-	case actionRescanJsxIdentifier:
-		s.lastScanAction = actionRescanJsxIdentifier
-		return s.s.ScanJsxIdentifier()
-	case actionRescanJsxText:
-		s.lastScanAction = actionRescanJsxText
-		return s.s.ReScanJsxToken( /*allowMultilineJsxText*/ false)
-	case actionRescanJsxAttributeValue:
-		s.lastScanAction = actionRescanJsxAttributeValue
-		return s.s.ReScanJsxAttributeValue()
 	case actionScan:
 		break
 	default:

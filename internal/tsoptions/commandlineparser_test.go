@@ -27,8 +27,6 @@ func TestCommandLineParseResult(t *testing.T) {
 		{"Handles may only be used with --build flags", []string{"--build", "--clean", "--dry", "--force", "--verbose"}},
 		// --declarations --allowTS
 		{"Handles did you mean for misspelt flags", []string{"--declarations", "--allowTS"}},
-		// 0.ts --jsx
-		{"Parse empty options of --jsx", []string{"0.ts", "--jsx"}},
 		// 0.ts --
 		{"Parse empty options of --module", []string{"0.ts", "--module"}},
 		// 0.ts --newLine

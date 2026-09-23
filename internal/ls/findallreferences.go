@@ -229,11 +229,8 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 			}
 		}
 
-		// Jsx Tags
 		switch node.Parent.Kind {
-		case ast.KindJsxOpeningElement, ast.KindJsxClosingElement:
-			return node.Parent.Parent
-		case ast.KindJsxSelfClosingElement, ast.KindLabelStatement, ast.KindGotoStatement:
+		case ast.KindLabelStatement, ast.KindGotoStatement:
 			return node.Parent
 		case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
 			if validImport := ast.TryGetImportFromModuleSpecifier(node); validImport != nil {
@@ -1474,33 +1471,6 @@ func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName 
 	return positions
 }
 
-// findFirstJsxNode recursively searches for the first JSX element, self-closing element, or fragment
-func findFirstJsxNode(root *ast.Node) *ast.Node {
-	var visit func(*ast.Node) *ast.Node
-	visit = func(node *ast.Node) *ast.Node {
-		// Check if this is a JSX node we're looking for
-		switch node.Kind {
-		case ast.KindJsxElement, ast.KindJsxSelfClosingElement, ast.KindJsxFragment:
-			return node
-		}
-
-		// Skip subtree if it doesn't contain JSX
-		if node.SubtreeFacts()&ast.SubtreeContainsJsx == 0 {
-			return nil
-		}
-
-		// Traverse children to find JSX node
-		var result *ast.Node
-		node.ForEachChild(func(child *ast.Node) bool {
-			result = visit(child)
-			return result != nil // Stop if found
-		})
-		return result
-	}
-
-	return visit(root)
-}
-
 func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*ReferenceEntry {
 	// !!! not implemented
 	return []*ReferenceEntry{}
@@ -1541,21 +1511,12 @@ func (l *LanguageService) getReferencedSymbolsForModule(ctx context.Context, pro
 			// import("foo") with no qualifier will reference the `export =` of the module, which may be referenced anyway.
 			return newNodeEntry(reference.literal)
 		case ModuleReferenceKindImplicit:
-			// For implicit references (e.g., JSX runtime imports), return the first JSX node,
-			// the first statement, or the whole file
+			// For implicit references (e.g., import helpers), return the first statement or the whole file
 			var rangeNode *ast.Node
-
-			// Skip the JSX search for tslib imports
-			if reference.literal.Text() != "tslib" {
-				rangeNode = findFirstJsxNode(reference.referencingFile.AsNode())
-			}
-
-			if rangeNode == nil {
-				if reference.referencingFile.Statements != nil && len(reference.referencingFile.Statements.Nodes) > 0 {
-					rangeNode = reference.referencingFile.Statements.Nodes[0]
-				} else {
-					rangeNode = reference.referencingFile.AsNode()
-				}
+			if reference.referencingFile.Statements != nil && len(reference.referencingFile.Statements.Nodes) > 0 {
+				rangeNode = reference.referencingFile.Statements.Nodes[0]
+			} else {
+				rangeNode = reference.referencingFile.AsNode()
 			}
 			return newNodeEntry(rangeNode)
 		case ModuleReferenceKindReference:

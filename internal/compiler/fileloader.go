@@ -98,7 +98,6 @@ type processedFiles struct {
 	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
-	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
 	importHelpersImportSpecifiers map[tspath.Path]*ast.StringLiteralNode
 	libFiles                      map[tspath.Path]*LibFile
 	// List of present unsupported extensions
@@ -112,11 +111,6 @@ type processedFiles struct {
 	// filesByPath for redirect files
 	redirectFilesByPath map[tspath.Path]*redirectsFile
 	finishedProcessing  bool
-}
-
-type jsxRuntimeImportSpecifier struct {
-	moduleReference string
-	specifier       *ast.StringLiteralNode
 }
 
 func processAllProgramFiles(
@@ -532,18 +526,6 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 			specifier := p.createSyntheticImport(externalHelpersModuleNameText, file)
 			moduleNames = append(moduleNames, specifier)
 			t.importHelpersImportSpecifier = specifier
-		}
-	}
-
-	if file.ScriptKind == core.ScriptKindJSX || file.ScriptKind == core.ScriptKindTSX {
-		jsxImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(optionsForFile, file), optionsForFile)
-		if jsxImport != "" {
-			specifier := p.createSyntheticImport(jsxImport, file)
-			moduleNames = append(moduleNames, specifier)
-			t.jsxRuntimeImportSpecifier = &jsxRuntimeImportSpecifier{
-				moduleReference: jsxImport,
-				specifier:       specifier,
-			}
 		}
 	}
 

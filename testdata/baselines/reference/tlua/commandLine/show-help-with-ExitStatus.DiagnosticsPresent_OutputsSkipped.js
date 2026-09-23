@@ -129,13 +129,6 @@ tlua: The Lua Compiler - Version FakeTSVersion                                  
                default:  undefined
 
 
-[94m                  --jsx  [39mSpecify what JSX code is generated.
-
-                one of:  preserve, react-native, react-jsx, react-jsxdev, react
-
-               default:  undefined
-
-
 [94m              --outFile  [39mSpecify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, als
                          o designates a file that bundles all .d.ts output.
 

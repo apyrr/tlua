@@ -471,7 +471,7 @@ func replaceFirstIdentifierOfEntityName(factory *ast.NodeFactory, name *ast.Enti
 
 func (adder *importAdder) getImportFixForSymbol(view *View, file *ast.SourceFile, exports []*Export, isValidTypeOnlyUseSite bool) *Fix {
 	fixes := core.FlatMap(exports, func(export *Export) []*Fix {
-		return view.GetFixes(adder.ctx, export, false /*forJSX*/, isValidTypeOnlyUseSite, nil /*usagePosition*/)
+		return view.GetFixes(adder.ctx, export, isValidTypeOnlyUseSite, nil /*usagePosition*/)
 	})
 	slices.SortFunc(fixes, func(a, b *Fix) int {
 		return view.CompareFixesForRanking(a, b)

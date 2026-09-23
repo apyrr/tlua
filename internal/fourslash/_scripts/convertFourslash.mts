@@ -111,9 +111,9 @@ func TestMain(m *testing.M) {
     await $`dprint fmt ${outputDir}/**/*.go`;
 }
 
+// tlua has no JSX: .tsx test files are not converted.
 function hasTSExtension(file: string): boolean {
-    return file.endsWith(".ts") ||
-        file.endsWith(".tsx");
+    return file.endsWith(".ts");
 }
 
 // tlua sources are .tlua, emit output is .lua; upstream fixtures use .ts/.js.
@@ -121,8 +121,8 @@ function hasTSExtension(file: string): boolean {
 function rewriteExtensions(content: string): string {
     return content
         .replace(/\.d\.ts\b/g, ".d.tlua")
-        .replace(/\.ts\b(?!x)/g, ".tlua")
-        .replace(/\.js\b(?!x)/g, ".lua");
+        .replace(/\.ts\b/g, ".tlua")
+        .replace(/\.js\b/g, ".lua");
 }
 
 function parseTypeScriptFiles(manualTests: Set<string>, folder: string): void {
@@ -162,10 +162,14 @@ type NoTest = typeof NO_TEST;
 
 function parseFileContent(filename: string, content: string): GoTest | NoTest {
     console.error(`Parsing file: ${filename}`);
+    // tlua has no JSX, so tests that need JSX files or options are not converted.
+    if (/^\/\/\s*@(?:jsx\w*|Filename:.*\.[jt]sx)\b/im.test(content)) {
+        return NO_TEST;
+    }
     const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
     const goTest: GoTest = {
-        name: filename.replace(".tsx", "").replace(".ts", "").replace(".", ""),
+        name: filename.replace(".ts", "").replace(".", ""),
         content: getTestInput(content),
         commands: [],
     };
@@ -3415,7 +3419,7 @@ function parseKind(expr: ts.Expression): string {
     }
 }
 
-const fileKindModifiers = new Set([".d.ts", ".ts", ".tsx", ".js", ".jsx", ".json"]);
+const fileKindModifiers = new Set([".d.ts", ".ts", ".js", ".json"]);
 
 function parseKindModifiers(expr: ts.Expression): { isOptional: boolean; isDeprecated: boolean; extensions: string[]; } {
     if (!ts.isStringLiteral(expr)) {
@@ -4493,7 +4497,7 @@ function generateGoTest(test: GoTest, isServer: boolean): string {
     neededImports.add(IMPORT_FOURSLASH);
     neededImports.add(IMPORT_TESTUTIL);
     const hasDocCommentTemplateCommands = test.commands.some(hasDocCommentTemplateCommand);
-    const content = hasDocCommentTemplateCommands && /@Filename: .*\.jsx?/i.test(test.content)
+    const content = hasDocCommentTemplateCommands && /@Filename: .*\.js\b/i.test(test.content)
         ? prependLineToGoStringLiteral(test.content, "// @allowJs: true")
         : test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd, neededImports)).join("\n");

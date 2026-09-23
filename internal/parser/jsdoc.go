@@ -58,7 +58,7 @@ func (p *Parser) withJSDoc(node *ast.Node, info jsdocScannerInfo) []*ast.Node {
 		return nil
 	}
 
-	// For TS/TSX files, defer JSDoc parsing to first access, unless the comment
+	// For TS files, defer JSDoc parsing to first access, unless the comment
 	// contains @see/@link (needed for unused-identifier checks).
 	// @deprecated is detected via cheap text scan to set PossiblyContainsDeprecatedTag;
 	// callers must confirm via JSDoc lookup.

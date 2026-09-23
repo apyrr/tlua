@@ -192,14 +192,6 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.Visitor().VisitEachChild(node)
 
-	case ast.KindJsxSelfClosingElement:
-		n := node.AsJsxSelfClosingElement()
-		return tx.Factory().UpdateJsxSelfClosingElement(n, tx.Visitor().VisitNode(n.TagName), nil, tx.Visitor().VisitNode(n.Attributes))
-
-	case ast.KindJsxOpeningElement:
-		n := node.AsJsxOpeningElement()
-		return tx.Factory().UpdateJsxOpeningElement(n, tx.Visitor().VisitNode(n.TagName), nil, tx.Visitor().VisitNode(n.Attributes))
-
 	case ast.KindImportEqualsDeclaration:
 		n := node.AsImportEqualsDeclaration()
 		if n.IsTypeOnly {

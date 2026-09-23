@@ -359,7 +359,7 @@ func IsIdentifierName(node *Node) bool {
 		return parent.PropertyName() == node
 	case KindImportSpecifier:
 		return parent.PropertyName() == node
-	case KindExportSpecifier, KindJsxAttribute, KindJsxSelfClosingElement, KindJsxOpeningElement, KindJsxClosingElement:
+	case KindExportSpecifier:
 		return true
 	}
 	return false
@@ -452,9 +452,6 @@ func isLeftHandSideExpressionKind(kind Kind) bool {
 	case KindPropertyAccessExpression,
 		KindElementAccessExpression,
 		KindCallExpression,
-		KindJsxElement,
-		KindJsxSelfClosingElement,
-		KindJsxFragment,
 		KindArrayLiteralExpression,
 		KindParenthesizedExpression,
 		KindObjectLiteralExpression,
@@ -522,10 +519,6 @@ func IsExpression(node *Node) bool {
 
 func IsCommaExpression(node *Node) bool {
 	return node.Kind == KindBinaryExpression && node.AsBinaryExpression().OperatorToken.Kind == KindCommaToken
-}
-
-func IsCommaSequence(node *Node) bool {
-	return IsCommaExpression(node)
 }
 
 // Upstream took a lookInLabeledStatements flag so that `outer: for (...)` counted
@@ -606,22 +599,6 @@ func IsObjectLiteralElement(node *Node) bool {
 		return true
 	}
 	return false
-}
-
-func IsJsxChild(node *Node) bool {
-	switch node.Kind {
-	case KindJsxElement,
-		KindJsxExpression,
-		KindJsxSelfClosingElement,
-		KindJsxText,
-		KindJsxFragment:
-		return true
-	}
-	return false
-}
-
-func IsJsxAttributeLike(node *Node) bool {
-	return IsJsxAttribute(node) || IsJsxSpreadAttribute(node)
 }
 
 func isDeclarationStatementKind(kind Kind) bool {
@@ -1204,9 +1181,6 @@ func CanHaveSymbol(node *Node) bool {
 		KindIndexSignature,
 		KindInterfaceDeclaration,
 		KindJSTypeAliasDeclaration,
-		KindJsxAttribute,
-		KindJsxAttributes,
-		KindJsxSpreadAttribute,
 		KindMappedType,
 		KindMethodSignature,
 		KindModuleDeclaration,
@@ -1383,7 +1357,7 @@ func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
 }
 
 func IsSourceFileJS(file *SourceFile) bool {
-	return file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX
+	return file.ScriptKind == core.ScriptKindJS
 }
 
 func IsInJSFile(node *Node) bool {
@@ -1424,15 +1398,6 @@ func IsExternalModuleImportEqualsDeclaration(node *Node) bool {
 
 func IsLiteralImportTypeNode(node *Node) bool {
 	return IsImportTypeNode(node) && IsLiteralTypeNode(node.AsImportTypeNode().Argument) && IsStringLiteral(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
-}
-
-func IsJsxTagName(node *Node) bool {
-	parent := node.Parent
-	switch parent.Kind {
-	case KindJsxOpeningElement, KindJsxClosingElement, KindJsxSelfClosingElement:
-		return parent.TagName() == node
-	}
-	return false
 }
 
 func IsImportOrExportSpecifier(node *Node) bool {
@@ -2126,9 +2091,6 @@ func IsExpressionNode(node *Node) bool {
 		KindSpreadElement,
 		KindTemplateExpression,
 		KindOmittedExpression,
-		KindJsxElement,
-		KindJsxSelfClosingElement,
-		KindJsxFragment,
 		KindExpressionList,
 		KindVarargExpression:
 		return true
@@ -2138,11 +2100,11 @@ func IsExpressionNode(node *Node) bool {
 		for node.Parent.Kind == KindQualifiedName {
 			node = node.Parent
 		}
-		return IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent) || IsJsxTagName(node)
+		return IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent)
 	case KindPrivateIdentifier:
 		return IsBinaryExpression(node.Parent) && node.Parent.AsBinaryExpression().Left == node && node.Parent.AsBinaryExpression().OperatorToken.Kind == KindInKeyword
 	case KindIdentifier:
-		if IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent) || IsJsxTagName(node) {
+		if IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || IsJSDocNameReference(node.Parent) {
 			return true
 		}
 		fallthrough
@@ -2171,7 +2133,7 @@ func IsInExpressionContext(node *Node) bool {
 		return s.From == node || s.To == node || s.Step == node
 	case KindRepeatStatement:
 		return parent.AsRepeatStatement().Expression == node
-	case KindJsxExpression, KindJsxSpreadAttribute, KindSpreadAssignment:
+	case KindSpreadAssignment:
 		return true
 	case KindFunctionDeclaration:
 		// The target of `function M.f() ... end` names the table being extended.
@@ -2315,8 +2277,6 @@ func EntityNameToString(name *Node, getTextOfNode func(*Node) string) string {
 		return EntityNameToString(name.AsQualifiedName().Left, getTextOfNode) + "." + EntityNameToString(name.AsQualifiedName().Right, getTextOfNode)
 	case KindPropertyAccessExpression:
 		return EntityNameToString(name.Expression(), getTextOfNode) + "." + EntityNameToString(name.AsPropertyAccessExpression().Name(), getTextOfNode)
-	case KindJsxNamespacedName:
-		return EntityNameToString(name.AsJsxNamespacedName().Namespace, getTextOfNode) + ":" + EntityNameToString(name.AsJsxNamespacedName().Name(), getTextOfNode)
 	}
 	panic("Unhandled case in EntityNameToString")
 }
@@ -2335,22 +2295,12 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 		if IsStringOrNumericLiteralLike(name.Expression()) {
 			return name.Expression().Text(), true
 		}
-	case KindJsxNamespacedName:
-		return name.AsJsxNamespacedName().Namespace.Text() + ":" + name.Name().Text(), true
 	}
 	return "", false
 }
 
 func IsJSDocNode(node *Node) bool {
 	return node.Kind >= KindFirstJSDocNode && node.Kind <= KindLastJSDocNode
-}
-
-func IsNonWhitespaceToken(node *Node) bool {
-	return IsTokenKind(node.Kind) && !IsWhitespaceOnlyJsxText(node)
-}
-
-func IsWhitespaceOnlyJsxText(node *Node) bool {
-	return node.Kind == KindJsxText && node.AsJsxText().ContainsOnlyTriviaWhiteSpaces
 }
 
 func GetNewTargetContainer(node *Node) *Node {
@@ -2405,8 +2355,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindMethodSignature,
 		KindFunctionDeclaration,
 		KindFunctionExpression,
-		KindArrowFunction,
-		KindJsxAttribute:
+		KindArrowFunction:
 		return SemanticMeaningValue
 
 	case KindTypeParameter,
@@ -2779,7 +2728,7 @@ func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | 
 
 func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.ModuleKind {
 	impliedNodeFormat := core.ResolutionModeNone
-	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionJs}) {
 		impliedNodeFormat = core.IfElse(packageJsonType == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
 	}
 
@@ -2996,57 +2945,6 @@ func IsRequireVariableStatement(node *Node) bool {
 	return false
 }
 
-func GetJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *SourceFile) string {
-	jsxImportSourcePragma := GetPragmaFromSourceFile(file, "jsximportsource")
-	jsxRuntimePragma := GetPragmaFromSourceFile(file, "jsxruntime")
-	if GetPragmaArgument(jsxRuntimePragma, "factory") == "classic" {
-		return ""
-	}
-	if compilerOptions.Jsx == core.JsxEmitReactJSX ||
-		compilerOptions.Jsx == core.JsxEmitReactJSXDev ||
-		compilerOptions.JsxImportSource != "" ||
-		jsxImportSourcePragma != nil ||
-		GetPragmaArgument(jsxRuntimePragma, "factory") == "automatic" {
-		result := GetPragmaArgument(jsxImportSourcePragma, "factory")
-		if result == "" {
-			result = compilerOptions.JsxImportSource
-		}
-		if result == "" {
-			result = "react"
-		}
-		return result
-	}
-	return ""
-}
-
-func GetJSXRuntimeImport(base string, options *core.CompilerOptions) string {
-	if base == "" {
-		return base
-	}
-	return base + "/" + core.IfElse(options.Jsx == core.JsxEmitReactJSXDev, "jsx-dev-runtime", "jsx-runtime")
-}
-
-func GetPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
-	var result *Pragma
-	if file != nil {
-		for i := range file.Pragmas {
-			if file.Pragmas[i].Name == name {
-				result = &file.Pragmas[i] // Last one wins
-			}
-		}
-	}
-	return result
-}
-
-func GetPragmaArgument(pragma *Pragma, name string) string {
-	if pragma != nil {
-		if arg, ok := pragma.Args[name]; ok {
-			return arg.Value
-		}
-	}
-	return ""
-}
-
 // Of the form: `const x = require("x")` or `const { x } = require("x")` or with `var` or `let`
 // The variable must not be exported and must not have a type annotation, even a jsdoc one.
 // The initializer must be a call to `require` with a string literal or a string literal-like argument.
@@ -3112,7 +3010,7 @@ func IsCheckJSEnabledForFile(sourceFile *SourceFile) bool {
 }
 
 func IsPlainJSFile(file *SourceFile) bool {
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil
+	return file != nil && (file.ScriptKind == core.ScriptKindJS) && file.CheckJsDirective == nil
 }
 
 func GetLeftmostAccessExpression(expr *Node) *Node {
@@ -3167,27 +3065,8 @@ func IsExclusivelyTypeOnlyImportOrExport(node *Node) bool {
 	return false
 }
 
-func IsCallLikeExpression(node *Node) bool {
-	switch node.Kind {
-	case KindJsxOpeningElement,
-		KindJsxSelfClosingElement,
-		KindJsxOpeningFragment,
-		KindCallExpression:
-		return true
-	}
-	return false
-}
-
-func IsJsxCallLike(node *Node) bool {
-	switch node.Kind {
-	case KindJsxOpeningElement, KindJsxSelfClosingElement, KindJsxOpeningFragment:
-		return true
-	}
-	return false
-}
-
 func IsCallLikeOrFunctionLikeExpression(node *Node) bool {
-	return IsCallLikeExpression(node) || IsFunctionExpressionOrArrowFunction(node)
+	return IsCallExpression(node) || IsFunctionExpressionOrArrowFunction(node)
 }
 
 func NodeHasKind(node *Node, kind Kind) bool {
@@ -3229,9 +3108,7 @@ func HasTypeArguments(node *Node) bool {
 		KindTypeReference,
 		KindExpressionWithTypeArguments,
 		KindImportType,
-		KindTypeQuery,
-		KindJsxOpeningElement,
-		KindJsxSelfClosingElement:
+		KindTypeQuery:
 		return true
 	}
 	return false
@@ -3252,9 +3129,11 @@ func IsVariableLike(node *Node) bool {
 
 func HasInitializer(node *Node) bool {
 	switch node.Kind {
-	case KindVariableDeclaration, KindParameter, KindBindingElement,
-		KindPropertyAssignment, KindForOfStatement,
-		KindJsxAttribute:
+	case KindVariableDeclaration,
+		KindParameter,
+		KindBindingElement,
+		KindPropertyAssignment,
+		KindForOfStatement:
 		return node.Initializer() != nil
 	default:
 		return false
@@ -3361,8 +3240,10 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 	switch name.Kind {
 	case KindNumericLiteral:
 		return NumberKeyNameFromText(name.Text())
-	case KindIdentifier, KindPrivateIdentifier, KindStringLiteral, KindNoSubstitutionTemplateLiteral,
-		KindJsxNamespacedName:
+	case KindIdentifier,
+		KindPrivateIdentifier,
+		KindStringLiteral,
+		KindNoSubstitutionTemplateLiteral:
 		return name.Text()
 	case KindComputedPropertyName:
 		nameExpression := name.Expression()
@@ -3711,19 +3592,8 @@ func selectExpressionOfCallExpression(node *Node) *Node {
 	return nil
 }
 
-func selectTagNameOfJsxOpeningLikeElement(node *Node) *Node {
-	if IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node) {
-		return node.TagName()
-	}
-	return nil
-}
-
 func IsCallExpressionTarget(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
 	return isCalleeWorker(node, IsCallExpression, selectExpressionOfCallExpression, includeElementAccess, skipPastOuterExpressions)
-}
-
-func IsJsxOpeningLikeElementTagName(node *Node, includeElementAccess bool, skipPastOuterExpressions bool) bool {
-	return isCalleeWorker(node, IsJsxOpeningLikeElement, selectTagNameOfJsxOpeningLikeElement, includeElementAccess, skipPastOuterExpressions)
 }
 
 func isCalleeWorker(
@@ -3771,18 +3641,10 @@ func HasQuestionToken(node *Node) bool {
 	return IsQuestionToken(node.QuestionToken())
 }
 
-func IsJsxOpeningLikeElement(node *Node) bool {
-	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)
-}
-
 func GetInvokedExpression(node *Node) *Node {
 	switch node.Kind {
-	case KindJsxOpeningElement, KindJsxSelfClosingElement:
-		return node.TagName()
 	case KindBinaryExpression:
 		return node.AsBinaryExpression().Right
-	case KindJsxOpeningFragment:
-		return node
 	default:
 		return node.Expression()
 	}
@@ -3827,19 +3689,6 @@ func (h *hasFileNameImpl) FileName() string {
 
 func (h *hasFileNameImpl) Path() tspath.Path {
 	return h.path
-}
-
-func GetSemanticJsxChildren(children []*JsxChild) []*JsxChild {
-	return core.Filter(children, func(i *JsxChild) bool {
-		switch i.Kind {
-		case KindJsxExpression:
-			return i.Expression() != nil
-		case KindJsxText:
-			return !i.AsJsxText().ContainsOnlyTriviaWhiteSpaces
-		default:
-			return true
-		}
-	})
 }
 
 // Returns true if the node kind has a comment property.
@@ -4121,25 +3970,6 @@ func GetRestParameterElementType(node *ParameterDeclarationNode) *Node {
 		return core.FirstOrNil(node.AsTypeReferenceNode().TypeArguments.Nodes)
 	}
 	return nil
-}
-
-func TagNamesAreEquivalent(lhs *Expression, rhs *Expression) bool {
-	if lhs.Kind != rhs.Kind {
-		return false
-	}
-	switch lhs.Kind {
-	case KindIdentifier:
-		return lhs.Text() == rhs.Text()
-	case KindThisKeyword:
-		return true
-	case KindJsxNamespacedName:
-		return lhs.AsJsxNamespacedName().Namespace.Text() == rhs.AsJsxNamespacedName().Namespace.Text() &&
-			lhs.AsJsxNamespacedName().Name().Text() == rhs.AsJsxNamespacedName().Name().Text()
-	case KindPropertyAccessExpression:
-		return lhs.AsPropertyAccessExpression().Name().Text() == rhs.AsPropertyAccessExpression().Name().Text() &&
-			TagNamesAreEquivalent(lhs.Expression(), rhs.Expression())
-	}
-	panic("Unhandled case in TagNamesAreEquivalent")
 }
 
 func IsTagName(node *Node) bool {

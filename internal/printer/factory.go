@@ -166,7 +166,6 @@ func (f *NodeFactory) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 	switch textSourceNode.Kind {
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
-		ast.KindJsxNamespacedName,
 		ast.KindStringLiteral,
 		ast.KindNumericLiteral,
 		ast.KindNoSubstitutionTemplateLiteral,
@@ -187,18 +186,6 @@ func (f *NodeFactory) NewStringLiteralFromNode(textSourceNode *ast.Node) *ast.No
 //
 // Common Tokens
 //
-
-func (f *NodeFactory) NewThisExpression() *ast.Expression {
-	return f.NewKeywordExpression(ast.KindThisKeyword)
-}
-
-func (f *NodeFactory) NewTrueExpression() *ast.Expression {
-	return f.NewKeywordExpression(ast.KindTrueKeyword)
-}
-
-func (f *NodeFactory) NewFalseExpression() *ast.Expression {
-	return f.NewKeywordExpression(ast.KindFalseKeyword)
-}
 
 //
 // Common Operators
@@ -894,24 +881,6 @@ func (f *NodeFactory) NewExportStarHelper(moduleExpression *ast.Expression, expo
 		nil, /*questionDotToken*/
 		nil, /*typeArguments*/
 		f.NewNodeList([]*ast.Expression{moduleExpression, exportsExpression}),
-		ast.NodeFlagsNone,
-	)
-}
-
-// Allocates a new Call expression to the `__rewriteRelativeImportExtension` helper.
-func (f *NodeFactory) NewRewriteRelativeImportExtensionsHelper(firstArgument *ast.Node, preserveJsx bool) *ast.Expression {
-	f.emitContext.RequestEmitHelper(rewriteRelativeImportExtensionsHelper)
-	var arguments []*ast.Expression
-	if preserveJsx {
-		arguments = []*ast.Expression{firstArgument, f.NewToken(ast.KindTrueKeyword)}
-	} else {
-		arguments = []*ast.Expression{firstArgument}
-	}
-	return f.NewCallExpression(
-		f.NewUnscopedHelperName("__rewriteRelativeImportExtension"),
-		nil, /*questionDotToken*/
-		nil, /*typeArguments*/
-		f.NewNodeList(arguments),
 		ast.NodeFlagsNone,
 	)
 }

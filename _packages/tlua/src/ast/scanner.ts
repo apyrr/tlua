@@ -1,14 +1,10 @@
 import { CharacterCodes } from "#enums/characterCodes";
 import { CommentDirectiveType } from "#enums/commentDirectiveType";
-import { LanguageVariant } from "#enums/languageVariant";
 import { RegularExpressionFlags } from "#enums/regularExpressionFlags";
 import { ScriptTarget } from "#enums/scriptTarget";
 import { SyntaxKind } from "#enums/syntaxKind";
 import { TokenFlags } from "#enums/tokenFlags";
-import type {
-    JsxTokenSyntaxKind,
-    KeywordSyntaxKind,
-} from "./ast.ts";
+import type { KeywordSyntaxKind } from "./ast.ts";
 
 export type JSDocTokenKind = SyntaxKind.EndOfFile | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.GreaterThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.OpenParenToken | SyntaxKind.CloseParenToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.BacktickToken | SyntaxKind.HashToken | SyntaxKind.Unknown | KeywordSyntaxKind;
 
@@ -62,15 +58,9 @@ export interface Scanner {
     reScanSlashToken(): SyntaxKind;
     reScanTemplateToken(isTaggedTemplate: boolean): SyntaxKind;
     reScanTemplateHeadOrNoSubstitutionTemplate(): SyntaxKind;
-    scanJsxIdentifier(): SyntaxKind;
-    scanJsxAttributeValue(): SyntaxKind;
-    reScanJsxAttributeValue(): SyntaxKind;
-    reScanJsxToken(allowMultilineJsxText?: boolean): JsxTokenSyntaxKind;
-    reScanLessThanToken(): SyntaxKind;
     reScanHashToken(): SyntaxKind;
     reScanQuestionToken(): SyntaxKind;
     reScanInvalidIdentifier(): SyntaxKind;
-    scanJsxToken(): JsxTokenSyntaxKind;
     scanJsDocToken(): JSDocTokenKind;
     scanJSDocCommentTextToken(inBackticks: boolean): JSDocTokenKind | SyntaxKind.JSDocCommentTextToken;
     scan(): SyntaxKind;
@@ -78,7 +68,6 @@ export interface Scanner {
     getText(): string;
     clearCommentDirectives(): void;
     setText(text: string | undefined, start?: number, length?: number): void;
-    setLanguageVariant(variant: LanguageVariant): void;
     resetTokenState(pos: number): void;
     setSkipJsDocLeadingAsterisks(skip: boolean): void;
     lookAhead<T>(callback: () => T): T;
@@ -182,7 +171,6 @@ const textToToken = new Map(Object.entries({
     "*": SyntaxKind.AsteriskToken,
     "/": SyntaxKind.SlashToken,
     "%": SyntaxKind.PercentToken,
-    "</": SyntaxKind.LessThanSlashToken,
     "&": SyntaxKind.AmpersandToken,
     "|": SyntaxKind.BarToken,
     "!": SyntaxKind.ExclamationToken,
@@ -813,22 +801,20 @@ export function isIdentifierStart(ch: number, _languageVersion?: ScriptTarget): 
         ch > CharacterCodes.maxAsciiCharacter && isUnicodeIdentifierStart(ch);
 }
 
-export function isIdentifierPart(ch: number, _languageVersion?: ScriptTarget, identifierVariant?: LanguageVariant): boolean {
+export function isIdentifierPart(ch: number, _languageVersion?: ScriptTarget): boolean {
     return ch >= CharacterCodes.A && ch <= CharacterCodes.Z || ch >= CharacterCodes.a && ch <= CharacterCodes.z ||
         ch >= CharacterCodes._0 && ch <= CharacterCodes._9 || ch === CharacterCodes.$ || ch === CharacterCodes._ ||
-        // "-" and ":" are valid in JSX Identifiers
-        (identifierVariant === LanguageVariant.JSX ? (ch === CharacterCodes.minus || ch === CharacterCodes.colon) : false) ||
         ch > CharacterCodes.maxAsciiCharacter && isUnicodeIdentifierPart(ch);
 }
 
-export function isIdentifierText(name: string, _languageVersion?: ScriptTarget, identifierVariant?: LanguageVariant): boolean {
+export function isIdentifierText(name: string, _languageVersion?: ScriptTarget): boolean {
     let ch = name.codePointAt(0)!;
     if (!isIdentifierStart(ch)) {
         return false;
     }
 
     for (let i = charSize(ch); i < name.length; i += charSize(ch)) {
-        if (!isIdentifierPart(ch = name.codePointAt(i)!, undefined, identifierVariant)) {
+        if (!isIdentifierPart(ch = name.codePointAt(i)!)) {
             return false;
         }
     }
@@ -857,7 +843,6 @@ export function utf16EncodeAsString(codePoint: number): string {
 // Creates a scanner over a (possibly unspecified) range of a piece of text.
 export function createScanner(
     skipTrivia: boolean,
-    languageVariant: LanguageVariant = LanguageVariant.Standard,
     textInitial?: string,
     start?: number,
     length?: number,
@@ -912,22 +897,15 @@ export function createScanner(
         reScanSlashToken,
         reScanTemplateToken,
         reScanTemplateHeadOrNoSubstitutionTemplate,
-        scanJsxIdentifier,
-        scanJsxAttributeValue,
-        reScanJsxAttributeValue,
-        reScanJsxToken,
-        reScanLessThanToken,
         reScanHashToken,
         reScanQuestionToken,
         reScanInvalidIdentifier,
-        scanJsxToken,
         scanJsDocToken,
         scanJSDocCommentTextToken,
         scan,
         getText,
         clearCommentDirectives,
         setText,
-        setLanguageVariant,
         resetTokenState,
         setSkipJsDocLeadingAsterisks,
         tryScan,
@@ -1068,7 +1046,7 @@ export function createScanner(
         return String.fromCharCode(...valueChars);
     }
 
-    function scanString(jsxAttributeString = false): string {
+    function scanString(): string {
         const quote = charCodeUnchecked(pos);
         pos++;
         let result = "";
@@ -1085,14 +1063,14 @@ export function createScanner(
                 pos++;
                 break;
             }
-            if (ch === CharacterCodes.backslash && !jsxAttributeString) {
+            if (ch === CharacterCodes.backslash) {
                 result += text.substring(start, pos);
                 result += scanEscapeSequence(EscapeSequenceScanningFlags.String | EscapeSequenceScanningFlags.ReportErrors);
                 start = pos;
                 continue;
             }
 
-            if ((ch === CharacterCodes.lineFeed || ch === CharacterCodes.carriageReturn) && !jsxAttributeString) {
+            if (ch === CharacterCodes.lineFeed || ch === CharacterCodes.carriageReturn) {
                 result += text.substring(start, pos);
                 tokenFlags |= TokenFlags.Unterminated;
                 break;
@@ -1680,13 +1658,6 @@ export function createScanner(
                     if (charCodeUnchecked(pos + 1) === CharacterCodes.equals) {
                         return pos += 2, token = SyntaxKind.LessThanEqualsToken;
                     }
-                    if (
-                        languageVariant === LanguageVariant.JSX &&
-                        charCodeUnchecked(pos + 1) === CharacterCodes.slash &&
-                        charCodeUnchecked(pos + 2) !== CharacterCodes.asterisk
-                    ) {
-                        return pos += 2, token = SyntaxKind.LessThanSlashToken;
-                    }
                     pos++;
                     return token = SyntaxKind.LessThanToken;
                 case CharacterCodes.equals:
@@ -2027,15 +1998,6 @@ export function createScanner(
         return token = scanTemplateAndSetTokenValue(/*shouldEmitInvalidEscapeError*/ true);
     }
 
-    function reScanJsxToken(allowMultilineJsxText = true): JsxTokenSyntaxKind {
-        pos = tokenStart = fullStartPos;
-        return token = scanJsxToken(allowMultilineJsxText);
-    }
-
-    function reScanLessThanToken(): SyntaxKind {
-        return token;
-    }
-
     function reScanHashToken(): SyntaxKind {
         if (token === SyntaxKind.PrivateIdentifier) {
             pos = tokenStart + 1;
@@ -2047,99 +2009,6 @@ export function createScanner(
     function reScanQuestionToken(): SyntaxKind {
         pos = tokenStart + 1;
         return token = SyntaxKind.QuestionToken;
-    }
-
-    function scanJsxToken(allowMultilineJsxText = true): JsxTokenSyntaxKind {
-        fullStartPos = tokenStart = pos;
-
-        if (pos >= end) {
-            return token = SyntaxKind.EndOfFile;
-        }
-
-        let char = charCodeUnchecked(pos);
-        if (char === CharacterCodes.lessThan) {
-            if (charCodeUnchecked(pos + 1) === CharacterCodes.slash) {
-                pos += 2;
-                return token = SyntaxKind.LessThanSlashToken;
-            }
-            pos++;
-            return token = SyntaxKind.LessThanToken;
-        }
-
-        if (char === CharacterCodes.openBrace) {
-            pos++;
-            return token = SyntaxKind.OpenBraceToken;
-        }
-
-        let firstNonWhitespace = 0;
-
-        while (pos < end) {
-            char = charCodeUnchecked(pos);
-            if (char === CharacterCodes.openBrace) {
-                break;
-            }
-            if (char === CharacterCodes.lessThan) {
-                if (isConflictMarkerTrivia(text, pos)) {
-                    pos = scanConflictMarkerTrivia(text, pos);
-                    return token = SyntaxKind.ConflictMarkerTrivia;
-                }
-                break;
-            }
-
-            if (isLineBreak(char) && firstNonWhitespace === 0) {
-                firstNonWhitespace = -1;
-            }
-            else if (!allowMultilineJsxText && isLineBreak(char) && firstNonWhitespace > 0) {
-                break;
-            }
-            else if (!isWhiteSpaceLike(char)) {
-                firstNonWhitespace = pos;
-            }
-
-            pos++;
-        }
-
-        tokenValue = text.substring(fullStartPos, pos);
-
-        return firstNonWhitespace === -1 ? SyntaxKind.JsxTextAllWhiteSpaces : SyntaxKind.JsxText;
-    }
-
-    function scanJsxIdentifier(): SyntaxKind {
-        if (tokenIsIdentifierOrKeyword(token)) {
-            while (pos < end) {
-                const ch = charCodeUnchecked(pos);
-                if (ch === CharacterCodes.minus) {
-                    tokenValue += "-";
-                    pos++;
-                    continue;
-                }
-                const oldPos = pos;
-                tokenValue += scanIdentifierParts();
-                if (pos === oldPos) {
-                    break;
-                }
-            }
-            return getIdentifierToken();
-        }
-        return token;
-    }
-
-    function scanJsxAttributeValue(): SyntaxKind {
-        fullStartPos = pos;
-
-        switch (charCodeUnchecked(pos)) {
-            case CharacterCodes.doubleQuote:
-            case CharacterCodes.singleQuote:
-                tokenValue = scanString(/*jsxAttributeString*/ true);
-                return token = SyntaxKind.StringLiteral;
-            default:
-                return scan();
-        }
-    }
-
-    function reScanJsxAttributeValue(): SyntaxKind {
-        pos = tokenStart = fullStartPos;
-        return scanJsxAttributeValue();
     }
 
     function scanJSDocCommentTextToken(inBackticks: boolean): JSDocTokenKind | SyntaxKind.JSDocCommentTextToken {
@@ -2325,10 +2194,6 @@ export function createScanner(
         text = newText || "";
         end = length === undefined ? text.length : start! + length;
         resetTokenState(start || 0);
-    }
-
-    function setLanguageVariant(variant: LanguageVariant) {
-        languageVariant = variant;
     }
 
     function resetTokenState(position: number) {

@@ -229,9 +229,6 @@ func visitNode(ctx context.Context, n *ast.Node, depthRemaining int, sourceFile 
 }
 
 func addOutliningForLeadingCommentsForNode(ctx context.Context, n *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
-	if ast.IsJsxText(n) {
-		return nil
-	}
 	return addOutliningForLeadingCommentsForPos(ctx, n.Pos(), sourceFile, l)
 }
 
@@ -359,10 +356,6 @@ func getOutliningSpanForNode(ctx context.Context, n *ast.Node, sourceFile *ast.S
 		return spanForNode(ctx, n, ast.KindOpenBraceToken, !ast.IsArrayLiteralExpression(n.Parent) && !ast.IsCallExpression(n.Parent) /*useFullStart*/, sourceFile, l)
 	case ast.KindArrayLiteralExpression:
 		return spanForNode(ctx, n, ast.KindOpenBracketToken, !ast.IsArrayLiteralExpression(n.Parent) && !ast.IsCallExpression(n.Parent) /*useFullStart*/, sourceFile, l)
-	case ast.KindJsxElement, ast.KindJsxFragment:
-		return spanForJSXElement(ctx, n, sourceFile, l)
-	case ast.KindJsxSelfClosingElement, ast.KindJsxOpeningElement:
-		return spanForJSXAttributes(ctx, n, sourceFile, l)
 	case ast.KindTemplateExpression, ast.KindNoSubstitutionTemplateLiteral:
 		return spanForTemplateLiteral(ctx, n, sourceFile, l)
 	case ast.KindArrayBindingPattern:
@@ -431,33 +424,6 @@ func spanForArrowFunction(ctx context.Context, node *ast.Node, sourceFile *ast.S
 
 func spanForTemplateLiteral(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	if node.Kind == ast.KindNoSubstitutionTemplateLiteral && len(node.Text()) == 0 {
-		return nil
-	}
-	return createFoldingRangeFromBounds(ctx, astnav.GetStartOfNode(node, sourceFile, false /*includeJSDoc*/), node.End(), "", sourceFile, l)
-}
-
-func spanForJSXElement(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
-	if node.Kind == ast.KindJsxElement {
-		jsxElement := node.AsJsxElement()
-		textRange := l.createLspRangeFromBounds(astnav.GetStartOfNode(jsxElement.OpeningElement, sourceFile, false /*includeJSDoc*/), jsxElement.ClosingElement.End(), sourceFile)
-		tagName := scanner.GetTextOfNode(jsxElement.OpeningElement.TagName())
-		bannerText := "<" + tagName + ">...</" + tagName + ">"
-		return createFoldingRange(ctx, textRange, "", bannerText)
-	}
-	// JsxFragment
-	jsxFragment := node.AsJsxFragment()
-	textRange := l.createLspRangeFromBounds(astnav.GetStartOfNode(jsxFragment.OpeningFragment, sourceFile, false /*includeJSDoc*/), jsxFragment.ClosingFragment.End(), sourceFile)
-	return createFoldingRange(ctx, textRange, "", "<>...</>")
-}
-
-func spanForJSXAttributes(ctx context.Context, node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
-	var attributes *ast.JsxAttributesNode
-	if node.Kind == ast.KindJsxSelfClosingElement {
-		attributes = node.AsJsxSelfClosingElement().Attributes
-	} else {
-		attributes = node.AsJsxOpeningElement().Attributes
-	}
-	if len(attributes.Properties()) == 0 {
 		return nil
 	}
 	return createFoldingRangeFromBounds(ctx, astnav.GetStartOfNode(node, sourceFile, false /*includeJSDoc*/), node.End(), "", sourceFile, l)

@@ -6,7 +6,6 @@ import (
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/binder"
-	"github.com/apyrr/tlua/internal/collections"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/debug"
 	"github.com/apyrr/tlua/internal/diagnostics"
@@ -72,7 +71,6 @@ func (c *Checker) checkGrammarRegularExpressionLiteral(node *ast.RegularExpressi
 			c.regExpScanner = scanner.NewScanner()
 		}
 		c.regExpScanner.SetScriptTarget(c.languageVersion)
-		c.regExpScanner.SetLanguageVariant(sourceFile.LanguageVariant)
 		c.regExpScanner.SetOnError(func(message *diagnostics.Message, start int, length int, args ...any) {
 			if message.Category() == diagnostics.CategoryMessage && lastError != nil && start == lastError.Pos() && length == lastError.Len() {
 				// For providing spelling suggestions.
@@ -781,48 +779,6 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 				}
 			}
 		}
-	}
-
-	return false
-}
-
-func (c *Checker) checkGrammarJsxElement(node *ast.Node) bool {
-	c.checkGrammarJsxName(node.TagName())
-	c.checkGrammarTypeArguments(node, node.TypeArgumentList())
-	var seen collections.Set[string]
-	for _, attrNode := range node.Attributes().Properties() {
-		// Every attribute is a plain one: spread attributes no longer parse.
-		attr := attrNode.AsJsxAttribute()
-		name := attr.Name()
-		initializer := attr.Initializer
-		textOfName := name.Text()
-		if !seen.Has(textOfName) {
-			seen.Add(textOfName)
-		} else {
-			return c.grammarErrorOnNode(name, diagnostics.JSX_elements_cannot_have_multiple_attributes_with_the_same_name)
-		}
-		if initializer != nil && initializer.Kind == ast.KindJsxExpression && initializer.Expression() == nil {
-			return c.grammarErrorOnNode(initializer, diagnostics.JSX_attributes_must_only_be_assigned_a_non_empty_expression)
-		}
-	}
-	return false
-}
-
-func (c *Checker) checkGrammarJsxName(node *ast.JsxTagNameExpression) bool {
-	if ast.IsPropertyAccessExpression(node) && ast.IsJsxNamespacedName(node.Expression()) {
-		return c.grammarErrorOnNode(node.Expression(), diagnostics.JSX_property_access_expressions_cannot_include_JSX_namespace_names)
-	}
-
-	if ast.IsJsxNamespacedName(node) && c.compilerOptions.GetJSXTransformEnabled() && !scanner.IsIntrinsicJsxName(node.AsJsxNamespacedName().Namespace.Text()) {
-		return c.grammarErrorOnNode(node, diagnostics.React_components_cannot_include_JSX_namespace_names)
-	}
-
-	return false
-}
-
-func (c *Checker) checkGrammarJsxExpression(node *ast.JsxExpression) bool {
-	if node.Expression != nil && ast.IsCommaSequence(node.Expression) {
-		return c.grammarErrorOnNode(node.Expression, diagnostics.JSX_expressions_may_not_use_the_comma_operator_Did_you_mean_to_write_an_array)
 	}
 
 	return false

@@ -983,21 +983,6 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 			argumentCount:       argumentCount,
 			implicitArguments:   implicitArguments,
 		}
-	} else if ast.IsJsxOpeningLikeElement(parent) {
-		// Provide a signature help for JSX opening element or JSX self-closing element.
-		// This is not guarantee that JSX tag-name is resolved into stateless function component. (that is done in "getSignatureHelpItems")
-		// i.e
-		//      export function MainButton(props: ButtonProps, context: any): JSX.Element { ... }
-		//      <MainButton /*signatureHelp*/
-		attributeSpanStart := parent.Attributes().Loc.Pos()
-		attributeSpanEnd := scanner.SkipTrivia(sourceFile.Text(), parent.Attributes().End())
-		return &argumentListInfo{
-			isTypeParameterList: false,
-			invocation:          &invocation{callInvocation: &callInvocation{node: parent}},
-			argumentsSpan:       core.NewTextRange(attributeSpanStart, attributeSpanEnd-attributeSpanStart),
-			argumentIndex:       0,
-			argumentCount:       1,
-		}
 	} else {
 		typeArgInfo := getPossibleTypeArgumentsInfo(node, sourceFile)
 		if typeArgInfo != nil {

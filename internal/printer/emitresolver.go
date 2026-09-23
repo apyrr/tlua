@@ -84,11 +84,6 @@ type EmitResolver interface {
 	// decorator metadata
 	GetTypeReferenceSerializationKind(name *ast.EntityName, serialScope *ast.Node) TypeReferenceSerializationKind
 
-	// JSX Emit
-	GetJsxFactoryEntity(location *ast.Node) *ast.Node
-	GetJsxFragmentFactoryEntity(location *ast.Node) *ast.Node
-	SetReferencedImportDeclaration(node *ast.IdentifierNode, ref *ast.Declaration) // for overriding the reference resolver behavior for generated identifiers
-
 	// declaration emit checker functionality projections
 	PrecalculateDeclarationEmitVisibility(file *ast.SourceFile)
 	IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) SymbolAccessibilityResult

@@ -286,14 +286,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.InlineSources = ParseTristate(value)
 	case "isolatedDeclarations":
 		allOptions.IsolatedDeclarations = ParseTristate(value)
-	case "jsx":
-		allOptions.Jsx = floatOrInt32ToFlag[core.JsxEmit](value)
-	case "jsxFactory":
-		allOptions.JsxFactory = ParseString(value)
-	case "jsxFragmentFactory":
-		allOptions.JsxFragmentFactory = ParseString(value)
-	case "jsxImportSource":
-		allOptions.JsxImportSource = ParseString(value)
 	case "lib":
 		if _, ok := value.([]string); ok {
 			allOptions.Lib = value.([]string)
@@ -358,8 +350,6 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.ResolvePackageJsonExports = ParseTristate(value)
 	case "resolvePackageJsonImports":
 		allOptions.ResolvePackageJsonImports = ParseTristate(value)
-	case "reactNamespace":
-		allOptions.ReactNamespace = ParseString(value)
 	case "rootDir":
 		allOptions.RootDir = ParseString(value)
 	case "removeComments":

@@ -339,8 +339,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			!ast.IsLabelName(node) &&
 			!ast.IsGlobalScopeAugmentation(node.Parent) &&
 			!isImportStatementName(node) &&
-			!isExportStatementName(node) &&
-			!isIntrinsicJsxTag(node, walker.currentSourceFile) {
+			!isExportStatementName(node) {
 			typeString = t.AsIntrinsicType().IntrinsicName()
 		} else {
 			ctx.Reset()
@@ -430,15 +429,4 @@ func isExportStatementName(node *ast.Node) bool {
 		return true
 	}
 	return false
-}
-
-func isIntrinsicJsxTag(node *ast.Node, sourceFile *ast.SourceFile) bool {
-	if !(ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxClosingElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) {
-		return false
-	}
-	if node.Parent.TagName() != node {
-		return false
-	}
-	text := scanner.GetSourceTextOfNodeFromSourceFile(sourceFile, node, false /*includeTrivia*/)
-	return scanner.IsIntrinsicJsxName(text)
 }

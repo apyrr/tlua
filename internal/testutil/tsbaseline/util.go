@@ -10,7 +10,7 @@ import (
 var (
 	lineDelimiter      = regexp.MustCompile("\r?\n")
 	nonWhitespace      = regexp.MustCompile(`\S`)
-	tsExtension        = regexp.MustCompile(`\.(tlua|tsx)$`)
+	tsExtension        = regexp.MustCompile(`\.tlua$`)
 	testPathCharacters = regexp.MustCompile(`[\^<>:"|?*%]`)
 	testPathDotDot     = regexp.MustCompile(`\.\.\/`)
 )

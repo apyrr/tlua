@@ -368,11 +368,6 @@ type SourceFileLinks struct {
 	requestedExternalEmitHelpers ExternalEmitHelpers
 	deferredNodes                collections.OrderedSet[*ast.Node]
 	identifierCheckNodes         []*ast.Node
-	localJsxNamespace            string
-	localJsxFragmentNamespace    string
-	localJsxFactory              *ast.EntityName
-	localJsxFragmentFactory      *ast.EntityName
-	jsxFragmentType              *Type
 }
 
 // Signature specific links
@@ -559,7 +554,6 @@ const (
 	ObjectFlagsEvolvingArray                              ObjectFlags = 1 << 8  // Evolving array type
 	ObjectFlagsObjectLiteralPatternWithComputedProperties ObjectFlags = 1 << 9  // Object literal pattern with computed properties
 	ObjectFlagsReverseMapped                              ObjectFlags = 1 << 10 // Object contains a property from a reverse-mapped type
-	ObjectFlagsJsxAttributes                              ObjectFlags = 1 << 11 // Jsx attributes type
 	ObjectFlagsJSLiteral                                  ObjectFlags = 1 << 12 // Object type declared in JS - disables errors on read/write of nonexisting members
 	ObjectFlagsFreshLiteral                               ObjectFlags = 1 << 13 // Fresh object literal
 	ObjectFlagsArrayLiteral                               ObjectFlags = 1 << 14 // Originates in an array literal
@@ -759,24 +753,12 @@ func (t *Type) IsString() bool {
 	return t.flags&TypeFlagsString != 0
 }
 
-func (t *Type) IsIntersection() bool {
-	return t.flags&TypeFlagsIntersection != 0
-}
-
 func (t *Type) IsStringLiteral() bool {
 	return t.flags&TypeFlagsStringLiteral != 0
 }
 
 func (t *Type) IsNumberLiteral() bool {
 	return t.flags&TypeFlagsNumberLiteral != 0
-}
-
-func (t *Type) IsBooleanLike() bool {
-	return t.flags&TypeFlagsBooleanLike != 0
-}
-
-func (t *Type) IsStringLike() bool {
-	return t.flags&TypeFlagsStringLike != 0
 }
 
 func (t *Type) IsClass() bool {

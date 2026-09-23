@@ -119,12 +119,12 @@ func FuzzParser(f *testing.F) {
 				if extension == "" {
 					continue
 				}
-				f.Add(extension, unit.content, false, false)
+				f.Add(extension, unit.content, false)
 			}
 		}
 	}
 
-	f.Fuzz(func(t *testing.T, extension string, sourceText string, externalModuleIndicatorOptionsJSX bool, externalModuleIndicatorOptionsForce bool) {
+	f.Fuzz(func(t *testing.T, extension string, sourceText string, externalModuleIndicatorOptionsForce bool) {
 		if !extensions.Has(extension) {
 			t.Skip()
 		}
@@ -136,7 +136,6 @@ func FuzzParser(f *testing.F) {
 			FileName: fileName,
 			Path:     path,
 			ExternalModuleIndicatorOptions: ast.ExternalModuleIndicatorOptions{
-				JSX:   externalModuleIndicatorOptionsJSX,
 				Force: externalModuleIndicatorOptionsForce,
 			},
 		}

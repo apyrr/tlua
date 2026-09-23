@@ -61,7 +61,7 @@ func TestTscCommandline(t *testing.T) {
 		},
 		{
 			subScenario:     "Initialized TSConfig with enum value compiler options",
-			commandLineArgs: []string{"--init", "--target", "es5", "--jsx", "react"},
+			commandLineArgs: []string{"--init", "--target", "es5", "--module", "commonjs"},
 		},
 		{
 			subScenario:     "Initialized TSConfig with list compiler options",
@@ -189,7 +189,7 @@ func TestTscCommandline(t *testing.T) {
 		},
 		{
 			subScenario:     "Parse enum type options",
-			commandLineArgs: []string{"first.tlua", "--module", "nodenext ", "--target", "esnext", "--jsx", "react", "--newLine", "crlf"},
+			commandLineArgs: []string{"first.tlua", "--module", "nodenext ", "--target", "esnext", "--newLine", "crlf"},
 		},
 		{
 			subScenario: "Parse watch interval option",
@@ -410,56 +410,6 @@ func TestTscComposite(t *testing.T) {
 					},
 				},
 			},
-		},
-		{
-			subScenario: "synthetic jsx import of ESM module from CJS module no crash no jsx element",
-			files: FileMap{
-				"/home/src/projects/project/src/main.tlua": "return 42;",
-				"/home/src/projects/project/tluaconfig.json": stringtestutil.Dedent(`
-				{
-					"compilerOptions": {
-						"composite": true,
-						"module": "Node16",
-						"jsx": "react-jsx",
-						"jsxImportSource": "solid-js",
-					},
-				}`),
-				"/home/src/projects/project/node_modules/solid-js/package.json": stringtestutil.Dedent(`
-					{
-						"name": "solid-js",
-						"type": "module"
-					}
-				`),
-				"/home/src/projects/project/node_modules/solid-js/jsx-runtime.d.tlua": stringtestutil.Dedent(`
-					interface JsxIntrinsicElements { div: {}; }
-				`),
-			},
-			cwd: "/home/src/projects/project",
-		},
-		{
-			subScenario: "synthetic jsx import of ESM module from CJS module error on jsx element",
-			files: FileMap{
-				"/home/src/projects/project/src/main.tsx": "return <div/>;",
-				"/home/src/projects/project/tluaconfig.json": stringtestutil.Dedent(`
-				{
-					"compilerOptions": {
-						"composite": true,
-						"module": "Node16",
-						"jsx": "react-jsx",
-						"jsxImportSource": "solid-js",
-					},
-				}`),
-				"/home/src/projects/project/node_modules/solid-js/package.json": stringtestutil.Dedent(`
-					{
-						"name": "solid-js",
-						"type": "module"
-					}
-				`),
-				"/home/src/projects/project/node_modules/solid-js/jsx-runtime.d.tlua": stringtestutil.Dedent(`
-					interface JsxIntrinsicElements { div: {}; }
-				`),
-			},
-			cwd: "/home/src/projects/project",
 		},
 	}
 
@@ -823,22 +773,15 @@ func TestTscIncremental(t *testing.T) {
                     "compilerOptions": {
                         "incremental": true,
                         "strict": true,
-                        "jsx": "react",
                         "module": "esnext",
                     },
                 }`),
-				"/home/src/workspaces/project/index.tsx": stringtestutil.Dedent(`
-                    interface JsxElementChildrenAttribute { children: {}; }
-                    interface JsxIntrinsicElements { div: {} }
-
-                    declare React: any;
-
-                    declare function Component(props: never): any;
-                    declare function Component(props: { children?: number }): any;
-                    local _ = (<Component>
-                        <div />
-                        <div />
-                    </Component>)`),
+				"/home/src/workspaces/project/index.tlua": stringtestutil.Dedent(`
+                    declare f: {
+                        (x: never): any;
+                        (x: { a?: number }): any;
+                    }
+                    f({ a = "s" })`),
 			},
 			edits: noChangeOnlyEdit,
 		},
@@ -853,7 +796,7 @@ func TestTscIncremental(t *testing.T) {
                         "module": "esnext",
                     },
                 }`),
-				"/home/src/workspaces/project/index.tsx":  `local a = 1;`,
+				"/home/src/workspaces/project/index.tlua": `local a = 1;`,
 				"/home/src/workspaces/project/other.tlua": `local b = 2;`,
 			},
 		},
@@ -1089,53 +1032,6 @@ func TestTscIncremental(t *testing.T) {
 					},
 				},
 			},
-		},
-		{
-			subScenario: "react-jsx-emit-mode with no backing types found doesnt crash",
-			files: FileMap{
-				"/home/src/workspaces/project/node_modules/react/jsx-runtime.lua": "", // js needs to be present so there's a resolution result
-				"/home/src/workspaces/project/node_modules/@types/react/index.d.tlua": stringtestutil.Dedent(`
-					interface JsxElement {}
-					interface JsxIntrinsicElements {
-						div: {
-							propA?: boolean;
-						};
-					}`), // doesn't contain a jsx-runtime definition
-				"/home/src/workspaces/project/src/index.tsx": `local App = function() return <div propA={true}></div> end;`,
-				"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
-				{ 
-					"compilerOptions": { 
-						"module": "commonjs",
-						"jsx": "react-jsx", 
-						"incremental": true, 
-						"jsxImportSource": "react" 
-					} 
-				}`),
-			},
-		},
-		{
-			subScenario: "react-jsx-emit-mode with no backing types found doesnt crash under --strict",
-			files: FileMap{
-				"/home/src/workspaces/project/node_modules/react/jsx-runtime.lua": "", // js needs to be present so there's a resolution result
-				"/home/src/workspaces/project/node_modules/@types/react/index.d.tlua": stringtestutil.Dedent(`
-					interface JsxElement {}
-					interface JsxIntrinsicElements {
-						div: {
-							propA?: boolean;
-						};
-					}`), // doesn't contain a jsx-runtime definition
-				"/home/src/workspaces/project/src/index.tsx": `local App = function() return <div propA={true}></div> end;`,
-				"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
-				{ 
-					"compilerOptions": { 
-						"module": "commonjs",
-						"jsx": "react-jsx", 
-						"incremental": true, 
-						"jsxImportSource": "react" 
-					} 
-				}`),
-			},
-			commandLineArgs: []string{"--strict"},
 		},
 		{
 			subScenario: "change to type that gets used as global through export in another file",

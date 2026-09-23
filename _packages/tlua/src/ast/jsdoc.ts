@@ -8,7 +8,6 @@ import type {
     JSDocParameterTag,
     JSDocTag,
     JSDocTemplateTag,
-    JsxTagNameExpression,
     ParameterDeclaration,
     PrivateIdentifier,
     TypeParameterDeclaration,
@@ -219,7 +218,7 @@ function formatJSDocLink(link: JSDocLink | JSDocLinkCode | JSDocLinkPlain) {
     return `{@${kind} ${name}${space}${link.text}}`;
 }
 
-function entityNameToString(name: EntityNameOrEntityNameExpression | JsxTagNameExpression | PrivateIdentifier): string {
+function entityNameToString(name: EntityNameOrEntityNameExpression | PrivateIdentifier): string {
     switch (name.kind) {
         case SyntaxKind.PrivateIdentifier:
         case SyntaxKind.Identifier:
@@ -233,8 +232,6 @@ function entityNameToString(name: EntityNameOrEntityNameExpression | JsxTagNameE
             else {
                 return assertNever(name.name);
             }
-        case SyntaxKind.JsxNamespacedName:
-            return entityNameToString(name.namespace) + ":" + entityNameToString(name.name);
         default:
             return assertNever(name);
     }

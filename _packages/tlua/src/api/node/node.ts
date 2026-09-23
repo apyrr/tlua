@@ -169,17 +169,13 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
         return this.getString(stringIndex);
     }
 
-    get languageVariant(): number {
-        return this.view.getUint32(this.extendedDataOffset + 12, true);
-    }
-
     get scriptKind(): number {
-        return this.view.getUint32(this.extendedDataOffset + 16, true);
+        return this.view.getUint32(this.extendedDataOffset + 12, true);
     }
 
     get referencedFiles(): readonly FileReference[] {
         if (this._cachedReferencedFiles !== undefined) return this._cachedReferencedFiles;
-        const offset = this.view.getUint32(this.extendedDataOffset + 20, true);
+        const offset = this.view.getUint32(this.extendedDataOffset + 16, true);
         const files = this.readFileReferences(offset);
         this._cachedReferencedFiles = files;
         return files;
@@ -187,7 +183,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
 
     get typeReferenceDirectives(): readonly FileReference[] {
         if (this._cachedTypeReferenceDirectives !== undefined) return this._cachedTypeReferenceDirectives;
-        const offset = this.view.getUint32(this.extendedDataOffset + 24, true);
+        const offset = this.view.getUint32(this.extendedDataOffset + 20, true);
         const directives = this.readFileReferences(offset);
         this._cachedTypeReferenceDirectives = directives;
         return directives;
@@ -195,7 +191,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
 
     get libReferenceDirectives(): readonly FileReference[] {
         if (this._cachedLibReferenceDirectives !== undefined) return this._cachedLibReferenceDirectives;
-        const offset = this.view.getUint32(this.extendedDataOffset + 28, true);
+        const offset = this.view.getUint32(this.extendedDataOffset + 24, true);
         const directives = this.readFileReferences(offset);
         this._cachedLibReferenceDirectives = directives;
         return directives;
@@ -203,7 +199,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
 
     get imports(): readonly Node[] {
         if (this._cachedImports !== undefined) return this._cachedImports;
-        const offset = this.view.getUint32(this.extendedDataOffset + 32, true);
+        const offset = this.view.getUint32(this.extendedDataOffset + 28, true);
         const imports = this.readNodeIndexArray(offset);
         this._cachedImports = imports;
         return imports;
@@ -211,7 +207,7 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
 
     get moduleAugmentations(): readonly Node[] {
         if (this._cachedModuleAugmentations !== undefined) return this._cachedModuleAugmentations;
-        const offset = this.view.getUint32(this.extendedDataOffset + 36, true);
+        const offset = this.view.getUint32(this.extendedDataOffset + 32, true);
         const moduleAugmentations = this.readNodeIndexArray(offset);
         this._cachedModuleAugmentations = moduleAugmentations;
         return moduleAugmentations;
@@ -219,14 +215,14 @@ export class RemoteSourceFile extends RemoteNode implements SourceFileInfo {
 
     get ambientModuleNames(): readonly string[] {
         if (this._cachedAmbientModuleNames !== undefined) return this._cachedAmbientModuleNames;
-        const offset = this.view.getUint32(this.extendedDataOffset + 40, true);
+        const offset = this.view.getUint32(this.extendedDataOffset + 36, true);
         const names = this.readStringArray(offset);
         this._cachedAmbientModuleNames = names;
         return names;
     }
 
     get externalModuleIndicator(): Node | true | undefined {
-        const nodeIndex = this.view.getUint32(this.extendedDataOffset + 44, true);
+        const nodeIndex = this.view.getUint32(this.extendedDataOffset + 40, true);
         if (nodeIndex === 0) return undefined;
         if (nodeIndex === this.index) return true;
         return this.getOrCreateNodeAtIndex(nodeIndex) as Node;

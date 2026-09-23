@@ -99,24 +99,6 @@ import type {
     JSDocTypeTag,
     JSDocUnknownTag,
     JSDocVariadicType,
-    JsxAttribute,
-    JsxAttributeLike,
-    JsxAttributeName,
-    JsxAttributes,
-    JsxAttributeValue,
-    JsxChild,
-    JsxClosingElement,
-    JsxClosingFragment,
-    JsxElement,
-    JsxExpression,
-    JsxFragment,
-    JsxNamespacedName,
-    JsxOpeningElement,
-    JsxOpeningFragment,
-    JsxSelfClosingElement,
-    JsxSpreadAttribute,
-    JsxTagNameExpression,
-    JsxText,
     KeywordExpression,
     KeywordExpressionSyntaxKind,
     KeywordTypeNode,
@@ -251,9 +233,6 @@ export class NodeObject {
     get assertsModifier(): any {
         return this._data?.assertsModifier;
     }
-    get attributes(): any {
-        return this._data?.attributes;
-    }
     get body(): any {
         return this._data?.body;
     }
@@ -266,12 +245,6 @@ export class NodeObject {
     get className(): any {
         return this._data?.className;
     }
-    get closingElement(): any {
-        return this._data?.closingElement;
-    }
-    get closingFragment(): any {
-        return this._data?.closingFragment;
-    }
     get colonToken(): any {
         return this._data?.colonToken;
     }
@@ -280,9 +253,6 @@ export class NodeObject {
     }
     get constraint(): any {
         return this._data?.constraint;
-    }
-    get containsOnlyTriviaWhiteSpaces(): any {
-        return this._data?.containsOnlyTriviaWhiteSpaces;
     }
     get declarationList(): any {
         return this._data?.declarationList;
@@ -389,9 +359,6 @@ export class NodeObject {
     get label(): any {
         return this._data?.label;
     }
-    get languageVariant(): any {
-        return this._data?.languageVariant;
-    }
     get left(): any {
         return this._data?.left;
     }
@@ -431,17 +398,8 @@ export class NodeObject {
     get namedBindings(): any {
         return this._data?.namedBindings;
     }
-    get namespace(): any {
-        return this._data?.namespace;
-    }
     get objectType(): any {
         return this._data?.objectType;
-    }
-    get openingElement(): any {
-        return this._data?.openingElement;
-    }
-    get openingFragment(): any {
-        return this._data?.openingFragment;
     }
     get operand(): any {
         return this._data?.operand;
@@ -826,28 +784,6 @@ function cloneNodeData(node: Node): any {
             return { type: n.type, isSpread: n.isSpread, tupleNameSource: n.tupleNameSource };
         case SyntaxKind.PartiallyEmittedExpression:
             return { expression: n.expression };
-        case SyntaxKind.JsxElement:
-            return { openingElement: n.openingElement, children: n.children, closingElement: n.closingElement };
-        case SyntaxKind.JsxAttributes:
-            return { properties: n.properties };
-        case SyntaxKind.JsxNamespacedName:
-            return { namespace: n.namespace, name: n.name };
-        case SyntaxKind.JsxOpeningElement:
-            return { tagName: n.tagName, typeArguments: n.typeArguments, attributes: n.attributes };
-        case SyntaxKind.JsxSelfClosingElement:
-            return { tagName: n.tagName, typeArguments: n.typeArguments, attributes: n.attributes };
-        case SyntaxKind.JsxFragment:
-            return { openingFragment: n.openingFragment, children: n.children, closingFragment: n.closingFragment };
-        case SyntaxKind.JsxAttribute:
-            return { name: n.name, initializer: n.initializer };
-        case SyntaxKind.JsxSpreadAttribute:
-            return { expression: n.expression };
-        case SyntaxKind.JsxClosingElement:
-            return { tagName: n.tagName };
-        case SyntaxKind.JsxExpression:
-            return { dotDotDotToken: n.dotDotDotToken, expression: n.expression };
-        case SyntaxKind.JsxText:
-            return { text: n.text, containsOnlyTriviaWhiteSpaces: n.containsOnlyTriviaWhiteSpaces };
         case SyntaxKind.SyntaxList:
             return { children: n.children };
         case SyntaxKind.JSDoc:
@@ -1194,34 +1130,6 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNode(cbNode, data.literal),
     [SyntaxKind.SyntheticExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tupleNameSource),
     [SyntaxKind.PartiallyEmittedExpression]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
-    [SyntaxKind.JsxElement]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.openingElement) ||
-        visitNodes(cbNode, cbNodes, data.children) ||
-        visitNode(cbNode, data.closingElement),
-    [SyntaxKind.JsxAttributes]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.properties),
-    [SyntaxKind.JsxNamespacedName]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.namespace) ||
-        visitNode(cbNode, data.name),
-    [SyntaxKind.JsxOpeningElement]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.tagName) ||
-        visitNodes(cbNode, cbNodes, data.typeArguments) ||
-        visitNode(cbNode, data.attributes),
-    [SyntaxKind.JsxSelfClosingElement]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.tagName) ||
-        visitNodes(cbNode, cbNodes, data.typeArguments) ||
-        visitNode(cbNode, data.attributes),
-    [SyntaxKind.JsxFragment]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.openingFragment) ||
-        visitNodes(cbNode, cbNodes, data.children) ||
-        visitNode(cbNode, data.closingFragment),
-    [SyntaxKind.JsxAttribute]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.name) ||
-        visitNode(cbNode, data.initializer),
-    [SyntaxKind.JsxSpreadAttribute]: (data, cbNode, cbNodes) => visitNode(cbNode, data.expression),
-    [SyntaxKind.JsxClosingElement]: (data, cbNode, cbNodes) => visitNode(cbNode, data.tagName),
-    [SyntaxKind.JsxExpression]: (data, cbNode, cbNodes) =>
-        visitNode(cbNode, data.dotDotDotToken) ||
-        visitNode(cbNode, data.expression),
     [SyntaxKind.SyntaxList]: (data, cbNode, cbNodes) => visitNodes(cbNode, cbNodes, data.children),
     [SyntaxKind.JSDoc]: (data, cbNode, cbNodes) =>
         visitNodes(cbNode, cbNodes, data.comment) ||
@@ -2097,92 +2005,6 @@ export function createPartiallyEmittedExpression(expression: Expression): Partia
     }) as unknown as PartiallyEmittedExpression;
 }
 
-export function createJsxElement(openingElement: JsxOpeningElement, children: readonly JsxChild[], closingElement: JsxClosingElement): JsxElement {
-    return new NodeObject(SyntaxKind.JsxElement, {
-        openingElement,
-        children: createNodeArray(children),
-        closingElement,
-    }) as unknown as JsxElement;
-}
-
-export function createJsxAttributes(properties: readonly JsxAttributeLike[]): JsxAttributes {
-    return new NodeObject(SyntaxKind.JsxAttributes, {
-        properties: createNodeArray(properties),
-    }) as unknown as JsxAttributes;
-}
-
-export function createJsxNamespacedName(namespace: Identifier, name: Identifier): JsxNamespacedName {
-    return new NodeObject(SyntaxKind.JsxNamespacedName, {
-        namespace,
-        name,
-    }) as unknown as JsxNamespacedName;
-}
-
-export function createJsxOpeningElement(tagName: JsxTagNameExpression, typeArguments: readonly TypeNode[] | undefined, attributes: JsxAttributes): JsxOpeningElement {
-    return new NodeObject(SyntaxKind.JsxOpeningElement, {
-        tagName,
-        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
-        attributes,
-    }) as unknown as JsxOpeningElement;
-}
-
-export function createJsxSelfClosingElement(tagName: JsxTagNameExpression, typeArguments: readonly TypeNode[] | undefined, attributes: JsxAttributes): JsxSelfClosingElement {
-    return new NodeObject(SyntaxKind.JsxSelfClosingElement, {
-        tagName,
-        typeArguments: typeArguments ? createNodeArray(typeArguments) : undefined,
-        attributes,
-    }) as unknown as JsxSelfClosingElement;
-}
-
-export function createJsxFragment(openingFragment: JsxOpeningFragment, children: readonly JsxChild[], closingFragment: JsxClosingFragment): JsxFragment {
-    return new NodeObject(SyntaxKind.JsxFragment, {
-        openingFragment,
-        children: createNodeArray(children),
-        closingFragment,
-    }) as unknown as JsxFragment;
-}
-
-export function createJsxOpeningFragment(): JsxOpeningFragment {
-    return new NodeObject(SyntaxKind.JsxOpeningFragment, undefined) as unknown as JsxOpeningFragment;
-}
-
-export function createJsxClosingFragment(): JsxClosingFragment {
-    return new NodeObject(SyntaxKind.JsxClosingFragment, undefined) as unknown as JsxClosingFragment;
-}
-
-export function createJsxAttribute(name: JsxAttributeName, initializer?: JsxAttributeValue): JsxAttribute {
-    return new NodeObject(SyntaxKind.JsxAttribute, {
-        name,
-        initializer,
-    }) as unknown as JsxAttribute;
-}
-
-export function createJsxSpreadAttribute(expression: Expression): JsxSpreadAttribute {
-    return new NodeObject(SyntaxKind.JsxSpreadAttribute, {
-        expression,
-    }) as unknown as JsxSpreadAttribute;
-}
-
-export function createJsxClosingElement(tagName: JsxTagNameExpression): JsxClosingElement {
-    return new NodeObject(SyntaxKind.JsxClosingElement, {
-        tagName,
-    }) as unknown as JsxClosingElement;
-}
-
-export function createJsxExpression(dotDotDotToken?: DotDotDotToken, expression?: Expression): JsxExpression {
-    return new NodeObject(SyntaxKind.JsxExpression, {
-        dotDotDotToken,
-        expression,
-    }) as unknown as JsxExpression;
-}
-
-export function createJsxText(text: string, containsOnlyTriviaWhiteSpaces?: boolean): JsxText {
-    return new NodeObject(SyntaxKind.JsxText, {
-        text,
-        containsOnlyTriviaWhiteSpaces,
-    }) as unknown as JsxText;
-}
-
 export function createSyntaxList(children: readonly Node[]): SyntaxList {
     return new NodeObject(SyntaxKind.SyntaxList, {
         children,
@@ -2865,46 +2687,6 @@ export function updateSyntheticExpression(node: SyntheticExpression, tupleNameSo
 
 export function updatePartiallyEmittedExpression(node: PartiallyEmittedExpression, expression: Expression): PartiallyEmittedExpression {
     return node.expression !== expression ? createPartiallyEmittedExpression(expression) : node;
-}
-
-export function updateJsxElement(node: JsxElement, openingElement: JsxOpeningElement, children: readonly JsxChild[], closingElement: JsxClosingElement): JsxElement {
-    return node.openingElement !== openingElement || node.children !== children || node.closingElement !== closingElement ? createJsxElement(openingElement, children, closingElement) : node;
-}
-
-export function updateJsxAttributes(node: JsxAttributes, properties: readonly JsxAttributeLike[]): JsxAttributes {
-    return node.properties !== properties ? createJsxAttributes(properties) : node;
-}
-
-export function updateJsxNamespacedName(node: JsxNamespacedName, namespace: Identifier, name: Identifier): JsxNamespacedName {
-    return node.namespace !== namespace || node.name !== name ? createJsxNamespacedName(namespace, name) : node;
-}
-
-export function updateJsxOpeningElement(node: JsxOpeningElement, tagName: JsxTagNameExpression, typeArguments: readonly TypeNode[] | undefined, attributes: JsxAttributes): JsxOpeningElement {
-    return node.tagName !== tagName || node.typeArguments !== typeArguments || node.attributes !== attributes ? createJsxOpeningElement(tagName, typeArguments, attributes) : node;
-}
-
-export function updateJsxSelfClosingElement(node: JsxSelfClosingElement, tagName: JsxTagNameExpression, typeArguments: readonly TypeNode[] | undefined, attributes: JsxAttributes): JsxSelfClosingElement {
-    return node.tagName !== tagName || node.typeArguments !== typeArguments || node.attributes !== attributes ? createJsxSelfClosingElement(tagName, typeArguments, attributes) : node;
-}
-
-export function updateJsxFragment(node: JsxFragment, openingFragment: JsxOpeningFragment, children: readonly JsxChild[], closingFragment: JsxClosingFragment): JsxFragment {
-    return node.openingFragment !== openingFragment || node.children !== children || node.closingFragment !== closingFragment ? createJsxFragment(openingFragment, children, closingFragment) : node;
-}
-
-export function updateJsxAttribute(node: JsxAttribute, name: JsxAttributeName, initializer?: JsxAttributeValue): JsxAttribute {
-    return node.name !== name || node.initializer !== initializer ? createJsxAttribute(name, initializer) : node;
-}
-
-export function updateJsxSpreadAttribute(node: JsxSpreadAttribute, expression: Expression): JsxSpreadAttribute {
-    return node.expression !== expression ? createJsxSpreadAttribute(expression) : node;
-}
-
-export function updateJsxClosingElement(node: JsxClosingElement, tagName: JsxTagNameExpression): JsxClosingElement {
-    return node.tagName !== tagName ? createJsxClosingElement(tagName) : node;
-}
-
-export function updateJsxExpression(node: JsxExpression, dotDotDotToken?: DotDotDotToken, expression?: Expression): JsxExpression {
-    return node.dotDotDotToken !== dotDotDotToken || node.expression !== expression ? createJsxExpression(dotDotDotToken, expression) : node;
 }
 
 export function updateSyntaxList(node: SyntaxList, children: readonly Node[]): SyntaxList {

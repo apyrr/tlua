@@ -161,7 +161,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	compilerOptions := &core.CompilerOptions{
 		SkipDefaultLibCheck: core.TSTrue,
 		Target:              core.ScriptTargetLatestStandard,
-		Jsx:                 core.JsxEmitPreserve,
 	}
 	harnessOptions := harnessutil.HarnessOptions{UseCaseSensitiveFileNames: true, CurrentDirectory: rootDir}
 	harnessutil.SetOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions, &harnessOptions, rootDir, true /*allowUnknownOptions*/)
@@ -1007,12 +1006,6 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 	}
 	if tspath.FileExtensionIs(filename, tspath.ExtensionJs) {
 		return lsproto.LanguageKindJavaScript
-	}
-	if tspath.FileExtensionIs(filename, tspath.ExtensionJsx) {
-		return lsproto.LanguageKindJavaScriptReact
-	}
-	if tspath.FileExtensionIs(filename, tspath.ExtensionTsx) {
-		return lsproto.LanguageKindTypeScriptReact
 	}
 	if tspath.FileExtensionIs(filename, tspath.ExtensionJson) {
 		return lsproto.LanguageKindJSON
@@ -4144,78 +4137,6 @@ func (f *FourslashTest) VerifyQuickInfoIs(t *testing.T, expectedText string, exp
 	f.verifyHoverContent(t, hover.Contents, expectedText, expectedDocumentation, f.getCurrentPositionPrefix())
 }
 
-func (f *FourslashTest) VerifyJsxClosingTag(t *testing.T, markersToNewText map[string]*string) {
-	for marker, expectedText := range markersToNewText {
-		f.GoToMarker(t, marker)
-		params := &lsproto.VSOnAutoInsertParams{
-			VSTextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-			},
-			VSPosition: f.currentCaretPosition,
-			VSCh:       ">",
-		}
-
-		requestResult := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
-
-		var actualText *string
-		if item := requestResult.VSOnAutoInsertResponseItem; item != nil && item.VSTextEdit != nil {
-			newText := item.VSTextEdit.NewText
-			if item.VSTextEditFormat == lsproto.InsertTextFormatSnippet {
-				var ok bool
-				newText, ok = strings.CutPrefix(newText, "$0")
-				if !ok {
-					t.Fatalf("%sexpected JSX closing tag snippet to begin with $0, got %q", f.getCurrentPositionPrefix(), item.VSTextEdit.NewText)
-				}
-			}
-			actualText = &newText
-		}
-		assertDeepEqual(t, actualText, expectedText, f.getCurrentPositionPrefix()+"JSX closing tag text mismatch")
-	}
-}
-
-// VerifyBaselineClosingTags generates a baseline for JSX closing tag completions at all markers.
-func (f *FourslashTest) VerifyBaselineClosingTags(t *testing.T) {
-	t.Helper()
-
-	markersAndItems := core.MapFiltered(f.Markers(), func(marker *Marker) (markerAndItem[*lsproto.VSOnAutoInsertResponseItem], bool) {
-		if marker.Name == nil {
-			return markerAndItem[*lsproto.VSOnAutoInsertResponseItem]{}, false
-		}
-
-		params := &lsproto.VSOnAutoInsertParams{
-			VSTextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(marker.FileName()),
-			},
-			VSPosition: marker.LSPosition,
-			VSCh:       ">",
-		}
-
-		result := sendRequest(t, f, lsproto.TextDocumentVSOnAutoInsertInfo, params)
-		return markerAndItem[*lsproto.VSOnAutoInsertResponseItem]{Marker: marker, Item: result.VSOnAutoInsertResponseItem}, true
-	})
-
-	getRange := func(item *lsproto.VSOnAutoInsertResponseItem) *lsproto.Range {
-		// Returning nil lets annotateContentWithTooltips render the caret marker at
-		// the marker position. The text edit's range is zero-width at the cursor,
-		// which would render as an empty underline.
-		return nil
-	}
-
-	getTooltipLines := func(item, _prev *lsproto.VSOnAutoInsertResponseItem) []string {
-		if item == nil || item.VSTextEdit == nil {
-			return []string{"No closing tag"}
-		}
-		format := "plaintext"
-		if item.VSTextEditFormat == lsproto.InsertTextFormatSnippet {
-			format = "snippet"
-		}
-		return []string{fmt.Sprintf("%s: %q", format, item.VSTextEdit.NewText)}
-	}
-
-	result := annotateContentWithTooltips(t, f, markersAndItems, "closing tag", getRange, getTooltipLines)
-	f.addResultToBaseline(t, closingTagCmd, result)
-}
-
 // VerifySignatureHelpOptions contains options for verifying signature help.
 // All fields are optional - only specified fields will be verified.
 type VerifySignatureHelpOptions struct {
@@ -5204,112 +5125,6 @@ func (f *FourslashTest) VerifyBaselineInlayHints(
 	}
 
 	f.addResultToBaseline(t, inlayHintsCmd, strings.Join(annotations, "\n\n"))
-}
-
-func (f *FourslashTest) VerifyBaselineLinkedEditing(t *testing.T) {
-	baselineBuilder := &strings.Builder{}
-	offset := 0
-
-	// write to baseline in order of file appearance in test data
-	for _, file := range f.testData.Files {
-		fmt.Fprint(baselineBuilder, "// === Linked Editing ===\n")
-		fmt.Fprintf(baselineBuilder, "=== %s ===\n", file.FileName())
-		results := []*lsproto.LinkedEditingRanges{}
-		found := map[lsproto.Range]bool{}
-
-		// request linkedEditing at every position in the file
-		for i := range file.Content {
-			params := &lsproto.LinkedEditingRangeParams{
-				TextDocument: lsproto.TextDocumentIdentifier{
-					Uri: lsconv.FileNameToDocumentURI(file.FileName()),
-				},
-				Position: f.converters.PositionToLineAndCharacter(f.getScriptInfo(file.FileName()), core.TextPos(i)),
-			}
-			result := sendRequest(t, f, lsproto.TextDocumentLinkedEditingRangeInfo, params)
-			if result.LinkedEditingRanges != nil && len(result.LinkedEditingRanges.Ranges) > 0 && !found[result.LinkedEditingRanges.Ranges[0]] {
-				results = append(results, result.LinkedEditingRanges)
-				found[result.LinkedEditingRanges.Ranges[0]] = true
-			}
-		}
-
-		if len(results) == 0 {
-			fmt.Fprintf(baselineBuilder, "%s\n\n--No linked edits found--\n\n\n", file.Content)
-			continue
-		}
-
-		// sort entries in each file
-		slices.SortFunc(results, func(a, b *lsproto.LinkedEditingRanges) int {
-			return lsproto.ComparePositions(a.Ranges[0].Start, b.Ranges[0].Start)
-		})
-		baselineDetails := []baselineDetail{}
-		foundEditInfoBuilder := &strings.Builder{}
-		for _, edit := range results {
-			baselineDetails = append(baselineDetails, baselineDetail{
-				pos:            edit.Ranges[0].Start,
-				positionMarker: fmt.Sprintf("[|/*%d*/", offset),
-			})
-			baselineDetails = append(baselineDetails, baselineDetail{
-				pos:            edit.Ranges[0].End,
-				positionMarker: "|]",
-			})
-			baselineDetails = append(baselineDetails, baselineDetail{
-				pos:            edit.Ranges[1].Start,
-				positionMarker: fmt.Sprintf("[|/*%d*/", offset),
-			})
-			baselineDetails = append(baselineDetails, baselineDetail{
-				pos:            edit.Ranges[1].End,
-				positionMarker: "|]",
-			})
-
-			fmt.Fprintf(foundEditInfoBuilder, "\n\n=== %d ===\n%s", offset, core.Must(core.StringifyJson(edit, "", "  ")))
-			offset++
-		}
-
-		// sort baselineDetails by position
-		slices.SortStableFunc(baselineDetails, func(a, b baselineDetail) int {
-			return lsproto.ComparePositions(a.pos, b.pos)
-		})
-
-		// write file content with inline annotations for linked edits
-		lastPosition := 0
-		for _, detail := range baselineDetails {
-			currentPosition := f.converters.LineAndCharacterToPosition(f.getScriptInfo(file.FileName()), detail.pos)
-			fmt.Fprint(baselineBuilder, file.Content[lastPosition:currentPosition])
-			fmt.Fprint(baselineBuilder, detail.positionMarker)
-			lastPosition = int(currentPosition)
-		}
-		fmt.Fprint(baselineBuilder, file.Content[lastPosition:])
-		baselineBuilder.WriteString(foundEditInfoBuilder.String() + "\n\n\n")
-	}
-
-	f.writeToBaseline(linkedEditingCmd, baselineBuilder.String())
-}
-
-func (f *FourslashTest) VerifyLinkedEditing(t *testing.T, markerNamesToExpected map[string][]lsproto.Range) {
-	for markerName, expectedRanges := range markerNamesToExpected {
-		f.GoToMarker(t, markerName)
-		params := &lsproto.LinkedEditingRangeParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsconv.FileNameToDocumentURI(f.activeFilename),
-			},
-			Position: f.currentCaretPosition,
-		}
-		result := sendRequest(t, f, lsproto.TextDocumentLinkedEditingRangeInfo, params)
-		actualRanges := result.LinkedEditingRanges
-		if len(expectedRanges) == 0 {
-			if actualRanges != nil && len(actualRanges.Ranges) != 0 {
-				t.Fatalf("Expected no linked editing ranges for marker '%s', but found %v", markerName, actualRanges)
-			}
-			continue
-		} else {
-			if actualRanges == nil || len(actualRanges.Ranges) == 0 {
-				t.Fatalf("Expected linked editing ranges for marker '%s', but found none", markerName)
-			}
-
-			assertDeepEqual(t, actualRanges.Ranges[0], expectedRanges[0], fmt.Sprintf("Linked editing ranges for opening element do not match expected for marker '%s'", markerName))
-			assertDeepEqual(t, actualRanges.Ranges[1], expectedRanges[1], fmt.Sprintf("Linked editing ranges for closing element do not match expected for marker '%s'", markerName))
-		}
-	}
 }
 
 func (f *FourslashTest) VerifyDiagnostics(t *testing.T, expected []*lsproto.Diagnostic) {

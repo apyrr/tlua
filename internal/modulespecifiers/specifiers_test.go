@@ -105,11 +105,6 @@ func TestTryGetLuaModuleName(t *testing.T) {
 			expected: "a.b.c",
 		},
 		{
-			name:     "tsx file",
-			file:     "/project/a/b.tsx",
-			expected: "a.b",
-		},
-		{
 			name:     "init file without shadowing sibling",
 			file:     "/project/a/b/init.tlua",
 			expected: "a.b",
@@ -118,12 +113,6 @@ func TestTryGetLuaModuleName(t *testing.T) {
 			name:     "init file shadowed by .tlua sibling",
 			file:     "/project/a/b/init.tlua",
 			files:    []string{"/project/a/b.tlua"},
-			expected: "",
-		},
-		{
-			name:     "init file shadowed by .tsx sibling",
-			file:     "/project/a/b/init.tlua",
-			files:    []string{"/project/a/b.tsx"},
 			expected: "",
 		},
 		{

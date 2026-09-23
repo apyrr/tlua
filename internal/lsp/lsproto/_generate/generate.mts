@@ -509,12 +509,8 @@ const customStructures: Structure[] = [
         properties: [
             { name: "jsFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
             { name: "jsFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
-            { name: "jsxFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
-            { name: "jsxFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
             { name: "tsFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
             { name: "tsFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
-            { name: "tsxFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
-            { name: "tsxFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
             { name: "dtsFileCount", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
             { name: "dtsFileSize", type: { kind: "base", name: "decimal" }, omitzeroValue: true },
         ],

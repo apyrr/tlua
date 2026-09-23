@@ -16,7 +16,7 @@ func TestGetWildcardDirectories_DotPrefixedIncludeWithDotDirExclude(t *testing.T
 	// matches dot-directory excludes like "**/.*/", silently dropping every
 	// wildcard directory (and with them, root file watching for the config).
 	result := getWildcardDirectories(
-		[]string{"./app/**/*.tlua", "./app/**/*.tsx"},
+		[]string{"./app/**/*.tlua", "./app/**/*.lua"},
 		[]string{"**/node_modules", "**/.*/", "./build"},
 		tspath.ComparePathsOptions{
 			CurrentDirectory:          "/home/projects/monorepo/apps/web",

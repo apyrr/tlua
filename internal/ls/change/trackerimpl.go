@@ -107,7 +107,7 @@ func (t *Tracker) getFormattedTextOfNode(nodeIn *ast.Node, targetSourceFile *ast
 		delta = formatOptions.IndentSize
 	}
 
-	changes := format.FormatNodeGivenIndentation(t.ctx, sourceFileLike, sourceFileLike.AsSourceFile(), targetSourceFile.LanguageVariant, initialIndentation, delta)
+	changes := format.FormatNodeGivenIndentation(t.ctx, sourceFileLike, sourceFileLike.AsSourceFile(), initialIndentation, delta)
 	return core.ApplyBulkEdits(text, changes)
 }
 

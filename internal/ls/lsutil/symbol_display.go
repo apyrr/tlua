@@ -91,9 +91,7 @@ const (
 	ScriptElementKindModifierDeprecated
 	ScriptElementKindModifierDts
 	ScriptElementKindModifierTs
-	ScriptElementKindModifierTsx
 	ScriptElementKindModifierJs
-	ScriptElementKindModifierJsx
 	ScriptElementKindModifierJson
 )
 
@@ -112,9 +110,7 @@ var scriptElementKindModifierNames = []struct {
 	{ScriptElementKindModifierDeprecated, "deprecated"},
 	{ScriptElementKindModifierDts, tspath.ExtensionDts},
 	{ScriptElementKindModifierTs, tspath.ExtensionTs},
-	{ScriptElementKindModifierTsx, tspath.ExtensionTsx},
 	{ScriptElementKindModifierJs, tspath.ExtensionJs},
-	{ScriptElementKindModifierJsx, tspath.ExtensionJsx},
 	{ScriptElementKindModifierJson, tspath.ExtensionJson},
 }
 
@@ -130,9 +126,7 @@ func (m ScriptElementKindModifier) Strings() collections.Set[string] {
 
 var FileExtensionKindModifiers = ScriptElementKindModifierDts |
 	ScriptElementKindModifierTs |
-	ScriptElementKindModifierTsx |
 	ScriptElementKindModifierJs |
-	ScriptElementKindModifierJsx |
 	ScriptElementKindModifierJson
 
 func GetSymbolKind(typeChecker *checker.Checker, symbol *ast.Symbol, location *ast.Node) ScriptElementKind {

@@ -26,7 +26,7 @@ func DoSourcemapRecordBaseline(
 		}
 	}
 
-	if tspath.FileExtensionIsOneOf(baselinePath, []string{tspath.ExtensionTs, tspath.ExtensionTsx}) {
+	if tspath.FileExtensionIs(baselinePath, tspath.ExtensionTs) {
 		baselinePath = tspath.ChangeExtension(baselinePath, ".sourcemap.txt")
 	}
 

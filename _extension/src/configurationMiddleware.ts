@@ -33,7 +33,6 @@ const serverConfigSections = ["js/ts", "typescript", "javascript"];
 const configAliases = [
     ["validate.enabled", "validate.enable"],
     ["format.enabled", "format.enable"],
-    ["autoClosingTags.enabled", "autoClosingTags"],
     ["suggest.jsdoc.enabled", "suggest.completeJSDocs"],
 ] as const;
 

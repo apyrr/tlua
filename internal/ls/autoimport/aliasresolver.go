@@ -186,11 +186,6 @@ func (r *aliasResolver) GetImportHelpersImportSpecifier(path tspath.Path) *ast.N
 	panic("unimplemented")
 }
 
-// GetJSXRuntimeImportSpecifier implements checker.Program.
-func (r *aliasResolver) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
-	panic("unimplemented")
-}
-
 // GetNearestAncestorDirectoryWithPackageJson implements checker.Program.
 func (r *aliasResolver) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
 	panic("unimplemented")

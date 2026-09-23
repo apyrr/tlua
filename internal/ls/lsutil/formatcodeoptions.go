@@ -80,7 +80,6 @@ type FormatCodeSettings struct {
 	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces       core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces"`
 	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces          core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingEmptyBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces"`
 	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces"`
-	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces  core.Tristate       `raw:"insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces" config:"format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces"`
 	InsertSpaceAfterTypeAssertion                               core.Tristate       `raw:"insertSpaceAfterTypeAssertion" config:"format.insertSpaceAfterTypeAssertion"`
 	InsertSpaceBeforeFunctionParenthesis                        core.Tristate       `raw:"insertSpaceBeforeFunctionParenthesis" config:"format.insertSpaceBeforeFunctionParenthesis"`
 	PlaceOpenBraceOnNewLineForFunctions                         core.Tristate       `raw:"placeOpenBraceOnNewLineForFunctions" config:"format.placeOpenBraceOnNewLineForFunctions"`
@@ -130,7 +129,6 @@ func GetDefaultFormatCodeSettings() FormatCodeSettings {
 		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets:     core.TSFalse,
 		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces:       core.TSTrue,
 		InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: core.TSFalse,
-		InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces:  core.TSFalse,
 		InsertSpaceBeforeFunctionParenthesis:                        core.TSFalse,
 		PlaceOpenBraceOnNewLineForFunctions:                         core.TSFalse,
 		PlaceOpenBraceOnNewLineForControlBlocks:                     core.TSFalse,

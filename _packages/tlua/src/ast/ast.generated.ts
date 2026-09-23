@@ -5,12 +5,11 @@ import type { NodeFlags } from "#enums/nodeFlags";
 import { SyntaxKind } from "#enums/syntaxKind";
 import { TokenFlags } from "#enums/tokenFlags";
 import type {
-    JsxTagNamePropertyAccess,
     Node,
     NodeArray,
 } from "./ast.ts";
 export type TriviaSyntaxKind = SyntaxKind.SingleLineCommentTrivia | SyntaxKind.MultiLineCommentTrivia | SyntaxKind.NewLineTrivia | SyntaxKind.WhitespaceTrivia | SyntaxKind.ConflictMarkerTrivia;
-export type LiteralSyntaxKind = SyntaxKind.NumericLiteral | SyntaxKind.StringLiteral | SyntaxKind.JsxText | SyntaxKind.JsxTextAllWhiteSpaces | SyntaxKind.RegularExpressionLiteral | SyntaxKind.NoSubstitutionTemplateLiteral;
+export type LiteralSyntaxKind = SyntaxKind.NumericLiteral | SyntaxKind.StringLiteral | SyntaxKind.RegularExpressionLiteral | SyntaxKind.NoSubstitutionTemplateLiteral;
 export type PseudoLiteralSyntaxKind = SyntaxKind.TemplateHead | SyntaxKind.TemplateMiddle | SyntaxKind.TemplateTail;
 export type PunctuationSyntaxKind =
     | SyntaxKind.OpenBraceToken
@@ -25,7 +24,6 @@ export type PunctuationSyntaxKind =
     | SyntaxKind.CommaToken
     | SyntaxKind.QuestionDotToken
     | SyntaxKind.LessThanToken
-    | SyntaxKind.LessThanSlashToken
     | SyntaxKind.GreaterThanToken
     | SyntaxKind.LessThanEqualsToken
     | SyntaxKind.GreaterThanEqualsToken
@@ -142,8 +140,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.NonTextFileMarkerTrivia
     | SyntaxKind.NumericLiteral
     | SyntaxKind.StringLiteral
-    | SyntaxKind.JsxText
-    | SyntaxKind.JsxTextAllWhiteSpaces
     | SyntaxKind.RegularExpressionLiteral
     | SyntaxKind.NoSubstitutionTemplateLiteral
     | SyntaxKind.TemplateHead
@@ -161,7 +157,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.CommaToken
     | SyntaxKind.QuestionDotToken
     | SyntaxKind.LessThanToken
-    | SyntaxKind.LessThanSlashToken
     | SyntaxKind.GreaterThanToken
     | SyntaxKind.LessThanEqualsToken
     | SyntaxKind.GreaterThanEqualsToken
@@ -266,7 +261,6 @@ export type TokenSyntaxKind =
     | SyntaxKind.OfKeyword
     | SyntaxKind.SelfKeyword
     | SyntaxKind.DeferKeyword;
-export type JsxTokenSyntaxKind = SyntaxKind.LessThanSlashToken | SyntaxKind.EndOfFile | SyntaxKind.ConflictMarkerTrivia | SyntaxKind.JsxText | SyntaxKind.JsxTextAllWhiteSpaces | SyntaxKind.OpenBraceToken | SyntaxKind.LessThanToken;
 export type JSDocNodeSyntaxKind =
     | SyntaxKind.JSDocTypeExpression
     | SyntaxKind.JSDocNameReference
@@ -868,67 +862,6 @@ export interface PartiallyEmittedExpression extends LeftHandSideExpressionBase {
     readonly kind: SyntaxKind.PartiallyEmittedExpression;
     readonly expression: Expression;
 }
-export interface JsxElement extends PrimaryExpressionBase {
-    readonly kind: SyntaxKind.JsxElement;
-    readonly openingElement: JsxOpeningElement;
-    readonly children: NodeArray<JsxChild>;
-    readonly closingElement: JsxClosingElement;
-}
-export interface JsxAttributes extends PrimaryExpressionBase, DeclarationBase {
-    readonly kind: SyntaxKind.JsxAttributes;
-    readonly properties: NodeArray<JsxAttributeLike>;
-}
-export interface JsxNamespacedName extends ExpressionBase {
-    readonly kind: SyntaxKind.JsxNamespacedName;
-    readonly namespace: Identifier;
-    readonly name: Identifier;
-}
-export interface JsxOpeningElement extends ExpressionBase {
-    readonly kind: SyntaxKind.JsxOpeningElement;
-    readonly tagName: JsxTagNameExpression;
-    readonly typeArguments?: NodeArray<TypeNode>;
-    readonly attributes: JsxAttributes;
-}
-export interface JsxSelfClosingElement extends PrimaryExpressionBase {
-    readonly kind: SyntaxKind.JsxSelfClosingElement;
-    readonly tagName: JsxTagNameExpression;
-    readonly typeArguments?: NodeArray<TypeNode>;
-    readonly attributes: JsxAttributes;
-}
-export interface JsxFragment extends PrimaryExpressionBase {
-    readonly kind: SyntaxKind.JsxFragment;
-    readonly openingFragment: JsxOpeningFragment;
-    readonly children: NodeArray<JsxChild>;
-    readonly closingFragment: JsxClosingFragment;
-}
-export interface JsxOpeningFragment extends ExpressionBase {
-    readonly kind: SyntaxKind.JsxOpeningFragment;
-}
-export interface JsxClosingFragment extends ExpressionBase {
-    readonly kind: SyntaxKind.JsxClosingFragment;
-}
-export interface JsxAttribute extends NodeBase, DeclarationBase {
-    readonly kind: SyntaxKind.JsxAttribute;
-    readonly name: JsxAttributeName;
-    readonly initializer?: JsxAttributeValue;
-}
-export interface JsxSpreadAttribute extends ObjectLiteralElementBase, NodeBase {
-    readonly kind: SyntaxKind.JsxSpreadAttribute;
-    readonly expression: Expression;
-}
-export interface JsxClosingElement extends NodeBase {
-    readonly kind: SyntaxKind.JsxClosingElement;
-    readonly tagName: JsxTagNameExpression;
-}
-export interface JsxExpression extends ExpressionBase {
-    readonly kind: SyntaxKind.JsxExpression;
-    readonly dotDotDotToken?: DotDotDotToken;
-    readonly expression?: Expression;
-}
-export interface JsxText extends ExpressionBase, LiteralLikeNodeBase {
-    readonly kind: SyntaxKind.JsxText;
-    readonly containsOnlyTriviaWhiteSpaces: boolean;
-}
 export interface SyntaxList extends NodeBase {
     readonly kind: SyntaxKind.SyntaxList;
     readonly children: readonly Node[];
@@ -1136,12 +1069,7 @@ export type MemberName = Identifier | PrivateIdentifier;
 export type EntityName = Identifier | QualifiedName;
 export type BindingName = Identifier | BindingPattern;
 export type ModifierLike = Modifier;
-export type JsxChild = JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
-export type JsxAttributeLike = JsxAttribute | JsxSpreadAttribute;
-export type JsxAttributeName = Identifier | JsxNamespacedName;
-export type JsxAttributeValue = StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment;
-export type JsxTagNameExpression = Identifier | JsxTagNamePropertyAccess | JsxNamespacedName;
-export type LiteralLikeNode = StringLiteral | NumericLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText;
+export type LiteralLikeNode = StringLiteral | NumericLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode;
 export type LiteralExpression = StringLiteral | NumericLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral;
 export type UnionOrIntersectionTypeNode = UnionTypeNode | IntersectionTypeNode;
 export type TemplateLiteralLikeNode = TemplateHead | TemplateMiddle | TemplateTail;
@@ -1155,10 +1083,9 @@ export type StringLiteralLikeNode = StringLiteral | NoSubstitutionTemplateLitera
 export type NumericOrStringLikeLiteral = StringLiteralLikeNode | NumericLiteral;
 export type ObjectLiteralLikeNode = ObjectLiteralExpression | ObjectBindingPattern;
 export type ObjectTypeDeclaration = InterfaceDeclaration | TypeLiteralNode;
-export type JsxOpeningLikeElement = JsxOpeningElement | JsxSelfClosingElement;
 export type NamedImportsOrExports = NamedImports | NamedExports;
 export type BreakOrContinueStatement = BreakStatement | ContinueStatement;
-export type CallLikeExpression = CallExpression | JsxOpeningLikeElement;
+export type CallLikeExpression = CallExpression;
 export type FunctionLikeDeclaration = FunctionDeclaration | FunctionExpression | ArrowFunction;
 export type VariableOrParameterDeclaration = VariableDeclaration | ParameterDeclaration;
 export type ImportClauseOrBindingPattern = ImportClause | BindingPattern;
@@ -1172,7 +1099,7 @@ export type AssertionExpression = TypeAssertion | AsExpression;
 export type BooleanLiteral = TrueLiteral | FalseLiteral;
 export type ConciseBody = Block | Expression;
 export type DestructuringAssignment = ObjectDestructuringAssignment | ArrayDestructuringAssignment;
-export type LiteralToken = NumericLiteral | StringLiteral | JsxText | RegularExpressionLiteral | NoSubstitutionTemplateLiteral;
+export type LiteralToken = NumericLiteral | StringLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral;
 export type Modifier = AbstractKeyword | AccessorKeyword | SuspendKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | InKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | ReadonlyKeyword | OutKeyword | OverrideKeyword | StaticKeyword;
 export type ObjectLiteralElementLike = PropertyAssignment | SpreadAssignment | TableEntry;
 export type PropertyNameLiteral = Identifier | StringLiteral | NumericLiteral;
@@ -1260,5 +1187,3 @@ export type ElementList = NodeArray<Expression>;
 export type PropertyDefinitionList = NodeArray<ObjectLiteralElement>;
 export type TypeList = NodeArray<TypeNode>;
 export type TemplateLiteralTypeSpanList = NodeArray<TemplateLiteralTypeSpan>;
-export type JsxChildList = NodeArray<JsxChild>;
-export type JsxAttributeList = NodeArray<JsxAttributeLike>;

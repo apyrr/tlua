@@ -15,7 +15,7 @@ local abc = 10;
 tlua -p ./src/tluaconfig.json
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
-[91merror[0m[90m TLUA6231: [0mCould not resolve the path '/home/src/workspaces/project/oops' with the extensions: '.tlua', '.tsx', '.d.tlua'.
+[91merror[0m[90m TLUA6231: [0mCould not resolve the path '/home/src/workspaces/project/oops' with the extensions: '.tlua', '.d.tlua'.
   The file is in the program because:
     Part of 'files' list in tluaconfig.json
 

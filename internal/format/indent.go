@@ -135,9 +135,6 @@ func getCommentIndent(sourceFile *ast.SourceFile, position int, options lsutil.F
 }
 
 func getLeadingCommentRangesOfNode(node *ast.Node, file *ast.SourceFile) iter.Seq[ast.CommentRange] {
-	if node.Kind == ast.KindJsxText {
-		return nil
-	}
 	return scanner.GetLeadingCommentRanges(&ast.NodeFactory{}, file.Text(), node.Pos())
 }
 
@@ -666,10 +663,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		ast.KindReturnStatement,
 		ast.KindArrayBindingPattern,
 		ast.KindObjectBindingPattern,
-		ast.KindJsxOpeningElement,
-		ast.KindJsxOpeningFragment,
-		ast.KindJsxSelfClosingElement,
-		ast.KindJsxExpression,
 		ast.KindMethodSignature,
 		ast.KindCallSignature,
 		ast.KindParameter,
@@ -683,11 +676,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 	case ast.KindVariableDeclaration, ast.KindPropertyAssignment, ast.KindBinaryExpression:
 		if settings.IndentMultiLineObjectLiteralBeginningOnBlankLine.IsFalseOrUnknown() && sourceFile != nil && childKind == ast.KindObjectLiteralExpression {
 			return rangeIsOnOneLine(child.Loc, sourceFile)
-		}
-		if parent.Kind == ast.KindBinaryExpression && sourceFile != nil && childKind == ast.KindJsxElement {
-			parentStartLine := scanner.GetECMALineOfPosition(sourceFile, scanner.SkipTrivia(sourceFile.Text(), parent.Pos()))
-			childStartLine := scanner.GetECMALineOfPosition(sourceFile, scanner.SkipTrivia(sourceFile.Text(), child.Pos()))
-			return parentStartLine != childStartLine
 		}
 		if parent.Kind != ast.KindBinaryExpression {
 			return true
@@ -711,10 +699,6 @@ func NodeWillIndentChild(settings lsutil.FormatCodeSettings, parent *ast.Node, c
 		return childKind != ast.KindNamedExports
 	case ast.KindImportDeclaration:
 		return childKind != ast.KindImportClause || (child.AsImportClause().NamedBindings != nil && child.AsImportClause().NamedBindings.Kind != ast.KindNamedImports)
-	case ast.KindJsxElement:
-		return childKind != ast.KindJsxClosingElement
-	case ast.KindJsxFragment:
-		return childKind != ast.KindJsxClosingFragment
 	case ast.KindIntersectionType, ast.KindUnionType, ast.KindSatisfiesExpression:
 		if childKind == ast.KindTypeLiteral || childKind == ast.KindTupleType || childKind == ast.KindMappedType {
 			return false

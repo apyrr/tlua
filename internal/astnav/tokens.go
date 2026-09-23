@@ -324,7 +324,7 @@ func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
 func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *ast.Node, excludeJSDoc bool) *ast.Node {
 	var find func(node *ast.Node) *ast.Node
 	find = func(n *ast.Node) *ast.Node {
-		if ast.IsNonWhitespaceToken(n) && n.Kind != ast.KindEndOfFile {
+		if ast.IsTokenKind(n.Kind) && n.Kind != ast.KindEndOfFile {
 			return n
 		}
 
@@ -437,9 +437,6 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 		node = sourceFile.AsNode()
 	}
 	result := find(node)
-	if result != nil && ast.IsWhitespaceOnlyJsxText(result) {
-		panic("Expected result to be a non-whitespace token.")
-	}
 	return result
 }
 
@@ -449,7 +446,7 @@ func isValidPrecedingNode(node *ast.Node, sourceFile *ast.SourceFile) bool {
 	}
 	start := GetStartOfNode(node, sourceFile, false /*includeJSDoc*/)
 	width := node.End() - start
-	return !(ast.IsWhitespaceOnlyJsxText(node) || width == 0)
+	return width != 0
 }
 
 func GetStartOfNode(node *ast.Node, file *ast.SourceFile, includeJSDoc bool) int {
@@ -467,7 +464,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 		if n == nil {
 			return nil
 		}
-		if ast.IsNonWhitespaceToken(n) {
+		if ast.IsTokenKind(n.Kind) {
 			return n
 		}
 
@@ -574,12 +571,8 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 				scanner.Scan()
 			}
 
-			lastToken := len(tokens) - 1
-			// Find preceding valid token.
-			for i := lastToken; i >= 0; i-- {
-				if !ast.IsWhitespaceOnlyJsxText(tokens[i]) {
-					return tokens[i]
-				}
+			if len(tokens) > 0 {
+				return tokens[len(tokens)-1]
 			}
 		}
 

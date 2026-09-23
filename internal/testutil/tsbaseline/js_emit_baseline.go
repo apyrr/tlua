@@ -131,7 +131,7 @@ func DoJSEmitBaseline(
 		compareResultFileSets(&withoutChecking.JS, &result.JS)
 	}
 
-	if tspath.FileExtensionIsOneOf(baselinePath, []string{tspath.ExtensionTs, tspath.ExtensionTsx}) {
+	if tspath.FileExtensionIs(baselinePath, tspath.ExtensionTs) {
 		baselinePath = tspath.ChangeExtension(baselinePath, tspath.ExtensionJs)
 	}
 

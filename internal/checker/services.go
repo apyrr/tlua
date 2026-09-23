@@ -281,7 +281,7 @@ func (c *Checker) GetContextualType(node *ast.Expression, contextFlags ContextFl
 }
 
 func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn func() T) T {
-	containingCall := ast.FindAncestor(node, ast.IsCallLikeExpression)
+	containingCall := ast.FindAncestor(node, ast.IsCallExpression)
 	if containingCall != nil {
 		toMarkSkip := node
 		for {
@@ -451,24 +451,7 @@ func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Sym
 
 // IsDeclarationUsed checks if an import declaration identifier is used in the source file.
 // This is primarily used for organizing imports to determine which imports can be removed.
-func (c *Checker) IsDeclarationUsed(
-	sourceFile *ast.SourceFile,
-	identifier *ast.Identifier,
-	jsxElementsPresent bool,
-	jsxModeNeedsExplicitImport bool,
-) bool {
-	if jsxElementsPresent && jsxModeNeedsExplicitImport {
-		jsxNamespace := c.getJsxNamespace(sourceFile.AsNode())
-		jsxFragmentFactory := c.GetJsxFragmentFactory(sourceFile.AsNode())
-		identifierText := identifier.Text
-		if identifierText == jsxNamespace {
-			return true
-		}
-		if jsxFragmentFactory != "" && identifierText == jsxFragmentFactory {
-			return true
-		}
-	}
-
+func (c *Checker) IsDeclarationUsed(sourceFile *ast.SourceFile, identifier *ast.Identifier) bool {
 	symbol := c.GetSymbolAtLocation(identifier.AsNode())
 	if symbol == nil {
 		return true
@@ -623,16 +606,8 @@ func (c *Checker) GetTypeArgumentConstraint(node *ast.Node) *Type {
 
 // getUninstantiatedSignatures gets generic signatures from the function's/constructor's type.
 func (c *Checker) getUninstantiatedSignatures(node *ast.Node) []*Signature {
-	switch node.Kind {
-	case ast.KindCallExpression:
+	if ast.IsCallExpression(node) {
 		return c.getSignaturesOfType(c.getTypeOfExpression(node.Expression()), SignatureKindCall)
-	case ast.KindJsxSelfClosingElement, ast.KindJsxOpeningElement:
-		if isJsxIntrinsicTagName(node.TagName()) {
-			return nil
-		}
-		return c.getSignaturesOfType(c.getTypeOfExpression(node.TagName()), SignatureKindCall)
-	case ast.KindBinaryExpression, ast.KindJsxOpeningFragment:
-		return nil
 	}
 	return nil
 }
@@ -668,7 +643,7 @@ func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
 		// The node could be a type argument of a call, a `new` expression, an
 		// instantiation expression, or a generic type instantiation.
 
-		if ast.IsCallLikeExpression(node.Parent) {
+		if ast.IsCallExpression(node.Parent) {
 			return c.getTypeParameterConstraintForPositionAcrossSignatures(
 				c.getUninstantiatedSignatures(node.Parent),
 				typeArgumentPosition,
@@ -725,11 +700,7 @@ func (c *Checker) IsTypeInvalidDueToUnionDiscriminant(contextualType *Type, obj 
 		var nameType *Type
 		propertyName := property.Name()
 		if propertyName != nil {
-			if ast.IsJsxNamespacedName(propertyName) {
-				nameType = c.getStringLiteralType(propertyName.Text())
-			} else {
-				nameType = c.getLiteralTypeFromPropertyName(propertyName)
-			}
+			nameType = c.getLiteralTypeFromPropertyName(propertyName)
 		}
 		var name string
 		if nameType != nil && isTypeUsableAsPropertyName(nameType) {
@@ -758,19 +729,6 @@ func (c *Checker) GetExportsAndPropertiesOfModule(moduleSymbol *ast.Symbol) []*a
 
 func (c *Checker) getExportsOfModuleAsArray(moduleSymbol *ast.Symbol) []*ast.Symbol {
 	return symbolsToArray(c.getExportsOfModule(moduleSymbol))
-}
-
-// Returns all the properties of the Jsx.IntrinsicElements interface.
-func (c *Checker) GetJsxIntrinsicTagNamesAt(location *ast.Node) []*ast.Symbol {
-	intrinsics := c.getJsxType(JsxNames.IntrinsicElements, location)
-	if intrinsics == nil {
-		return nil
-	}
-	return c.GetPropertiesOfType(intrinsics)
-}
-
-func (c *Checker) GetContextualTypeForJsxAttribute(attribute *ast.JsxAttributeLike) *Type {
-	return c.getContextualTypeForJsxAttribute(attribute, ContextFlagsNone)
 }
 
 func (c *Checker) getResolvedSignatureWorker(node *ast.Node, checkMode CheckMode, argumentCount int) (*Signature, []*Signature) {
@@ -897,7 +855,7 @@ func (c *Checker) GetPropertySymbolsFromContextualType(node *ast.Node, contextua
 		return nil
 	}
 	filteredTypes := contextualType.Types()
-	if ast.IsObjectLiteralExpression(node.Parent) || ast.IsJsxAttributes(node.Parent) {
+	if ast.IsObjectLiteralExpression(node.Parent) {
 		filteredTypes = core.Filter(filteredTypes, func(t *Type) bool {
 			return !c.IsTypeInvalidDueToUnionDiscriminant(t, node.Parent)
 		})

@@ -457,7 +457,6 @@ func convertEntryToCallSite(entry *ReferenceEntry) *callSite {
 
 	node := entry.node
 	if !ast.IsCallExpressionTarget(node, true /*includeElementAccess*/, true /*skipPastOuterExpressions*/) &&
-		!ast.IsJsxOpeningLikeElementTagName(node, true, true) &&
 		!ast.IsRightSideOfPropertyAccess(node) &&
 		!ast.IsArgumentExpressionOfElementAccess(node) {
 		return nil
@@ -616,10 +615,6 @@ func (c *callSiteCollector) recordCallSite(node *ast.Node) {
 	var target *ast.Node
 
 	switch {
-	case ast.IsJsxOpeningElement(node):
-		target = node.TagName()
-	case ast.IsJsxSelfClosingElement(node):
-		target = node.TagName()
 	case ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node):
 		target = node
 	case ast.IsCallExpression(node):
@@ -697,12 +692,6 @@ func (c *callSiteCollector) collect(node *ast.Node) {
 		for _, arg := range node.Arguments() {
 			c.collect(arg)
 		}
-		return
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		// do not descend into the type arguments of a JsxOpeningLikeElement
-		c.recordCallSite(node)
-		c.collect(node.TagName())
-		c.collect(node.Attributes())
 		return
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		c.recordCallSite(node)

@@ -539,7 +539,6 @@ describe("RemoteNode + cloneNode", () => {
             assert.strictEqual(clone.fileName, sf.fileName);
             assert.strictEqual(clone.path, sf.path);
             assert.strictEqual(clone.scriptKind, sf.scriptKind);
-            assert.strictEqual(clone.languageVariant, sf.languageVariant);
             assert.strictEqual(clone.isDeclarationFile, sf.isDeclarationFile);
             assert.strictEqual(clone.referencedFiles, sf.referencedFiles);
             assert.strictEqual(clone.typeReferenceDirectives, sf.typeReferenceDirectives);

@@ -41,35 +41,6 @@ func (l *LanguageService) provideDocumentHighlightsWorker(ctx context.Context, d
 	position := int(l.converters.LineAndCharacterToPosition(sourceFile, documentPosition))
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 
-	// Cheap JSX check before resolving files to search.
-	if node.Parent != nil && (node.Parent.Kind == ast.KindJsxClosingElement || (node.Parent.Kind == ast.KindJsxOpeningElement && node.Parent.TagName() == node)) {
-		var openingElement, closingElement *ast.Node
-		if ast.IsJsxElement(node.Parent.Parent) {
-			openingElement = node.Parent.Parent.AsJsxElement().OpeningElement
-			closingElement = node.Parent.Parent.AsJsxElement().ClosingElement
-		}
-		var highlights []*lsproto.DocumentHighlight
-		kind := lsproto.DocumentHighlightKindRead
-		if openingElement != nil {
-			highlights = append(highlights, &lsproto.DocumentHighlight{
-				Range: l.createLspRangeFromNode(openingElement, sourceFile),
-				Kind:  &kind,
-			})
-		}
-		if closingElement != nil {
-			highlights = append(highlights, &lsproto.DocumentHighlight{
-				Range: l.createLspRangeFromNode(closingElement, sourceFile),
-				Kind:  &kind,
-			})
-		}
-		multiHighlights := []*lsproto.MultiDocumentHighlight{
-			{Uri: documentUri, Highlights: highlights},
-		}
-		return lsproto.MultiDocumentHighlightsOrNull{
-			MultiDocumentHighlights: &multiHighlights,
-		}, nil
-	}
-
 	// Resolve the source files to search, deduplicating by file name.
 	var sourceFiles []*ast.SourceFile
 	seenFiles := collections.NewSetWithSizeHint[string](len(filesToSearch))

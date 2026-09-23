@@ -303,7 +303,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 				fromProperties: stringLiteralCompletionsForObjectLiteral(typeChecker, parent.Parent),
 			}
 		}
-		if ast.FindAncestor(parent.Parent, ast.IsCallLikeExpression) != nil {
+		if ast.FindAncestor(parent.Parent, ast.IsCallExpression) != nil {
 			uniques := &collections.Set[string]{}
 			stringLiteralTypes := append(
 				getStringLiteralTypes(typeChecker.GetContextualType(node, checker.ContextFlagsNone), uniques, typeChecker),
@@ -330,15 +330,9 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			}
 		}
 		return nil
-	case ast.KindCallExpression, ast.KindJsxAttribute:
+	case ast.KindCallExpression:
 		if !isRequireCallArgument(node) && !ast.IsImportCall(parent) {
-			var argumentNode *ast.Node
-			if parent.Kind == ast.KindJsxAttribute {
-				argumentNode = parent.Parent
-			} else {
-				argumentNode = node
-			}
-			argumentInfo := getArgumentInfoForCompletions(argumentNode, position, file, typeChecker)
+			argumentInfo := getArgumentInfoForCompletions(node, position, file, typeChecker)
 			// Get string literal completions from specialized signatures of the target
 			// i.e. declare function f(a: 'A');
 			// f("/*completion position*/")
@@ -460,8 +454,6 @@ func fromUnionableLiteralType(
 	switch grandparent.Kind {
 	case ast.KindCallExpression,
 		ast.KindExpressionWithTypeArguments,
-		ast.KindJsxOpeningElement,
-		ast.KindJsxSelfClosingElement,
 		ast.KindTypeReference:
 		typeArgument := ast.FindAncestor(parent, func(n *ast.Node) bool { return n.Parent == grandparent })
 		if typeArgument != nil {
@@ -1686,7 +1678,7 @@ func getFilenameWithExtensionOption(
 		if tspath.FileExtensionIsOneOf(name, tspath.SupportedTSImplementationExtensions) {
 			return name, tspath.TryGetExtensionFromPath(name)
 		}
-		outputExtension := module.TryGetJSExtensionForFile(name, program.Options())
+		outputExtension := module.TryGetJSExtensionForFile(name)
 		if outputExtension != "" {
 			return tspath.ChangeExtension(name, outputExtension), outputExtension
 		}
@@ -1696,11 +1688,11 @@ func getFilenameWithExtensionOption(
 	if !isExportsOrImportsWildcard &&
 		len(allowedEndings) > 0 &&
 		(allowedEndings[0] == modulespecifiers.ModuleSpecifierEndingMinimal || allowedEndings[0] == modulespecifiers.ModuleSpecifierEndingIndex) &&
-		tspath.FileExtensionIsOneOf(name, []string{tspath.ExtensionJs, tspath.ExtensionJsx, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionDts}) {
+		tspath.FileExtensionIsOneOf(name, []string{tspath.ExtensionJs, tspath.ExtensionTs, tspath.ExtensionDts}) {
 		return tspath.RemoveFileExtension(name), tspath.TryGetExtensionFromPath(name)
 	}
 
-	outputExtension := module.TryGetJSExtensionForFile(name, program.Options())
+	outputExtension := module.TryGetJSExtensionForFile(name)
 	if outputExtension != "" {
 		return tspath.ChangeExtension(name, outputExtension), outputExtension
 	}
@@ -1775,12 +1767,8 @@ func kindModifiersFromExtension(extension string) lsutil.ScriptElementKindModifi
 		return lsutil.ScriptElementKindModifierJs
 	case tspath.ExtensionJson:
 		return lsutil.ScriptElementKindModifierJson
-	case tspath.ExtensionJsx:
-		return lsutil.ScriptElementKindModifierJsx
 	case tspath.ExtensionTs:
 		return lsutil.ScriptElementKindModifierTs
-	case tspath.ExtensionTsx:
-		return lsutil.ScriptElementKindModifierTsx
 	case tspath.ExtensionTsBuildInfo:
 		panic(fmt.Sprintf("Extension %v is unsupported.", tspath.ExtensionTsBuildInfo))
 	default:
@@ -1796,28 +1784,13 @@ func getStringLiteralCompletionsFromSignature(
 ) *completionsFromTypes {
 	isNewIdentifier := false
 	uniques := collections.Set[string]{}
-	var editingArgument *ast.Node
-	if ast.IsJsxOpeningLikeElement(call) {
-		editingArgument = ast.FindAncestor(arg.Parent, ast.IsJsxAttribute)
-		if editingArgument == nil {
-			panic("Expected jsx opening-like element to have a jsx attribute as ancestor.")
-		}
-	} else {
-		editingArgument = arg
-	}
-	candidates := typeChecker.GetCandidateSignaturesForStringLiteralCompletions(call, editingArgument)
+	candidates := typeChecker.GetCandidateSignaturesForStringLiteralCompletions(call, arg)
 	var types []*checker.StringLiteralType
 	for _, candidate := range candidates {
 		if !candidate.HasRestParameter() && argumentInfo.argumentCount > len(candidate.Parameters()) {
 			continue
 		}
 		t := typeChecker.GetTypeParameterAtPosition(candidate, argumentInfo.argumentIndex)
-		if ast.IsJsxOpeningLikeElement(call) {
-			propType := typeChecker.GetTypeOfPropertyOfType(t, editingArgument.AsJsxAttribute().Name().Text())
-			if propType != nil {
-				t = propType
-			}
-		}
 		isNewIdentifier = isNewIdentifier || t.IsString()
 		types = append(types, getStringLiteralTypes(t, &uniques, typeChecker)...)
 	}

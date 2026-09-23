@@ -38,7 +38,7 @@ func DiscoverTypings(
 	// A typing name to typing file path mapping
 	inferredTypings := map[string]string{}
 
-	// Only infer typings for .js and .jsx files
+	// Only infer typings for .js files
 	fileNames = core.Filter(fileNames, func(fileName string) bool {
 		return tspath.HasJSFileExtension(fileName)
 	})
@@ -141,10 +141,8 @@ func getTypingNamesFromSourceFileNames(
 	inferredTypings map[string]string,
 	fileNames []string,
 ) {
-	hasJsxFile := false
 	var fromFileNames []string
 	for _, fileName := range fileNames {
-		hasJsxFile = hasJsxFile || tspath.FileExtensionIs(fileName, tspath.ExtensionJsx)
 		inferredTypingName := tspath.RemoveFileExtension(tspath.ToFileNameLowerCase(tspath.GetBaseFileName(fileName)))
 		cleanedTypingName := removeMinAndVersionNumbers(inferredTypingName)
 		if typeName, ok := safeFileNameToTypeName[cleanedTypingName]; ok {
@@ -153,10 +151,6 @@ func getTypingNamesFromSourceFileNames(
 	}
 	if len(fromFileNames) > 0 {
 		addInferredTypings(fs, logger, inferredTypings, fromFileNames, "Inferred typings from file names")
-	}
-	if hasJsxFile {
-		logger.Log("ATA:: Inferred 'react' typings due to presence of '.jsx' extension")
-		addInferredTyping(inferredTypings, "react")
 	}
 }
 

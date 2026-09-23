@@ -314,19 +314,6 @@ type (
 	TemplateLiteralTypeSpanNode       = Node
 	SyntheticExpressionNode           = Node
 	PartiallyEmittedExpressionNode    = Node
-	JsxElementNode                    = Node
-	JsxAttributesNode                 = Node
-	JsxNamespacedNameNode             = Node
-	JsxOpeningElementNode             = Node
-	JsxSelfClosingElementNode         = Node
-	JsxFragmentNode                   = Node
-	JsxOpeningFragmentNode            = Node
-	JsxClosingFragmentNode            = Node
-	JsxAttributeNode                  = Node
-	JsxSpreadAttributeNode            = Node
-	JsxClosingElementNode             = Node
-	JsxExpressionNode                 = Node
-	JsxTextNode                       = Node
 	SyntaxListNode                    = Node
 	JSDocNode                         = Node
 	JSDocTypeExpressionNode           = Node
@@ -428,8 +415,6 @@ type (
 	PropertyDefinitionList          = NodeList // NodeList[*ObjectLiteralElement]
 	TypeList                        = NodeList // NodeList[*TypeNode]
 	TemplateLiteralTypeSpanList     = NodeList // NodeList[*TemplateLiteralTypeSpan]
-	JsxChildList                    = NodeList // NodeList[*JsxChild]
-	JsxAttributeList                = NodeList // NodeList[*JsxAttributeLike]
 )
 
 // ──────────────────────────────────────────────────────────────────────
@@ -458,12 +443,7 @@ type (
 	EntityName                     = Node // Identifier | QualifiedName
 	BindingName                    = Node // Identifier | BindingPattern
 	ModifierLike                   = Node // Modifier
-	JsxChild                       = Node // JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxAttributeLike               = Node // JsxAttribute | JsxSpreadAttribute
-	JsxAttributeName               = Node // Identifier | JsxNamespacedName
-	JsxAttributeValue              = Node // StringLiteral | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment
-	JsxTagNameExpression           = Node // Identifier | JsxTagNamePropertyAccess | JsxNamespacedName
-	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode | JsxText
+	LiteralLikeNode                = Node // StringLiteral | NumericLiteral | RegularExpressionLiteral | TemplateLiteralLikeNode
 	LiteralExpression              = Node // StringLiteral | NumericLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
 	UnionOrIntersectionTypeNode    = Node // UnionTypeNode | IntersectionTypeNode
 	TemplateLiteralLikeNode        = Node // PseudoLiteralSyntaxKind
@@ -477,10 +457,9 @@ type (
 	NumericOrStringLikeLiteral     = Node // StringLiteralLikeNode | NumericLiteral
 	ObjectLiteralLikeNode          = Node // ObjectLiteralExpression | ObjectBindingPattern
 	ObjectTypeDeclaration          = Node // InterfaceDeclaration | TypeLiteralNode
-	JsxOpeningLikeElement          = Node // JsxOpeningElement | JsxSelfClosingElement
 	NamedImportsOrExports          = Node // NamedImports | NamedExports
 	BreakOrContinueStatement       = Node // BreakStatement | ContinueStatement
-	CallLikeExpression             = Node // CallExpression | JsxOpeningLikeElement
+	CallLikeExpression             = Node // CallExpression
 	FunctionLikeDeclaration        = Node // FunctionDeclaration | FunctionExpression | ArrowFunction
 	VariableOrParameterDeclaration = Node // VariableDeclaration | ParameterDeclaration
 	ImportClauseOrBindingPattern   = Node // ImportClause | BindingPattern
@@ -494,7 +473,7 @@ type (
 	BooleanLiteral                 = Node // TrueLiteral | FalseLiteral
 	ConciseBody                    = Node // Block | Expression
 	DestructuringAssignment        = Node // ObjectDestructuringAssignment | ArrayDestructuringAssignment
-	LiteralToken                   = Node // NumericLiteral | StringLiteral | JsxText | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
+	LiteralToken                   = Node // NumericLiteral | StringLiteral | RegularExpressionLiteral | NoSubstitutionTemplateLiteral
 	Modifier                       = Node // ModifierSyntaxKind
 	ObjectLiteralElementLike       = Node // PropertyAssignment | SpreadAssignment | TableEntry
 	PropertyNameLiteral            = Node // Identifier | StringLiteral | NumericLiteral
@@ -525,7 +504,7 @@ func (node *Token) Clone(f NodeFactoryCoercible) *Node {
 
 func IsToken(node *Node) bool {
 	switch node.Kind {
-	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindJsxText, KindJsxTextAllWhiteSpaces, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindLessThanSlashToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDefaultKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindSuspendKeyword, KindBooleanKeyword, KindConstKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
+	case KindUnknown, KindEndOfFile, KindSingleLineCommentTrivia, KindMultiLineCommentTrivia, KindNewLineTrivia, KindWhitespaceTrivia, KindConflictMarkerTrivia, KindNonTextFileMarkerTrivia, KindNumericLiteral, KindStringLiteral, KindRegularExpressionLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateHead, KindTemplateMiddle, KindTemplateTail, KindOpenBraceToken, KindCloseBraceToken, KindOpenParenToken, KindCloseParenToken, KindOpenBracketToken, KindCloseBracketToken, KindDotToken, KindDotDotDotToken, KindSemicolonToken, KindCommaToken, KindQuestionDotToken, KindLessThanToken, KindGreaterThanToken, KindLessThanEqualsToken, KindGreaterThanEqualsToken, KindEqualsEqualsToken, KindTildeEqualsToken, KindEqualsGreaterThanToken, KindPlusToken, KindMinusToken, KindAsteriskToken, KindAsteriskAsteriskToken, KindSlashToken, KindPercentToken, KindDotDotToken, KindAmpersandToken, KindBarToken, KindExclamationToken, KindAmpersandAmpersandToken, KindBarBarToken, KindQuestionToken, KindColonToken, KindColonColonToken, KindAtToken, KindBacktickToken, KindHashToken, KindEqualsToken, KindIdentifier, KindPrivateIdentifier, KindJSDocCommentTextToken, KindBreakKeyword, KindContinueKeyword, KindDefaultKeyword, KindDoKeyword, KindElseKeyword, KindElseIfKeyword, KindEndKeyword, KindExportKeyword, KindExtendsKeyword, KindFalseKeyword, KindForKeyword, KindFunctionKeyword, KindGotoKeyword, KindIfKeyword, KindImportKeyword, KindInKeyword, KindRepeatKeyword, KindReturnKeyword, KindSuperKeyword, KindThenKeyword, KindThisKeyword, KindTrueKeyword, KindTypeOfKeyword, KindUntilKeyword, KindLocalKeyword, KindVoidKeyword, KindWhileKeyword, KindImplementsKeyword, KindInterfaceKeyword, KindPackageKeyword, KindPrivateKeyword, KindProtectedKeyword, KindPublicKeyword, KindStaticKeyword, KindYieldKeyword, KindAbstractKeyword, KindAccessorKeyword, KindAsKeyword, KindAssertsKeyword, KindAnyKeyword, KindSuspendKeyword, KindBooleanKeyword, KindConstKeyword, KindConstructorKeyword, KindDeclareKeyword, KindGetKeyword, KindImmediateKeyword, KindInferKeyword, KindIntrinsicKeyword, KindIsKeyword, KindKeyOfKeyword, KindModuleKeyword, KindNamespaceKeyword, KindNeverKeyword, KindOutKeyword, KindReadonlyKeyword, KindRequireKeyword, KindNumberKeyword, KindObjectKeyword, KindThreadKeyword, KindUserdataKeyword, KindCDataKeyword, KindSatisfiesKeyword, KindSetKeyword, KindStringKeyword, KindSymbolKeyword, KindTypeKeyword, KindNilKeyword, KindUniqueKeyword, KindUnknownKeyword, KindFromKeyword, KindGlobalKeyword, KindOverrideKeyword, KindOfKeyword, KindSelfKeyword, KindDeferKeyword:
 		return true
 	}
 	return false
@@ -4749,494 +4728,6 @@ func IsPartiallyEmittedExpression(node *Node) bool {
 }
 
 // ──────────────────────────────────────────────────────────────────────
-// JsxElement
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxElement struct {
-	PrimaryExpressionBase
-	CompositeBase
-	OpeningElement *JsxOpeningElementNode
-	Children       *JsxChildList
-	ClosingElement *JsxClosingElementNode
-}
-
-func (f *NodeFactory) NewJsxElement(openingElement *JsxOpeningElementNode, children *JsxChildList, closingElement *JsxClosingElementNode) *Node {
-	data := &JsxElement{}
-	data.OpeningElement = openingElement
-	data.Children = children
-	data.ClosingElement = closingElement
-	return f.newNode(KindJsxElement, data)
-}
-
-func (f *NodeFactory) UpdateJsxElement(node *JsxElement, openingElement *JsxOpeningElementNode, children *JsxChildList, closingElement *JsxClosingElementNode) *Node {
-	if openingElement != node.OpeningElement || children != node.Children || closingElement != node.ClosingElement {
-		return updateNode(f.NewJsxElement(openingElement, children, closingElement), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxElement) ForEachChild(v Visitor) bool {
-	return visit(v, node.OpeningElement) || visitNodeList(v, node.Children) || visit(v, node.ClosingElement)
-}
-
-func (node *JsxElement) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxElement(node, v.visitNode(node.OpeningElement), v.visitNodes(node.Children), v.visitNode(node.ClosingElement))
-}
-
-func (node *JsxElement) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxElement(node.OpeningElement, node.Children, node.ClosingElement), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxElement(node *Node) bool {
-	return node.Kind == KindJsxElement
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxAttributes
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxAttributes struct {
-	PrimaryExpressionBase
-	DeclarationBase
-	CompositeBase
-	Properties *JsxAttributeList
-}
-
-func (f *NodeFactory) NewJsxAttributes(properties *JsxAttributeList) *Node {
-	data := &JsxAttributes{}
-	data.Properties = properties
-	return f.newNode(KindJsxAttributes, data)
-}
-
-func (f *NodeFactory) UpdateJsxAttributes(node *JsxAttributes, properties *JsxAttributeList) *Node {
-	if properties != node.Properties {
-		return updateNode(f.NewJsxAttributes(properties), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxAttributes) ForEachChild(v Visitor) bool {
-	return visitNodeList(v, node.Properties)
-}
-
-func (node *JsxAttributes) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxAttributes(node, v.visitNodes(node.Properties))
-}
-
-func (node *JsxAttributes) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxAttributes(node.Properties), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxAttributes(node *Node) bool {
-	return node.Kind == KindJsxAttributes
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxNamespacedName
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxNamespacedName struct {
-	ExpressionBase
-	CompositeBase
-	Namespace *IdentifierNode
-	name      *IdentifierNode
-}
-
-func (f *NodeFactory) NewJsxNamespacedName(namespace *IdentifierNode, name *IdentifierNode) *Node {
-	data := &JsxNamespacedName{}
-	data.Namespace = namespace
-	data.name = name
-	return f.newNode(KindJsxNamespacedName, data)
-}
-
-func (f *NodeFactory) UpdateJsxNamespacedName(node *JsxNamespacedName, namespace *IdentifierNode, name *IdentifierNode) *Node {
-	if namespace != node.Namespace || name != node.name {
-		return updateNode(f.NewJsxNamespacedName(namespace, name), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxNamespacedName) ForEachChild(v Visitor) bool {
-	return visit(v, node.Namespace) || visit(v, node.name)
-}
-
-func (node *JsxNamespacedName) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxNamespacedName(node, v.visitNode(node.Namespace), v.visitNode(node.name))
-}
-
-func (node *JsxNamespacedName) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxNamespacedName(node.Namespace, node.name), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *JsxNamespacedName) Name() *DeclarationName {
-	return node.name
-}
-
-func IsJsxNamespacedName(node *Node) bool {
-	return node.Kind == KindJsxNamespacedName
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxOpeningElement
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxOpeningElement struct {
-	ExpressionBase
-	CompositeBase
-	TagName       *JsxTagNameExpression
-	TypeArguments *TypeList // Optional
-	Attributes    *JsxAttributesNode
-}
-
-func (f *NodeFactory) NewJsxOpeningElement(tagName *JsxTagNameExpression, typeArguments *TypeList, attributes *JsxAttributesNode) *Node {
-	data := &JsxOpeningElement{}
-	data.TagName = tagName
-	data.TypeArguments = typeArguments
-	data.Attributes = attributes
-	return f.newNode(KindJsxOpeningElement, data)
-}
-
-func (f *NodeFactory) UpdateJsxOpeningElement(node *JsxOpeningElement, tagName *JsxTagNameExpression, typeArguments *TypeList, attributes *JsxAttributesNode) *Node {
-	if tagName != node.TagName || typeArguments != node.TypeArguments || attributes != node.Attributes {
-		return updateNode(f.NewJsxOpeningElement(tagName, typeArguments, attributes), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxOpeningElement) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visitNodeList(v, node.TypeArguments) || visit(v, node.Attributes)
-}
-
-func (node *JsxOpeningElement) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxOpeningElement(node, v.visitNode(node.TagName), v.visitNodes(node.TypeArguments), v.visitNode(node.Attributes))
-}
-
-func (node *JsxOpeningElement) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxOpeningElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxOpeningElement(node *Node) bool {
-	return node.Kind == KindJsxOpeningElement
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxSelfClosingElement
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxSelfClosingElement struct {
-	PrimaryExpressionBase
-	CompositeBase
-	TagName       *JsxTagNameExpression
-	TypeArguments *TypeList // Optional
-	Attributes    *JsxAttributesNode
-}
-
-func (f *NodeFactory) NewJsxSelfClosingElement(tagName *JsxTagNameExpression, typeArguments *TypeList, attributes *JsxAttributesNode) *Node {
-	data := &JsxSelfClosingElement{}
-	data.TagName = tagName
-	data.TypeArguments = typeArguments
-	data.Attributes = attributes
-	return f.newNode(KindJsxSelfClosingElement, data)
-}
-
-func (f *NodeFactory) UpdateJsxSelfClosingElement(node *JsxSelfClosingElement, tagName *JsxTagNameExpression, typeArguments *TypeList, attributes *JsxAttributesNode) *Node {
-	if tagName != node.TagName || typeArguments != node.TypeArguments || attributes != node.Attributes {
-		return updateNode(f.NewJsxSelfClosingElement(tagName, typeArguments, attributes), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxSelfClosingElement) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visitNodeList(v, node.TypeArguments) || visit(v, node.Attributes)
-}
-
-func (node *JsxSelfClosingElement) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxSelfClosingElement(node, v.visitNode(node.TagName), v.visitNodes(node.TypeArguments), v.visitNode(node.Attributes))
-}
-
-func (node *JsxSelfClosingElement) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxSelfClosingElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxSelfClosingElement(node *Node) bool {
-	return node.Kind == KindJsxSelfClosingElement
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxFragment
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxFragment struct {
-	PrimaryExpressionBase
-	CompositeBase
-	OpeningFragment *JsxOpeningFragmentNode
-	Children        *JsxChildList
-	ClosingFragment *JsxClosingFragmentNode
-}
-
-func (f *NodeFactory) NewJsxFragment(openingFragment *JsxOpeningFragmentNode, children *JsxChildList, closingFragment *JsxClosingFragmentNode) *Node {
-	data := &JsxFragment{}
-	data.OpeningFragment = openingFragment
-	data.Children = children
-	data.ClosingFragment = closingFragment
-	return f.newNode(KindJsxFragment, data)
-}
-
-func (f *NodeFactory) UpdateJsxFragment(node *JsxFragment, openingFragment *JsxOpeningFragmentNode, children *JsxChildList, closingFragment *JsxClosingFragmentNode) *Node {
-	if openingFragment != node.OpeningFragment || children != node.Children || closingFragment != node.ClosingFragment {
-		return updateNode(f.NewJsxFragment(openingFragment, children, closingFragment), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxFragment) ForEachChild(v Visitor) bool {
-	return visit(v, node.OpeningFragment) || visitNodeList(v, node.Children) || visit(v, node.ClosingFragment)
-}
-
-func (node *JsxFragment) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxFragment(node, v.visitNode(node.OpeningFragment), v.visitNodes(node.Children), v.visitNode(node.ClosingFragment))
-}
-
-func (node *JsxFragment) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxFragment(node.OpeningFragment, node.Children, node.ClosingFragment), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxFragment(node *Node) bool {
-	return node.Kind == KindJsxFragment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxOpeningFragment
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxOpeningFragment struct {
-	ExpressionBase
-}
-
-func (f *NodeFactory) NewJsxOpeningFragment() *Node {
-	data := &JsxOpeningFragment{}
-	return f.newNode(KindJsxOpeningFragment, data)
-}
-
-func (node *JsxOpeningFragment) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxOpeningFragment(), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxOpeningFragment(node *Node) bool {
-	return node.Kind == KindJsxOpeningFragment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxClosingFragment
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxClosingFragment struct {
-	ExpressionBase
-}
-
-func (f *NodeFactory) NewJsxClosingFragment() *Node {
-	data := &JsxClosingFragment{}
-	return f.newNode(KindJsxClosingFragment, data)
-}
-
-func (node *JsxClosingFragment) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxClosingFragment(), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxClosingFragment(node *Node) bool {
-	return node.Kind == KindJsxClosingFragment
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxAttribute
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxAttribute struct {
-	NodeBase
-	DeclarationBase
-	CompositeBase
-	name        *JsxAttributeName
-	Initializer *JsxAttributeValue // Optional
-}
-
-func (f *NodeFactory) NewJsxAttribute(name *JsxAttributeName, initializer *JsxAttributeValue) *Node {
-	data := &JsxAttribute{}
-	data.name = name
-	data.Initializer = initializer
-	return f.newNode(KindJsxAttribute, data)
-}
-
-func (f *NodeFactory) UpdateJsxAttribute(node *JsxAttribute, name *JsxAttributeName, initializer *JsxAttributeValue) *Node {
-	if name != node.name || initializer != node.Initializer {
-		return updateNode(f.NewJsxAttribute(name, initializer), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxAttribute) ForEachChild(v Visitor) bool {
-	return visit(v, node.name) || visit(v, node.Initializer)
-}
-
-func (node *JsxAttribute) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxAttribute(node, v.visitNode(node.name), v.visitNode(node.Initializer))
-}
-
-func (node *JsxAttribute) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxAttribute(node.name, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *JsxAttribute) Name() *DeclarationName {
-	return node.name
-}
-
-func IsJsxAttribute(node *Node) bool {
-	return node.Kind == KindJsxAttribute
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxSpreadAttribute
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxSpreadAttribute struct {
-	ObjectLiteralElementBase
-	NodeBase
-	Expression *Expression
-}
-
-func (f *NodeFactory) NewJsxSpreadAttribute(expression *Expression) *Node {
-	data := &JsxSpreadAttribute{}
-	data.Expression = expression
-	return f.newNode(KindJsxSpreadAttribute, data)
-}
-
-func (f *NodeFactory) UpdateJsxSpreadAttribute(node *JsxSpreadAttribute, expression *Expression) *Node {
-	if expression != node.Expression {
-		return updateNode(f.NewJsxSpreadAttribute(expression), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxSpreadAttribute) ForEachChild(v Visitor) bool {
-	return visit(v, node.Expression)
-}
-
-func (node *JsxSpreadAttribute) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxSpreadAttribute(node, v.visitNode(node.Expression))
-}
-
-func (node *JsxSpreadAttribute) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxSpreadAttribute(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxSpreadAttribute(node *Node) bool {
-	return node.Kind == KindJsxSpreadAttribute
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxClosingElement
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxClosingElement struct {
-	NodeBase
-	TagName *JsxTagNameExpression
-}
-
-func (f *NodeFactory) NewJsxClosingElement(tagName *JsxTagNameExpression) *Node {
-	data := &JsxClosingElement{}
-	data.TagName = tagName
-	return f.newNode(KindJsxClosingElement, data)
-}
-
-func (f *NodeFactory) UpdateJsxClosingElement(node *JsxClosingElement, tagName *JsxTagNameExpression) *Node {
-	if tagName != node.TagName {
-		return updateNode(f.NewJsxClosingElement(tagName), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxClosingElement) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName)
-}
-
-func (node *JsxClosingElement) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxClosingElement(node, v.visitNode(node.TagName))
-}
-
-func (node *JsxClosingElement) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxClosingElement(node.TagName), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxClosingElement(node *Node) bool {
-	return node.Kind == KindJsxClosingElement
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxExpression
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxExpression struct {
-	ExpressionBase
-	DotDotDotToken *DotDotDotToken // Optional
-	Expression     *Expression     // Optional
-}
-
-func (f *NodeFactory) NewJsxExpression(dotDotDotToken *DotDotDotToken, expression *Expression) *Node {
-	data := &JsxExpression{}
-	data.DotDotDotToken = dotDotDotToken
-	data.Expression = expression
-	return f.newNode(KindJsxExpression, data)
-}
-
-func (f *NodeFactory) UpdateJsxExpression(node *JsxExpression, dotDotDotToken *DotDotDotToken, expression *Expression) *Node {
-	if dotDotDotToken != node.DotDotDotToken || expression != node.Expression {
-		return updateNode(f.NewJsxExpression(dotDotDotToken, expression), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JsxExpression) ForEachChild(v Visitor) bool {
-	return visit(v, node.DotDotDotToken) || visit(v, node.Expression)
-}
-
-func (node *JsxExpression) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJsxExpression(node, v.visitNode(node.DotDotDotToken), v.visitNode(node.Expression))
-}
-
-func (node *JsxExpression) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxExpression(node.DotDotDotToken, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxExpression(node *Node) bool {
-	return node.Kind == KindJsxExpression
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// JsxText
-// ──────────────────────────────────────────────────────────────────────
-
-type JsxText struct {
-	ExpressionBase
-	LiteralLikeNodeBase
-	ContainsOnlyTriviaWhiteSpaces bool
-}
-
-func (f *NodeFactory) NewJsxText(text string, containsOnlyTriviaWhiteSpaces bool) *Node {
-	data := &JsxText{}
-	data.Text = text
-	data.ContainsOnlyTriviaWhiteSpaces = containsOnlyTriviaWhiteSpaces
-	f.textCount++
-	return f.newNode(KindJsxText, data)
-}
-
-func (node *JsxText) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJsxText(node.Text, node.ContainsOnlyTriviaWhiteSpaces), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func IsJsxText(node *Node) bool {
-	return node.Kind == KindJsxText
-}
-
-// ──────────────────────────────────────────────────────────────────────
 // SyntaxList
 // ──────────────────────────────────────────────────────────────────────
 
@@ -7248,26 +6739,6 @@ func (n *Node) ForEachChild(v Visitor) bool {
 		return n.data.(*SyntheticExpression).ForEachChild(v)
 	case KindPartiallyEmittedExpression:
 		return n.data.(*PartiallyEmittedExpression).ForEachChild(v)
-	case KindJsxElement:
-		return n.data.(*JsxElement).ForEachChild(v)
-	case KindJsxAttributes:
-		return n.data.(*JsxAttributes).ForEachChild(v)
-	case KindJsxNamespacedName:
-		return n.data.(*JsxNamespacedName).ForEachChild(v)
-	case KindJsxOpeningElement:
-		return n.data.(*JsxOpeningElement).ForEachChild(v)
-	case KindJsxSelfClosingElement:
-		return n.data.(*JsxSelfClosingElement).ForEachChild(v)
-	case KindJsxFragment:
-		return n.data.(*JsxFragment).ForEachChild(v)
-	case KindJsxAttribute:
-		return n.data.(*JsxAttribute).ForEachChild(v)
-	case KindJsxSpreadAttribute:
-		return n.data.(*JsxSpreadAttribute).ForEachChild(v)
-	case KindJsxClosingElement:
-		return n.data.(*JsxClosingElement).ForEachChild(v)
-	case KindJsxExpression:
-		return n.data.(*JsxExpression).ForEachChild(v)
 	case KindSyntaxList:
 		return n.data.(*SyntaxList).ForEachChild(v)
 	case KindJSDoc:
@@ -7771,58 +7242,6 @@ func (n *Node) AsPartiallyEmittedExpression() *PartiallyEmittedExpression {
 	return n.data.(*PartiallyEmittedExpression)
 }
 
-func (n *Node) AsJsxElement() *JsxElement {
-	return n.data.(*JsxElement)
-}
-
-func (n *Node) AsJsxAttributes() *JsxAttributes {
-	return n.data.(*JsxAttributes)
-}
-
-func (n *Node) AsJsxNamespacedName() *JsxNamespacedName {
-	return n.data.(*JsxNamespacedName)
-}
-
-func (n *Node) AsJsxOpeningElement() *JsxOpeningElement {
-	return n.data.(*JsxOpeningElement)
-}
-
-func (n *Node) AsJsxSelfClosingElement() *JsxSelfClosingElement {
-	return n.data.(*JsxSelfClosingElement)
-}
-
-func (n *Node) AsJsxFragment() *JsxFragment {
-	return n.data.(*JsxFragment)
-}
-
-func (n *Node) AsJsxOpeningFragment() *JsxOpeningFragment {
-	return n.data.(*JsxOpeningFragment)
-}
-
-func (n *Node) AsJsxClosingFragment() *JsxClosingFragment {
-	return n.data.(*JsxClosingFragment)
-}
-
-func (n *Node) AsJsxAttribute() *JsxAttribute {
-	return n.data.(*JsxAttribute)
-}
-
-func (n *Node) AsJsxSpreadAttribute() *JsxSpreadAttribute {
-	return n.data.(*JsxSpreadAttribute)
-}
-
-func (n *Node) AsJsxClosingElement() *JsxClosingElement {
-	return n.data.(*JsxClosingElement)
-}
-
-func (n *Node) AsJsxExpression() *JsxExpression {
-	return n.data.(*JsxExpression)
-}
-
-func (n *Node) AsJsxText() *JsxText {
-	return n.data.(*JsxText)
-}
-
 func (n *Node) AsSyntaxList() *SyntaxList {
 	return n.data.(*SyntaxList)
 }
@@ -8061,14 +7480,6 @@ func IsKeywordExpressionKind(kind Kind) bool {
 
 func IsTokenKind(kind Kind) bool {
 	return kind >= KindFirstToken && kind <= KindLastToken
-}
-
-func IsJsxTokenKind(kind Kind) bool {
-	switch kind {
-	case KindLessThanSlashToken, KindEndOfFile, KindConflictMarkerTrivia, KindJsxText, KindJsxTextAllWhiteSpaces, KindOpenBraceToken, KindLessThanToken:
-		return true
-	}
-	return false
 }
 
 func IsJSDocNodeKind(kind Kind) bool {

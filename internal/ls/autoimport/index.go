@@ -21,7 +21,7 @@ type Index[T Named] struct {
 	index   map[rune][]int
 }
 
-func (idx *Index[T]) Find(name string, caseSensitive bool) []T {
+func (idx *Index[T]) Find(name string) []T {
 	if len(idx.entries) == 0 || len(name) == 0 {
 		return nil
 	}
@@ -39,7 +39,7 @@ func (idx *Index[T]) Find(name string, caseSensitive bool) []T {
 	for _, entryIndex := range candidates {
 		entry := idx.entries[entryIndex]
 		entryName := entry.Name()
-		if (caseSensitive && entryName == name) || (!caseSensitive && strings.EqualFold(entryName, name)) {
+		if entryName == name {
 			results = append(results, entry)
 		}
 	}

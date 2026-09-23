@@ -20,11 +20,11 @@ Build one or more projects and their dependencies, if out of date
 [94m--checkers[39m
 Set the number of checkers per project.
 
-[94m--help, -?[39m
-
-
 [94m--help, -h[39m
 Print this message.
+
+[94m--help, -?[39m
+
 
 [94m--ignoreConfig[39m
 Ignore the tluaconfig found and build with commandline options and files.
@@ -418,26 +418,6 @@ default: false
 
 ### Language and Environment
 
-[94m--jsx[39m
-Specify what JSX code is generated.
-one of: preserve, react-native, react-jsx, react-jsxdev, react
-default: undefined
-
-[94m--jsxFactory[39m
-Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'.
-type: string
-default: `React.createElement`
-
-[94m--jsxFragmentFactory[39m
-Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'.
-type: string
-default: React.Fragment
-
-[94m--jsxImportSource[39m
-Specify module specifier used to import the JSX factory functions when using 'jsx: react-jsx*'.
-type: string
-default: react
-
 [94m--lib[39m
 Specify a set of bundled library declaration files that describe the target runtime environment.
 one or more: luajit
@@ -452,11 +432,6 @@ default: false
 Disable including any library files, including the default lib.d.ts.
 type: boolean
 default: false
-
-[94m--reactNamespace[39m
-Specify the object invoked for 'createElement'. This only applies when targeting 'react' JSX emit.
-type: string
-default: `React`
 
 [94m--target, -t[39m
 Set the JavaScript language version for emitted JavaScript and include compatible library declarations.

@@ -15,11 +15,6 @@ import (
 
 var _ printer.EmitResolver = (*EmitResolver)(nil)
 
-// Links for jsx
-type JSXLinks struct {
-	importRef *ast.Node
-}
-
 // Links for declarations
 
 type DeclarationLinks struct {
@@ -36,7 +31,6 @@ type EmitResolver struct {
 	isValueAliasDeclaration func(node *ast.Node) bool
 	aliasMarkingVisitor     func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
-	jsxLinks                core.LinkStore[*ast.Node, JSXLinks]
 	declarationLinks        core.LinkStore[*ast.Node, DeclarationLinks]
 	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
 }
@@ -47,18 +41,6 @@ func newEmitResolver(checker *Checker) *EmitResolver {
 	e.aliasMarkingVisitor = e.aliasMarkingVisitorWorker
 	e.checkerMu = &checker.mu
 	return e
-}
-
-func (r *EmitResolver) GetJsxFactoryEntity(location *ast.Node) *ast.Node {
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
-	return r.checker.getJsxFactoryEntity(location)
-}
-
-func (r *EmitResolver) GetJsxFragmentFactoryEntity(location *ast.Node) *ast.Node {
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
-	return r.checker.getJsxFragmentFactoryEntity(location)
 }
 
 func (r *EmitResolver) IsOptionalParameter(node *ast.Node) bool {
@@ -827,17 +809,11 @@ func (r *EmitResolver) GetReferencedExportContainer(node *ast.IdentifierNode, pr
 	return r.getReferenceResolver().GetReferencedExportContainer(node, prefixLocals)
 }
 
-func (r *EmitResolver) SetReferencedImportDeclaration(node *ast.IdentifierNode, ref *ast.Declaration) {
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
-	r.jsxLinks.Get(node).importRef = ref
-}
-
 func (r *EmitResolver) GetReferencedImportDeclaration(node *ast.IdentifierNode) *ast.Declaration {
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
 	if !ast.IsParseTreeNode(node) {
-		return r.jsxLinks.Get(node).importRef
+		return nil
 	}
 
 	symbol := r.checker.getReferencedValueOrAliasSymbol(node)

@@ -25,7 +25,6 @@ import {
 } from "./configurationMiddleware";
 import { registerMultiDocumentHighlightFeature } from "./languageFeatures/documentHighlight";
 import { registerHoverFeature } from "./languageFeatures/hover";
-import { registerOnAutoInsertFeature } from "./languageFeatures/onAutoInsert";
 import { registerSourceDefinitionFeature } from "./languageFeatures/sourceDefinition";
 import * as tr from "./telemetryReporting";
 import {
@@ -258,7 +257,6 @@ export class Client implements vscode.Disposable {
             registerMultiDocumentHighlightFeature(this.documentSelector, this.client),
             registerSourceDefinitionFeature(this.client),
             registerHoverFeature(this.documentSelector, this.client),
-            registerOnAutoInsertFeature(this.documentSelector, this.client),
         );
     }
 

@@ -63,10 +63,6 @@ func insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption(options l
 	return options.InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces
 }
 
-func insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBracesOption(options lsutil.FormatCodeSettings) core.Tristate {
-	return options.InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces
-}
-
 func insertSpaceAfterTypeAssertionOption(options lsutil.FormatCodeSettings) core.Tristate {
 	return options.InsertSpaceAfterTypeAssertion
 }
@@ -389,40 +385,8 @@ func isImportTypeContext(context *FormattingContext) bool {
 	return context.contextNode.Kind == ast.KindImportType
 }
 
-func isNonJsxSameLineTokenContext(context *FormattingContext) bool {
-	return context.TokensAreOnSameLine() && context.contextNode.Kind != ast.KindJsxText
-}
-
-func isNonJsxTextContext(context *FormattingContext) bool {
-	return context.contextNode.Kind != ast.KindJsxText
-}
-
-func isNonJsxElementOrFragmentContext(context *FormattingContext) bool {
-	return context.contextNode.Kind != ast.KindJsxElement && context.contextNode.Kind != ast.KindJsxFragment
-}
-
-func isJsxExpressionContext(context *FormattingContext) bool {
-	return context.contextNode.Kind == ast.KindJsxExpression || context.contextNode.Kind == ast.KindJsxSpreadAttribute
-}
-
-func isNextTokenParentJsxAttribute(context *FormattingContext) bool {
-	return context.nextTokenParent.Kind == ast.KindJsxAttribute || (context.nextTokenParent.Kind == ast.KindJsxNamespacedName && context.nextTokenParent.Parent.Kind == ast.KindJsxAttribute)
-}
-
-func isJsxAttributeContext(context *FormattingContext) bool {
-	return context.contextNode.Kind == ast.KindJsxAttribute
-}
-
-func isNextTokenParentNotJsxNamespacedName(context *FormattingContext) bool {
-	return context.nextTokenParent.Kind != ast.KindJsxNamespacedName
-}
-
-func isNextTokenParentJsxNamespacedName(context *FormattingContext) bool {
-	return context.nextTokenParent.Kind == ast.KindJsxNamespacedName
-}
-
-func isJsxSelfClosingElementContext(context *FormattingContext) bool {
-	return context.contextNode.Kind == ast.KindJsxSelfClosingElement
+func isSameLineTokenContext(context *FormattingContext) bool {
+	return context.TokensAreOnSameLine()
 }
 
 func isNotBeforeBlockInFunctionDeclarationContext(context *FormattingContext) bool {

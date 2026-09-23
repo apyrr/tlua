@@ -119,11 +119,6 @@
                             "experimental"
                         ]
                     },
-                    "tlua.autoClosingTags.enabled": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "%tlua.autoClosingTags.description%"
-                    },
                     "tlua.preferences.autoImportEntrypointDirectorySearch": {
                         "type": "boolean",
                         "default": false,

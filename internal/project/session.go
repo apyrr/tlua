@@ -824,9 +824,6 @@ func (s *Session) collectProjectInfoTelemetry(project *Project) lsproto.Telemetr
 	if opts.Module != core.ModuleKindNone {
 		compilerOptions["module"] = opts.Module.String()
 	}
-	if opts.Jsx != core.JsxEmitNone {
-		compilerOptions["jsx"] = opts.Jsx.String()
-	}
 	if b, err := json.Marshal(compilerOptions); err == nil {
 		props["compilerOptions"] = string(b)
 	}
@@ -870,9 +867,6 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 		case core.ScriptKindJS:
 			stats.JsFileCount++
 			stats.JsFileSize += size
-		case core.ScriptKindJSX:
-			stats.JsxFileCount++
-			stats.JsxFileSize += size
 		case core.ScriptKindTS:
 			if tspath.IsDeclarationFileName(sf.FileName()) {
 				stats.DtsFileCount++
@@ -881,9 +875,6 @@ func countFileStats(sourceFiles []*ast.SourceFile) *lsproto.ProjectInfoTelemetry
 				stats.TsFileCount++
 				stats.TsFileSize += size
 			}
-		case core.ScriptKindTSX:
-			stats.TsxFileCount++
-			stats.TsxFileSize += size
 		}
 	}
 	return &stats

@@ -11,7 +11,7 @@ the text to replace it with.
 Most of the exposed APIs internally are `Format*` and they all set up and configure `FormatSpan` which could be considered the root call for formatting. Span in this case refers to the range of 
 the sourcefile which should be formatted. 
 
-The formatSpan then uses a scanner (either with or without JSX support) which starts at the highest
+The formatSpan then uses a scanner which starts at the highest
 node the covers the span of text and recurses down through the node's children.
 
 As it recurses, `processNode` is called on the children setting the indentation is decided and passed 

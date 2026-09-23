@@ -18,7 +18,6 @@ import type {
     Identifier,
     JSDocTypeExpression,
     JSDocTypeLiteral,
-    JsxTagNameExpression,
     LeftHandSideExpression,
     LiteralExpression,
     MinusToken,
@@ -120,7 +119,6 @@ export function isExpression(node: Node): node is Expression {
         || kind === SyntaxKind.TypeAssertionExpression
         || kind === SyntaxKind.CallExpression
         || kind === SyntaxKind.NonNullExpression
-        || kind === SyntaxKind.JsxExpression
         || kind === SyntaxKind.PropertyAccessExpression || kind === SyntaxKind.ElementAccessExpression
         || kind === SyntaxKind.FunctionExpression
         || kind === SyntaxKind.ParenthesizedExpression || kind === SyntaxKind.ArrayLiteralExpression
@@ -129,8 +127,7 @@ export function isExpression(node: Node): node is Expression {
         || kind === SyntaxKind.PrivateIdentifier
         || kind === SyntaxKind.NumericLiteral
         || kind === SyntaxKind.StringLiteral || kind === SyntaxKind.RegularExpressionLiteral
-        || kind === SyntaxKind.NoSubstitutionTemplateLiteral || kind === SyntaxKind.JsxElement
-        || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.JsxFragment
+        || kind === SyntaxKind.NoSubstitutionTemplateLiteral
         || kind === SyntaxKind.NilKeyword || kind === SyntaxKind.TrueKeyword
         || kind === SyntaxKind.FalseKeyword || kind === SyntaxKind.ThisKeyword
         || kind === SyntaxKind.SuperKeyword || kind === SyntaxKind.ImportKeyword
@@ -157,9 +154,6 @@ function isLeftHandSideExpressionKind(kind: SyntaxKind): boolean {
         case SyntaxKind.PropertyAccessExpression:
         case SyntaxKind.ElementAccessExpression:
         case SyntaxKind.CallExpression:
-        case SyntaxKind.JsxElement:
-        case SyntaxKind.JsxSelfClosingElement:
-        case SyntaxKind.JsxFragment:
         case SyntaxKind.ArrayLiteralExpression:
         case SyntaxKind.ParenthesizedExpression:
         case SyntaxKind.ObjectLiteralExpression:
@@ -239,7 +233,7 @@ export function skipOuterExpressions(node: Node, kinds = OuterExpressionKinds.Al
 
 function isJSDocTypeAssertion(node: ParenthesizedExpression): boolean {
     const sourceFile = node.getSourceFile();
-    if (sourceFile.scriptKind !== ScriptKind.JS && sourceFile.scriptKind !== ScriptKind.JSX) {
+    if (sourceFile.scriptKind !== ScriptKind.JS) {
         return false;
     }
     const expression = node.expression;
@@ -292,12 +286,4 @@ export function isIdentifierOrJSDocNamespaceDeclaration(node: Node): node is Ide
 
 export function isJSDocTypeExpressionOrJSDocTypeLiteral(node: Node): node is JSDocTypeExpression | JSDocTypeLiteral {
     return node.kind === SyntaxKind.JSDocTypeExpression || node.kind === SyntaxKind.JSDocTypeLiteral;
-}
-
-export function isJsxTagNameExpression(node: Node): node is JsxTagNameExpression {
-    const kind = node.kind;
-    return kind === SyntaxKind.ThisKeyword
-        || kind === SyntaxKind.Identifier
-        || kind === SyntaxKind.PropertyAccessExpression
-        || kind === SyntaxKind.JsxNamespacedName;
 }

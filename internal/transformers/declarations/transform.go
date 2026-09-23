@@ -177,7 +177,7 @@ func (tx *DeclarationTransformer) isInternalDeclaration(node *ast.Node, sourceFi
 }
 
 func (tx *DeclarationTransformer) getLeadingCommentRangesOfNode(node *ast.Node, sourceFile *ast.SourceFile) iter.Seq[ast.CommentRange] {
-	if node == nil || node.Kind == ast.KindJsxText {
+	if node == nil {
 		return nil
 	}
 	return scanner.GetLeadingCommentRanges(tx.Factory().AsNodeFactory(), sourceFile.Text(), node.Pos())
@@ -1929,7 +1929,7 @@ func (tx *DeclarationTransformer) getNameExpressionPreferringIdentifier(nameExpr
 		// Numeric property names are string properties in JS; convert to string literal
 		nameExpr = tx.Factory().NewStringLiteral(nameExpr.Text(), ast.TokenFlagsNone)
 	}
-	if ast.IsStringLiteralLike(nameExpr) && scanner.IsIdentifierText(nameExpr.Text(), core.LanguageVariantStandard) {
+	if ast.IsStringLiteralLike(nameExpr) && scanner.IsIdentifierText(nameExpr.Text()) {
 		result := tx.Factory().NewIdentifier(nameExpr.Text()) // prefer non-string literal names where possible
 		kwKind := scanner.IdentifierToKeywordKind(result.AsIdentifier())
 		// keep keywords as strings, except `default`, which has special reformulations in the transformer
@@ -2061,7 +2061,7 @@ func (tx *DeclarationTransformer) transformExpandoAssignment(node *ast.BinaryExp
 	property := tx.tryGetPropertyName(left)
 	// A word-operator name like `A["and"] = ...` is skipped: the exported alias
 	// would print as the bare `export { C as and }`, which does not parse.
-	if property == "" || !scanner.IsBareWritableName(property, core.LanguageVariantStandard) {
+	if property == "" || !scanner.IsBareWritableName(property) {
 		return
 	}
 

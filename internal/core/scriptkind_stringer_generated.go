@@ -10,17 +10,15 @@ func _() {
 	var x [1]struct{}
 	_ = x[ScriptKindUnknown-0]
 	_ = x[ScriptKindJS-1]
-	_ = x[ScriptKindJSX-2]
-	_ = x[ScriptKindTS-3]
-	_ = x[ScriptKindTSX-4]
-	_ = x[ScriptKindExternal-5]
-	_ = x[ScriptKindJSON-6]
-	_ = x[ScriptKindDeferred-7]
+	_ = x[ScriptKindTS-2]
+	_ = x[ScriptKindExternal-3]
+	_ = x[ScriptKindJSON-4]
+	_ = x[ScriptKindDeferred-5]
 }
 
-const _ScriptKind_name = "ScriptKindUnknownScriptKindJSScriptKindJSXScriptKindTSScriptKindTSXScriptKindExternalScriptKindJSONScriptKindDeferred"
+const _ScriptKind_name = "ScriptKindUnknownScriptKindJSScriptKindTSScriptKindExternalScriptKindJSONScriptKindDeferred"
 
-var _ScriptKind_index = [...]uint8{0, 17, 29, 42, 54, 67, 85, 99, 117}
+var _ScriptKind_index = [...]uint8{0, 17, 29, 41, 59, 73, 91}
 
 func (i ScriptKind) String() string {
 	idx := int(i) - 0

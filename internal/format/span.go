@@ -408,12 +408,9 @@ func (w *formatSpanWorker) processChildNode(
 	if ast.IsTokenKind(child.Kind) {
 		// if child node is a token, it does not impact indentation, proceed it using parent indentation scope rules
 		tokenInfo := w.formattingScanner.readTokenInfo(child)
-		// JSX text shouldn't affect indenting
-		if child.Kind != ast.KindJsxText {
-			debug.Assert(tokenInfo.token.Loc.End() == child.Loc.End(), "Token end is child end")
-			w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, child, false)
-			return inheritedIndentation
-		}
+		debug.Assert(tokenInfo.token.Loc.End() == child.Loc.End(), "Token end is child end")
+		w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, child, false)
+		return inheritedIndentation
 	}
 
 	effectiveParentStartLine := undecoratedParentStartLine
@@ -581,7 +578,7 @@ func (w *formatSpanWorker) computeIndentation(node *ast.Node, startLine int, inh
  */
 func (w *formatSpanWorker) tryComputeIndentationForListItem(startPos int, endPos int, parentStartLine int, r core.TextRange, inheritedIndentation int) int {
 	r2 := core.NewTextRange(startPos, endPos)
-	if r.Overlaps(r2) || r2.ContainedBy(r) { /* Not to miss zero-range nodes e.g. JsxText */
+	if r.Overlaps(r2) || r2.ContainedBy(r) { /* Not to miss zero-range nodes */
 		if inheritedIndentation != -1 {
 			return inheritedIndentation
 		}
@@ -1187,12 +1184,6 @@ func (i *dynamicIndenter) shouldAddDelta(line int, kind ast.Kind, container *ast
 	case ast.KindOpenBraceToken, ast.KindCloseBraceToken, ast.KindCloseParenToken, ast.KindElseKeyword, ast.KindWhileKeyword, ast.KindAtToken,
 		ast.KindEndKeyword, ast.KindUntilKeyword:
 		return false
-	case ast.KindSlashToken, ast.KindGreaterThanToken:
-		switch container.Kind {
-		case ast.KindJsxOpeningElement, ast.KindJsxClosingElement, ast.KindJsxSelfClosingElement:
-			return false
-		}
-		break
 	case ast.KindOpenBracketToken, ast.KindCloseBracketToken:
 		if container.Kind != ast.KindMappedType {
 			return false

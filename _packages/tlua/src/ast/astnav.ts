@@ -106,7 +106,6 @@ export function findNextToken(previousToken: Node, parent: Node, sourceFile: Sou
  * Finds the leftmost token satisfying `position < token.end`.
  * If the position is in the trivia of that leftmost token, or the token is invalid,
  * returns the rightmost valid token with `token.end <= position`.
- * Excludes `JsxText` tokens containing only whitespace.
  */
 export function findPrecedingToken(sourceFile: SourceFile, position: number): Node | undefined {
     return findPrecedingTokenImpl(sourceFile, position, sourceFile);
@@ -311,7 +310,7 @@ export function getTokenPosOfNode(node: Node, sourceFile: SourceFile, includeJSD
     if (nodeIsMissing(node)) {
         return node.pos;
     }
-    if (isJSDocNodeKind(node.kind) || node.kind === SyntaxKind.JsxText) {
+    if (isJSDocNodeKind(node.kind)) {
         return skipTrivia(sourceFile.text, node.pos, /*stopAfterLineBreak*/ false, /*stopAtComments*/ true);
     }
     if (includeJSDoc && node.jsDoc && node.jsDoc.length > 0) {
@@ -578,7 +577,7 @@ function isJSDocSingleCommentNodeList(nodes: NodeArray<Node>): boolean {
 }
 
 function getScannerForSourceFile(sourceFile: SourceFile, pos: number) {
-    const scanner = createScanner(/*skipTrivia*/ true, sourceFile.languageVariant, sourceFile.text);
+    const scanner = createScanner(/*skipTrivia*/ true, sourceFile.text);
     scanner.resetTokenState(pos);
     scanner.scan();
     return scanner;

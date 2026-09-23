@@ -2,7 +2,7 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
 
-tlua --init --target es5 --jsx react
+tlua --init --target es5 --module commonjs
 ExitStatus:: Success
 Output::
 
@@ -19,7 +19,7 @@ You can learn more at https://aka.ms/tsconfig
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
+    "module": "commonjs",
     "target": "es5",
     "types": [],
     // For nodejs:
@@ -43,7 +43,6 @@ You can learn more at https://aka.ms/tsconfig
 
     // Recommended Options
     "strict": true,
-    "jsx": "react",
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,

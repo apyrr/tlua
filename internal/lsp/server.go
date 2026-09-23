@@ -83,7 +83,7 @@ var (
 		{
 			Scheme: new("file"),
 			Pattern: &lsproto.FileOperationPattern{
-				Glob: "**/*.{tlua,tsx,lua,jsx,json}",
+				Glob: "**/*.{tlua,lua,json}",
 			},
 		},
 	}
@@ -798,12 +798,9 @@ var handlers = sync.OnceValue(func() handlerMap {
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareCallHierarchyInfo, (*Server).handlePrepareCallHierarchy)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentFoldingRangeInfo, (*Server).handleFoldingRange)
 	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentPrepareRenameInfo, (*Server).handlePrepareRename)
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentLinkedEditingRangeInfo, (*Server).handleLinkedEditingRange)
 
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCompletionInfo, (*Server).handleCompletion)
 	registerLanguageServiceWithAutoImportsRequestHandler(handlers, lsproto.TextDocumentCodeActionInfo, (*Server).handleCodeAction)
-
-	registerLanguageServiceDocumentRequestHandler(handlers, lsproto.TextDocumentVSOnAutoInsertInfo, (*Server).handleVSOnAutoInsert)
 
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentReferencesInfo, (*ls.LanguageService).ProvideReferences)
 	registerMultiProjectReferenceRequestHandler(handlers, lsproto.TextDocumentVSReferencesInfo, (*ls.LanguageService).ProvideVSReferences)
@@ -1207,9 +1204,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 			SelectionRangeProvider: &lsproto.BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{
 				Boolean: new(true),
 			},
-			LinkedEditingRangeProvider: &lsproto.BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{
-				Boolean: new(true),
-			},
 			InlayHintProvider: &lsproto.BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{
 				Boolean: new(true),
 			},
@@ -1235,9 +1229,6 @@ func (s *Server) handleInitialize(ctx context.Context, params *lsproto.Initializ
 				CustomMultiDocumentHighlightProvider: new(true),
 			},
 			VSReferencesProvider: new(true),
-			VSOnAutoInsertProvider: &lsproto.VSOnAutoInsertOptions{
-				VSTriggerCharacters: []string{">"},
-			},
 			Workspace: &lsproto.WorkspaceOptions{
 				FileOperations: &lsproto.FileOperationOptions{
 					WillRename: &lsproto.FileOperationRegistrationOptions{
@@ -1607,14 +1598,6 @@ func (s *Server) handleSignatureHelp(ctx context.Context, languageService *ls.La
 
 func (s *Server) handleFoldingRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.FoldingRangeParams) (lsproto.FoldingRangeResponse, error) {
 	return ls.ProvideFoldingRange(ctx, params.TextDocument.Uri)
-}
-
-func (s *Server) handleVSOnAutoInsert(ctx context.Context, ls *ls.LanguageService, params *lsproto.VSOnAutoInsertParams) (lsproto.VSOnAutoInsertResponse, error) {
-	return ls.ProvideOnAutoInsert(ctx, params)
-}
-
-func (s *Server) handleLinkedEditingRange(ctx context.Context, ls *ls.LanguageService, params *lsproto.LinkedEditingRangeParams) (lsproto.LinkedEditingRangeResponse, error) {
-	return ls.ProvideLinkedEditingRange(ctx, params)
 }
 
 func (s *Server) handleDefinition(ctx context.Context, ls *ls.LanguageService, params *lsproto.DefinitionParams) (lsproto.DefinitionResponse, error) {

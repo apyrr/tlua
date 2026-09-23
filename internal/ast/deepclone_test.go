@@ -27,7 +27,6 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 	data := []struct {
 		title string
 		input string
-		jsx   bool
 	}{
 		{title: "StringLiteral#1", input: `;"test"`},
 		{title: "StringLiteral#2", input: `;'test'`},
@@ -500,45 +499,13 @@ func TestDeepCloneNodeSanityCheck(t *testing.T) {
 		{title: "TypeParameterDeclaration#5", input: "function f<T extends U = V>();"},
 		{title: "TypeParameterDeclaration#6", input: "function f<T, U>();"},
 		{title: "TypeParameterDeclaration#7", input: "function f<T,>();"},
-		{title: "JsxElement1", input: "<a></a>"},
-		{title: "JsxElement2", input: "<this></this>"},
-		{title: "JsxElement3", input: "<a:b></a:b>"},
-		{title: "JsxElement4", input: "<a.b></a.b>"},
-		{title: "JsxElement5", input: "<a<b>></a>"},
-		{title: "JsxElement6", input: "<a b></a>"},
-		{title: "JsxElement7", input: "<a>b</a>"},
-		{title: "JsxElement8", input: "<a>{b}</a>"},
-		{title: "JsxElement9", input: "<a><b></b></a>"},
-		{title: "JsxElement10", input: "<a><b /></a>"},
-		{title: "JsxElement11", input: "<a><></></a>"},
-		{title: "JsxSelfClosingElement1", input: "<a />"},
-		{title: "JsxSelfClosingElement2", input: "<this />"},
-		{title: "JsxSelfClosingElement3", input: "<a:b />"},
-		{title: "JsxSelfClosingElement4", input: "<a.b />"},
-		{title: "JsxSelfClosingElement5", input: "<a<b> />"},
-		{title: "JsxSelfClosingElement6", input: "<a b/>"},
-		{title: "JsxFragment1", input: "<></>"},
-		{title: "JsxFragment2", input: "<>b</>"},
-		{title: "JsxFragment3", input: "<>{b}</>"},
-		{title: "JsxFragment4", input: "<><b></b></>"},
-		{title: "JsxFragment5", input: "<><b /></>"},
-		{title: "JsxFragment6", input: "<><></></>"},
-		{title: "JsxAttribute1", input: "<a b/>"},
-		{title: "JsxAttribute2", input: "<a b:c/>"},
-		{title: "JsxAttribute3", input: "<a b=\"c\"/>"},
-		{title: "JsxAttribute4", input: "<a b='c'/>"},
-		{title: "JsxAttribute5", input: "<a b={c}/>"},
-		{title: "JsxAttribute6", input: "<a b=<c></c>/>"},
-		{title: "JsxAttribute7", input: "<a b=<c />/>"},
-		{title: "JsxAttribute8", input: "<a b=<></>/>"},
-		{title: "JsxSpreadAttribute", input: "<a {...b}/>"},
 	}
 	for _, rec := range data {
 		t.Run("Clone "+rec.title, func(t *testing.T) {
 			t.Parallel()
 
 			factory := &ast.NodeFactory{}
-			file := parsetestutil.ParseTypeScript(rec.input, false).AsNode()
+			file := parsetestutil.ParseTypeScript(rec.input).AsNode()
 			clone := factory.DeepCloneNode(file.AsNode()).AsNode()
 
 			work := []NodeComparisonWorkItem{{file, clone}}

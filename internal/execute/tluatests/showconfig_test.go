@@ -23,7 +23,7 @@ func TestShowConfig(t *testing.T) {
 		},
 		{
 			subScenario:     "Show TSConfig with enum value compiler options",
-			commandLineArgs: []string{"--showConfig", "--target", "es5", "--jsx", "react"},
+			commandLineArgs: []string{"--showConfig", "--target", "es5", "--module", "commonjs"},
 		},
 		{
 			subScenario:     "Show TSConfig with list compiler options",

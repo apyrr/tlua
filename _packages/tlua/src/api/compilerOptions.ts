@@ -1,4 +1,3 @@
-import type { JsxEmit } from "#enums/jsxEmit";
 import type { ModuleKind } from "#enums/moduleKind";
 import type { NewLineKind } from "#enums/newLineKind";
 import type { ScriptTarget } from "#enums/scriptTarget";
@@ -36,10 +35,6 @@ export interface CompilerOptions {
     inlineSources?: boolean;
     init?: boolean;
     incremental?: boolean;
-    jsx?: JsxEmit;
-    jsxFactory?: string;
-    jsxFragmentFactory?: string;
-    jsxImportSource?: string;
     lib?: string[];
     libReplacement?: boolean;
     locale?: string;
@@ -67,7 +62,6 @@ export interface CompilerOptions {
     resolvePackageJsonExports?: boolean;
     resolvePackageJsonImports?: boolean;
     removeComments?: boolean;
-    reactNamespace?: string;
     rootDir?: string;
     skipLibCheck?: boolean;
     stableTypeOrdering?: boolean;

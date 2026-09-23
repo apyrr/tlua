@@ -12,7 +12,7 @@ This guide covers the complete testing workflow for the tlua repository, includi
 
 ## 1. Compiler Tests
 
-Compiler tests validate the TypeScript compiler's behavior: diagnostics, JavaScript emit, source maps, type/symbol baselines, and more. Each test is a `.ts` or `.tsx` file that the test runner compiles, then compares output against stored baselines.
+Compiler tests validate the TypeScript compiler's behavior: diagnostics, JavaScript emit, source maps, type/symbol baselines, and more. Each test is a `.tlua` file that the test runner compiles, then compares output against stored baselines.
 
 ### 1.1 Where Test Files Live
 
@@ -23,13 +23,13 @@ Compiler tests validate the TypeScript compiler's behavior: diagnostics, JavaScr
 
 ### 1.2 Writing a New Compiler Test
 
-A compiler test is just a `.ts` or `.tsx` file — no Go code needed. Place it in `testdata/tests/cases/compiler/` for regression tests or `testdata/tests/cases/conformance/<subdir>/` for conformance tests.
+A compiler test is just a `.tlua` file — no Go code needed. Place it in `testdata/tests/cases/compiler/` for regression tests or `testdata/tests/cases/conformance/<subdir>/` for conformance tests.
 
 #### Simple single-file test
 
 ```typescript
-// testdata/tests/cases/compiler/myNewTest.ts
-const x: number = "hello"; // expect type error
+-- testdata/tests/cases/compiler/myNewTest.tlua
+local x: number = "hello" -- expect type error
 ```
 
 #### Using compiler option directives
@@ -40,9 +40,8 @@ Set compiler options with `// @option: value` comment directives at the top of t
 // @target: es2020
 // @strict: true
 // @declaration: true
-// @jsx: react
 // @noEmit: true
-const x: number = 42;
+local x: number = 42
 ```
 
 #### Multi-file test

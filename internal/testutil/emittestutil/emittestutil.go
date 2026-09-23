@@ -15,7 +15,7 @@ import (
 func CheckEmit(t *testing.T, emitContext *printer.EmitContext, file *ast.SourceFile, expected string) {
 	t.Helper()
 	text := checkEmitWorker(t, emitContext, file, expected)
-	file2 := parsetestutil.ParseTypeScript(text, file.LanguageVariant == core.LanguageVariantJSX)
+	file2 := parsetestutil.ParseTypeScript(text)
 	parsetestutil.CheckDiagnosticsMessage(t, file2, "error on reparse: ")
 }
 

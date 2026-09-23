@@ -206,17 +206,13 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 				return p.getLiteralTextOfNode(textSourceNode, ast.GetSourceFileOfNode(textSourceNode), flags)
 			case ast.KindNumericLiteral:
 				text = textSourceNode.Text()
-			case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindJsxNamespacedName:
+			case ast.KindIdentifier, ast.KindPrivateIdentifier:
 				text = p.getTextOfNode(textSourceNode, false)
 			}
 		} else if node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0 {
 			// Preserve the author's quote style for a real source string; synthetic strings have
 			// no quote preference and use the default double quote.
 			quoteChar = QuoteCharSingleQuote
-		}
-		// JSX attribute values need HTML-entity escaping, not Lua string escaping.
-		if flags&getLiteralTextFlagsJsxAttributeEscape != 0 {
-			return "\"" + escapeJsxAttributeString(text, QuoteCharDoubleQuote) + "\""
 		}
 		return luaStringLiteral(text, quoteChar)
 	}
@@ -227,7 +223,7 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 	return getLiteralText(node, core.Coalesce(sourceFile, p.currentSourceFile), flags)
 }
 
-// `node` must be one of Identifier | PrivateIdentifier | LiteralExpression | JsxNamespacedName
+// `node` must be one of Identifier | PrivateIdentifier | LiteralExpression
 func (p *Printer) getTextOfNode(node *ast.Node, includeTrivia bool) string {
 	if ast.IsMemberName(node) && p.emitContext.autoGenerate[node] != nil {
 		return p.nameGenerator.GenerateName(node)
@@ -243,8 +239,7 @@ func (p *Printer) getTextOfNode(node *ast.Node, includeTrivia bool) string {
 
 	switch node.Kind {
 	case ast.KindIdentifier,
-		ast.KindPrivateIdentifier,
-		ast.KindJsxNamespacedName:
+		ast.KindPrivateIdentifier:
 		if !canUseSourceFile || ast.GetSourceFileOfNode(node) != p.emitContext.MostOriginal(p.currentSourceFile.AsNode()).AsSourceFile() {
 			return node.Text()
 		}
@@ -532,10 +527,6 @@ func (p *Printer) getLeadingLineTerminatorCount(parentNode *ast.Node, firstChild
 			// leading newline to start the modifiers.
 			return 0
 		}
-		if firstChild.Kind == ast.KindJsxText {
-			// JsxText will be written with its leading whitespace, so don't add more manually.
-			return 0
-		}
 		if p.currentSourceFile != nil && parentNode != nil &&
 			!ast.PositionIsSynthesized(parentNode.Pos()) &&
 			!ast.NodeIsSynthesized(firstChild) &&
@@ -566,10 +557,7 @@ func (p *Printer) getSeparatingLineTerminatorCount(previousNode *ast.Node, nextN
 		if previousNode == nil || nextNode == nil {
 			return 0
 		}
-		if nextNode.Kind == ast.KindJsxText {
-			// JsxText will be written with its leading whitespace, so don't add more manually.
-			return 0
-		} else if p.currentSourceFile != nil && !ast.NodeIsSynthesized(previousNode) && !ast.NodeIsSynthesized(nextNode) {
+		if p.currentSourceFile != nil && !ast.NodeIsSynthesized(previousNode) && !ast.NodeIsSynthesized(nextNode) {
 			if p.Options.PreserveSourceNewlines && siblingNodePositionsAreComparable(p.emitContext, previousNode, nextNode) {
 				return p.getEffectiveLines(
 					func(includeComments bool) int {
@@ -905,20 +893,6 @@ func (p *Printer) shouldEmitDetachedComments(node *ast.Node) bool {
 	return len(file.Statements.Nodes) == 0 ||
 		!ast.IsPrologueDirective(file.Statements.Nodes[0]) ||
 		ast.NodeIsSynthesized(file.Statements.Nodes[0])
-}
-
-func (p *Printer) hasCommentsAtPosition(pos int) bool {
-	if p.currentSourceFile == nil {
-		return false
-	}
-
-	for range scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pos+1) {
-		return true
-	}
-	for range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pos+1) {
-		return true
-	}
-	return false
 }
 
 func (p *Printer) shouldEmitIndirectCall(node *ast.Node) bool {
@@ -2994,15 +2968,6 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	case ast.KindMissingDeclaration:
 		break
 
-	// JSX
-	case ast.KindJsxElement:
-		p.emitJsxElement(node.AsJsxElement())
-	case ast.KindJsxSelfClosingElement:
-		p.emitJsxSelfClosingElement(node.AsJsxSelfClosingElement())
-	case ast.KindJsxFragment:
-		p.emitJsxFragment(node.AsJsxFragment())
-
-	// Synthesized list
 	case ast.KindSyntaxList:
 		panic("SyntaxList should not be printed")
 
@@ -3820,200 +3785,6 @@ func (p *Printer) emitExternalModuleReference(node *ast.ExternalModuleReference)
 }
 
 //
-// JSX
-//
-
-func (p *Printer) emitJsxElement(node *ast.JsxElement) {
-	state := p.enterNode(node.AsNode())
-	p.emitJsxOpeningElement(node.OpeningElement.AsJsxOpeningElement())
-	p.emitList((*Printer).emitJsxChild, node.AsNode(), node.Children, LFJsxElementOrFragmentChildren)
-	p.emitJsxClosingElement(node.ClosingElement.AsJsxClosingElement())
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxSelfClosingElement(node *ast.JsxSelfClosingElement) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("<")
-	p.emitJsxTagName(node.TagName)
-	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	p.writeSpace()
-	p.emitJsxAttributes(node.Attributes.AsJsxAttributes())
-	p.writePunctuation("/>")
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxFragment(node *ast.JsxFragment) {
-	state := p.enterNode(node.AsNode())
-	p.emitJsxOpeningFragment(node.OpeningFragment.AsJsxOpeningFragment())
-	p.emitList((*Printer).emitJsxChild, node.AsNode(), node.Children, LFJsxElementOrFragmentChildren)
-	p.emitJsxClosingFragment(node.ClosingFragment.AsJsxClosingFragment())
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxOpeningElement(node *ast.JsxOpeningElement) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("<")
-	indented := p.writeLineSeparatorsAndIndentBefore(node.TagName, node.AsNode())
-	p.emitJsxTagName(node.TagName)
-	p.emitTypeArguments(node.AsNode(), node.TypeArguments)
-	if len(node.Attributes.Properties()) > 0 {
-		p.writeSpace()
-	}
-	p.emitJsxAttributes(node.Attributes.AsJsxAttributes())
-	p.writeLineSeparatorsAfter(node.Attributes, node.AsNode())
-	p.decreaseIndentIf(indented)
-	p.writePunctuation(">")
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxClosingElement(node *ast.JsxClosingElement) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("</")
-	p.emitJsxTagName(node.TagName)
-	p.writePunctuation(">")
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxOpeningFragment(node *ast.JsxOpeningFragment) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("<")
-	p.writePunctuation(">")
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxClosingFragment(node *ast.JsxClosingFragment) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("</")
-	p.writePunctuation(">")
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxText(node *ast.JsxText) {
-	state := p.enterNode(node.AsNode())
-	// TODO(rbuckton): Should this be using `getLiteralTextOfNode` instead?
-	p.writeLiteral(node.Text)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxAttributes(node *ast.JsxAttributes) {
-	state := p.enterNode(node.AsNode())
-	p.emitList((*Printer).emitJsxAttributeLike, node.AsNode(), node.Properties, LFJsxElementAttributes)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxAttribute(node *ast.JsxAttribute) {
-	state := p.enterNode(node.AsNode())
-	p.emitJsxAttributeName(node.Name())
-	if node.Initializer != nil {
-		p.writePunctuation("=")
-		p.emitJsxAttributeValue(node.Initializer)
-	}
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxSpreadAttribute(node *ast.JsxSpreadAttribute) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("{...")
-	p.emitExpression(node.Expression, ast.OperatorPrecedenceLowest)
-	p.writePunctuation("}")
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxAttributeLike(node *ast.JsxAttributeLike) {
-	switch node.Kind {
-	case ast.KindJsxAttribute:
-		p.emitJsxAttribute(node.AsJsxAttribute())
-	case ast.KindJsxSpreadAttribute:
-		p.emitJsxSpreadAttribute(node.AsJsxSpreadAttribute())
-	default:
-		panic(fmt.Sprintf("unhandled JsxAttributeLike: %v", node.Kind))
-	}
-}
-
-func (p *Printer) emitJsxExpression(node *ast.JsxExpression) {
-	state := p.enterNode(node.AsNode())
-	if node.Expression != nil || !p.commentsDisabled && !ast.NodeIsSynthesized(node.AsNode()) && p.hasCommentsAtPosition(node.Pos()) { // preserve empty expressions if they contain comments!
-		indented := p.currentSourceFile != nil && !ast.NodeIsSynthesized(node.AsNode()) && GetLinesBetweenPositions(p.currentSourceFile, node.Pos(), node.End()) != 0
-		p.increaseIndentIf(indented)
-		end := p.emitToken(ast.KindOpenBraceToken, node.Pos(), WriteKindPunctuation, node.AsNode())
-		p.emitTokenNode(node.DotDotDotToken)
-		if node.Expression != nil {
-			p.emitExpression(node.Expression, ast.OperatorPrecedenceDisallowComma)
-		}
-		p.emitToken(ast.KindCloseBraceToken, greatestEnd(end, node.Expression, node.DotDotDotToken), WriteKindPunctuation, node.AsNode())
-		p.decreaseIndentIf(indented)
-	}
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxNamespacedName(node *ast.JsxNamespacedName) {
-	state := p.enterNode(node.AsNode())
-	p.emitIdentifierName(node.Namespace.AsIdentifier())
-	p.writePunctuation(":")
-	p.emitIdentifierName(node.Name().AsIdentifier())
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJsxChild(node *ast.JsxChild) {
-	switch node.Kind {
-	case ast.KindJsxText:
-		p.emitJsxText(node.AsJsxText())
-	case ast.KindJsxExpression:
-		p.emitJsxExpression(node.AsJsxExpression())
-	case ast.KindJsxElement:
-		p.emitJsxElement(node.AsJsxElement())
-	case ast.KindJsxSelfClosingElement:
-		p.emitJsxSelfClosingElement(node.AsJsxSelfClosingElement())
-	case ast.KindJsxFragment:
-		p.emitJsxFragment(node.AsJsxFragment())
-	default:
-		panic(fmt.Sprintf("unhandled JsxChild: %v", node.Kind))
-	}
-}
-
-func (p *Printer) emitJsxTagName(node *ast.JsxTagNameExpression) {
-	switch node.Kind {
-	case ast.KindIdentifier:
-		p.emitIdentifierReference(node.AsIdentifier())
-	case ast.KindThisKeyword:
-		p.emitKeywordExpression(node.AsKeywordExpression())
-	case ast.KindJsxNamespacedName:
-		p.emitJsxNamespacedName(node.AsJsxNamespacedName())
-	case ast.KindPropertyAccessExpression:
-		p.emitPropertyAccessExpression(node.AsPropertyAccessExpression())
-	default:
-		panic(fmt.Sprintf("unhandled JsxTagName: %v", node.Kind))
-	}
-}
-
-func (p *Printer) emitJsxAttributeName(node *ast.JsxAttributeName) {
-	switch node.Kind {
-	case ast.KindIdentifier:
-		p.emitIdentifierName(node.AsIdentifier())
-	case ast.KindJsxNamespacedName:
-		p.emitJsxNamespacedName(node.AsJsxNamespacedName())
-	default:
-		panic(fmt.Sprintf("unhandled JsxAttributeName: %v", node.Kind))
-	}
-}
-
-func (p *Printer) emitJsxAttributeValue(node *ast.JsxAttributeValue) {
-	switch node.Kind {
-	case ast.KindStringLiteral:
-		p.emitStringLiteral(node.AsStringLiteral())
-	case ast.KindJsxExpression:
-		p.emitJsxExpression(node.AsJsxExpression())
-	case ast.KindJsxElement:
-		p.emitJsxElement(node.AsJsxElement())
-	case ast.KindJsxSelfClosingElement:
-		p.emitJsxSelfClosingElement(node.AsJsxSelfClosingElement())
-	case ast.KindJsxFragment:
-		p.emitJsxFragment(node.AsJsxFragment())
-	default:
-		p.emitExpression(node, ast.OperatorPrecedenceLowest)
-	}
-}
-
 //
 // Clauses
 //
@@ -4648,28 +4419,6 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	case ast.KindExternalModuleReference:
 		p.emitExternalModuleReference(node.AsExternalModuleReference())
 
-	// JSX (non-expression)
-	case ast.KindJsxText:
-		p.emitJsxText(node.AsJsxText())
-	case ast.KindJsxOpeningElement:
-		p.emitJsxOpeningElement(node.AsJsxOpeningElement())
-	case ast.KindJsxOpeningFragment:
-		p.emitJsxOpeningFragment(node.AsJsxOpeningFragment())
-	case ast.KindJsxClosingElement:
-		p.emitJsxClosingElement(node.AsJsxClosingElement())
-	case ast.KindJsxClosingFragment:
-		p.emitJsxClosingFragment(node.AsJsxClosingFragment())
-	case ast.KindJsxAttribute:
-		p.emitJsxAttribute(node.AsJsxAttribute())
-	case ast.KindJsxAttributes:
-		p.emitJsxAttributes(node.AsJsxAttributes())
-	case ast.KindJsxSpreadAttribute:
-		p.emitJsxSpreadAttribute(node.AsJsxSpreadAttribute())
-	case ast.KindJsxExpression:
-		p.emitJsxExpression(node.AsJsxExpression())
-	case ast.KindJsxNamespacedName:
-		p.emitJsxNamespacedName(node.AsJsxNamespacedName())
-
 	// Clauses
 	case ast.KindHeritageClause:
 		p.emitHeritageClause(node.AsHeritageClause())
@@ -4806,8 +4555,7 @@ func (p *Printer) emitCommentsAfterToken(token ast.Kind, pos int, contextNode *a
 	}
 
 	if contextNode.End() != pos {
-		isJsxExprContext := contextNode.Kind == ast.KindJsxExpression
-		p.emitTrailingComments(pos, core.IfElse(isJsxExprContext, commentSeparatorNone, commentSeparatorBefore))
+		p.emitTrailingComments(pos, commentSeparatorBefore)
 	}
 }
 
@@ -4855,10 +4603,8 @@ func (p *Printer) emitLeadingCommentsOfNode(node *ast.Node, emitFlags EmitFlags,
 
 	// Save current container state on the stack.
 	if (!ast.PositionIsSynthesized(pos) || !ast.PositionIsSynthesized(end)) && pos != end {
-		// We have to explicitly check that the node is JsxText because if the compilerOptions.jsx is "preserve" we will not do any transformation.
-		// It is expensive to walk entire tree just to set one kind of node to have no comments.
-		skipLeadingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoLeadingComments != 0 || node.Kind == ast.KindJsxText
-		skipTrailingComments := ast.PositionIsSynthesized(end) || emitFlags&EFNoTrailingComments != 0 || node.Kind == ast.KindJsxText
+		skipLeadingComments := ast.PositionIsSynthesized(pos) || emitFlags&EFNoLeadingComments != 0
+		skipTrailingComments := ast.PositionIsSynthesized(end) || emitFlags&EFNoTrailingComments != 0
 
 		// Emit leading comments if the position is not synthesized and the node
 		// has not opted out from emitting leading comments.
@@ -4887,7 +4633,7 @@ func (p *Printer) emitLeadingCommentsOfNode(node *ast.Node, emitFlags EmitFlags,
 func (p *Printer) emitTrailingCommentsOfNode(node *ast.Node, emitFlags EmitFlags, commentRange core.TextRange, containerPos int, containerEnd int, declarationListContainerEnd int) {
 	pos := commentRange.Pos()
 	end := commentRange.End()
-	skipTrailingComments := end < 0 || (emitFlags&EFNoTrailingComments) != 0 || node.Kind == ast.KindJsxText
+	skipTrailingComments := end < 0 || (emitFlags&EFNoTrailingComments) != 0
 	if (!ast.PositionIsSynthesized(pos) || !ast.PositionIsSynthesized(end)) && pos != end {
 		// Restore previous container state.
 		p.containerPos = containerPos
@@ -5678,8 +5424,6 @@ const (
 	LFMultiLineFunctionBodyStatements   ListFormat = LFMultiLine
 	LFInterfaceMembers                  ListFormat = LFIndented | LFMultiLine
 	LFNamedImportsOrExportsElements     ListFormat = LFCommaDelimited | LFSpaceBetweenSiblings | LFAllowTrailingComma | LFSingleLine | LFSpaceBetweenBraces | LFNoSpaceIfEmpty
-	LFJsxElementOrFragmentChildren      ListFormat = LFSingleLine | LFNoInterveningComments
-	LFJsxElementAttributes              ListFormat = LFSingleLine | LFSpaceBetweenSiblings | LFNoInterveningComments
 	LFHeritageClauseTypes               ListFormat = LFCommaDelimited | LFSpaceBetweenSiblings | LFSingleLine
 	LFSourceFileStatements              ListFormat = LFMultiLine | LFNoTrailingNewLine
 	LFTypeArguments                     ListFormat = LFCommaDelimited | LFSpaceBetweenSiblings | LFSingleLine | LFAngleBrackets | LFOptional

@@ -147,8 +147,8 @@ func TryGetRealFileNameForNonJSDeclarationFileName(fileName string) string {
 	return before + ext
 }
 
-func getJSExtensionForFile(fileName string, options *core.CompilerOptions) string {
-	result := module.TryGetJSExtensionForFile(fileName, options)
+func getJSExtensionForFile(fileName string) string {
+	result := module.TryGetJSExtensionForFile(fileName)
 	if len(result) == 0 {
 		panic(fmt.Sprintf("Extension %s is unsupported:: FileName:: %s", extensionFromPath(fileName), fileName))
 	}
@@ -391,13 +391,13 @@ func ProcessEntrypointEnding(
 		return specifier
 	}
 
-	// Handle .ts/.tsx extensions
-	if tspath.FileExtensionIsOneOf(specifier, []string{tspath.ExtensionTs, tspath.ExtensionTsx}) {
+	// Handle .ts extensions
+	if tspath.FileExtensionIs(specifier, tspath.ExtensionTs) {
 		switch preferredEnding {
 		case ModuleSpecifierEndingTsExtension:
 			return specifier
 		case ModuleSpecifierEndingJsExtension:
-			if jsExtension := module.TryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+			if jsExtension := module.TryGetJSExtensionForFile(specifier); jsExtension != "" {
 				return tspath.RemoveFileExtension(specifier) + jsExtension
 			}
 			return specifier
@@ -410,7 +410,7 @@ func ProcessEntrypointEnding(
 				return specifier
 			}
 			// EndingExtensionChangeable - can only change extension, not remove it
-			if jsExtension := module.TryGetJSExtensionForFile(specifier, options); jsExtension != "" {
+			if jsExtension := module.TryGetJSExtensionForFile(specifier); jsExtension != "" {
 				return tspath.RemoveFileExtension(specifier) + jsExtension
 			}
 			return specifier
@@ -418,8 +418,8 @@ func ProcessEntrypointEnding(
 		return specifier
 	}
 
-	// Handle .js/.jsx extensions
-	if tspath.FileExtensionIsOneOf(specifier, []string{tspath.ExtensionJs, tspath.ExtensionJsx}) {
+	// Handle .js extensions
+	if tspath.FileExtensionIs(specifier, tspath.ExtensionJs) {
 		switch preferredEnding {
 		case ModuleSpecifierEndingTsExtension, ModuleSpecifierEndingJsExtension:
 			return specifier

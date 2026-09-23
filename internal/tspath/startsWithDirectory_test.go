@@ -43,7 +43,7 @@ func TestStartsWithDirectory(t *testing.T) {
 		},
 		{
 			name:                      "file in subdirectory",
-			fileName:                  "/project/src/components/Button.tsx",
+			fileName:                  "/project/src/components/Button.tlua",
 			directoryName:             "/project/src",
 			useCaseSensitiveFileNames: true,
 			expected:                  true,

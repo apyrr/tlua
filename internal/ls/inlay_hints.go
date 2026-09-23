@@ -835,7 +835,7 @@ func identifierOrAccessExpressionPostfixMatchesParameterName(expr *ast.Expressio
 }
 
 func (s *inlayHintState) leadingCommentsContainsParameterName(node *ast.Node, name string) bool {
-	if !scanner.IsIdentifierText(name, s.file.LanguageVariant) {
+	if !scanner.IsIdentifierText(name) {
 		return false
 	}
 

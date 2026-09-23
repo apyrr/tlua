@@ -366,7 +366,6 @@ const (
 	ReferenceHintUnspecified ReferenceHint = iota
 	ReferenceHintIdentifier
 	ReferenceHintProperty
-	ReferenceHintJsx
 )
 
 type TypeFacts uint32
@@ -502,7 +501,6 @@ type Program interface {
 	GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	GetPackagesMap() map[string]bool
 	GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData
-	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFileDefaultLibrary(path tspath.Path) bool
@@ -637,7 +635,6 @@ type Checker struct {
 	assertionLinks                 core.LinkStore[*ast.Node, AssertionLinks]
 	luaGenericForLinks             core.LinkStore[*ast.Node, LuaGenericForLinks]
 	luaBuiltinLinks                core.LinkStore[*ast.Node, LuaBuiltinLinks]
-	jsxElementLinks                core.LinkStore[*ast.Node, JsxElementLinks]
 	symbolReferenceLinks           core.LinkStore[*ast.Symbol, SymbolReferenceLinks]
 	valueSymbolLinks               core.LinkStore[*ast.Symbol, ValueSymbolLinks]
 	mappedSymbolLinks              core.LinkStore[*ast.Symbol, MappedSymbolLinks]
@@ -699,8 +696,6 @@ type Checker struct {
 	restrictiveMapper              *TypeMapper
 	permissiveMapper               *TypeMapper
 	emptyObjectType                *Type
-	emptyJsxObjectType             *Type
-	emptyFreshJsxObjectType        *Type
 	emptyTypeLiteralType           *Type
 	unknownEmptyObjectType         *Type
 	unknownUnionType               *Type
@@ -815,8 +810,6 @@ type Checker struct {
 	compareTypesAssignable                      TypeComparer
 	emitResolver                                *EmitResolver
 	emitResolverOnce                            sync.Once
-	_jsxNamespace                               string
-	_jsxFactoryEntity                           *ast.Node
 	skipDirectInferenceNodes                    collections.Set[*ast.Node]
 	ctx                                         context.Context
 	packagesMap                                 map[string]bool
@@ -975,8 +968,6 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.restrictiveMapper = newFunctionTypeMapper(c.restrictiveMapperWorker)
 	c.permissiveMapper = newFunctionTypeMapper(c.permissiveMapperWorker)
 	c.emptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
-	c.emptyJsxObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
-	c.emptyFreshJsxObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.emptyTypeLiteralType = c.newAnonymousType(c.newSymbol(ast.SymbolFlagsTypeLiteral, ast.InternalSymbolNameType), nil, nil, nil, nil)
 	c.unknownEmptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.unknownUnionType = c.createUnknownUnionType()
@@ -2248,7 +2239,7 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 	c.currentNode = node
 	c.instantiationCount = 0
 	switch node.Kind {
-	case ast.KindCallExpression, ast.KindJsxOpeningElement:
+	case ast.KindCallExpression:
 		// These node kinds are deferred checked when overload resolution fails. To save on work,
 		// we ensure the arguments are checked just once in a deferred way.
 		c.resolveUntypedCall(node)
@@ -2256,10 +2247,6 @@ func (c *Checker) checkDeferredNode(node *ast.Node) {
 		c.checkFunctionExpressionOrObjectLiteralMethodDeferred(node)
 	case ast.KindTypeParameter:
 		c.checkTypeParameterDeferred(node)
-	case ast.KindJsxSelfClosingElement:
-		c.checkJsxSelfClosingElementDeferred(node)
-	case ast.KindJsxElement:
-		c.checkJsxElementDeferred(node)
 	case ast.KindTypeAssertionExpression, ast.KindAsExpression:
 		c.checkAssertionDeferred(node)
 	}
@@ -2571,8 +2558,6 @@ func (c *Checker) getDeprecatedSuggestionNode(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.getDeprecatedSuggestionNode(node.Expression())
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		return c.getDeprecatedSuggestionNode(node.TagName())
 	case ast.KindElementAccessExpression:
 		return node.AsElementAccessExpression().ArgumentExpression
 	case ast.KindPropertyAccessExpression:
@@ -5569,9 +5554,8 @@ func (c *Checker) reportObjectPossiblyNilError(node *ast.Node) {
 }
 
 func (c *Checker) checkExpressionWithContextualType(node *ast.Node, contextualType *Type, inferenceContext *InferenceContext, checkMode CheckMode) *Type {
-	contextNode := c.getContextNode(node)
-	c.pushContextualType(contextNode, contextualType, false /*isCache*/)
-	c.pushInferenceContext(contextNode, inferenceContext)
+	c.pushContextualType(node, contextualType, false /*isCache*/)
+	c.pushInferenceContext(node, inferenceContext)
 	t := c.checkExpressionEx(node, checkMode|CheckModeContextual|core.IfElse(inferenceContext != nil, CheckModeInferential, 0))
 	// In CheckMode.Inferential we collect intra-expression inference sites to process before fixing any type
 	// parameters. This information is no longer needed after the call to checkExpression.
@@ -5587,14 +5571,6 @@ func (c *Checker) checkExpressionWithContextualType(node *ast.Node, contextualTy
 	c.popInferenceContext()
 	c.popContextualType()
 	return t
-}
-
-func (c *Checker) getContextNode(node *ast.Node) *ast.Node {
-	if ast.IsJsxAttributes(node) && !ast.IsJsxSelfClosingElement(node.Parent) {
-		// Needs to be the root JsxElement, so it encompasses the attributes _and_ the children (which are essentially part of the attributes)
-		return node.Parent.Parent
-	}
-	return node
 }
 
 func (c *Checker) checkExpressionCached(node *ast.Node) *Type {
@@ -5852,18 +5828,6 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 		return c.nilWideningType
 	case ast.KindSyntheticExpression:
 		return c.checkSyntheticExpression(node)
-	case ast.KindJsxExpression:
-		return c.checkJsxExpression(node, checkMode)
-	case ast.KindJsxElement:
-		return c.checkJsxElement(node, checkMode)
-	case ast.KindJsxSelfClosingElement:
-		return c.checkJsxSelfClosingElement(node, checkMode)
-	case ast.KindJsxFragment:
-		return c.checkJsxFragment(node)
-	case ast.KindJsxAttributes:
-		return c.checkJsxAttributes(node, checkMode)
-	case ast.KindJsxOpeningElement:
-		panic("Should never directly check a JsxOpeningElement")
 	}
 	return c.errorType
 }
@@ -6179,18 +6143,9 @@ func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
 // allowed inside another suspend function. Passing a suspend function as a
 // value (e.g. to coroutine.create) is not a call and stays unrestricted.
 // It is invoked from the single resolution choke point (getResolvedSignature)
-// so every call-like that actually invokes the signature is covered — plain
-// calls, tagged templates, and JSX elements alike.
+// so every call that actually invokes the signature is covered.
 func (c *Checker) checkSuspendCallContext(node *ast.Node, signature *Signature) {
 	if signature.flags&SignatureFlagsSuspend == 0 || signature.flags&SignatureFlagsConstruct != 0 {
-		return
-	}
-	switch node.Kind {
-	case ast.KindCallExpression,
-		ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		// these syntactically invoke the resolved signature
-	default:
-		// A JSX fragment does not invoke the signature at all.
 		return
 	}
 	container := ast.GetContainingFunction(node)
@@ -6301,8 +6256,6 @@ func (c *Checker) resolveSignature(node *ast.Node, candidatesOutArray *[]*Signat
 	switch node.Kind {
 	case ast.KindCallExpression:
 		return c.resolveCallExpression(node, candidatesOutArray, checkMode)
-	case ast.KindJsxOpeningFragment, ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		return c.resolveJsxOpeningLikeElement(node, candidatesOutArray, checkMode)
 	}
 	panic("Unhandled case in resolveSignature")
 }
@@ -6402,16 +6355,12 @@ func someSignature(signatures []*Signature, f func(s *Signature) bool) bool {
 }
 
 func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidatesOutArray *[]*Signature, checkMode CheckMode, callChainFlags SignatureFlags, headMessage *diagnostics.Message) *Signature {
-	isJsxOpeningOrSelfClosingElement := ast.IsJsxOpeningLikeElement(node)
 	reportErrors := !c.isInferencePartiallyBlocked && candidatesOutArray == nil
 	var s CallState
 	s.node = node
-	if !isSuperCall(node) && !ast.IsJsxOpeningFragment(node) {
+	if !isSuperCall(node) {
 		s.typeArguments = node.TypeArguments()
-		// We already perform checking on the type arguments on the class declaration itself.
-		if isJsxOpeningOrSelfClosingElement || node.Expression().Kind != ast.KindSuperKeyword {
-			c.checkSourceElements(s.typeArguments)
-		}
+		c.checkSourceElements(s.typeArguments)
 	}
 	s.candidates = c.reorderCandidates(signatures, callChainFlags)
 	if candidatesOutArray != nil {
@@ -6654,30 +6603,13 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 }
 
 func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *Signature, signatureHelpTrailingComma bool) bool {
-	if ast.IsJsxOpeningFragment(node) {
-		return true
-	}
-	var argCount int
+	argCount := len(args)
 	callIsIncomplete := false
-	// In incomplete call we want to be lenient when we have too few arguments
-	effectiveParameterCount := c.getParameterCount(signature)
-	effectiveMinimumArguments := c.getMinArgumentCount(signature)
-	switch {
-	case ast.IsBinaryExpression(node):
+	if ast.IsBinaryExpression(node) {
 		argCount = 1
-	case ast.IsJsxOpeningLikeElement(node):
-		callIsIncomplete = node.Attributes().End() == node.End()
-		if callIsIncomplete {
-			return true
-		}
-		argCount = core.IfElse(effectiveMinimumArguments == 0, len(args), 1)
-		effectiveParameterCount = core.IfElse(len(args) == 0, effectiveParameterCount, 1) // class may have argumentless ctor functions - still resolve ctor and compare vs props member type
-		effectiveMinimumArguments = min(effectiveMinimumArguments, 1)                     // sfc may specify context argument - handled by framework and not typechecked
-	default:
+	} else {
 		if signatureHelpTrailingComma {
-			argCount = len(args) + 1
-		} else {
-			argCount = len(args)
+			argCount++
 		}
 		// If we are missing the close parenthesis, the call is incomplete.
 		callIsIncomplete = node.ArgumentList().End() == node.End()
@@ -6693,15 +6625,16 @@ func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *S
 		}
 	}
 	// Too many arguments implies incorrect arity.
-	if !c.hasEffectiveRestParameter(signature) && argCount > effectiveParameterCount {
+	if !c.hasEffectiveRestParameter(signature) && argCount > c.getParameterCount(signature) {
 		return false
 	}
-	// If the call is incomplete, we should skip the lower bound check.
-	// JSX signatures can have extra parameters provided by the library which we don't check
-	if callIsIncomplete || argCount >= effectiveMinimumArguments {
+	// In an incomplete call we want to be lenient when there are too few
+	// arguments, so skip the lower bound check.
+	minimumArguments := c.getMinArgumentCount(signature)
+	if callIsIncomplete || argCount >= minimumArguments {
 		return true
 	}
-	for i := argCount; i < effectiveMinimumArguments; i++ {
+	for i := argCount; i < minimumArguments; i++ {
 		t := c.getTypeAtPosition(signature, i)
 		if c.filterType(t, acceptsVoid).flags&TypeFlagsNever != 0 {
 			return false
@@ -6764,9 +6697,6 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 }
 
 func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signature *Signature, relation *Relation, checkMode CheckMode, reportErrors bool, diagnosticOutput *[]*ast.Diagnostic) bool {
-	if ast.IsJsxCallLike(node) {
-		return c.checkApplicableSignatureForJsxCallLikeElement(node, signature, relation, checkMode, reportErrors, diagnosticOutput)
-	}
 	thisType := c.getThisTypeOfSignature(signature)
 	if thisType != nil && thisType != c.voidType && !(ast.IsCallExpression(node) && ast.IsSuperProperty(node.Expression())) {
 		// If the called expression is not of the form `x.f` or `x["f"]`, then sourceType = voidType
@@ -6923,9 +6853,6 @@ func (c *Checker) getEffectiveCheckNode(argument *ast.Node) *ast.Node {
 }
 
 func (c *Checker) inferTypeArguments(node *ast.Node, signature *Signature, args []*ast.Node, checkMode CheckMode, context *InferenceContext) []*Type {
-	if ast.IsJsxOpeningLikeElement(node) {
-		return c.inferJsxTypeArguments(node, signature, checkMode, context)
-	}
 	// If a contextual type is available, infer from that type to the return type of the call expression. For
 	// example, given a 'function wrap<T, U>(cb: (x: T) => U): (x: T) => U' and a call expression
 	// 'let f: (x: string) => number = wrap(s => s.length)', we infer from the declared type of 'f' to the
@@ -7069,7 +6996,7 @@ func (c *Checker) pickLongestCandidateSignature(node *ast.Node, candidates []*Si
 		return candidate
 	}
 	var typeArgumentNodes []*ast.Node
-	if c.callLikeExpressionMayHaveTypeArguments(node) {
+	if ast.IsCallExpression(node) {
 		typeArgumentNodes = node.TypeArguments()
 	}
 	var instantiated *Signature
@@ -7214,7 +7141,7 @@ func (c *Checker) reportCallResolutionErrors(node *ast.Node, s *CallState, signa
 		c.addDiagnostic(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
 	case s.candidateForTypeArgumentError != nil:
 		c.checkTypeArguments(s.candidateForTypeArgumentError, s.node.TypeArguments(), true /*reportErrors*/, headMessage)
-	case !ast.IsJsxOpeningFragment(node):
+	default:
 		signaturesWithCorrectTypeArgumentArity := core.Filter(signatures, func(sig *Signature) bool {
 			return c.hasCorrectTypeArgumentArity(sig, s.typeArguments)
 		})
@@ -7437,14 +7364,12 @@ func (c *Checker) reportCannotInvokePossiblyNilError(node *ast.Node) {
 }
 
 func (c *Checker) resolveUntypedCall(node *ast.Node) *Signature {
-	if c.callLikeExpressionMayHaveTypeArguments(node) {
+	if ast.IsCallExpression(node) {
 		// Check type arguments even though we will give an error that untyped calls may not accept type arguments.
 		// This gets us diagnostics for the type arguments and marks them as referenced.
 		c.checkSourceElements(node.TypeArguments())
 	}
 	switch node.Kind {
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		c.checkExpression(node.Attributes())
 	case ast.KindBinaryExpression:
 		c.checkExpression(node.AsBinaryExpression().Left)
 	case ast.KindCallExpression:
@@ -8797,8 +8722,8 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 		if parent == nil {
 			parent = node.Parent
 		}
-		if ast.IsCallLikeExpression(parent) {
-			return ast.IsCallExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
+		if ast.IsCallExpression(parent) {
+			return ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
 		}
 		return core.Every(symbol.Declarations, func(d *ast.Node) bool {
 			return !ast.IsFunctionLike(d) || c.IsDeprecatedDeclaration(d)
@@ -9307,7 +9232,7 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 	node = ast.SkipOuterExpressions(node, ast.OEKAll)
 	switch node.Kind {
 	case ast.KindArrayLiteralExpression, ast.KindArrowFunction, ast.KindFunctionExpression,
-		ast.KindJsxElement, ast.KindJsxSelfClosingElement, ast.KindObjectLiteralExpression, ast.KindRegularExpressionLiteral,
+		ast.KindObjectLiteralExpression, ast.KindRegularExpressionLiteral,
 		// Under Lua truthiness `""` and `0` are truthy, so every string and
 		// numeric literal is. That retires the JS-era `while(0)`/`while(1)`
 		// exemption: `0` no longer means "loop never", so a numeric condition
@@ -9335,11 +9260,20 @@ func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics
 func (c *Checker) isSideEffectFree(node *ast.Node) bool {
 	node = ast.SkipParentheses(node)
 	switch node.Kind {
-	case ast.KindIdentifier, ast.KindStringLiteral, ast.KindRegularExpressionLiteral, ast.KindTemplateExpression,
-		ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindTrueKeyword, ast.KindFalseKeyword,
-		ast.KindNilKeyword, ast.KindFunctionExpression, ast.KindArrowFunction,
-		ast.KindArrayLiteralExpression, ast.KindObjectLiteralExpression, ast.KindNonNullExpression, ast.KindJsxSelfClosingElement,
-		ast.KindJsxElement:
+	case ast.KindIdentifier,
+		ast.KindStringLiteral,
+		ast.KindRegularExpressionLiteral,
+		ast.KindTemplateExpression,
+		ast.KindNoSubstitutionTemplateLiteral,
+		ast.KindNumericLiteral,
+		ast.KindTrueKeyword,
+		ast.KindFalseKeyword,
+		ast.KindNilKeyword,
+		ast.KindFunctionExpression,
+		ast.KindArrowFunction,
+		ast.KindArrayLiteralExpression,
+		ast.KindObjectLiteralExpression,
+		ast.KindNonNullExpression:
 		return true
 	case ast.KindBinaryExpression:
 		if ast.IsAssignmentOperator(node.AsBinaryExpression().OperatorToken.Kind) {
@@ -11596,7 +11530,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	}
 
 	var sourceFile *ast.SourceFile
-	if resolvedModule.IsResolved() && (resolutionDiagnostic == nil || resolutionDiagnostic == diagnostics.Module_0_was_resolved_to_1_but_jsx_is_not_set) {
+	if resolvedModule.IsResolved() && resolutionDiagnostic == nil {
 		sourceFile = c.program.GetSourceFileForResolvedModule(resolvedModule.ResolvedFileName)
 	}
 
@@ -11661,7 +11595,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 							// CJS file resolving to an ESM file
 							var diagnosticDetails *ast.Diagnostic
 							ext := tspath.TryGetExtensionFromPath(importingSourceFile.FileName())
-							if ext == tspath.ExtensionTs || ext == tspath.ExtensionJs || ext == tspath.ExtensionTsx || ext == tspath.ExtensionJsx {
+							if ext == tspath.ExtensionTs || ext == tspath.ExtensionJs {
 								diagnosticDetails = c.createModeMismatchDetails(importingSourceFile, errorNode)
 							}
 
@@ -11764,10 +11698,6 @@ func (c *Checker) getSuggestedImportExtension(extensionlessImportPath string) st
 		return tspath.ExtensionJs
 	case c.program.FileExists(extensionlessImportPath + tspath.ExtensionJs):
 		return tspath.ExtensionJs
-	case c.program.FileExists(extensionlessImportPath + tspath.ExtensionTsx):
-		return core.IfElse(c.compilerOptions.Jsx == core.JsxEmitPreserve, tspath.ExtensionJsx, tspath.ExtensionJs)
-	case c.program.FileExists(extensionlessImportPath + tspath.ExtensionJsx):
-		return tspath.ExtensionJsx
 	case c.program.FileExists(extensionlessImportPath + tspath.ExtensionJson):
 		return tspath.ExtensionJson
 	}
@@ -12717,8 +12647,7 @@ func (c *Checker) GetTypeOfSymbolAtLocation(symbol *ast.Symbol, location *ast.No
 		// an dotted name expression, and if the location is not an assignment target, obtain the type
 		// of the expression (which will reflect control flow analysis). If the expression indeed
 		// resolved to the given symbol, return the narrowed type.
-		if (ast.IsIdentifier(location) || ast.IsPrivateIdentifier(location)) &&
-			!(ast.IsJsxTagName(location) || ast.IsJsxAttribute(location.Parent) || ast.IsJsxNamespacedName(location.Parent)) {
+		if ast.IsIdentifier(location) || ast.IsPrivateIdentifier(location) {
 			if ast.IsRightSideOfQualifiedNameOrPropertyAccess(location) {
 				location = location.Parent
 			}
@@ -12895,8 +12824,6 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 			result = c.getLuaModuleReturnType(symbol)
 		case ast.KindBinaryExpression, ast.KindCallExpression:
 			result = c.getWidenedTypeForAssignmentDeclaration(symbol)
-		case ast.KindJsxAttribute:
-			result = c.checkJsxAttribute(declaration, CheckModeNormal)
 		default:
 			panic("Unhandled case in getTypeOfVariableOrParameterOrPropertyWorker: " + declaration.Kind.String())
 		}
@@ -13039,11 +12966,6 @@ func (c *Checker) getTypeForVariableLikeDeclaration(declaration *ast.Node, inclu
 	if declaration.Initializer() != nil {
 		t := c.widenTypeInferredFromInitializer(declaration, c.checkDeclarationInitializer(declaration, checkMode, nil /*contextualType*/))
 		return c.addOptionalityEx(t, isProperty, isOptional)
-	}
-	if ast.IsJsxAttribute(declaration) {
-		// if JSX attribute doesn't have initializer, by default the attribute will have boolean value of true.
-		// I.e <Elem attr /> is sugar for <Elem attr={true} />
-		return c.trueType
 	}
 	// If the declaration specifies a binding pattern and is not a parameter of a contextually
 	// typed function, use the type implied by the binding pattern
@@ -19450,10 +19372,6 @@ func (c *Checker) isTupleLikeType(t *Type) bool {
 	return isTupleType(t) || c.getPropertyOfType(t, ast.NumberKeyNameFromPosition(0)) != nil
 }
 
-func (c *Checker) isArrayOrTupleLikeType(t *Type) bool {
-	return c.isArrayLikeType(t) || c.isTupleLikeType(t)
-}
-
 func (c *Checker) isArrayOrTupleOrIntersection(t *Type) bool {
 	return t.flags&TypeFlagsIntersection != 0 && core.Every(t.Types(), c.isArrayOrTupleType)
 }
@@ -24410,12 +24328,7 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		c.markIdentifierAliasReferenced(location)
 	case ReferenceHintProperty:
 		c.markPropertyAliasReferenced(location, propSymbol, parentType)
-	case ReferenceHintJsx:
-		c.markJsxAliasReferenced(location)
 	case ReferenceHintUnspecified:
-		if ast.IsJsxTagName(location) && isJsxIntrinsicTagName(location) {
-			return // builtin JSX tag names aren't real type refs by most metrics, but are expressions, so must be filtered
-		}
 		// Identifiers in expression contexts are emitted, so we need to follow their referenced aliases and mark them as used
 		// Some non-expression identifiers are also treated as expression identifiers for this purpose, eg, `a` in `b = {a}`
 		// This is the exception, rather than the rule - most non-expression identifiers are declaration names.
@@ -24444,10 +24357,6 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 				topProp = topProp.Parent
 			}
 			c.markPropertyAliasReferenced(location, nil /*propSymbol*/, nil /*parentType*/)
-			return
-		}
-		if ast.IsJsxOpeningLikeElement(location) || ast.IsJsxOpeningFragment(location) {
-			c.markJsxAliasReferenced(location)
 			return
 		}
 		return
@@ -24502,45 +24411,6 @@ func (c *Checker) markPropertyAliasReferenced(location *ast.Node /*PropertyAcces
 		return
 	}
 	c.markAliasReferenced(parentSymbol, location)
-}
-
-func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement | JsxOpeningFragment*/) {
-	if c.getJsxNamespaceContainerForImplicitImport(node) != nil {
-		return
-	}
-	// The reactNamespace/jsxFactory's root symbol should be marked as 'used' so we don't incorrectly elide its import.
-	// And if there is no reactNamespace/jsxFactory's symbol in scope when targeting React emit, we should issue an error.
-	jsxFactoryRefErr := core.IfElse(c.compilerOptions.Jsx == core.JsxEmitReact, diagnostics.This_JSX_tag_requires_0_to_be_in_scope_but_it_could_not_be_found, nil)
-	jsxFactoryNamespace := c.getJsxNamespace(node)
-	jsxFactoryLocation := node
-	if ast.IsJsxOpeningLikeElement(node) {
-		jsxFactoryLocation = node.TagName()
-	}
-	// #38720/60122, allow null as jsxFragmentFactory
-	var jsxFactorySym *ast.Symbol
-	if !(ast.IsJsxOpeningFragment(node) && jsxFactoryNamespace == "null") {
-		flags := ast.SymbolFlagsValue
-		jsxFactorySym = c.resolveName(jsxFactoryLocation, jsxFactoryNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
-	}
-	if jsxFactorySym != nil {
-		// Mark local symbol as referenced here because it might not have been marked
-		// if jsx emit was not jsxFactory as there wont be error being emitted
-		c.symbolReferenced(jsxFactorySym, ast.SymbolFlagsAll)
-		// If react/jsxFactory symbol is alias, mark it as referenced
-		if c.canCollectSymbolAliasAccessibilityData && jsxFactorySym.Flags&ast.SymbolFlagsAlias != 0 && c.getTypeOnlyAliasDeclaration(jsxFactorySym) == nil {
-			c.markAliasSymbolAsReferenced(jsxFactorySym)
-		}
-	}
-	// if JsxFragment, additionally mark jsx pragma as referenced, since `getJsxNamespace` above would have resolved to only the fragment factory if they are distinct
-	if ast.IsJsxOpeningFragment(node) {
-		file := ast.GetSourceFileOfNode(node)
-		entity := c.getJsxFactoryEntity(file.AsNode())
-		if entity != nil {
-			localJsxNamespace := ast.GetFirstIdentifier(entity).Text()
-			flags := ast.SymbolFlagsValue
-			c.resolveName(jsxFactoryLocation, localJsxNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
-		}
-	}
 }
 
 func (c *Checker) checkExternalEmitHelpers(location *ast.Node, helpers ExternalEmitHelpers) {
@@ -25115,12 +24985,6 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 		return c.getContextualType(parent, contextFlags)
 	case ast.KindSatisfiesExpression:
 		return c.getTypeFromTypeNode(parent.Type())
-	case ast.KindJsxExpression:
-		return c.getContextualTypeForJsxExpression(parent, contextFlags)
-	case ast.KindJsxAttribute:
-		return c.getContextualTypeForJsxAttribute(parent, contextFlags)
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		return c.getContextualJsxElementAttributesType(parent, contextFlags)
 	}
 	return nil
 }
@@ -25372,9 +25236,6 @@ func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argI
 		signature = c.resolvingSignature
 	} else {
 		signature = c.getResolvedSignature(callTarget, nil, CheckModeNormal)
-	}
-	if ast.IsJsxOpeningLikeElement(callTarget) && argIndex == 0 {
-		return c.getEffectiveFirstArgumentForJsxSignature(signature, callTarget)
 	}
 	restIndex := len(signature.parameters) - 1
 	if signatureHasRestParameter(signature) && argIndex >= restIndex {
@@ -25630,72 +25491,61 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 }
 
 func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
-	switch {
-	case ast.IsJsxOpeningFragment(node):
-		// This attributes Type does not include a children property yet, the same way a fragment created with <React.Fragment> does not at this stage
-		return []*ast.Node{c.createSyntheticExpression(node, c.emptyFreshJsxObjectType, false, nil)}
-	case ast.IsJsxOpeningLikeElement(node):
-		if len(node.Attributes().Properties()) != 0 || (ast.IsJsxOpeningElement(node) && len(node.Parent.Children().Nodes) != 0) {
-			return []*ast.Node{node.Attributes()}
-		}
-		return nil
-	default:
-		args := node.Arguments()
-		// No tuple-spread expansion: operand spread no longer parses, so a raw
-		// argument is never a spread. The only spread argument in the effective
-		// list is the synthetic one built just below.
-		//
-		// Lua tail expansion: a `...` or a call in the LAST argument position
-		// contributes all of its values. Non-tail calls truncate to one value
-		// through the ordinary adjusted expression type; unions of packs stay
-		// single arguments.
-		if len(args) != 0 {
-			last := args[len(args)-1]
-			if packType := c.getTailCallPackType(last); packType != nil {
-				effectiveArgs := slices.Clip(args[:len(args)-1])
-				switch {
-				case packType.flags&TypeFlagsVoid != 0:
-					// A call that returns nothing contributes zero values, exactly as
-					// it does in a table constructor or a value list.
-				case isOpenPackType(packType):
-					// An unknown number of values: one tail argument carrying the whole
-					// pack. Flattening it into positional synthetics would force arity,
-					// inference and applicability to each re-derive Lua's adjustment
-					// rule from the layout -- which is precisely how they came to
-					// disagree. They ask packTailArgumentTypes instead.
-					effectiveArgs = append(effectiveArgs, c.createSyntheticExpression(last, packType, true /*isSpread*/, nil))
-				default:
-					// A closed pack has an exact arity, so it expands into one argument
-					// per element and is arity-checked like any other argument list.
-					for _, t := range c.getElementTypes(packType) {
-						effectiveArgs = append(effectiveArgs, c.createSyntheticExpression(last, t, false /*isSpread*/, nil))
-					}
+	args := node.Arguments()
+	// No tuple-spread expansion: operand spread no longer parses, so a raw
+	// argument is never a spread. The only spread argument in the effective
+	// list is the synthetic one built just below.
+	//
+	// Lua tail expansion: a `...` or a call in the LAST argument position
+	// contributes all of its values. Non-tail calls truncate to one value
+	// through the ordinary adjusted expression type; unions of packs stay
+	// single arguments.
+	if len(args) != 0 {
+		last := args[len(args)-1]
+		if packType := c.getTailCallPackType(last); packType != nil {
+			effectiveArgs := slices.Clip(args[:len(args)-1])
+			switch {
+			case packType.flags&TypeFlagsVoid != 0:
+				// A call that returns nothing contributes zero values, exactly as
+				// it does in a table constructor or a value list.
+			case isOpenPackType(packType):
+				// An unknown number of values: one tail argument carrying the whole
+				// pack. Flattening it into positional synthetics would force arity,
+				// inference and applicability to each re-derive Lua's adjustment
+				// rule from the layout -- which is precisely how they came to
+				// disagree. They ask packTailArgumentTypes instead.
+				effectiveArgs = append(effectiveArgs, c.createSyntheticExpression(last, packType, true /*isSpread*/, nil))
+			default:
+				// A closed pack has an exact arity, so it expands into one argument
+				// per element and is arity-checked like any other argument list.
+				for _, t := range c.getElementTypes(packType) {
+					effectiveArgs = append(effectiveArgs, c.createSyntheticExpression(last, t, false /*isSpread*/, nil))
 				}
-				args = effectiveArgs
 			}
+			args = effectiveArgs
 		}
-		if ast.IsLuaColonCall(node) {
-			// `obj:f(a)` passes the receiver as the implicit first argument. A
-			// synthetic carries the receiver's type at the receiver's location,
-			// so a mismatch is reported on the receiver text. It is deliberately
-			// not the raw expression: a receiver that is itself a call
-			// (`g():f()`) must contribute its adjusted single value, not a pack
-			// tail. The first checkExpressionCached computes and caches (the
-			// callee's own check does not populate the expression cache); the
-			// re-derivations getContextualTypeForArgument triggers then hit it.
-			// A receiver that survived its `?.` guards is not nil at call time,
-			// so strip the optional marker exactly as checkPropertyAccessChain
-			// did when it looked up the method.
-			// (Flow narrowing keeps the RAW receiver instead -- see
-			// getTypePredicateArgument -- because reference matching cannot
-			// see through this synthetic.)
-			receiver := ast.LuaColonCallReceiver(node)
-			receiverType := c.getOptionalExpressionType(c.checkExpressionCached(receiver), receiver)
-			receiverArg := c.createSyntheticExpression(receiver, receiverType, false /*isSpread*/, nil)
-			args = append([]*ast.Node{receiverArg}, args...)
-		}
-		return args
 	}
+	if ast.IsLuaColonCall(node) {
+		// `obj:f(a)` passes the receiver as the implicit first argument. A
+		// synthetic carries the receiver's type at the receiver's location,
+		// so a mismatch is reported on the receiver text. It is deliberately
+		// not the raw expression: a receiver that is itself a call
+		// (`g():f()`) must contribute its adjusted single value, not a pack
+		// tail. The first checkExpressionCached computes and caches (the
+		// callee's own check does not populate the expression cache); the
+		// re-derivations getContextualTypeForArgument triggers then hit it.
+		// A receiver that survived its `?.` guards is not nil at call time,
+		// so strip the optional marker exactly as checkPropertyAccessChain
+		// did when it looked up the method.
+		// (Flow narrowing keeps the RAW receiver instead -- see
+		// getTypePredicateArgument -- because reference matching cannot
+		// see through this synthetic.)
+		receiver := ast.LuaColonCallReceiver(node)
+		receiverType := c.getOptionalExpressionType(c.checkExpressionCached(receiver), receiver)
+		receiverArg := c.createSyntheticExpression(receiver, receiverType, false /*isSpread*/, nil)
+		args = append([]*ast.Node{receiverArg}, args...)
+	}
+	return args
 }
 
 // getTailCallPackType conservatively probes an argument-tail producer through
@@ -25965,8 +25815,6 @@ func (c *Checker) getApparentTypeOfContextualType(node *ast.Node, contextFlags C
 		switch {
 		case apparentType.flags&TypeFlagsUnion != 0 && ast.IsObjectLiteralExpression(node):
 			return c.discriminateContextualTypeByObjectMembers(node, apparentType)
-		case apparentType.flags&TypeFlagsUnion != 0 && ast.IsJsxAttributes(node):
-			return c.discriminateContextualTypeByJSXAttributes(node, apparentType)
 		default:
 			return apparentType
 		}
@@ -25995,13 +25843,8 @@ func (d *ObjectLiteralDiscriminator) matches(index int, t *Type) bool {
 	var propType *Type
 	if index < len(d.props) {
 		prop := d.props[index]
-		if ast.IsPropertyAssignment(prop) || ast.IsJsxAttribute(prop) {
-			initializer := prop.Initializer()
-			if initializer != nil {
-				propType = d.c.getContextFreeTypeOfExpression(prop.Initializer())
-			} else {
-				propType = d.c.trueType // JsxAttribute without initializer is always true
-			}
+		if ast.IsPropertyAssignment(prop) {
+			propType = d.c.getContextFreeTypeOfExpression(prop.Initializer())
 		} else {
 			propType = d.c.getContextFreeTypeOfExpression(prop.Name())
 		}
@@ -26067,8 +25910,6 @@ func (c *Checker) isPossiblyDiscriminantValue(node *ast.Node) bool {
 		return true
 	case ast.KindPropertyAccessExpression, ast.KindParenthesizedExpression:
 		return c.isPossiblyDiscriminantValue(node.Expression())
-	case ast.KindJsxExpression:
-		return node.Expression() == nil || c.isPossiblyDiscriminantValue(node.Expression())
 	}
 	return false
 }
@@ -26170,16 +26011,6 @@ func (c *Checker) isContextSensitive(node *ast.Node) bool {
 		return c.isContextSensitive(node.Initializer())
 	case ast.KindTableEntry, ast.KindParenthesizedExpression:
 		return c.isContextSensitive(node.Expression())
-	case ast.KindJsxAttributes:
-		return core.Some(node.Properties(), c.isContextSensitive) || ast.IsJsxOpeningElement(node.Parent) && core.Some(node.Parent.Parent.Children().Nodes, c.isContextSensitive)
-	case ast.KindJsxAttribute:
-		// If there is no initializer, JSX attribute has a boolean value of true which is not context sensitive.
-		initializer := node.Initializer()
-		return initializer != nil && c.isContextSensitive(initializer)
-	case ast.KindJsxExpression:
-		// It is possible to that node.expression is undefined (e.g <div x={} />)
-		expression := node.Expression()
-		return expression != nil && c.isContextSensitive(expression)
 	}
 	return false
 }
@@ -26443,10 +26274,7 @@ func (c *Checker) isGenericTypeWithoutNullableConstraint(t *Type) bool {
 }
 
 func (c *Checker) hasContextualTypeWithNoGenericTypes(node *ast.Node, checkMode CheckMode) bool {
-	// Computing the contextual type for a child of a JSX element involves resolving the type of the
-	// element's tag name, so we exclude that here to avoid circularities.
-	if (ast.IsIdentifier(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) &&
-		!((ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) && node.Parent.TagName() == node) {
+	if ast.IsIdentifier(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node) {
 		contextualType := c.getContextualType(node, ContextFlagsNone)
 		if contextualType != nil {
 			return !c.isGenericType(contextualType)
@@ -26604,15 +26432,6 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		return nil
 	case ast.KindImportKeyword:
 		return nil
-	case ast.KindJsxNamespacedName:
-		if ast.IsJsxTagName(node) && isJsxIntrinsicTagName(node) {
-			symbol := c.getIntrinsicTagSymbol(node.Parent)
-			if symbol == c.unknownSymbol {
-				return nil
-			}
-			return symbol
-		}
-		fallthrough
 	default:
 		return nil
 	}
@@ -26697,10 +26516,6 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 		isJSDoc := ast.IsJSDocNameReferenceContext(name)
 		if ast.IsIdentifier(name) {
-			if ast.IsJsxTagName(name) && isJsxIntrinsicTagName(name) {
-				symbol := c.getIntrinsicTagSymbol(name.Parent)
-				return core.IfElse(symbol == c.unknownSymbol, nil, symbol)
-			}
 			meaning := core.IfElse(isJSDoc, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace, ast.SymbolFlagsValue)
 			var location *ast.Node
 			if isJSDoc {

@@ -36,12 +36,12 @@ func TestIndexClone(t *testing.T) {
 		assert.Equal(t, len(cloned.entries), 2)
 
 		// Search should work on cloned index
-		results := cloned.Find("fooBar", true)
+		results := cloned.Find("fooBar")
 		assert.Equal(t, len(results), 1)
 		assert.Equal(t, results[0].name, "fooBar")
 
 		// bazQux should not be in cloned index
-		results = cloned.Find("bazQux", true)
+		results = cloned.Find("bazQux")
 		assert.Equal(t, len(results), 0)
 
 		// Word prefix search should work

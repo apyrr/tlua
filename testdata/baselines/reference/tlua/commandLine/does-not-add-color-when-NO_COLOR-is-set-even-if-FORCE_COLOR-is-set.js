@@ -108,11 +108,6 @@ Specify a set of bundled library declaration files that describe the target runt
 one or more: luajit
 default: undefined
 
---jsx
-Specify what JSX code is generated.
-one of: preserve, react-native, react-jsx, react-jsxdev, react
-default: undefined
-
 --outFile
 Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output.
 

@@ -12,8 +12,6 @@
             "NonTextFileMarkerTrivia",
             "NumericLiteral",
             "StringLiteral",
-            "JsxText",
-            "JsxTextAllWhiteSpaces",
             "RegularExpressionLiteral",
             "NoSubstitutionTemplateLiteral",
             {
@@ -37,7 +35,6 @@
             "CommaToken",
             "QuestionDotToken",
             "LessThanToken",
-            "LessThanSlashToken",
             "GreaterThanToken",
             "LessThanEqualsToken",
             "GreaterThanEqualsToken",
@@ -293,21 +290,6 @@
                 "comment": "Module references"
             },
             "ExternalModuleReference",
-            {
-                "comment": "JSX"
-            },
-            "JsxElement",
-            "JsxSelfClosingElement",
-            "JsxOpeningElement",
-            "JsxClosingElement",
-            "JsxFragment",
-            "JsxOpeningFragment",
-            "JsxClosingFragment",
-            "JsxAttribute",
-            "JsxAttributes",
-            "JsxSpreadAttribute",
-            "JsxExpression",
-            "JsxNamespacedName",
             {
                 "comment": "Clauses"
             },
@@ -591,15 +573,6 @@
                     "LastToken"
                 ]
             },
-            "JsxTokenSyntaxKind": [
-                "LessThanSlashToken",
-                "EndOfFile",
-                "ConflictMarkerTrivia",
-                "JsxText",
-                "JsxTextAllWhiteSpaces",
-                "OpenBraceToken",
-                "LessThanToken"
-            ],
             "JSDocNodeSyntaxKind": {
                 "range": [
                     "FirstJSDocNode",
@@ -3052,208 +3025,6 @@
                     }
                 ]
             },
-            "JsxElement": {
-                "extends": [
-                    "PrimaryExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "OpeningElement",
-                        "type": "JsxOpeningElement"
-                    },
-                    {
-                        "name": "Children",
-                        "type": "JsxChild",
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "ClosingElement",
-                        "type": "JsxClosingElement"
-                    }
-                ]
-            },
-            "JsxAttributes": {
-                "extends": [
-                    "PrimaryExpressionBase",
-                    "DeclarationBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Properties",
-                        "type": "JsxAttributeLike",
-                        "list": "NodeList"
-                    }
-                ]
-            },
-            "JsxNamespacedName": {
-                "extends": [
-                    "ExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Namespace",
-                        "type": "Identifier"
-                    },
-                    {
-                        "name": "name",
-                        "type": "Identifier",
-                        "private": true
-                    }
-                ]
-            },
-            "JsxOpeningElement": {
-                "extends": [
-                    "ExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "TagName",
-                        "type": "JsxTagNameExpression"
-                    },
-                    {
-                        "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "optional": true,
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "Attributes",
-                        "type": "JsxAttributes"
-                    }
-                ]
-            },
-            "JsxSelfClosingElement": {
-                "extends": [
-                    "PrimaryExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "TagName",
-                        "type": "JsxTagNameExpression"
-                    },
-                    {
-                        "name": "TypeArguments",
-                        "type": "TypeNode",
-                        "optional": true,
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "Attributes",
-                        "type": "JsxAttributes"
-                    }
-                ]
-            },
-            "JsxFragment": {
-                "extends": [
-                    "PrimaryExpressionBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "OpeningFragment",
-                        "type": "JsxOpeningFragment"
-                    },
-                    {
-                        "name": "Children",
-                        "type": "JsxChild",
-                        "list": "NodeList"
-                    },
-                    {
-                        "name": "ClosingFragment",
-                        "type": "JsxClosingFragment"
-                    }
-                ]
-            },
-            "JsxOpeningFragment": {
-                "extends": [
-                    "ExpressionBase"
-                ]
-            },
-            "JsxClosingFragment": {
-                "extends": [
-                    "ExpressionBase"
-                ]
-            },
-            "JsxAttribute": {
-                "extends": [
-                    "NodeBase",
-                    "DeclarationBase",
-                    "CompositeBase"
-                ],
-                "members": [
-                    {
-                        "name": "name",
-                        "type": "JsxAttributeName",
-                        "private": true
-                    },
-                    {
-                        "name": "Initializer",
-                        "type": "JsxAttributeValue",
-                        "optional": true
-                    }
-                ]
-            },
-            "JsxSpreadAttribute": {
-                "extends": [
-                    "ObjectLiteralElementBase",
-                    "NodeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Expression",
-                        "type": "Expression"
-                    }
-                ]
-            },
-            "JsxClosingElement": {
-                "extends": [
-                    "NodeBase"
-                ],
-                "members": [
-                    {
-                        "name": "TagName",
-                        "type": "JsxTagNameExpression"
-                    }
-                ]
-            },
-            "JsxExpression": {
-                "extends": [
-                    "ExpressionBase"
-                ],
-                "members": [
-                    {
-                        "name": "DotDotDotToken",
-                        "type": "DotDotDotToken",
-                        "optional": true
-                    },
-                    {
-                        "name": "Expression",
-                        "type": "Expression",
-                        "optional": true
-                    }
-                ]
-            },
-            "JsxText": {
-                "extends": [
-                    "ExpressionBase",
-                    "LiteralLikeNodeBase"
-                ],
-                "members": [
-                    {
-                        "name": "Text",
-                        "inherited": true
-                    },
-                    {
-                        "name": "ContainsOnlyTriviaWhiteSpaces",
-                        "type": "bool"
-                    }
-                ]
-            },
             "SyntaxList": {
                 "extends": [
                     "NodeBase"
@@ -4219,39 +3990,11 @@
             "ModifierLike": [
                 "Modifier"
             ],
-            "JsxChild": [
-                "JsxText",
-                "JsxExpression",
-                "JsxElement",
-                "JsxSelfClosingElement",
-                "JsxFragment"
-            ],
-            "JsxAttributeLike": [
-                "JsxAttribute",
-                "JsxSpreadAttribute"
-            ],
-            "JsxAttributeName": [
-                "Identifier",
-                "JsxNamespacedName"
-            ],
-            "JsxAttributeValue": [
-                "StringLiteral",
-                "JsxExpression",
-                "JsxElement",
-                "JsxSelfClosingElement",
-                "JsxFragment"
-            ],
-            "JsxTagNameExpression": [
-                "Identifier",
-                "JsxTagNamePropertyAccess",
-                "JsxNamespacedName"
-            ],
             "LiteralLikeNode": [
                 "StringLiteral",
                 "NumericLiteral",
                 "RegularExpressionLiteral",
-                "TemplateLiteralLikeNode",
-                "JsxText"
+                "TemplateLiteralLikeNode"
             ],
             "LiteralExpression": [
                 "StringLiteral",
@@ -4311,10 +4054,6 @@
                 "InterfaceDeclaration",
                 "TypeLiteralNode"
             ],
-            "JsxOpeningLikeElement": [
-                "JsxOpeningElement",
-                "JsxSelfClosingElement"
-            ],
             "NamedImportsOrExports": [
                 "NamedImports",
                 "NamedExports"
@@ -4324,8 +4063,7 @@
                 "ContinueStatement"
             ],
             "CallLikeExpression": [
-                "CallExpression",
-                "JsxOpeningLikeElement"
+                "CallExpression"
             ],
             "FunctionLikeDeclaration": [
                 "FunctionDeclaration",
@@ -4379,7 +4117,6 @@
             "LiteralToken": [
                 "NumericLiteral",
                 "StringLiteral",
-                "JsxText",
                 "RegularExpressionLiteral",
                 "NoSubstitutionTemplateLiteral"
             ],
@@ -4433,9 +4170,7 @@
             "ElementList": "Expression",
             "PropertyDefinitionList": "ObjectLiteralElement",
             "TypeList": "TypeNode",
-            "TemplateLiteralTypeSpanList": "TemplateLiteralTypeSpan",
-            "JsxChildList": "JsxChild",
-            "JsxAttributeList": "JsxAttributeLike"
+            "TemplateLiteralTypeSpanList": "TemplateLiteralTypeSpan"
         }
     }
 }

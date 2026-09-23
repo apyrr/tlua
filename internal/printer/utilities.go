@@ -20,8 +20,7 @@ type getLiteralTextFlags int
 const (
 	getLiteralTextFlagsNone                          getLiteralTextFlags = 0
 	getLiteralTextFlagsNeverAsciiEscape              getLiteralTextFlags = 1 << 0
-	getLiteralTextFlagsJsxAttributeEscape            getLiteralTextFlags = 1 << 1
-	getLiteralTextFlagsTerminateUnterminatedLiterals getLiteralTextFlags = 1 << 2
+	getLiteralTextFlagsTerminateUnterminatedLiterals getLiteralTextFlags = 1 << 1
 )
 
 type QuoteChar rune
@@ -31,11 +30,6 @@ const (
 	QuoteCharDoubleQuote QuoteChar = '"'
 	QuoteCharBacktick    QuoteChar = '`'
 )
-
-var jsxEscapedCharsMap = map[rune]string{
-	'"':  "&quot;",
-	'\'': "&apos;",
-}
 
 var escapedCharsMap = map[rune]string{
 	'\t':     `\t`,
@@ -52,13 +46,6 @@ var escapedCharsMap = map[rune]string{
 	'\u2028': `\u2028`, // lineSeparator
 	'\u2029': `\u2029`, // paragraphSeparator
 	'\u0085': `\u0085`, // nextLine
-}
-
-func encodeJsxCharacterEntity(b *strings.Builder, charCode rune) {
-	hexCharCode := strings.ToUpper(strconv.FormatUint(uint64(charCode), 16))
-	b.WriteString("&#x")
-	b.WriteString(hexCharCode)
-	b.WriteByte(';')
 }
 
 func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
@@ -93,13 +80,11 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 		// This consists of the first 19 unprintable ASCII characters, canonical escapes, lineSeparator,
 		// paragraphSeparator, and nextLine. The latter three are just desirable to suppress new lines in
 		// the language service. These characters should be escaped when printing, and if any characters are added,
-		// `escapedCharsMap` and/or `jsxEscapedCharsMap` must be updated. Note that this *does not* include the 'delete'
+		// `escapedCharsMap` must be updated. Note that this *does not* include the 'delete'
 		// character. There is no reason for this other than that JSON.stringify does not handle it either.
 		switch ch {
 		case '\\':
-			if flags&getLiteralTextFlagsJsxAttributeEscape == 0 {
-				escape = true
-			}
+			escape = true
 		case '$':
 			if quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '{' {
 				escape = true
@@ -123,44 +108,32 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 				b.WriteString(s[pos:i])
 			}
 
-			switch {
-			case flags&getLiteralTextFlagsJsxAttributeEscape != 0:
-				if ch == 0 {
-					b.WriteString("&#0;")
-				} else if match, ok := jsxEscapedCharsMap[ch]; ok {
+			if ch == '\r' && quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
+				// Template strings preserve simple LF newlines, but still must escape CRLF. Left alone, the
+				// above cases for `\r` and `\n` would inadvertently escape CRLF as two independent characters.
+				size++
+				b.WriteString(`\r\n`)
+			} else if ch > 0xffff {
+				// encode as surrogate pair
+				ch -= 0x10000
+				encodeUtf16EscapeSequence(b, (ch&0b11111111110000000000>>10)+0xD800)
+				encodeUtf16EscapeSequence(b, (ch&0b00000000001111111111)+0xDC00)
+			} else if ch >= 0xD800 && ch <= 0xDFFF {
+				encodeUtf16EscapeSequence(b, ch)
+			} else if ch == 0 {
+				if i+1 < len(s) && stringutil.IsDigit(rune(s[i+1])) {
+					// If the null character is followed by digits, print as a hex escape to prevent the result from
+					// parsing as an octal (which is forbidden in strict mode)
+					b.WriteString(`\x00`)
+				} else {
+					// Otherwise, keep printing a literal \0 for the null character
+					b.WriteString(`\0`)
+				}
+			} else {
+				if match, ok := escapedCharsMap[ch]; ok {
 					b.WriteString(match)
 				} else {
-					encodeJsxCharacterEntity(b, ch)
-				}
-
-			default:
-				if ch == '\r' && quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
-					// Template strings preserve simple LF newlines, but still must escape CRLF. Left alone, the
-					// above cases for `\r` and `\n` would inadvertently escape CRLF as two independent characters.
-					size++
-					b.WriteString(`\r\n`)
-				} else if ch > 0xffff {
-					// encode as surrogate pair
-					ch -= 0x10000
-					encodeUtf16EscapeSequence(b, (ch&0b11111111110000000000>>10)+0xD800)
-					encodeUtf16EscapeSequence(b, (ch&0b00000000001111111111)+0xDC00)
-				} else if ch >= 0xD800 && ch <= 0xDFFF {
 					encodeUtf16EscapeSequence(b, ch)
-				} else if ch == 0 {
-					if i+1 < len(s) && stringutil.IsDigit(rune(s[i+1])) {
-						// If the null character is followed by digits, print as a hex escape to prevent the result from
-						// parsing as an octal (which is forbidden in strict mode)
-						b.WriteString(`\x00`)
-					} else {
-						// Otherwise, keep printing a literal \0 for the null character
-						b.WriteString(`\0`)
-					}
-				} else {
-					if match, ok := escapedCharsMap[ch]; ok {
-						b.WriteString(match)
-					} else {
-						encodeUtf16EscapeSequence(b, ch)
-					}
 				}
 			}
 			pos = i + size
@@ -255,13 +228,6 @@ func lowerHexDigit(n byte) byte {
 func luaStringLiteral(cooked string, quoteChar QuoteChar) string {
 	q := string(rune(quoteChar))
 	return q + LuaEscapeString(cooked, quoteChar) + q
-}
-
-func escapeJsxAttributeString(s string, quoteChar QuoteChar) string {
-	var b strings.Builder
-	b.Grow(len(s) + 2)
-	escapeStringWorker(s, quoteChar, getLiteralTextFlagsJsxAttributeEscape|getLiteralTextFlagsNeverAsciiEscape, &b)
-	return b.String()
 }
 
 func canUseOriginalText(node *ast.LiteralLikeNode, flags getLiteralTextFlags) bool {
@@ -525,7 +491,7 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 		return parent.AsIntersectionTypeNode().Types
 	case ast.KindArrayLiteralExpression, ast.KindTupleType, ast.KindNamedImports, ast.KindNamedExports:
 		return parent.ElementList()
-	case ast.KindObjectLiteralExpression, ast.KindJsxAttributes:
+	case ast.KindObjectLiteralExpression:
 		return parent.PropertyList()
 	case ast.KindCallExpression:
 		p := parent.AsCallExpression()
@@ -534,14 +500,6 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 			return p.TypeArguments
 		case node != p.Expression:
 			return p.Arguments
-		}
-	case ast.KindJsxElement, ast.KindJsxFragment:
-		if ast.IsJsxChild(node) {
-			return parent.Children()
-		}
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		if ast.IsTypeNode(node) {
-			return parent.TypeArgumentList()
 		}
 	case ast.KindBlock, ast.KindModuleBlock:
 		return parent.StatementList()

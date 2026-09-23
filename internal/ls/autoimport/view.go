@@ -4,7 +4,6 @@ import (
 	"context"
 	"slices"
 	"strings"
-	"unicode"
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/collections"
@@ -67,7 +66,6 @@ type QueryKind int
 const (
 	QueryKindWordPrefix QueryKind = iota
 	QueryKindExactMatch
-	QueryKindCaseInsensitiveMatch
 )
 
 func (v *View) Search(query string, kind QueryKind) []*Export {
@@ -76,9 +74,7 @@ func (v *View) Search(query string, kind QueryKind) []*Export {
 		case QueryKindWordPrefix:
 			return bucket.Index.SearchWordPrefix(query)
 		case QueryKindExactMatch:
-			return bucket.Index.Find(query, true)
-		case QueryKindCaseInsensitiveMatch:
-			return bucket.Index.Find(query, false)
+			return bucket.Index.Find(query)
 		default:
 			panic("unreachable")
 		}
@@ -169,7 +165,7 @@ type FixAndExport struct {
 	Export *Export
 }
 
-func (v *View) GetCompletions(ctx context.Context, prefix string, position lsproto.Position, forJSX bool, isTypeOnlyLocation bool) []*FixAndExport {
+func (v *View) GetCompletions(ctx context.Context, prefix string, position lsproto.Position, isTypeOnlyLocation bool) []*FixAndExport {
 	results := v.Search(prefix, QueryKindWordPrefix)
 
 	type exportGroupKey struct {
@@ -184,10 +180,7 @@ outer:
 		// A word-operator export like `export { foo as "and" }` is dropped with
 		// the other non-identifier names: the inserted `import { and }` would
 		// not parse.
-		if !scanner.IsBareWritableName(name, core.LanguageVariantStandard) {
-			continue
-		}
-		if forJSX && !(unicode.IsUpper(rune(name[0])) || e.IsRenameable()) {
+		if !scanner.IsBareWritableName(name) {
 			continue
 		}
 		target := e.ExportID
@@ -237,7 +230,7 @@ outer:
 	for _, exps := range grouped {
 		fixesForGroup := make([]*FixAndExport, 0, len(exps))
 		for _, e := range exps {
-			for _, fix := range v.GetFixes(ctx, e, forJSX, isTypeOnlyLocation, &position) {
+			for _, fix := range v.GetFixes(ctx, e, isTypeOnlyLocation, &position) {
 				fixesForGroup = append(fixesForGroup, &FixAndExport{
 					Fix:    fix,
 					Export: e,

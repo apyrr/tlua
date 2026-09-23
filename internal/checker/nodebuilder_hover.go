@@ -165,7 +165,7 @@ func (b *NodeBuilderImpl) expandModuleDecl(symbol *ast.Symbol) *ast.Node {
 		}
 		// The expanded members are printed as bare declaration names, so a
 		// string-named export such as `export { x as "and" }` is skipped.
-		if !scanner.IsBareWritableName(sym.Name, core.LanguageVariantStandard) {
+		if !scanner.IsBareWritableName(sym.Name) {
 			continue
 		}
 		members = append(members, sym)

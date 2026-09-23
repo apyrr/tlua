@@ -139,7 +139,7 @@ func organizeImportsWorker(
 	if shouldRemove {
 		typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
 		defer done()
-		processedImports = removeUnusedImports(processedImports, sourceFile, typeChecker, program, changeTracker)
+		processedImports = removeUnusedImports(processedImports, sourceFile, typeChecker, changeTracker)
 	}
 
 	var newImportDecls []*ast.Statement
@@ -231,11 +231,7 @@ func groupByModuleSpecifier(imports []*ast.Statement) [][]*ast.Statement {
 	return result
 }
 
-func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile, typeChecker *checker.Checker, program *compiler.Program, changeTracker *change.Tracker) []*ast.Statement {
-	compilerOptions := program.Options()
-	jsxElementsPresent := (sourceFile.AsNode().SubtreeFacts() & ast.SubtreeContainsJsx) != 0
-	jsxModeNeedsExplicitImport := compilerOptions.Jsx == core.JsxEmitReact || compilerOptions.Jsx == core.JsxEmitReactNative
-
+func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile, typeChecker *checker.Checker, changeTracker *change.Tracker) []*ast.Statement {
 	factory := ast.NewNodeFactory(ast.NodeFactoryHooks{})
 	usedImports := make([]*ast.Statement, 0, len(oldImports))
 
@@ -250,7 +246,7 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 		name := clause.Name()
 		namedBindings := clause.NamedBindings
 
-		if name != nil && !typeChecker.IsDeclarationUsed(sourceFile, name.AsIdentifier(), jsxElementsPresent, jsxModeNeedsExplicitImport) {
+		if name != nil && !typeChecker.IsDeclarationUsed(sourceFile, name.AsIdentifier()) {
 			name = nil
 		}
 
@@ -258,13 +254,13 @@ func removeUnusedImports(oldImports []*ast.Statement, sourceFile *ast.SourceFile
 			switch namedBindings.Kind {
 			case ast.KindNamespaceImport:
 				nsImport := namedBindings.AsNamespaceImport()
-				if !typeChecker.IsDeclarationUsed(sourceFile, nsImport.Name().AsIdentifier(), jsxElementsPresent, jsxModeNeedsExplicitImport) {
+				if !typeChecker.IsDeclarationUsed(sourceFile, nsImport.Name().AsIdentifier()) {
 					namedBindings = nil
 				}
 			case ast.KindNamedImports:
 				namedImports := namedBindings.AsNamedImports()
 				originalBindings := namedBindings
-				newElements := filterUsedImportSpecifiers(namedImports.Elements.Nodes, typeChecker, sourceFile, jsxElementsPresent, jsxModeNeedsExplicitImport)
+				newElements := filterUsedImportSpecifiers(namedImports.Elements.Nodes, typeChecker, sourceFile)
 				if len(newElements) == 0 {
 					namedBindings = nil
 				} else if len(newElements) < len(namedImports.Elements.Nodes) {
@@ -314,13 +310,11 @@ func filterUsedImportSpecifiers(
 	elements []*ast.Statement,
 	typeChecker *checker.Checker,
 	sourceFile *ast.SourceFile,
-	jsxElementsPresent bool,
-	jsxModeNeedsExplicitImport bool,
 ) []*ast.Statement {
 	var result []*ast.Statement
 	for _, elem := range elements {
 		spec := elem.AsImportSpecifier()
-		if typeChecker.IsDeclarationUsed(sourceFile, spec.Name().AsIdentifier(), jsxElementsPresent, jsxModeNeedsExplicitImport) {
+		if typeChecker.IsDeclarationUsed(sourceFile, spec.Name().AsIdentifier()) {
 			result = append(result, elem)
 		}
 	}

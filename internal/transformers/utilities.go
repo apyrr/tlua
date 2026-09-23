@@ -39,9 +39,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindArrayLiteralExpression,
 		ast.KindTypeAssertionExpression,
 		ast.KindExpressionWithTypeArguments,
-		ast.KindJsxSelfClosingElement,
-		ast.KindJsxSpreadAttribute,
-		ast.KindJsxExpression,
 		ast.KindPartiallyEmittedExpression:
 		// all immediate children that can be `Identifier` would be instances of `IdentifierReference`
 		return true
@@ -59,8 +56,7 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindParameter,
 		ast.KindBindingElement,
 		ast.KindPropertySignature,
-		ast.KindPropertyAssignment,
-		ast.KindJsxAttribute:
+		ast.KindPropertyAssignment:
 		// only an `Initializer()` child that can be `Identifier` would be an instance of `IdentifierReference`
 		return parent.Initializer() == name
 	case ast.KindForOfStatement:
@@ -79,8 +75,6 @@ func IsIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 	case ast.KindCallExpression:
 		return parent.Expression() == name ||
 			slices.Contains(parent.Arguments(), name)
-	case ast.KindJsxOpeningElement, ast.KindJsxClosingElement:
-		return parent.TagName() == name
 	default:
 		return false
 	}

@@ -2,7 +2,6 @@
 // Generated types are in ast.generated.ts
 
 import type { InternalSymbolName } from "#enums/internalSymbolName";
-import type { LanguageVariant } from "#enums/languageVariant";
 import type { NodeFlags } from "#enums/nodeFlags";
 import type { ScriptKind } from "#enums/scriptKind";
 import { SyntaxKind } from "#enums/syntaxKind";
@@ -88,7 +87,6 @@ export interface SourceFile extends Node {
     readonly text: string;
     readonly fileName: string;
     readonly path: Path;
-    readonly languageVariant: LanguageVariant;
     readonly scriptKind: ScriptKind;
     readonly isDeclarationFile: boolean;
     readonly referencedFiles: readonly FileReference[];
@@ -123,7 +121,3 @@ export interface PropertyAccessEntityNameExpression extends PropertyAccessExpres
 
 export type EntityNameExpression = Identifier | PropertyAccessEntityNameExpression;
 export type EntityNameOrEntityNameExpression = EntityName | EntityNameExpression;
-
-export interface JsxTagNamePropertyAccess extends PropertyAccessExpression {
-    readonly expression: Identifier | JsxTagNamePropertyAccess;
-}

@@ -18,7 +18,6 @@ func TestEmit(t *testing.T) {
 		title  string
 		input  string
 		output string
-		jsx    bool
 	}{
 		{title: "StringLiteral#1", input: `;local _ = "test"`, output: ";\nlocal _ = \"test\";"},
 		// tlua: a control char emits as Lua `\xHH` (not JS `\uXXXX` nor octal `\ddd`) and
@@ -261,44 +260,12 @@ func TestEmit(t *testing.T) {
 		{title: "TypeParameterDeclaration#5", input: "function f<T extends U = V>();", output: "function f<T extends U = V>();"},
 		{title: "TypeParameterDeclaration#6", input: "function f<T, U>();", output: "function f<T, U>();"},
 		// {title: "TypeParameterDeclaration#7", input: "function f<T,>();", output: "function f<T,>();"}, // TODO: preserve trailing comma after Strada migration
-		{title: "JsxElement1", input: "local _ = <a></a>", output: "local _ = <a></a>;", jsx: true},
-		{title: "JsxElement2", input: "local _ = <this></this>", output: "local _ = <this></this>;", jsx: true},
-		{title: "JsxElement3", input: "local _ = <a:b></a:b>", output: "local _ = <a:b></a:b>;", jsx: true},
-		{title: "JsxElement4", input: "local _ = <a.b></a.b>", output: "local _ = <a.b></a.b>;", jsx: true},
-		{title: "JsxElement5", input: "local _ = <a<b>></a>", output: "local _ = <a<b>></a>;", jsx: true},
-		{title: "JsxElement6", input: "local _ = <a b></a>", output: "local _ = <a b></a>;", jsx: true},
-		{title: "JsxElement7", input: "local _ = <a>b</a>", output: "local _ = <a>b</a>;", jsx: true},
-		{title: "JsxElement8", input: "local _ = <a>{b}</a>", output: "local _ = <a>{b}</a>;", jsx: true},
-		{title: "JsxElement9", input: "local _ = <a><b></b></a>", output: "local _ = <a><b></b></a>;", jsx: true},
-		{title: "JsxElement10", input: "local _ = <a><b /></a>", output: "local _ = <a><b /></a>;", jsx: true},
-		{title: "JsxElement11", input: "local _ = <a><></></a>", output: "local _ = <a><></></a>;", jsx: true},
-		{title: "JsxElement12", input: "local _ = <a>\n    {/* missing */}\n    {\n        // foo\n    }\n</a>", output: "local _ = <a>\n    {--[[ missing ]]}\n    {\n    -- foo\n    }\n</a>;", jsx: true},
-		{title: "JsxSelfClosingElement1", input: "local _ = <a />", output: "local _ = <a />;", jsx: true},
-		{title: "JsxSelfClosingElement2", input: "local _ = <this />", output: "local _ = <this />;", jsx: true},
-		{title: "JsxSelfClosingElement3", input: "local _ = <a:b />", output: "local _ = <a:b />;", jsx: true},
-		{title: "JsxSelfClosingElement4", input: "local _ = <a.b />", output: "local _ = <a.b />;", jsx: true},
-		{title: "JsxSelfClosingElement5", input: "local _ = <a<b> />", output: "local _ = <a<b> />;", jsx: true},
-		{title: "JsxSelfClosingElement6", input: "local _ = <a b/>", output: "local _ = <a b/>;", jsx: true},
-		{title: "JsxFragment1", input: "local _ = <></>", output: "local _ = <></>;", jsx: true},
-		{title: "JsxFragment2", input: "local _ = <>b</>", output: "local _ = <>b</>;", jsx: true},
-		{title: "JsxFragment3", input: "local _ = <>{b}</>", output: "local _ = <>{b}</>;", jsx: true},
-		{title: "JsxFragment4", input: "local _ = <><b></b></>", output: "local _ = <><b></b></>;", jsx: true},
-		{title: "JsxFragment5", input: "local _ = <><b /></>", output: "local _ = <><b /></>;", jsx: true},
-		{title: "JsxFragment6", input: "local _ = <><></></>", output: "local _ = <><></></>;", jsx: true},
-		{title: "JsxAttribute1", input: "local _ = <a b/>", output: "local _ = <a b/>;", jsx: true},
-		{title: "JsxAttribute2", input: "local _ = <a b:c/>", output: "local _ = <a b:c/>;", jsx: true},
-		{title: "JsxAttribute3", input: "local _ = <a b=\"c\"/>", output: "local _ = <a b=\"c\"/>;", jsx: true},
-		{title: "JsxAttribute4", input: "local _ = <a b='c'/>", output: "local _ = <a b='c'/>;", jsx: true},
-		{title: "JsxAttribute5", input: "local _ = <a b={c}/>", output: "local _ = <a b={c}/>;", jsx: true},
-		{title: "JsxAttribute6", input: "local _ = <a b=<c></c>/>", output: "local _ = <a b=<c></c>/>;", jsx: true},
-		{title: "JsxAttribute7", input: "local _ = <a b=<c />/>", output: "local _ = <a b=<c />/>;", jsx: true},
-		{title: "JsxAttribute8", input: "local _ = <a b=<></>/>", output: "local _ = <a b=<></>/>;", jsx: true},
 	}
 
 	for _, rec := range data {
 		t.Run(rec.title, func(t *testing.T) {
 			t.Parallel()
-			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
+			file := parsetestutil.ParseTypeScript(rec.input)
 			parsetestutil.CheckDiagnostics(t, file)
 			emittestutil.CheckEmit(t, nil, file, rec.output)
 		})
@@ -1377,7 +1344,7 @@ func TestPartiallyEmittedExpression(t *testing.T) {
 	file := parsetestutil.ParseTypeScript(`return ((container.parent
     .left as PropertyAccessExpression)
     .expression as PropertyAccessExpression)
-    .expression;`, false /*jsx*/)
+    .expression;`)
 
 	emitContext := printer.NewEmitContext()
 	file = tstransforms.NewTypeEraserTransformer(&transformers.TransformOptions{CompilerOptions: compilerOptions, Context: emitContext}).TransformSourceFile(file)

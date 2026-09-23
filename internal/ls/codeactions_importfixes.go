@@ -3,7 +3,6 @@ package ls
 import (
 	"context"
 	"slices"
-	"strings"
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/astnav"
@@ -38,7 +37,6 @@ var importFixErrorCodes = []int32{
 	diagnostics.Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashnode_and_then_add_node_to_the_types_field_in_your_tluaconfig.Code(),
 	diagnostics.Cannot_find_namespace_0_Did_you_mean_1.Code(),
 	diagnostics.Cannot_extend_an_interface_0_Did_you_mean_implements.Code(),
-	diagnostics.This_JSX_tag_requires_0_to_be_in_scope_but_it_could_not_be_found.Code(),
 }
 
 const (
@@ -57,7 +55,6 @@ type fixInfo struct {
 	fix                 *autoimport.Fix
 	symbolName          string
 	errorIdentifierText string
-	isJsxNamespaceFix   bool
 }
 
 func getImportCodeActions(ctx context.Context, fixContext *CodeFixContext) ([]*CodeAction, error) {
@@ -185,40 +182,15 @@ func getFixInfos(ctx context.Context, fixContext *CodeFixContext, errorCode int3
 	} else if errorCode == diagnostics.X_0_cannot_be_used_as_a_value_because_it_was_imported_using_import_type.Code() {
 		ch, done := fixContext.Program.GetTypeChecker(ctx)
 		defer done()
-		compilerOptions := fixContext.Program.Options()
-		symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
-
-		var allTypeOnlyFixes []*fixInfo
-		for _, sn := range symbolNames {
-			if !sn.isTypeOnly {
-				continue
-			}
-			fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, sn.name, fixContext.Program)
-			if fix != nil {
-				allTypeOnlyFixes = append(allTypeOnlyFixes, &fixInfo{fix: fix, symbolName: sn.name, errorIdentifierText: symbolToken.Text()})
-			}
+		sn := getSymbolNameToImport(ch, symbolToken)
+		if !sn.isTypeOnly {
+			return nil, nil
 		}
-
-		// For JSX opening tags, there can be separate type-only errors for both the tag name
-		// identifier and the JSX namespace identifier. When both produce valid fixes, we
-		// disambiguate using the diagnostic message, which quotes the symbol name in single
-		// quotes (e.g., "'React' cannot be used as a value..."). If filtering yields nothing
-		// (e.g., due to localization), fall back to returning all candidates.
-		diagnosticMessage := ""
-		if fixContext.Diagnostic != nil {
-			diagnosticMessage = fixContext.Diagnostic.Message.AsString()
+		fix := getTypeOnlyPromotionFix(ctx, fixContext.SourceFile, symbolToken, sn.name, fixContext.Program)
+		if fix == nil {
+			return nil, nil
 		}
-		if len(allTypeOnlyFixes) > 1 && diagnosticMessage != "" {
-			for _, fi := range allTypeOnlyFixes {
-				if strings.Contains(diagnosticMessage, "'"+fi.symbolName+"'") {
-					info = append(info, fi)
-				}
-			}
-		}
-		if len(info) == 0 {
-			info = allTypeOnlyFixes
-		}
-		return info, nil
+		return []*fixInfo{{fix: fix, symbolName: sn.name, errorIdentifierText: symbolToken.Text()}}, nil
 	} else {
 		var err error
 		view, err = fixContext.LS.getPreparedAutoImportView(fixContext.SourceFile)
@@ -250,7 +222,7 @@ func getFixesInfoForUMDImport(ctx context.Context, fixContext *CodeFixContext, t
 	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(token)
 
 	var result []*fixInfo
-	for _, fix := range view.GetFixes(ctx, export, false, isValidTypeOnlyUseSite, nil) {
+	for _, fix := range view.GetFixes(ctx, export, isValidTypeOnlyUseSite, nil) {
 		errorIdentifierText := ""
 		if ast.IsIdentifier(token) {
 			errorIdentifierText = token.Text()
@@ -273,23 +245,6 @@ func getUmdSymbol(token *ast.Node, ch *checker.Checker) *ast.Symbol {
 	if isUMDExportSymbol(umdSymbol) {
 		return umdSymbol
 	}
-
-	// The error wasn't for the symbolAtLocation, it was for the JSX tag itself, which needs access to e.g. `React`.
-	parent := token.Parent
-	if (ast.IsJsxOpeningLikeElement(parent) && parent.TagName() == token) ||
-		ast.IsJsxOpeningFragment(parent) {
-		var location *ast.Node
-		if ast.IsJsxOpeningLikeElement(parent) {
-			location = token
-		} else {
-			location = parent
-		}
-		jsxNamespace := ch.GetJsxNamespace(parent)
-		parentSymbol := ch.ResolveName(jsxNamespace, location, ast.SymbolFlagsValue, false /* excludeGlobals */)
-		if isUMDExportSymbol(parentSymbol) {
-			return parentSymbol
-		}
-	}
 	return nil
 }
 
@@ -302,47 +257,30 @@ func isUMDExportSymbol(symbol *ast.Symbol) bool {
 func getFixesInfoForNonUMDImport(ctx context.Context, fixContext *CodeFixContext, symbolToken *ast.Node, view *autoimport.View) []*fixInfo {
 	ch, done := fixContext.Program.GetTypeChecker(ctx)
 	defer done()
-	compilerOptions := fixContext.Program.Options()
 
 	isValidTypeOnlyUseSite := ast.IsValidTypeOnlyAliasUseSite(symbolToken)
-	symbolNames := getSymbolNamesToImport(fixContext.SourceFile, ch, symbolToken, compilerOptions)
-	var allInfo []*fixInfo
+	sn := getSymbolNameToImport(ch, symbolToken)
+	// Type-only imports are handled by the promotion code path, not the auto-import path.
+	if sn.isTypeOnly {
+		return nil
+	}
+
+	symbolName := sn.name
+	// "default" is a keyword and not a legal identifier for the import
+	if symbolName == "default" {
+		return nil
+	}
 
 	// Compute usage position for JSDoc import type fixes
 	usagePosition := fixContext.LS.converters.PositionToLineAndCharacter(fixContext.SourceFile, core.TextPos(scanner.GetTokenPosOfNode(symbolToken, fixContext.SourceFile, false)))
 
-	for _, sn := range symbolNames {
-		// Type-only imports are handled by the promotion code path, not the auto-import path.
-		if sn.isTypeOnly {
-			continue
-		}
-
-		symbolName := sn.name
-		// "default" is a keyword and not a legal identifier for the import
-		if symbolName == "default" {
-			continue
-		}
-
-		isJSXTagName := symbolName == symbolToken.Text() && ast.IsJsxTagName(symbolToken)
-		queryKind := autoimport.QueryKindExactMatch
-		if isJSXTagName {
-			queryKind = autoimport.QueryKindCaseInsensitiveMatch
-		}
-
-		exports := view.Search(symbolName, queryKind)
-		for _, export := range exports {
-			if isJSXTagName && !(export.Name() == symbolName || export.IsRenameable()) {
-				continue
-			}
-
-			fixes := view.GetFixes(ctx, export, isJSXTagName, isValidTypeOnlyUseSite, &usagePosition)
-			for _, fix := range fixes {
-				allInfo = append(allInfo, &fixInfo{
-					fix:               fix,
-					symbolName:        symbolName,
-					isJsxNamespaceFix: symbolName != symbolToken.Text(),
-				})
-			}
+	var allInfo []*fixInfo
+	for _, export := range view.Search(symbolName, autoimport.QueryKindExactMatch) {
+		for _, fix := range view.GetFixes(ctx, export, isValidTypeOnlyUseSite, &usagePosition) {
+			allInfo = append(allInfo, &fixInfo{
+				fix:        fix,
+				symbolName: symbolName,
+			})
 		}
 	}
 
@@ -378,53 +316,12 @@ type symbolNameInfo struct {
 	isTypeOnly bool // whether the symbol currently resolves to a type-only import
 }
 
-func getSymbolNamesToImport(sourceFile *ast.SourceFile, ch *checker.Checker, symbolToken *ast.Node, compilerOptions *core.CompilerOptions) []symbolNameInfo {
-	parent := symbolToken.Parent
-	if (ast.IsJsxOpeningLikeElement(parent) || ast.IsJsxClosingElement(parent)) &&
-		parent.TagName() == symbolToken &&
-		jsxModeNeedsExplicitImport(compilerOptions.Jsx) {
-		jsxNamespace := ch.GetJsxNamespace(sourceFile.AsNode())
-		if needsJsxNamespaceFix(jsxNamespace, symbolToken, ch) {
-			var result []symbolNameInfo
-			if !scanner.IsIntrinsicJsxName(symbolToken.Text()) {
-				compSymbol := ch.ResolveName(symbolToken.Text(), symbolToken, ast.SymbolFlagsValue, false /* excludeGlobals */)
-				if compSymbol == nil {
-					result = append(result, symbolNameInfo{name: symbolToken.Text()})
-				} else if ch.GetTypeOnlyAliasDeclaration(compSymbol) != nil {
-					result = append(result, symbolNameInfo{name: symbolToken.Text(), isTypeOnly: true})
-				}
-			}
-			nsIsTypeOnly := false
-			if nsSymbol := ch.ResolveName(jsxNamespace, symbolToken, ast.SymbolFlagsValue, true /* excludeGlobals */); nsSymbol != nil {
-				nsIsTypeOnly = ch.GetTypeOnlyAliasDeclaration(nsSymbol) != nil
-			}
-			result = append(result, symbolNameInfo{name: jsxNamespace, isTypeOnly: nsIsTypeOnly})
-			return result
-		}
-	}
+func getSymbolNameToImport(ch *checker.Checker, symbolToken *ast.Node) symbolNameInfo {
 	tokenIsTypeOnly := false
 	if sym := ch.ResolveName(symbolToken.Text(), symbolToken, ast.SymbolFlagsValue, true /* excludeGlobals */); sym != nil {
 		tokenIsTypeOnly = ch.GetTypeOnlyAliasDeclaration(sym) != nil
 	}
-	return []symbolNameInfo{{name: symbolToken.Text(), isTypeOnly: tokenIsTypeOnly}}
-}
-
-func needsJsxNamespaceFix(jsxNamespace string, symbolToken *ast.Node, ch *checker.Checker) bool {
-	if scanner.IsIntrinsicJsxName(symbolToken.Text()) {
-		return true
-	}
-	namespaceSymbol := ch.ResolveName(jsxNamespace, symbolToken, ast.SymbolFlagsValue, true /* excludeGlobals */)
-	if namespaceSymbol == nil {
-		return true
-	}
-	if slices.ContainsFunc(namespaceSymbol.Declarations, ast.IsTypeOnlyImportOrExportDeclaration) {
-		return (namespaceSymbol.Flags & ast.SymbolFlagsValue) == 0
-	}
-	return false
-}
-
-func jsxModeNeedsExplicitImport(jsx core.JsxEmit) bool {
-	return jsx == core.JsxEmitReact || jsx == core.JsxEmitReactNative
+	return symbolNameInfo{name: symbolToken.Text(), isTypeOnly: tokenIsTypeOnly}
 }
 
 func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext, view *autoimport.View) []*fixInfo {
@@ -436,14 +333,8 @@ func sortFixInfo(fixes []*fixInfo, fixContext *CodeFixContext, view *autoimport.
 	sorted := make([]*fixInfo, len(fixes))
 	copy(sorted, fixes)
 
-	// Sort by:
-	// 1. JSX namespace fixes last
-	// 2. Fix comparison using view.CompareFixes
+	// Sort by fix comparison using view.CompareFixesForSorting
 	slices.SortFunc(sorted, func(a, b *fixInfo) int {
-		// JSX namespace fixes should come last
-		if cmp := core.CompareBooleans(a.isJsxNamespaceFix, b.isJsxNamespaceFix); cmp != 0 {
-			return cmp
-		}
 		return view.CompareFixesForSorting(a.fix, b.fix)
 	})
 

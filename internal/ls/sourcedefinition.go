@@ -358,7 +358,7 @@ func (r *sourceDefResolver) findImplementationFileFromDtsFileName(
 	dtsFileName string,
 	preferredMode core.ResolutionMode,
 ) string {
-	if jsExt := module.TryGetJSExtensionForFile(dtsFileName, r.options); jsExt != "" {
+	if jsExt := module.TryGetJSExtensionForFile(dtsFileName); jsExt != "" {
 		candidate := tspath.ChangeExtension(dtsFileName, jsExt)
 		if r.fs.FileExists(candidate) {
 			return candidate

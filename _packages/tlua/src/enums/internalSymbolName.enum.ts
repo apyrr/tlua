@@ -10,7 +10,6 @@ export enum InternalSymbolName {
     Missing = "__missing",
     Type = "__type",
     Object = "__object",
-    JSXAttributes = "__jsxAttributes",
     Class = "__class",
     Function = "__function",
     Computed = "__computed",

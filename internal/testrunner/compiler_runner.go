@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	compilerBaselineRegex = regexp.MustCompile(`\.(tlua|tsx)$`)
+	compilerBaselineRegex = regexp.MustCompile(`\.tlua$`)
 	requireStr            = "require("
 	referencesRegex       = regexp.MustCompile(`reference\spath`)
 )

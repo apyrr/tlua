@@ -108,15 +108,11 @@ type completionDataData struct {
 	symbolToSortTextMap          map[ast.SymbolId]SortText
 	previousToken                *ast.Node
 	contextToken                 *ast.Node
-	jsxInitializer               jsxInitializer
 	insideJSDocTagTypeExpression bool
 	isTypeOnlyLocation           bool
-	// In JSX tag name and attribute names, identifiers like "my-tag" or "aria-name" is valid identifier.
-	isJsxIdentifierExpected   bool
-	isRightOfOpenTag          bool
-	isRightOfDotOrQuestionDot bool
-	importStatementCompletion *importStatementCompletionInfo // !!!
-	hasUnresolvedAutoImports  bool                           // !!!
+	isRightOfDotOrQuestionDot    bool
+	importStatementCompletion    *importStatementCompletionInfo // !!!
+	hasUnresolvedAutoImports     bool                           // !!!
 	// flags CompletionInfoFlags // !!!
 	defaultCommitCharacters []string
 }
@@ -141,13 +137,6 @@ type importStatementCompletionInfo struct {
 	isTopLevelTypeOnly             bool
 	couldBeTypeOnlyImportSpecifier bool
 	replacementSpan                *lsproto.Range
-}
-
-// If we're after the `=` sign but no identifier has been typed yet,
-// value will be `true` but initializer will be `nil`.
-type jsxInitializer struct {
-	isInitializer bool
-	initializer   *ast.IdentifierNode
 }
 
 type KeywordCompletionFilters int
@@ -183,7 +172,7 @@ const (
 	CompletionKindString
 )
 
-var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " ", "*"}
+var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "#", " ", "*"}
 
 // All commit characters, valid when `isNewIdentifierLocation` is false.
 var allCommitCharacters = []string{".", ",", ";"}
@@ -529,16 +518,11 @@ func (l *LanguageService) getCompletionData(
 	contextToken, previousToken := getRelevantTokens(position, file)
 
 	// Find the node where completion is requested on.
-	// Also determine whether we are trying to complete with members of that node
-	// or attributes of a JSX tag.
+	// Also determine whether we are trying to complete with members of that node.
 	node := currentToken
 	var propertyAccessToConvert *ast.PropertyAccessExpressionNode
 	isRightOfDot := false
 	isRightOfQuestionDot := false
-	isRightOfOpenTag := false
-	isStartingCloseTag := false
-	var jsxInitializer jsxInitializer
-	isJsxIdentifierExpected := false
 	var importStatementCompletion *importStatementCompletionInfo
 	location := astnav.GetTouchingPropertyName(file, position)
 	keywordFilters := KeywordCompletionFiltersNone
@@ -569,7 +553,7 @@ func (l *LanguageService) getCompletionData(
 			isNewIdentifierLocation = importStatementCompletionInfo.isNewIdentifierLocation
 		}
 		// Bail out if this is a known invalid completion location.
-		if isCompletionListBlocker(contextToken, previousToken, location, file, position, typeChecker) {
+		if isCompletionListBlocker(contextToken, previousToken, file, position, typeChecker) {
 			if keywordFilters != KeywordCompletionFiltersNone {
 				isNewIdentifierLocation, _ := computeCommitCharactersAndIsNewIdentifier(contextToken, file, position)
 				return keywordCompletionData(keywordFilters, isJSOnlyLocation, isNewIdentifierLocation), nil
@@ -607,75 +591,13 @@ func (l *LanguageService) getCompletionData(
 				// or leading into a '...' token. Just bail out instead.
 				return nil, nil
 			}
-		} else { // !!! else if (!importStatementCompletion)
-			// <UI.Test /* completion position */ />
-			// If the tagname is a property access expression, we will then walk up to the top most of property access expression.
-			// Then, try to get a JSX container and its associated attributes type.
-			if parent != nil && parent.Kind == ast.KindPropertyAccessExpression {
-				contextToken = parent
-				parent = parent.Parent
-			}
-
-			// Fix location
-			if parent == location {
-				switch currentToken.Kind {
-				case ast.KindGreaterThanToken:
-					if parent.Kind == ast.KindJsxElement || parent.Kind == ast.KindJsxOpeningElement {
-						location = currentToken
-					}
-				case ast.KindLessThanSlashToken:
-					if parent.Kind == ast.KindJsxSelfClosingElement {
-						location = currentToken
-					}
-				}
-			}
-
-			switch parent.Kind {
-			case ast.KindJsxClosingElement:
-				if contextToken.Kind == ast.KindLessThanSlashToken {
-					isStartingCloseTag = true
-					location = contextToken
-				}
-			case ast.KindBinaryExpression:
-				if !binaryExpressionMayBeOpenTag(parent.AsBinaryExpression()) {
-					break
-				}
-				fallthrough
-			case ast.KindJsxSelfClosingElement, ast.KindJsxElement, ast.KindJsxOpeningElement:
-				isJsxIdentifierExpected = true
-				if contextToken.Kind == ast.KindLessThanToken {
-					isRightOfOpenTag = true
-					location = contextToken
-				}
-			case ast.KindJsxExpression, ast.KindJsxSpreadAttribute:
-				// First case is for `<div foo={true} [||] />` or `<div foo={true} [||] ></div>`,
-				// `parent` will be `{true}` and `previousToken` will be `}`.
-				// Second case is for `<div foo={true} t[||] ></div>`.
-				// Second case must not match for `<div foo={undefine[||]}></div>`.
-				if previousToken.Kind == ast.KindCloseBraceToken ||
-					previousToken.Kind == ast.KindIdentifier && previousToken.Parent.Kind == ast.KindJsxAttribute {
-					isJsxIdentifierExpected = true
-				}
-			case ast.KindJsxAttribute:
-				// For `<div className="x" [||] ></div>`, `parent` will be JsxAttribute and `previousToken` will be its initializer.
-				if parent.Initializer() == previousToken && previousToken.End() < position {
-					isJsxIdentifierExpected = true
-				} else {
-					switch previousToken.Kind {
-					case ast.KindEqualsToken:
-						jsxInitializer.isInitializer = true
-					case ast.KindIdentifier:
-						isJsxIdentifierExpected = true
-						// For `<div x=[|f/**/|]`, `parent` will be `x` and `previousToken.parent` will be `f` (which is its own JsxAttribute).
-						// Note for `<div someBool f>` we don't want to treat this as a jsx inializer, instead it's the attribute name.
-						if parent != previousToken.Parent &&
-							parent.Initializer() == nil &&
-							astnav.FindChildOfKind(parent, ast.KindEqualsToken, file) != nil {
-							jsxInitializer.initializer = previousToken
-						}
-					}
-				}
-			}
+		} else if parent != nil && parent.Kind == ast.KindPropertyAccessExpression { // !!! else if (!importStatementCompletion)
+			// If the context token is the name of a property access expression, walk up to the
+			// property access expression. The context token then differs from previousToken, so
+			// symbol visibility is judged at the start of the member name rather than at the
+			// cursor: in `local y = t.x |` the local `y` is not yet in scope (the expression may
+			// continue), and the cursor sitting past the statement's end must not reveal it.
+			contextToken = parent
 		}
 	}
 
@@ -1081,7 +1003,7 @@ func (l *LanguageService) getCompletionData(
 			return nil
 		}
 
-		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isRightOfOpenTag, isTypeOnlyLocation)
+		autoImports = view.GetCompletions(ctx, lowerCaseTokenText, usagePosition, isTypeOnlyLocation)
 		return nil
 	}
 
@@ -1236,41 +1158,6 @@ func (l *LanguageService) getCompletionData(
 		return globalsSearchSuccess, nil
 	}
 
-	tryGetJsxCompletionSymbols := func() (globalsSearch, error) {
-		jsxContainer := tryGetContainingJsxElement(contextToken, file)
-		if jsxContainer == nil {
-			return globalsSearchContinue, nil
-		}
-		// Cursor is inside a JSX self-closing element or opening element.
-		attrsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsNone)
-		if attrsType == nil {
-			return globalsSearchContinue, nil
-		}
-		completionsType := typeChecker.GetContextualType(jsxContainer.Attributes(), checker.ContextFlagsIgnoreNodeInferences)
-		filteredSymbols := filterJsxAttributes(
-			getPropertiesForObjectExpression(attrsType, completionsType, jsxContainer.Attributes(), typeChecker),
-			jsxContainer.Attributes().Properties(),
-			file,
-			position,
-		)
-
-		symbols = append(symbols, filteredSymbols...)
-		// Set sort texts.
-		for _, symbol := range filteredSymbols {
-			symbolId := ast.GetSymbolId(symbol)
-			if symbol.Flags&ast.SymbolFlagsOptional != 0 {
-				_, ok := symbolToSortTextMap[symbolId]
-				if !ok {
-					symbolToSortTextMap[symbolId] = SortTextOptionalMember
-				}
-			}
-		}
-
-		completionKind = CompletionKindMemberLike
-		isNewIdentifierLocation = false
-		return globalsSearchSuccess, nil
-	}
-
 	getGlobalCompletions := func() (globalsSearch, error) {
 		if tryGetFunctionLikeBodyCompletionContainer(contextToken) != nil {
 			keywordFilters = KeywordCompletionFiltersFunctionLikeBodyKeywords
@@ -1394,7 +1281,6 @@ func (l *LanguageService) getCompletionData(
 			tryGetImportOrExportClauseCompletionSymbols,
 			tryGetLocalNamedExportCompletionSymbols,
 			tryGetClassLikeCompletionSymbols,
-			tryGetJsxCompletionSymbols,
 			getGlobalCompletions,
 		}
 		for _, globalSearchFunc := range globalSearchFuncs {
@@ -1411,22 +1297,6 @@ func (l *LanguageService) getCompletionData(
 
 	if isRightOfDot || isRightOfQuestionDot {
 		getTypeScriptMemberSymbols()
-	} else if isRightOfOpenTag {
-		symbols = typeChecker.GetJsxIntrinsicTagNamesAt(location)
-		core.CheckEachDefined(symbols, "GetJsxIntrinsicTagNamesAt() should all be defined")
-		if _, err := tryGetGlobalSymbols(); err != nil {
-			return nil, err
-		}
-		completionKind = CompletionKindGlobal
-		keywordFilters = KeywordCompletionFiltersNone
-	} else if isStartingCloseTag {
-		tagName := contextToken.Parent.Parent.AsJsxElement().OpeningElement.TagName()
-		tagSymbol := typeChecker.GetSymbolAtLocation(tagName)
-		if tagSymbol != nil {
-			symbols = []*ast.Symbol{tagSymbol}
-		}
-		completionKind = CompletionKindGlobal
-		keywordFilters = KeywordCompletionFiltersNone
 	} else {
 		// For JavaScript or TypeScript, if we're not after a dot, then just try to get the
 		// global symbols in scope.  These results should be valid for either language as
@@ -1450,9 +1320,9 @@ func (l *LanguageService) getCompletionData(
 		}
 	}
 
-	// exclude literal suggestions after <input type="text" [||] /> microsoft/TypeScript#51667) and after closing quote (microsoft/TypeScript#52675)
+	// exclude literal suggestions after closing quote (microsoft/TypeScript#52675)
 	// for strings getStringLiteralCompletions handles completions
-	isLiteralExpected := !(previousToken != nil && ast.IsStringLiteralLike(previousToken)) && !isJsxIdentifierExpected
+	isLiteralExpected := !(previousToken != nil && ast.IsStringLiteralLike(previousToken))
 	var literals []literalValue
 	if isLiteralExpected {
 		var types []*checker.Type
@@ -1487,11 +1357,8 @@ func (l *LanguageService) getCompletionData(
 		symbolToSortTextMap:          symbolToSortTextMap,
 		previousToken:                previousToken,
 		contextToken:                 contextToken,
-		jsxInitializer:               jsxInitializer,
 		insideJSDocTagTypeExpression: insideJSDocTagTypeExpression,
 		isTypeOnlyLocation:           isTypeOnlyLocation,
-		isJsxIdentifierExpected:      isJsxIdentifierExpected,
-		isRightOfOpenTag:             isRightOfOpenTag,
 		isRightOfDotOrQuestionDot:    isRightOfDot || isRightOfQuestionDot,
 		importStatementCompletion:    importStatementCompletion,
 		hasUnresolvedAutoImports:     hasUnresolvedAutoImports,
@@ -1531,14 +1398,6 @@ func (l *LanguageService) completionInfoFromData(
 	isNewIdentifierLocation := data.isNewIdentifierLocation
 	literals := data.literals
 	preferences := l.UserPreferences()
-
-	// Verify if the file is JSX language variant
-	if file.LanguageVariant == core.LanguageVariantJSX {
-		list := l.getJsxClosingTagCompletion(ctx, data.location, file, position)
-		if list != nil {
-			return list, nil
-		}
-	}
 
 	isChecked := isCheckedFile(file, compilerOptions)
 	if isChecked && !isNewIdentifierLocation && len(data.symbols) == 0 && keywordFilters == KeywordCompletionFiltersNone {
@@ -1625,7 +1484,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			symbol,
 			origin,
 			data.completionKind,
-			data.isJsxIdentifierExpected,
 		)
 		// Dedupe number keys by their mangled name so key 1 can never collapse
 		// with the disjoint string key "1" regardless of how each displays.
@@ -1868,16 +1726,6 @@ func (l *LanguageService) createCompletionItem(
 		replacementSpan = new(l.createLspRangeFromBounds(astnav.GetStartOfNode(dot, file, false /*includeJSDoc*/), end, file))
 	}
 
-	if data.jsxInitializer.isInitializer {
-		if insertText == "" {
-			insertText = name
-		}
-		insertText = fmt.Sprintf("{%s}", insertText)
-		if data.jsxInitializer.initializer != nil {
-			replacementSpan = new(l.createLspRangeFromNode(data.jsxInitializer.initializer, file))
-		}
-	}
-
 	if originIsTypeOnlyAlias(origin) {
 		hasAction = true
 	}
@@ -1915,48 +1763,12 @@ func (l *LanguageService) createCompletionItem(
 		sortText = sortBelow(sortText)
 	}
 
-	if data.isJsxIdentifierExpected &&
-		!data.isRightOfOpenTag &&
-		clientSupportsItemSnippet(ctx) &&
-		preferences.JsxAttributeCompletionStyle != lsutil.JsxAttributeCompletionStyleNone &&
-		!(data.location.Parent != nil && ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
-		useBraces := preferences.JsxAttributeCompletionStyle == lsutil.JsxAttributeCompletionStyleBraces
-		t := typeChecker.GetTypeOfSymbolAtLocation(symbol, data.location)
-
-		// If is boolean like or undefined, don't return a snippet, we want to return just the completion.
-		if preferences.JsxAttributeCompletionStyle == lsutil.JsxAttributeCompletionStyleAuto &&
-			!t.IsBooleanLike() &&
-			!(t.IsUnion() && core.Some(t.Types(), (*checker.Type).IsBooleanLike)) {
-			if t.IsStringLike() ||
-				t.IsUnion() &&
-					core.Every(
-						t.Types(),
-						func(t *checker.Type) bool {
-							return t.Flags()&(checker.TypeFlagsStringLike|checker.TypeFlagsNil) != 0 ||
-								isStringAndEmptyAnonymousObjectIntersection(typeChecker, t)
-						},
-					) {
-				// If type is string-like or undefined, use quotes.
-				insertText = fmt.Sprintf("%s=%s", escapeSnippetText(name), quote(file, preferences, "$1"))
-				isSnippet = true
-			} else {
-				// Use braces for everything else.
-				useBraces = true
-			}
-		}
-
-		if useBraces {
-			insertText = escapeSnippetText(name) + "={$1}"
-			isSnippet = true
-		}
-	}
-
 	parentNamedImportOrExport := ast.FindAncestor(data.location, isNamedImportsOrExports)
 	if parentNamedImportOrExport != nil {
 		// A word operator is identifier-shaped but scans as punctuation, so like
 		// a non-identifier name it has to be imported through its string
 		// spelling: `import { "and" as and_ }`.
-		if !scanner.IsBareWritableName(name, core.LanguageVariantStandard) {
+		if !scanner.IsBareWritableName(name) {
 			insertText = quotePropertyName(file, preferences, name)
 
 			if parentNamedImportOrExport.Kind == ast.KindNamedImports {
@@ -2292,7 +2104,6 @@ func getCompletionEntryDisplayNameForSymbol(
 	symbol *ast.Symbol,
 	origin *symbolOriginInfo,
 	completionKind CompletionKind,
-	isJsxIdentifierExpected bool,
 ) (displayName string, needsConvertPropertyAccess bool) {
 	if originIsIgnore(origin) {
 		return "", false
@@ -2340,11 +2151,10 @@ func getCompletionEntryDisplayNameForSymbol(
 		return "", false
 	}
 
-	variant := core.IfElse(isJsxIdentifierExpected, core.LanguageVariantJSX, core.LanguageVariantStandard)
 	// name is a valid identifier or private identifier text. The word operators
 	// are identifier-shaped but scan as punctuation, so they need the bracket
 	// spelling `t["and"]` rather than a bare `t.and`, which does not parse.
-	if scanner.IsBareWritableName(name, variant) {
+	if scanner.IsBareWritableName(name) {
 		return name, false
 	}
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
@@ -2434,7 +2244,7 @@ func getRelevantTokens(position int, file *ast.SourceFile) (contextToken *ast.No
 	return previousToken, previousToken
 }
 
-// "." | '"' | "'" | "`" | "/" | "@" | "<" | "#" | " " | "*"
+// "." | '"' | "'" | "`" | "/" | "@" | "#" | " " | "*"
 type CompletionsTriggerCharacter = string
 
 func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCharacter, contextToken *ast.Node, position int) bool {
@@ -2448,25 +2258,21 @@ func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCha
 			position == astnav.GetStartOfNode(contextToken, file, false /*includeJSDoc*/)+1
 	case "#":
 		return false
-	case "<":
-		// Opening JSX tag
-		return contextToken != nil &&
-			contextToken.Kind == ast.KindLessThanToken &&
-			(!ast.IsBinaryExpression(contextToken.Parent) || binaryExpressionMayBeOpenTag(contextToken.Parent.AsBinaryExpression()))
 	case "/":
 		if contextToken == nil {
 			return false
 		}
-		if ast.IsStringLiteralLike(contextToken) {
-			return ast.TryGetImportFromModuleSpecifier(contextToken) != nil
-		}
-		return contextToken.Kind == ast.KindLessThanSlashToken && ast.IsJsxClosingElement(contextToken.Parent)
+		return ast.IsStringLiteralLike(contextToken) && ast.TryGetImportFromModuleSpecifier(contextToken) != nil
 	case " ":
 		return contextToken != nil && contextToken.Kind == ast.KindImportKeyword && contextToken.Parent.Kind == ast.KindSourceFile
 	case "*":
 		return isPotentiallyValidJSDocSnippetCompletionPosition(file, position)
 	default:
-		panic("Unknown trigger character: " + triggerCharacter)
+		// A client may send a character the server never advertised (such as the
+		// JSX `<`, which tlua no longer registers); that is client input. An
+		// advertised character without a case here is internal drift.
+		debug.Assert(!slices.Contains(TriggerCharacters, triggerCharacter), "unhandled completion trigger character: "+triggerCharacter)
+		return false
 	}
 }
 
@@ -2476,10 +2282,6 @@ func isStringLiteralOrTemplate(node *ast.Node) bool {
 		return true
 	}
 	return false
-}
-
-func binaryExpressionMayBeOpenTag(binaryExpression *ast.BinaryExpression) bool {
-	return ast.NodeIsMissing(binaryExpression.Left)
 }
 
 func isCheckedFile(file *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
@@ -2606,8 +2408,6 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 			return typeChecker.GetContextualType(parent.Initializer(), checker.ContextFlagsNone)
 		case ast.KindBinaryExpression:
 			return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
-		case ast.KindJsxAttribute:
-			return typeChecker.GetContextualTypeForJsxAttribute(parent)
 		case ast.KindPropertyAssignment:
 			// The value slot of a Lua keyed field `x = <cursor>` is contextually
 			// typed by the field's property type. A bare type parameter degrades
@@ -2632,9 +2432,6 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 			return nil
 		}
 	case ast.KindOpenBraceToken:
-		if ast.IsJsxExpression(parent) && !ast.IsJsxElement(parent.Parent) && !ast.IsJsxFragment(parent.Parent) {
-			return typeChecker.GetContextualTypeForJsxAttribute(parent.Parent)
-		}
 		return nil
 	case ast.KindOpenBracketToken:
 		// When completing after `[` in an array literal (e.g., `[/*here*/]`),
@@ -2800,23 +2597,6 @@ func quotePropertyName(file *ast.SourceFile, preferences lsutil.UserPreferences,
 	// A string key is always quoted: t["1"] is disjoint from the number key
 	// t[1], so a numeric-looking string key must not insert as a number index.
 	return quote(file, preferences, name)
-}
-
-// Checks whether type is `string & {}`, which is semantically equivalent to string but
-// is not reduced by the checker as a special case used for supporting string literal completions
-// for string type.
-func isStringAndEmptyAnonymousObjectIntersection(typeChecker *checker.Checker, t *checker.Type) bool {
-	if !t.IsIntersection() {
-		return false
-	}
-
-	return len(t.Types()) == 2 &&
-		(areIntersectedTypesAvoidingStringReduction(typeChecker, t.Types()[0], t.Types()[1]) ||
-			areIntersectedTypesAvoidingStringReduction(typeChecker, t.Types()[1], t.Types()[0]))
-}
-
-func areIntersectedTypesAvoidingStringReduction(typeChecker *checker.Checker, t1 *checker.Type, t2 *checker.Type) bool {
-	return t1.IsString() && typeChecker.IsEmptyAnonymousObjectType(t2)
 }
 
 func escapeSnippetText(text string) string {
@@ -3116,7 +2896,7 @@ func (l *LanguageService) getJSCompletionEntries(
 		}
 		// The name table holds string-literal element-access names, so a
 		// `t["and"]` in the file must not be offered as a bare completion.
-		if !uniqueNames.Has(name) && scanner.IsBareWritableName(name, core.LanguageVariantStandard) {
+		if !uniqueNames.Has(name) && scanner.IsBareWritableName(name) {
 			uniqueNames.Add(name)
 			sortedEntries = append(sortedEntries, &CompletionItem{
 				CompletionItem: &lsproto.CompletionItem{
@@ -3301,7 +3081,6 @@ func isSnippetScope(scopeNode *ast.Node) bool {
 	switch scopeNode.Kind {
 	case ast.KindSourceFile,
 		ast.KindTemplateExpression,
-		ast.KindJsxExpression,
 		ast.KindBlock:
 		return true
 	default:
@@ -3664,91 +3443,6 @@ func isFromObjectTypeDeclaration(node *ast.Node) bool {
 	return node.Parent != nil && ast.IsTypeElement(node.Parent) && ast.IsObjectTypeDeclaration(node.Parent.Parent)
 }
 
-func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *ast.JsxOpeningLikeElement {
-	if contextToken == nil {
-		return nil
-	}
-
-	parent := contextToken.Parent
-	switch contextToken.Kind {
-	case ast.KindGreaterThanToken, ast.KindLessThanSlashToken, ast.KindSlashToken, ast.KindIdentifier,
-		ast.KindPropertyAccessExpression, ast.KindJsxNamespacedName, ast.KindJsxAttributes, ast.KindJsxAttribute, ast.KindJsxSpreadAttribute:
-		if parent != nil && (parent.Kind == ast.KindJsxSelfClosingElement || parent.Kind == ast.KindJsxOpeningElement) {
-			if contextToken.Kind == ast.KindGreaterThanToken {
-				precedingToken := astnav.FindPrecedingToken(file, contextToken.Pos())
-				if len(parent.TypeArguments()) == 0 ||
-					precedingToken != nil && precedingToken.Kind == ast.KindSlashToken {
-					return nil
-				}
-			}
-			return parent
-		} else if parent != nil && ast.IsJsxNamespacedName(parent) &&
-			parent.Parent != nil && (parent.Parent.Kind == ast.KindJsxSelfClosingElement || parent.Parent.Kind == ast.KindJsxOpeningElement) {
-			return parent.Parent
-		} else if parent != nil && parent.Kind == ast.KindJsxAttribute {
-			// Currently we parse JsxOpeningLikeElement as:
-			//      JsxOpeningLikeElement
-			//          attributes: JsxAttributes
-			//             properties: NodeArray<JsxAttributeLike>
-			return parent.Parent.Parent
-		}
-	// The context token is the closing } or " of an attribute, which means
-	// its parent is a JsxExpression, whose parent is a JsxAttribute,
-	// whose parent is a JsxOpeningLikeElement
-	case ast.KindStringLiteral:
-		if parent != nil && (parent.Kind == ast.KindJsxAttribute || parent.Kind == ast.KindJsxSpreadAttribute) {
-			// Currently we parse JsxOpeningLikeElement as:
-			//      JsxOpeningLikeElement
-			//          attributes: JsxAttributes
-			//             properties: NodeArray<JsxAttributeLike>
-			return parent.Parent.Parent
-		}
-	case ast.KindCloseBraceToken:
-		if parent != nil && parent.Kind == ast.KindJsxExpression &&
-			parent.Parent != nil && parent.Parent.Kind == ast.KindJsxAttribute {
-			// Currently we parse JsxOpeningLikeElement as:
-			//      JsxOpeningLikeElement
-			//          attributes: JsxAttributes
-			//             properties: NodeArray<JsxAttributeLike>
-			//                  each JsxAttribute can have initializer as JsxExpression
-			return parent.Parent.Parent.Parent
-		}
-		if parent != nil && parent.Kind == ast.KindJsxSpreadAttribute {
-			// Currently we parse JsxOpeningLikeElement as:
-			//      JsxOpeningLikeElement
-			//          attributes: JsxAttributes
-			//             properties: NodeArray<JsxAttributeLike>
-			return parent.Parent.Parent
-		}
-	}
-
-	return nil
-}
-
-// Filters out completion suggestions from 'symbols' according to existing JSX attributes.
-// @returns Symbols to be suggested in a JSX element, barring those whose attributes
-// do not occur at the current position and have not otherwise been typed.
-func filterJsxAttributes(
-	symbols []*ast.Symbol,
-	attributes []*ast.JsxAttributeLike,
-	file *ast.SourceFile,
-	position int,
-) (filteredMembers []*ast.Symbol) {
-	existingNames := collections.Set[string]{}
-	for _, attr := range attributes {
-		// If this is the item we are editing right now, do not filter it out.
-		if isCurrentlyEditingNode(attr, file, position) {
-			continue
-		}
-
-		if attr.Kind == ast.KindJsxAttribute {
-			existingNames.Add(attr.Name().Text())
-		}
-	}
-
-	return core.Filter(symbols, func(a *ast.Symbol) bool { return !existingNames.Has(a.Name) })
-}
-
 func isTypeKeywordTokenOrIdentifier(node *ast.Node) bool {
 	return ast.IsTypeKeywordToken(node) ||
 		ast.IsIdentifier(node) && scanner.IdentifierToKeywordKind(node.AsIdentifier()) == ast.KindTypeKeyword
@@ -3842,88 +3536,6 @@ func (l *LanguageService) specificKeywordCompletionInfo(
 		&defaultCommitCharacters,
 		optionalReplacementSpan,
 	)
-	return &CompletionList{
-		IsIncomplete: false,
-		ItemDefaults: itemDefaults,
-		Items:        items,
-	}
-}
-
-func (l *LanguageService) getJsxClosingTagCompletion(
-	ctx context.Context,
-	location *ast.Node,
-	file *ast.SourceFile,
-	position int,
-) *CompletionList {
-	// We wanna walk up the tree till we find a JSX closing element.
-	jsxClosingElement := ast.FindAncestorOrQuit(location, func(node *ast.Node) ast.FindAncestorResult {
-		switch node.Kind {
-		case ast.KindJsxClosingElement:
-			return ast.FindAncestorTrue
-		case ast.KindLessThanSlashToken, ast.KindGreaterThanToken, ast.KindIdentifier, ast.KindPropertyAccessExpression:
-			return ast.FindAncestorFalse
-		default:
-			return ast.FindAncestorQuit
-		}
-	})
-
-	if jsxClosingElement == nil {
-		return nil
-	}
-
-	// In the TypeScript JSX element, if such element is not defined. When users query for completion at closing tag,
-	// instead of simply giving unknown value, the completion will return the tag-name of an associated opening-element.
-	// For example:
-	//     var x = <div> </ /*1*/
-	// The completion list at "1" will contain "div>" with type any
-	// And at `<div> </ /*1*/ >` (with a closing `>`), the completion list will contain "div".
-	// And at property access expressions `<MainComponent.Child> </MainComponent. /*1*/ >` the completion will
-	// return full closing tag with an optional replacement span
-	// For example:
-	//     var x = <MainComponent.Child> </     MainComponent /*1*/  >
-	//     var y = <MainComponent.Child> </   /*2*/   MainComponent >
-	// the completion list at "1" and "2" will contain "MainComponent.Child" with a replacement span of closing tag name
-	hasClosingAngleBracket := astnav.FindChildOfKind(jsxClosingElement, ast.KindGreaterThanToken, file) != nil
-	tagName := jsxClosingElement.Parent.AsJsxElement().OpeningElement.TagName()
-	closingTag := scanner.GetTextOfNode(tagName)
-	fullClosingTag := closingTag + core.IfElse(hasClosingAngleBracket, "", ">")
-	optionalReplacementSpan := new(l.createLspRangeFromNode(jsxClosingElement.TagName(), file))
-	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
-
-	lspItem := l.createLSPCompletionItem(
-		ctx,
-		fullClosingTag, /*name*/
-		"",             /*insertText*/
-		"",             /*filterText*/
-		SortTextLocationPriority,
-		lsutil.ScriptElementKindClassElement,
-		lsutil.ScriptElementKindModifierNone, /*kindModifiers*/
-		nil,                                  /*replacementSpan*/
-		nil,                                  /*commitCharacters*/
-		nil,                                  /*labelDetails*/
-		file,
-		position,
-		true,  /*isMemberCompletion*/
-		false, /*isSnippet*/
-		false, /*hasAction*/
-		false, /*preselect*/
-		"",    /*source*/
-		nil,   /*autoImportEntryData*/ // !!! jsx autoimports
-		nil,   /*detail*/
-	)
-	item := &CompletionItem{
-		CompletionItem: lspItem,
-	}
-	items := []*CompletionItem{item}
-	itemDefaults := l.setItemDefaults(
-		ctx,
-		position,
-		file,
-		items,
-		&defaultCommitCharacters,
-		optionalReplacementSpan,
-	)
-
 	return &CompletionList{
 		IsIncomplete: false,
 		ItemDefaults: itemDefaults,
@@ -4027,15 +3639,13 @@ func (l *LanguageService) createLSPCompletionItem(
 func isCompletionListBlocker(
 	contextToken *ast.Node,
 	previousToken *ast.Node,
-	location *ast.Node,
 	file *ast.SourceFile,
 	position int,
 	typeChecker *checker.Checker,
 ) bool {
 	return isInStringOrRegularExpressionOrTemplateLiteral(contextToken, position) ||
 		isSolelyIdentifierDefinitionLocation(contextToken, previousToken, file, position, typeChecker) ||
-		isDotOfNumericLiteral(contextToken, file) ||
-		isInJsxText(contextToken, location)
+		isDotOfNumericLiteral(contextToken, file)
 }
 
 func isInStringOrRegularExpressionOrTemplateLiteral(contextToken *ast.Node, position int) bool {
@@ -4131,7 +3741,6 @@ func isSolelyIdentifierDefinitionLocation(
 	}
 
 	return ast.IsDeclarationName(contextToken) &&
-		!ast.IsJsxAttribute(parent) &&
 		// Don't block completions if we're in `interface I /**/` or `<T /**/>`,
 		// because we're *past* the end of the identifier and might want to complete `extends`.
 		// If `contextToken !== previousToken`, this is `interface I ex/**/` or `<T ex/**/>`.
@@ -4149,38 +3758,6 @@ func isDotOfNumericLiteral(contextToken *ast.Node, file *ast.SourceFile) bool {
 		text := file.Text()[contextToken.Pos():contextToken.End()]
 		r, _ := utf8.DecodeLastRuneInString(text)
 		return r == '.'
-	}
-
-	return false
-}
-
-func isInJsxText(contextToken *ast.Node, location *ast.Node) bool {
-	if contextToken.Kind == ast.KindJsxText {
-		return true
-	}
-
-	if contextToken.Kind == ast.KindGreaterThanToken && contextToken.Parent != nil {
-		// <Component<string> /**/ />
-		// <Component<string> /**/ ><Component>
-		// - contextToken: GreaterThanToken (before cursor)
-		// - location: JsxSelfClosingElement or JsxOpeningElement
-		// - contextToken.parent === location
-		if location == contextToken.Parent && ast.IsJsxOpeningLikeElement(location) {
-			return false
-		}
-
-		if contextToken.Parent.Kind == ast.KindJsxOpeningElement {
-			// <div>/**/
-			// - contextToken: GreaterThanToken (before cursor)
-			// - location: JSXElement
-			// - different parents (JSXOpeningElement, JSXElement)
-			return location.Parent.Kind != ast.KindJsxOpeningElement
-		}
-
-		if contextToken.Parent.Kind == ast.KindJsxClosingElement ||
-			contextToken.Parent.Kind == ast.KindJsxSelfClosingElement {
-			return contextToken.Parent.Parent != nil && contextToken.Parent.Parent.Kind == ast.KindJsxElement
-		}
 	}
 
 	return false
@@ -4368,7 +3945,6 @@ type symbolDetails struct {
 	origin             *symbolOriginInfo
 	previousToken      *ast.Node
 	contextToken       *ast.Node
-	jsxInitializer     jsxInitializer
 	isTypeOnlyLocation bool
 }
 
@@ -4416,7 +3992,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	// completion entry.
 	for index, symbol := range data.symbols {
 		origin := data.symbolToOriginInfoMap[index]
-		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.isJsxIdentifierExpected)
+		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind)
 		if displayName == itemData.Name &&
 			(itemData.Source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
 				getSourceFromOrigin(origin) == itemData.Source ||
@@ -4428,7 +4004,6 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 					origin:             origin,
 					previousToken:      data.previousToken,
 					contextToken:       data.contextToken,
-					jsxInitializer:     data.jsxInitializer,
 					isTypeOnlyLocation: data.isTypeOnlyLocation,
 				},
 			}

@@ -13,7 +13,6 @@ import type {
     ImportTypeNode,
     JSDocParameterOrPropertyTag,
     JSDocTypeLiteral,
-    JsxText,
     ModuleDeclaration,
     Node,
     ObjectLiteralExpression,
@@ -32,7 +31,6 @@ export function getNodeDataType(kind: SyntaxKind): number {
     switch (kind) {
         case SyntaxKind.Identifier:
         case SyntaxKind.PrivateIdentifier:
-        case SyntaxKind.JsxText:
         case SyntaxKind.JSDocText:
         case SyntaxKind.JSDocLink:
         case SyntaxKind.JSDocLinkPlain:
@@ -70,8 +68,6 @@ export function getNodeCommonData(node: Node): number {
             return ((node as ObjectLiteralExpression).multiLine ? 1 : 0) << 24;
         case SyntaxKind.TypeOperator:
             return ((node as TypeOperatorNode).operator === SyntaxKind.ReadonlyKeyword ? 1 : (node as TypeOperatorNode).operator === SyntaxKind.UniqueKeyword ? 2 : 0) << 24;
-        case SyntaxKind.JsxText:
-            return ((node as JsxText).containsOnlyTriviaWhiteSpaces ? 1 : 0) << 24;
         case SyntaxKind.ModuleDeclaration:
             return ((node as ModuleDeclaration).keyword === SyntaxKind.NamespaceKeyword ? 1 : 0) << 24;
         case SyntaxKind.ImportEqualsDeclaration:

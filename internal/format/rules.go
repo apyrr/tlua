@@ -106,46 +106,46 @@ func getAllRules() []ruleSpec {
 		//
 		// A comment adjacent to the colon keeps its spacing: the ignore rules above
 		// stop all space actions, here as everywhere else in the formatter.
-		rule("NoSpaceBeforeLuaMethodColon", anyToken, ast.KindColonToken, []contextPredicate{isNonJsxSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterLuaMethodColon", ast.KindColonToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeLuaMethodColon", anyToken, ast.KindColonToken, []contextPredicate{isSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterLuaMethodColon", ast.KindColonToken, anyToken, []contextPredicate{isSameLineTokenContext, isLuaMethodColonContext}, ruleActionDeleteSpace),
 
-		rule("NotSpaceBeforeColon", anyToken, ast.KindColonToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext, isNotTypeAnnotationContext}, ruleActionDeleteSpace),
-		rule("SpaceAfterColon", ast.KindColonToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext, isNextTokenParentNotJsxNamespacedName}, ruleActionInsertSpace),
-		rule("NoSpaceBeforeQuestionMark", anyToken, ast.KindQuestionToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext, isNotTypeAnnotationContext}, ruleActionDeleteSpace),
+		rule("NotSpaceBeforeColon", anyToken, ast.KindColonToken, []contextPredicate{isSameLineTokenContext, isNotBinaryOpContext, isNotTypeAnnotationContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterColon", ast.KindColonToken, anyToken, []contextPredicate{isSameLineTokenContext, isNotBinaryOpContext}, ruleActionInsertSpace),
+		rule("NoSpaceBeforeQuestionMark", anyToken, ast.KindQuestionToken, []contextPredicate{isSameLineTokenContext, isNotBinaryOpContext, isNotTypeAnnotationContext}, ruleActionDeleteSpace),
 		// insert space after '?' only when it is used in conditional operator
-		rule("SpaceAfterQuestionMarkInConditionalOperator", ast.KindQuestionToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isConditionalOperatorContext}, ruleActionInsertSpace),
+		rule("SpaceAfterQuestionMarkInConditionalOperator", ast.KindQuestionToken, anyToken, []contextPredicate{isSameLineTokenContext, isConditionalOperatorContext}, ruleActionInsertSpace),
 
 		// in other cases there should be no space between '?' and next token
-		rule("NoSpaceAfterQuestionMark", ast.KindQuestionToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterQuestionMark", ast.KindQuestionToken, anyToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 
-		rule("NoSpaceBeforeDot", anyToken, []ast.Kind{ast.KindDotToken, ast.KindQuestionDotToken}, []contextPredicate{isNonJsxSameLineTokenContext, isNotPropertyAccessOnIntegerLiteral}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterDot", []ast.Kind{ast.KindDotToken, ast.KindQuestionDotToken}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeDot", anyToken, []ast.Kind{ast.KindDotToken, ast.KindQuestionDotToken}, []contextPredicate{isSameLineTokenContext, isNotPropertyAccessOnIntegerLiteral}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterDot", []ast.Kind{ast.KindDotToken, ast.KindQuestionDotToken}, anyToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 
-		rule("NoSpaceBetweenImportParenInImportType", ast.KindImportKeyword, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext, isImportTypeContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBetweenImportParenInImportType", ast.KindImportKeyword, ast.KindOpenParenToken, []contextPredicate{isSameLineTokenContext, isImportTypeContext}, ruleActionDeleteSpace),
 
 		// Special handling of unary operators.
 		// Prefix operators generally shouldn't have a space between
 		// them and their target unary expression.
-		rule("NoSpaceAfterUnaryPrefixOperator", unaryPrefixOperators, unaryPrefixExpressions, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext, isCurrentTokenNotWordSpelledOperator}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterUnaryPrefixOperator", unaryPrefixOperators, unaryPrefixExpressions, []contextPredicate{isSameLineTokenContext, isNotBinaryOpContext, isCurrentTokenNotWordSpelledOperator}, ruleActionDeleteSpace),
 
 		// More unary operator special-casing.
 		// DevDiv 181814: Be careful when removing leading whitespace
 		// around unary operators.  Examples:
 		//      1 - -2  --X--> 1--2
-		rule("SpaceAfterAddWhenFollowedByUnaryPlus", ast.KindPlusToken, ast.KindPlusToken, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
-		rule("SpaceAfterSubtractWhenFollowedByUnaryMinus", ast.KindMinusToken, ast.KindMinusToken, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
+		rule("SpaceAfterAddWhenFollowedByUnaryPlus", ast.KindPlusToken, ast.KindPlusToken, []contextPredicate{isSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
+		rule("SpaceAfterSubtractWhenFollowedByUnaryMinus", ast.KindMinusToken, ast.KindMinusToken, []contextPredicate{isSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
 
-		rule("NoSpaceAfterCloseBrace", ast.KindCloseBraceToken, []ast.Kind{ast.KindCommaToken, ast.KindSemicolonToken}, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterCloseBrace", ast.KindCloseBraceToken, []ast.Kind{ast.KindCommaToken, ast.KindSemicolonToken}, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 		// For functions and control block place } on a new line []ast.Kind{multi-line rule}
 		rule("NewLineBeforeCloseBraceInBlockContext", anyTokenIncludingMultilineComments, ast.KindCloseBraceToken, []contextPredicate{isMultilineBlockContext}, ruleActionInsertNewLine),
 
 		// Space/new line after }.
-		rule("SpaceAfterCloseBrace", ast.KindCloseBraceToken, anyTokenExcept(ast.KindCloseParenToken), []contextPredicate{isNonJsxSameLineTokenContext, isAfterCodeBlockContext}, ruleActionInsertSpace),
+		rule("SpaceAfterCloseBrace", ast.KindCloseBraceToken, anyTokenExcept(ast.KindCloseParenToken), []contextPredicate{isSameLineTokenContext, isAfterCodeBlockContext}, ruleActionInsertSpace),
 		// Special case for (}, else) and (}, while) since else & while tokens are not part of the tree which makes SpaceAfterCloseBrace rule not applied
 		// Also should not apply to })
-		rule("SpaceBetweenCloseBraceAndElse", ast.KindCloseBraceToken, ast.KindElseKeyword, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceBetweenCloseBraceAndWhile", ast.KindCloseBraceToken, ast.KindWhileKeyword, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("NoSpaceBetweenEmptyBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isNonJsxSameLineTokenContext, isObjectContext}, ruleActionDeleteSpace),
+		rule("SpaceBetweenCloseBraceAndElse", ast.KindCloseBraceToken, ast.KindElseKeyword, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBetweenCloseBraceAndWhile", ast.KindCloseBraceToken, ast.KindWhileKeyword, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("NoSpaceBetweenEmptyBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isSameLineTokenContext, isObjectContext}, ruleActionDeleteSpace),
 
 		// Add a space after control dec context if the next character is an open bracket ex: 'if (false)[]ast.Kind{a, b} = []ast.Kind{1, 2};' -> 'if (false) []ast.Kind{a, b} = []ast.Kind{1, 2};'
 		rule("SpaceAfterConditionalClosingParen", ast.KindCloseParenToken, ast.KindOpenBracketToken, []contextPredicate{isControlDeclContext}, ruleActionInsertSpace),
@@ -167,34 +167,25 @@ func getAllRules() []ruleSpec {
 		//      set x(val) {}
 		rule("SpaceAfterGetSetInMember", []ast.Kind{ast.KindGetKeyword, ast.KindSetKeyword}, ast.KindIdentifier, []contextPredicate{isFunctionDeclContext}, ruleActionInsertSpace),
 
-		rule("NoSpaceBetweenReturnAndSemicolon", ast.KindReturnKeyword, ast.KindSemicolonToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindReturnKeyword, ast.KindTypeOfKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceAfterLocalInVariableDeclaration", []ast.Kind{ast.KindLocalKeyword}, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isStartOfVariableDeclarationList}, ruleActionInsertSpace),
-		rule("NoSpaceBeforeOpenParenInFuncCall", anyToken, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext, isFunctionCallContext, isPreviousTokenNotComma}, ruleActionDeleteSpace),
+		rule("NoSpaceBetweenReturnAndSemicolon", ast.KindReturnKeyword, ast.KindSemicolonToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterCertainKeywords", []ast.Kind{ast.KindReturnKeyword, ast.KindTypeOfKeyword}, anyToken, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceAfterLocalInVariableDeclaration", []ast.Kind{ast.KindLocalKeyword}, anyToken, []contextPredicate{isSameLineTokenContext, isStartOfVariableDeclarationList}, ruleActionInsertSpace),
+		rule("NoSpaceBeforeOpenParenInFuncCall", anyToken, ast.KindOpenParenToken, []contextPredicate{isSameLineTokenContext, isFunctionCallContext, isPreviousTokenNotComma}, ruleActionDeleteSpace),
 
 		// Special case for binary operators (that are keywords). For these we have to add a space and shouldn't follow any user options.
-		rule("SpaceBeforeBinaryKeywordOperator", anyToken, binaryKeywordOperators, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
-		rule("SpaceAfterBinaryKeywordOperator", binaryKeywordOperators, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
+		rule("SpaceBeforeBinaryKeywordOperator", anyToken, binaryKeywordOperators, []contextPredicate{isSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
+		rule("SpaceAfterBinaryKeywordOperator", binaryKeywordOperators, anyToken, []contextPredicate{isSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
 
 		// Suspend modifier
-		rule("SpaceBetweenSuspendAndOpenParen", ast.KindSuspendKeyword, ast.KindOpenParenToken, []contextPredicate{isArrowFunctionContext, isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceBetweenSuspendAndFunctionKeyword", ast.KindSuspendKeyword, []ast.Kind{ast.KindFunctionKeyword, ast.KindIdentifier}, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBetweenSuspendAndOpenParen", ast.KindSuspendKeyword, ast.KindOpenParenToken, []contextPredicate{isArrowFunctionContext, isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBetweenSuspendAndFunctionKeyword", ast.KindSuspendKeyword, []ast.Kind{ast.KindFunctionKeyword, ast.KindIdentifier}, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
 
 		// Template string
-		rule("NoSpaceBetweenTagAndTemplateString", []ast.Kind{ast.KindIdentifier, ast.KindCloseParenToken}, []ast.Kind{ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead}, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-
-		// JSX opening elements
-		rule("SpaceBeforeJsxAttribute", anyToken, ast.KindIdentifier, []contextPredicate{isNextTokenParentJsxAttribute, isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceBeforeSlashInJsxOpeningElement", anyToken, ast.KindSlashToken, []contextPredicate{isJsxSelfClosingElementContext, isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("NoSpaceBeforeGreaterThanTokenInJsxOpeningElement", ast.KindSlashToken, ast.KindGreaterThanToken, []contextPredicate{isJsxSelfClosingElementContext, isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBeforeEqualInJsxAttribute", anyToken, ast.KindEqualsToken, []contextPredicate{isJsxAttributeContext, isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterEqualInJsxAttribute", ast.KindEqualsToken, anyToken, []contextPredicate{isJsxAttributeContext, isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBeforeJsxNamespaceColon", ast.KindIdentifier, ast.KindColonToken, []contextPredicate{isNextTokenParentJsxNamespacedName}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterJsxNamespaceColon", ast.KindColonToken, ast.KindIdentifier, []contextPredicate{isNextTokenParentJsxNamespacedName}, ruleActionDeleteSpace),
+		rule("NoSpaceBetweenTagAndTemplateString", []ast.Kind{ast.KindIdentifier, ast.KindCloseParenToken}, []ast.Kind{ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateHead}, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// TypeScript-specific rules
 		// Use of module as a function call. e.g.: import m2 = module("m2");
-		rule("NoSpaceAfterModuleImport", []ast.Kind{ast.KindModuleKeyword, ast.KindRequireKeyword}, ast.KindOpenParenToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterModuleImport", []ast.Kind{ast.KindModuleKeyword, ast.KindRequireKeyword}, ast.KindOpenParenToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 		// Add a space around certain TypeScript keywords
 		rule(
 			"SpaceAfterCertainTypeScriptKeywords",
@@ -224,54 +215,54 @@ func getAllRules() []ruleSpec {
 				ast.KindInferKeyword,
 			},
 			anyToken,
-			[]contextPredicate{isNonJsxSameLineTokenContext},
+			[]contextPredicate{isSameLineTokenContext},
 			ruleActionInsertSpace,
 		),
 		rule(
 			"SpaceBeforeCertainTypeScriptKeywords",
 			anyToken,
 			[]ast.Kind{ast.KindExtendsKeyword, ast.KindImplementsKeyword, ast.KindFromKeyword},
-			[]contextPredicate{isNonJsxSameLineTokenContext},
+			[]contextPredicate{isSameLineTokenContext},
 			ruleActionInsertSpace,
 		),
 		// Treat string literals in module names as identifiers, and add a space between the literal and the opening Brace braces, e.g.: module "m2" {
 		rule("SpaceAfterModuleName", ast.KindStringLiteral, ast.KindOpenBraceToken, []contextPredicate{isModuleDeclContext}, ruleActionInsertSpace),
 
 		// Lambda expressions
-		rule("SpaceBeforeArrow", anyToken, ast.KindEqualsGreaterThanToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceAfterArrow", ast.KindEqualsGreaterThanToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBeforeArrow", anyToken, ast.KindEqualsGreaterThanToken, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceAfterArrow", ast.KindEqualsGreaterThanToken, anyToken, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
 
 		// Optional parameters and let args
-		rule("NoSpaceAfterEllipsis", ast.KindDotDotDotToken, ast.KindIdentifier, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterOptionalParameters", ast.KindQuestionToken, []ast.Kind{ast.KindCloseParenToken, ast.KindCommaToken}, []contextPredicate{isNonJsxSameLineTokenContext, isNotBinaryOpContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterEllipsis", ast.KindDotDotDotToken, ast.KindIdentifier, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterOptionalParameters", ast.KindQuestionToken, []ast.Kind{ast.KindCloseParenToken, ast.KindCommaToken}, []contextPredicate{isSameLineTokenContext, isNotBinaryOpContext}, ruleActionDeleteSpace),
 
 		// Remove spaces in empty interface literals. e.g.: x: {}
-		rule("NoSpaceBetweenEmptyInterfaceBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isNonJsxSameLineTokenContext, isObjectTypeContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBetweenEmptyInterfaceBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isSameLineTokenContext, isObjectTypeContext}, ruleActionDeleteSpace),
 
 		// generics and type assertions
-		rule("NoSpaceBeforeOpenAngularBracket", typeNames, ast.KindLessThanToken, []contextPredicate{isNonJsxSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBetweenCloseParenAndAngularBracket", ast.KindCloseParenToken, ast.KindLessThanToken, []contextPredicate{isNonJsxSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterOpenAngularBracket", ast.KindLessThanToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBeforeCloseAngularBracket", anyToken, ast.KindGreaterThanToken, []contextPredicate{isNonJsxSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeOpenAngularBracket", typeNames, ast.KindLessThanToken, []contextPredicate{isSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBetweenCloseParenAndAngularBracket", ast.KindCloseParenToken, ast.KindLessThanToken, []contextPredicate{isSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterOpenAngularBracket", ast.KindLessThanToken, anyToken, []contextPredicate{isSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeCloseAngularBracket", anyToken, ast.KindGreaterThanToken, []contextPredicate{isSameLineTokenContext, isTypeArgumentOrParameterOrAssertionContext}, ruleActionDeleteSpace),
 		rule("NoSpaceAfterCloseAngularBracket", ast.KindGreaterThanToken, []ast.Kind{ast.KindOpenParenToken, ast.KindOpenBracketToken, ast.KindGreaterThanToken, ast.KindCommaToken}, []contextPredicate{
-			isNonJsxSameLineTokenContext,
+			isSameLineTokenContext,
 			isTypeArgumentOrParameterOrAssertionContext,
 			isNotFunctionDeclContext, /*To prevent an interference with the SpaceBeforeOpenParenInFuncDecl rule*/
 			isNonTypeAssertionContext,
 		}, ruleActionDeleteSpace),
 
-		rule("NoSpaceBeforeNonNullAssertionOperator", anyToken, ast.KindExclamationToken, []contextPredicate{isNonJsxSameLineTokenContext, isNonNullAssertionContext}, ruleActionDeleteSpace),
-		rule("SpaceLessThanAndNonJSXTypeAnnotation", ast.KindLessThanToken, ast.KindLessThanToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("NoSpaceBeforeNonNullAssertionOperator", anyToken, ast.KindExclamationToken, []contextPredicate{isSameLineTokenContext, isNonNullAssertionContext}, ruleActionDeleteSpace),
+		rule("SpaceBetweenLessThanTokens", ast.KindLessThanToken, ast.KindLessThanToken, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
 	}
 
 	// These rules are applied after high priority
 	userConfigurableRules := []ruleSpec{
 		// Treat constructor as an identifier in a function declaration, and remove spaces between constructor and following left parentheses
-		rule("SpaceAfterConstructor", ast.KindConstructorKeyword, ast.KindOpenParenToken, []contextPredicate{isOptionEnabled(insertSpaceAfterConstructorOption), isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("NoSpaceAfterConstructor", ast.KindConstructorKeyword, ast.KindOpenParenToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterConstructorOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterConstructor", ast.KindConstructorKeyword, ast.KindOpenParenToken, []contextPredicate{isOptionEnabled(insertSpaceAfterConstructorOption), isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("NoSpaceAfterConstructor", ast.KindConstructorKeyword, ast.KindOpenParenToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterConstructorOption), isSameLineTokenContext}, ruleActionDeleteSpace),
 
-		rule("SpaceAfterComma", ast.KindCommaToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterCommaDelimiterOption), isNonJsxSameLineTokenContext, isNonJsxElementOrFragmentContext, isNextTokenNotCloseBracket, isNextTokenNotCloseParen}, ruleActionInsertSpace),
-		rule("NoSpaceAfterComma", ast.KindCommaToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterCommaDelimiterOption), isNonJsxSameLineTokenContext, isNonJsxElementOrFragmentContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterComma", ast.KindCommaToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterCommaDelimiterOption), isSameLineTokenContext, isNextTokenNotCloseBracket, isNextTokenNotCloseParen}, ruleActionInsertSpace),
+		rule("NoSpaceAfterComma", ast.KindCommaToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterCommaDelimiterOption), isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// Insert space after function keyword for anonymous functions
 		rule("SpaceAfterAnonymousFunctionKeyword", []ast.Kind{ast.KindFunctionKeyword, ast.KindAsteriskToken}, ast.KindOpenParenToken, []contextPredicate{isOptionEnabled(insertSpaceAfterFunctionKeywordForAnonymousFunctionsOption), isFunctionDeclContext}, ruleActionInsertSpace),
@@ -282,51 +273,45 @@ func getAllRules() []ruleSpec {
 		rule("NoSpaceAfterKeywordInControl", keywords, ast.KindOpenParenToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterKeywordsInControlFlowStatementsOption), isControlDeclContext}, ruleActionDeleteSpace),
 
 		// Insert space after opening and before closing nonempty parenthesis
-		rule("SpaceAfterOpenParen", ast.KindOpenParenToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceBeforeCloseParen", anyToken, ast.KindCloseParenToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceBetweenOpenParens", ast.KindOpenParenToken, ast.KindOpenParenToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("NoSpaceBetweenParens", ast.KindOpenParenToken, ast.KindCloseParenToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterOpenParen", ast.KindOpenParenToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBeforeCloseParen", anyToken, ast.KindCloseParenToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterOpenParen", ast.KindOpenParenToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBeforeCloseParen", anyToken, ast.KindCloseParenToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBetweenOpenParens", ast.KindOpenParenToken, ast.KindOpenParenToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("NoSpaceBetweenParens", ast.KindOpenParenToken, ast.KindCloseParenToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterOpenParen", ast.KindOpenParenToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeCloseParen", anyToken, ast.KindCloseParenToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesisOption), isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// Insert space after opening and before closing nonempty brackets
-		rule("SpaceAfterOpenBracket", ast.KindOpenBracketToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("SpaceBeforeCloseBracket", anyToken, ast.KindCloseBracketToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("NoSpaceBetweenBrackets", ast.KindOpenBracketToken, ast.KindCloseBracketToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterOpenBracket", ast.KindOpenBracketToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBeforeCloseBracket", anyToken, ast.KindCloseBracketToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterOpenBracket", ast.KindOpenBracketToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("SpaceBeforeCloseBracket", anyToken, ast.KindCloseBracketToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("NoSpaceBetweenBrackets", ast.KindOpenBracketToken, ast.KindCloseBracketToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterOpenBracket", ast.KindOpenBracketToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeCloseBracket", anyToken, ast.KindCloseBracketToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracketsOption), isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// Insert a space after { and before } in single-line contexts, but remove space from empty object literals {}.
 		rule("SpaceAfterOpenBrace", ast.KindOpenBraceToken, anyToken, []contextPredicate{isOptionEnabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption), isBraceWrappedContext}, ruleActionInsertSpace),
 		rule("SpaceBeforeCloseBrace", anyToken, ast.KindCloseBraceToken, []contextPredicate{isOptionEnabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption), isBraceWrappedContext}, ruleActionInsertSpace),
-		rule("NoSpaceBetweenEmptyBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isNonJsxSameLineTokenContext, isObjectContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterOpenBrace", ast.KindOpenBraceToken, anyToken, []contextPredicate{isOptionDisabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBeforeCloseBrace", anyToken, ast.KindCloseBraceToken, []contextPredicate{isOptionDisabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBetweenEmptyBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isSameLineTokenContext, isObjectContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterOpenBrace", ast.KindOpenBraceToken, anyToken, []contextPredicate{isOptionDisabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption), isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeCloseBrace", anyToken, ast.KindCloseBraceToken, []contextPredicate{isOptionDisabled(insertSpaceAfterOpeningAndBeforeClosingNonemptyBracesOption), isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// Insert a space after opening and before closing empty brace brackets
 		rule("SpaceBetweenEmptyBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingEmptyBracesOption)}, ruleActionInsertSpace),
-		rule("NoSpaceBetweenEmptyBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isOptionDisabled(insertSpaceAfterOpeningAndBeforeClosingEmptyBracesOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBetweenEmptyBraceBrackets", ast.KindOpenBraceToken, ast.KindCloseBraceToken, []contextPredicate{isOptionDisabled(insertSpaceAfterOpeningAndBeforeClosingEmptyBracesOption), isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// Insert space after opening and before closing template string braces
-		rule("SpaceAfterTemplateHeadAndMiddle", []ast.Kind{ast.KindTemplateHead, ast.KindTemplateMiddle}, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption), isNonJsxTextContext}, ruleActionInsertSpace, ruleFlagsCanDeleteNewLines),
-		rule("SpaceBeforeTemplateMiddleAndTail", anyToken, []ast.Kind{ast.KindTemplateMiddle, ast.KindTemplateTail}, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption), isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
-		rule("NoSpaceAfterTemplateHeadAndMiddle", []ast.Kind{ast.KindTemplateHead, ast.KindTemplateMiddle}, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption), isNonJsxTextContext}, ruleActionDeleteSpace, ruleFlagsCanDeleteNewLines),
-		rule("NoSpaceBeforeTemplateMiddleAndTail", anyToken, []ast.Kind{ast.KindTemplateMiddle, ast.KindTemplateTail}, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption), isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-
-		// No space after { and before } in JSX expression
-		rule("SpaceAfterOpenBraceInJsxExpression", ast.KindOpenBraceToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBracesOption), isNonJsxSameLineTokenContext, isJsxExpressionContext}, ruleActionInsertSpace),
-		rule("SpaceBeforeCloseBraceInJsxExpression", anyToken, ast.KindCloseBraceToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBracesOption), isNonJsxSameLineTokenContext, isJsxExpressionContext}, ruleActionInsertSpace),
-		rule("NoSpaceAfterOpenBraceInJsxExpression", ast.KindOpenBraceToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBracesOption), isNonJsxSameLineTokenContext, isJsxExpressionContext}, ruleActionDeleteSpace),
-		rule("NoSpaceBeforeCloseBraceInJsxExpression", anyToken, ast.KindCloseBraceToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBracesOption), isNonJsxSameLineTokenContext, isJsxExpressionContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterTemplateHeadAndMiddle", []ast.Kind{ast.KindTemplateHead, ast.KindTemplateMiddle}, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption)}, ruleActionInsertSpace, ruleFlagsCanDeleteNewLines),
+		rule("SpaceBeforeTemplateMiddleAndTail", anyToken, []ast.Kind{ast.KindTemplateMiddle, ast.KindTemplateTail}, []contextPredicate{isOptionEnabled(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption), isSameLineTokenContext}, ruleActionInsertSpace),
+		rule("NoSpaceAfterTemplateHeadAndMiddle", []ast.Kind{ast.KindTemplateHead, ast.KindTemplateMiddle}, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption)}, ruleActionDeleteSpace, ruleFlagsCanDeleteNewLines),
+		rule("NoSpaceBeforeTemplateMiddleAndTail", anyToken, []ast.Kind{ast.KindTemplateMiddle, ast.KindTemplateTail}, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterOpeningAndBeforeClosingTemplateStringBracesOption), isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// Insert space before and after binary operators
-		rule("SpaceBeforeBinaryOperator", anyToken, binaryOperators, []contextPredicate{isOptionEnabled(insertSpaceBeforeAndAfterBinaryOperatorsOption), isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
-		rule("SpaceAfterBinaryOperator", binaryOperators, anyToken, []contextPredicate{isOptionEnabled(insertSpaceBeforeAndAfterBinaryOperatorsOption), isNonJsxSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
-		rule("NoSpaceBeforeBinaryOperator", anyToken, binaryOperators, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeAndAfterBinaryOperatorsOption), isNonJsxSameLineTokenContext, isBinaryOpContext, isNextTokenNotWordSpelledOperator}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterBinaryOperator", binaryOperators, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeAndAfterBinaryOperatorsOption), isNonJsxSameLineTokenContext, isBinaryOpContext, isCurrentTokenNotWordSpelledOperator}, ruleActionDeleteSpace),
+		rule("SpaceBeforeBinaryOperator", anyToken, binaryOperators, []contextPredicate{isOptionEnabled(insertSpaceBeforeAndAfterBinaryOperatorsOption), isSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
+		rule("SpaceAfterBinaryOperator", binaryOperators, anyToken, []contextPredicate{isOptionEnabled(insertSpaceBeforeAndAfterBinaryOperatorsOption), isSameLineTokenContext, isBinaryOpContext}, ruleActionInsertSpace),
+		rule("NoSpaceBeforeBinaryOperator", anyToken, binaryOperators, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeAndAfterBinaryOperatorsOption), isSameLineTokenContext, isBinaryOpContext, isNextTokenNotWordSpelledOperator}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterBinaryOperator", binaryOperators, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeAndAfterBinaryOperatorsOption), isSameLineTokenContext, isBinaryOpContext, isCurrentTokenNotWordSpelledOperator}, ruleActionDeleteSpace),
 
-		rule("SpaceBeforeOpenParenInFuncDecl", anyToken, ast.KindOpenParenToken, []contextPredicate{isOptionEnabled(insertSpaceBeforeFunctionParenthesisOption), isNonJsxSameLineTokenContext, isFunctionDeclContext}, ruleActionInsertSpace),
-		rule("NoSpaceBeforeOpenParenInFuncDecl", anyToken, ast.KindOpenParenToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeFunctionParenthesisOption), isNonJsxSameLineTokenContext, isFunctionDeclContext}, ruleActionDeleteSpace),
+		rule("SpaceBeforeOpenParenInFuncDecl", anyToken, ast.KindOpenParenToken, []contextPredicate{isOptionEnabled(insertSpaceBeforeFunctionParenthesisOption), isSameLineTokenContext, isFunctionDeclContext}, ruleActionInsertSpace),
+		rule("NoSpaceBeforeOpenParenInFuncDecl", anyToken, ast.KindOpenParenToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeFunctionParenthesisOption), isSameLineTokenContext, isFunctionDeclContext}, ruleActionDeleteSpace),
 
 		// Open Brace braces after control block
 		rule("NewLineBeforeOpenBraceInControl", controlOpenBraceLeftTokenRange, ast.KindOpenBraceToken, []contextPredicate{isOptionEnabled(placeOpenBraceOnNewLineForControlBlocksOption), isControlDeclContext, isBeforeMultilineBlockContext}, ruleActionInsertNewLine, ruleFlagsCanDeleteNewLines),
@@ -337,11 +322,11 @@ func getAllRules() []ruleSpec {
 		// Open Brace braces after TypeScript module/class/interface
 		rule("NewLineBeforeOpenBraceInTypeScriptDeclWithBlock", typeScriptOpenBraceLeftTokenRange, ast.KindOpenBraceToken, []contextPredicate{isOptionEnabled(placeOpenBraceOnNewLineForFunctionsOption), isTypeScriptDeclWithBlockContext, isBeforeMultilineBlockContext}, ruleActionInsertNewLine, ruleFlagsCanDeleteNewLines),
 
-		rule("SpaceAfterTypeAssertion", ast.KindGreaterThanToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterTypeAssertionOption), isNonJsxSameLineTokenContext, isTypeAssertionContext}, ruleActionInsertSpace),
-		rule("NoSpaceAfterTypeAssertion", ast.KindGreaterThanToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterTypeAssertionOption), isNonJsxSameLineTokenContext, isTypeAssertionContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterTypeAssertion", ast.KindGreaterThanToken, anyToken, []contextPredicate{isOptionEnabled(insertSpaceAfterTypeAssertionOption), isSameLineTokenContext, isTypeAssertionContext}, ruleActionInsertSpace),
+		rule("NoSpaceAfterTypeAssertion", ast.KindGreaterThanToken, anyToken, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceAfterTypeAssertionOption), isSameLineTokenContext, isTypeAssertionContext}, ruleActionDeleteSpace),
 
-		rule("SpaceBeforeTypeAnnotation", anyToken, []ast.Kind{ast.KindQuestionToken, ast.KindColonToken}, []contextPredicate{isOptionEnabled(insertSpaceBeforeTypeAnnotationOption), isNonJsxSameLineTokenContext, isTypeAnnotationContext}, ruleActionInsertSpace),
-		rule("NoSpaceBeforeTypeAnnotation", anyToken, []ast.Kind{ast.KindQuestionToken, ast.KindColonToken}, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeTypeAnnotationOption), isNonJsxSameLineTokenContext, isTypeAnnotationContext}, ruleActionDeleteSpace),
+		rule("SpaceBeforeTypeAnnotation", anyToken, []ast.Kind{ast.KindQuestionToken, ast.KindColonToken}, []contextPredicate{isOptionEnabled(insertSpaceBeforeTypeAnnotationOption), isSameLineTokenContext, isTypeAnnotationContext}, ruleActionInsertSpace),
+		rule("NoSpaceBeforeTypeAnnotation", anyToken, []ast.Kind{ast.KindQuestionToken, ast.KindColonToken}, []contextPredicate{isOptionDisabledOrUndefined(insertSpaceBeforeTypeAnnotationOption), isSameLineTokenContext, isTypeAnnotationContext}, ruleActionDeleteSpace),
 
 		rule("NoOptionalSemicolon", ast.KindSemicolonToken, anyTokenIncludingEOF, []contextPredicate{optionEquals(semicolonOption, lsutil.SemicolonPreferenceRemove), isSemicolonDeletionContext}, ruleActionDeleteToken),
 		rule("OptionalSemicolon", anyToken, anyTokenIncludingEOF, []contextPredicate{optionEquals(semicolonOption, lsutil.SemicolonPreferenceInsert), isSemicolonInsertionContext}, ruleActionInsertTrailingSemicolon),
@@ -350,23 +335,23 @@ func getAllRules() []ruleSpec {
 	// These rules are lower in priority than user-configurable. Rules earlier in this list have priority over rules later in the list.
 	lowPriorityCommonRules := []ruleSpec{
 		// Space after keyword but not before ; or : or ?
-		rule("NoSpaceBeforeSemicolon", anyToken, ast.KindSemicolonToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeSemicolon", anyToken, ast.KindSemicolonToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		rule("SpaceBeforeOpenBraceInControl", controlOpenBraceLeftTokenRange, ast.KindOpenBraceToken, []contextPredicate{isOptionDisabledOrUndefinedOrTokensOnSameLine(placeOpenBraceOnNewLineForControlBlocksOption), isControlDeclContext, isNotFormatOnEnter, isSameLineTokenOrBeforeBlockContext}, ruleActionInsertSpace, ruleFlagsCanDeleteNewLines),
 		rule("SpaceBeforeOpenBraceInFunction", functionOpenBraceLeftTokenRange, ast.KindOpenBraceToken, []contextPredicate{isOptionDisabledOrUndefinedOrTokensOnSameLine(placeOpenBraceOnNewLineForFunctionsOption), isFunctionDeclContext, isBeforeBlockContext, isNotFormatOnEnter, isSameLineTokenOrBeforeBlockContext}, ruleActionInsertSpace, ruleFlagsCanDeleteNewLines),
 		rule("SpaceBeforeOpenBraceInTypeScriptDeclWithBlock", typeScriptOpenBraceLeftTokenRange, ast.KindOpenBraceToken, []contextPredicate{isOptionDisabledOrUndefinedOrTokensOnSameLine(placeOpenBraceOnNewLineForFunctionsOption), isTypeScriptDeclWithBlockContext, isNotFormatOnEnter, isSameLineTokenOrBeforeBlockContext}, ruleActionInsertSpace, ruleFlagsCanDeleteNewLines),
 
-		rule("NoSpaceBeforeComma", anyToken, ast.KindCommaToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceBeforeComma", anyToken, ast.KindCommaToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// No space before and after indexer `x[]ast.Kind{}`
-		rule("NoSpaceBeforeOpenBracket", anyTokenExcept(ast.KindSuspendKeyword), ast.KindOpenBracketToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
-		rule("NoSpaceAfterCloseBracket", ast.KindCloseBracketToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext, isNotBeforeBlockInFunctionDeclarationContext}, ruleActionDeleteSpace),
-		rule("SpaceAfterSemicolon", ast.KindSemicolonToken, anyToken, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionInsertSpace),
+		rule("NoSpaceBeforeOpenBracket", anyTokenExcept(ast.KindSuspendKeyword), ast.KindOpenBracketToken, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("NoSpaceAfterCloseBracket", ast.KindCloseBracketToken, anyToken, []contextPredicate{isSameLineTokenContext, isNotBeforeBlockInFunctionDeclarationContext}, ruleActionDeleteSpace),
+		rule("SpaceAfterSemicolon", ast.KindSemicolonToken, anyToken, []contextPredicate{isSameLineTokenContext}, ruleActionInsertSpace),
 
 		// Remove extra space between for and await
 
 		// Remove extra spaces between ... and type name in tuple spread
-		rule("SpaceBetweenDotDotDotAndTypeName", ast.KindDotDotDotToken, typeNames, []contextPredicate{isNonJsxSameLineTokenContext}, ruleActionDeleteSpace),
+		rule("SpaceBetweenDotDotDotAndTypeName", ast.KindDotDotDotToken, typeNames, []contextPredicate{isSameLineTokenContext}, ruleActionDeleteSpace),
 
 		// Add a space between statements. All keywords except (do,else) has open/close parens after them.
 		// So, we have a rule to add a space for []ast.Kind{),Any}, []ast.Kind{do,Any}, and []ast.Kind{else,Any}
@@ -374,7 +359,7 @@ func getAllRules() []ruleSpec {
 			"SpaceBetweenStatements",
 			[]ast.Kind{ast.KindCloseParenToken, ast.KindDoKeyword, ast.KindElseKeyword},
 			anyToken,
-			[]contextPredicate{isNonJsxSameLineTokenContext, isNonJsxElementOrFragmentContext},
+			[]contextPredicate{isSameLineTokenContext},
 			ruleActionInsertSpace,
 		),
 	}

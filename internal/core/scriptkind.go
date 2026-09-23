@@ -8,9 +8,7 @@ type ScriptKind int32
 const (
 	ScriptKindUnknown ScriptKind = iota
 	ScriptKindJS
-	ScriptKindJSX
 	ScriptKindTS
-	ScriptKindTSX
 	ScriptKindExternal
 	ScriptKindJSON
 	/**

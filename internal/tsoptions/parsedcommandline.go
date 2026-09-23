@@ -20,8 +20,8 @@ import (
 )
 
 const (
-	fileGlobPattern          = "*.{lua,jsx,tlua,tsx,json}"
-	recursiveFileGlobPattern = "**/*.{lua,jsx,tlua,tsx,json}"
+	fileGlobPattern          = "*.{lua,tlua,json}"
+	recursiveFileGlobPattern = "**/*.{lua,tlua,json}"
 )
 
 type ParsedCommandLine struct {

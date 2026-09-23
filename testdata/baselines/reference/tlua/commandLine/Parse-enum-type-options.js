@@ -2,7 +2,7 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
 
-tlua first.tlua --module nodenext  --target esnext --jsx react --newLine crlf
+tlua first.tlua --module nodenext  --target esnext --newLine crlf
 ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [91merror[0m[90m TLUA6053: [0mFile 'first.tlua' not found.

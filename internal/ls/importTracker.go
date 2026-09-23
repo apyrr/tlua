@@ -99,10 +99,6 @@ func getDirectImportsMap(ctx context.Context, program *compiler.Program, sourceF
 // Calls `action` for each import, re-export, or require() in a file
 func forEachImport(program *compiler.Program, sourceFile *ast.SourceFile, action func(importStatement *ast.Node, imported *ast.Node)) {
 	var implicitImports []*ast.LiteralLikeNode
-	_, jsxSpecifier := program.GetJSXRuntimeImportSpecifier(sourceFile.Path())
-	if jsxSpecifier != nil {
-		implicitImports = append(implicitImports, jsxSpecifier)
-	}
 	importHelpersSpecifier := program.GetImportHelpersImportSpecifier(sourceFile.Path())
 	if importHelpersSpecifier != nil {
 		implicitImports = append(implicitImports, importHelpersSpecifier)
@@ -710,7 +706,7 @@ func symbolNameNoDefault(symbol *ast.Symbol) string {
 }
 
 // findModuleReferences finds all references to a module symbol across the given source files.
-// This includes import statements, <reference> directives, and implicit references (e.g., JSX runtime imports).
+// This includes import statements, <reference> directives, and implicit references (e.g., import helpers).
 func findModuleReferences(program *compiler.Program, sourceFiles []*ast.SourceFile, searchModuleSymbol *ast.Symbol, checker *checker.Checker) []ModuleReference {
 	refs := []ModuleReference{}
 

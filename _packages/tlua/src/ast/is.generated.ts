@@ -128,25 +128,6 @@ import type {
     JSDocTypeTag,
     JSDocUnknownTag,
     JSDocVariadicType,
-    JsxAttribute,
-    JsxAttributeLike,
-    JsxAttributeName,
-    JsxAttributes,
-    JsxAttributeValue,
-    JsxChild,
-    JsxClosingElement,
-    JsxClosingFragment,
-    JsxElement,
-    JsxExpression,
-    JsxFragment,
-    JsxNamespacedName,
-    JsxOpeningElement,
-    JsxOpeningFragment,
-    JsxOpeningLikeElement,
-    JsxSelfClosingElement,
-    JsxSpreadAttribute,
-    JsxText,
-    JsxTokenSyntaxKind,
     KeywordExpression,
     KeywordExpressionSyntaxKind,
     KeywordTypeNode,
@@ -696,58 +677,6 @@ export function isPartiallyEmittedExpression(node: Node): node is PartiallyEmitt
     return node.kind === SyntaxKind.PartiallyEmittedExpression;
 }
 
-export function isJsxElement(node: Node): node is JsxElement {
-    return node.kind === SyntaxKind.JsxElement;
-}
-
-export function isJsxAttributes(node: Node): node is JsxAttributes {
-    return node.kind === SyntaxKind.JsxAttributes;
-}
-
-export function isJsxNamespacedName(node: Node): node is JsxNamespacedName {
-    return node.kind === SyntaxKind.JsxNamespacedName;
-}
-
-export function isJsxOpeningElement(node: Node): node is JsxOpeningElement {
-    return node.kind === SyntaxKind.JsxOpeningElement;
-}
-
-export function isJsxSelfClosingElement(node: Node): node is JsxSelfClosingElement {
-    return node.kind === SyntaxKind.JsxSelfClosingElement;
-}
-
-export function isJsxFragment(node: Node): node is JsxFragment {
-    return node.kind === SyntaxKind.JsxFragment;
-}
-
-export function isJsxOpeningFragment(node: Node): node is JsxOpeningFragment {
-    return node.kind === SyntaxKind.JsxOpeningFragment;
-}
-
-export function isJsxClosingFragment(node: Node): node is JsxClosingFragment {
-    return node.kind === SyntaxKind.JsxClosingFragment;
-}
-
-export function isJsxAttribute(node: Node): node is JsxAttribute {
-    return node.kind === SyntaxKind.JsxAttribute;
-}
-
-export function isJsxSpreadAttribute(node: Node): node is JsxSpreadAttribute {
-    return node.kind === SyntaxKind.JsxSpreadAttribute;
-}
-
-export function isJsxClosingElement(node: Node): node is JsxClosingElement {
-    return node.kind === SyntaxKind.JsxClosingElement;
-}
-
-export function isJsxExpression(node: Node): node is JsxExpression {
-    return node.kind === SyntaxKind.JsxExpression;
-}
-
-export function isJsxText(node: Node): node is JsxText {
-    return node.kind === SyntaxKind.JsxText;
-}
-
 export function isSyntaxList(node: Node): node is SyntaxList {
     return node.kind === SyntaxKind.SyntaxList;
 }
@@ -1003,27 +932,9 @@ export function isModifierLike(node: Node): node is ModifierLike {
     return kind === SyntaxKind.AbstractKeyword || kind === SyntaxKind.AccessorKeyword || kind === SyntaxKind.SuspendKeyword || kind === SyntaxKind.ConstKeyword || kind === SyntaxKind.DeclareKeyword || kind === SyntaxKind.DefaultKeyword || kind === SyntaxKind.ExportKeyword || kind === SyntaxKind.InKeyword || kind === SyntaxKind.PrivateKeyword || kind === SyntaxKind.ProtectedKeyword || kind === SyntaxKind.PublicKeyword || kind === SyntaxKind.ReadonlyKeyword || kind === SyntaxKind.OutKeyword || kind === SyntaxKind.OverrideKeyword || kind === SyntaxKind.StaticKeyword;
 }
 
-export function isJsxChild(node: Node): node is JsxChild {
-    const kind = node.kind;
-    return kind === SyntaxKind.JsxText || kind === SyntaxKind.JsxExpression || kind === SyntaxKind.JsxElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.JsxFragment;
-}
-
-export function isJsxAttributeLike(node: Node): node is JsxAttributeLike {
-    return node.kind === SyntaxKind.JsxAttribute || node.kind === SyntaxKind.JsxSpreadAttribute;
-}
-
-export function isJsxAttributeName(node: Node): node is JsxAttributeName {
-    return node.kind === SyntaxKind.Identifier || node.kind === SyntaxKind.JsxNamespacedName;
-}
-
-export function isJsxAttributeValue(node: Node): node is JsxAttributeValue {
-    const kind = node.kind;
-    return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.JsxExpression || kind === SyntaxKind.JsxElement || kind === SyntaxKind.JsxSelfClosingElement || kind === SyntaxKind.JsxFragment;
-}
-
 export function isLiteralLikeNode(node: Node): node is LiteralLikeNode {
     const kind = node.kind;
-    return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.TemplateHead || kind === SyntaxKind.TemplateMiddle || kind === SyntaxKind.TemplateTail || kind === SyntaxKind.JsxText;
+    return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.TemplateHead || kind === SyntaxKind.TemplateMiddle || kind === SyntaxKind.TemplateTail;
 }
 
 export function isLiteralExpression(node: Node): node is LiteralExpression {
@@ -1078,10 +989,6 @@ export function isObjectTypeDeclaration(node: Node): node is ObjectTypeDeclarati
     return node.kind === SyntaxKind.InterfaceDeclaration || node.kind === SyntaxKind.TypeLiteral;
 }
 
-export function isJsxOpeningLikeElement(node: Node): node is JsxOpeningLikeElement {
-    return node.kind === SyntaxKind.JsxOpeningElement || node.kind === SyntaxKind.JsxSelfClosingElement;
-}
-
 export function isNamedImportsOrExports(node: Node): node is NamedImportsOrExports {
     return node.kind === SyntaxKind.NamedImports || node.kind === SyntaxKind.NamedExports;
 }
@@ -1091,7 +998,7 @@ export function isBreakOrContinueStatement(node: Node): node is BreakOrContinueS
 }
 
 export function isCallLikeExpression(node: Node): node is CallLikeExpression {
-    return node.kind === SyntaxKind.CallExpression || node.kind === SyntaxKind.JsxOpeningElement || node.kind === SyntaxKind.JsxSelfClosingElement;
+    return node.kind === SyntaxKind.CallExpression;
 }
 
 export function isFunctionLikeDeclaration(node: Node): node is FunctionLikeDeclaration {
@@ -1128,7 +1035,7 @@ export function isDestructuringAssignment(node: Node): node is DestructuringAssi
 
 export function isLiteralToken(node: Node): node is LiteralToken {
     const kind = node.kind;
-    return kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.StringLiteral || kind === SyntaxKind.JsxText || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.NoSubstitutionTemplateLiteral;
+    return kind === SyntaxKind.NumericLiteral || kind === SyntaxKind.StringLiteral || kind === SyntaxKind.RegularExpressionLiteral || kind === SyntaxKind.NoSubstitutionTemplateLiteral;
 }
 
 export function isModifier(node: Node): node is Modifier {
@@ -1224,16 +1131,6 @@ export function isKeywordExpressionKind(kind: SyntaxKind): kind is KeywordExpres
         || kind === SyntaxKind.ThisKeyword
         || kind === SyntaxKind.SuperKeyword
         || kind === SyntaxKind.ImportKeyword;
-}
-
-export function isJsxTokenKind(kind: SyntaxKind): kind is JsxTokenSyntaxKind {
-    return kind === SyntaxKind.LessThanSlashToken
-        || kind === SyntaxKind.EndOfFile
-        || kind === SyntaxKind.ConflictMarkerTrivia
-        || kind === SyntaxKind.JsxText
-        || kind === SyntaxKind.JsxTextAllWhiteSpaces
-        || kind === SyntaxKind.OpenBraceToken
-        || kind === SyntaxKind.LessThanToken;
 }
 
 export function isImportPhaseModifierKind(kind: SyntaxKind): kind is ImportPhaseModifierSyntaxKind {

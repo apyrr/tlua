@@ -37,7 +37,6 @@ type parseTask struct {
 	resolutionDiagnostics        []*ast.Diagnostic
 	processingDiagnostics        []*processingDiagnostic
 	importHelpersImportSpecifier *ast.StringLiteralNode
-	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
 
 	increaseDepth bool
 	elideOnDepth  bool
@@ -323,7 +322,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount+1)
 	typeResolutionsInFile := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], totalFileCount)
 	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
-	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.StringLiteralNode
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
 	libFilesMap := make(map[tspath.Path]*LibFile, libFileCount)
@@ -487,12 +485,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 			typeResolutionsInFile[path] = task.typeResolutionsInFile
 			sourceFileMetaDatas[path] = task.metadata
 
-			if task.jsxRuntimeImportSpecifier != nil {
-				if jsxRuntimeImportSpecifiers == nil {
-					jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
-				}
-				jsxRuntimeImportSpecifiers[path] = task.jsxRuntimeImportSpecifier
-			}
 			if task.importHelpersImportSpecifier != nil {
 				if importHelpersImportSpecifiers == nil {
 					importHelpersImportSpecifiers = make(map[tspath.Path]*ast.StringLiteralNode, totalFileCount)
@@ -535,7 +527,6 @@ func (w *filesParser) getProcessedFiles(loader *fileLoader) processedFiles {
 		resolvedModules:                      resolvedModules,
 		typeResolutionsInFile:                typeResolutionsInFile,
 		sourceFileMetaDatas:                  sourceFileMetaDatas,
-		jsxRuntimeImportSpecifiers:           jsxRuntimeImportSpecifiers,
 		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
 		libFiles:                             libFilesMap,

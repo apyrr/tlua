@@ -12,7 +12,6 @@ func getNodeDataType(node *ast.Node) uint32 {
 	switch node.Kind {
 	case ast.KindIdentifier,
 		ast.KindPrivateIdentifier,
-		ast.KindJsxText,
 		ast.KindJSDocText,
 		ast.KindJSDocLink,
 		ast.KindJSDocLinkPlain,
@@ -283,36 +282,6 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindPartiallyEmittedExpression:
 		n := node.AsPartiallyEmittedExpression()
 		return (boolToByte(n.Expression != nil) << 0)
-	case ast.KindJsxElement:
-		n := node.AsJsxElement()
-		return (boolToByte(n.OpeningElement != nil) << 0) | (boolToByte(n.Children != nil) << 1) | (boolToByte(n.ClosingElement != nil) << 2)
-	case ast.KindJsxAttributes:
-		n := node.AsJsxAttributes()
-		return (boolToByte(n.Properties != nil) << 0)
-	case ast.KindJsxNamespacedName:
-		n := node.AsJsxNamespacedName()
-		return (boolToByte(n.Namespace != nil) << 0) | (boolToByte(n.Name() != nil) << 1)
-	case ast.KindJsxOpeningElement:
-		n := node.AsJsxOpeningElement()
-		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeArguments != nil) << 1) | (boolToByte(n.Attributes != nil) << 2)
-	case ast.KindJsxSelfClosingElement:
-		n := node.AsJsxSelfClosingElement()
-		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeArguments != nil) << 1) | (boolToByte(n.Attributes != nil) << 2)
-	case ast.KindJsxFragment:
-		n := node.AsJsxFragment()
-		return (boolToByte(n.OpeningFragment != nil) << 0) | (boolToByte(n.Children != nil) << 1) | (boolToByte(n.ClosingFragment != nil) << 2)
-	case ast.KindJsxAttribute:
-		n := node.AsJsxAttribute()
-		return (boolToByte(n.Name() != nil) << 0) | (boolToByte(n.Initializer != nil) << 1)
-	case ast.KindJsxSpreadAttribute:
-		n := node.AsJsxSpreadAttribute()
-		return (boolToByte(n.Expression != nil) << 0)
-	case ast.KindJsxClosingElement:
-		n := node.AsJsxClosingElement()
-		return (boolToByte(n.TagName != nil) << 0)
-	case ast.KindJsxExpression:
-		n := node.AsJsxExpression()
-		return (boolToByte(n.DotDotDotToken != nil) << 0) | (boolToByte(n.Expression != nil) << 1)
 	case ast.KindSyntaxList:
 		n := node.AsSyntaxList()
 		return (boolToByte(len(n.Children) > 0) << 0)
@@ -493,9 +462,6 @@ func getNodeCommonData(node *ast.Node) uint32 {
 		return operatorIdx << 24
 	case ast.KindSyntheticExpression:
 		return getNodeCommonData_SyntheticExpression(node)
-	case ast.KindJsxText:
-		n := node.AsJsxText()
-		return uint32(boolToByte(n.ContainsOnlyTriviaWhiteSpaces)) << 24
 	case ast.KindModuleDeclaration:
 		n := node.AsModuleDeclaration()
 		var keywordIdx uint32
@@ -542,8 +508,6 @@ func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 		return strs.add(node.AsIdentifier().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindPrivateIdentifier:
 		return strs.add(node.AsPrivateIdentifier().Text, node.Kind, node.Pos(), node.End())
-	case ast.KindJsxText:
-		return strs.add(node.AsJsxText().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindJSDocText:
 		return strs.add(node.AsJSDocText().Text(), node.Kind, node.Pos(), node.End())
 	case ast.KindJSDocLink:

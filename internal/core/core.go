@@ -530,12 +530,8 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 		switch strings.ToLower(fileName[dotPos:]) {
 		case tspath.ExtensionJs:
 			return ScriptKindJS
-		case tspath.ExtensionJsx:
-			return ScriptKindJSX
 		case tspath.ExtensionTs:
 			return ScriptKindTS
-		case tspath.ExtensionTsx:
-			return ScriptKindTSX
 		case tspath.ExtensionJson:
 			return ScriptKindJSON
 		}

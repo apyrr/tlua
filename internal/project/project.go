@@ -110,7 +110,6 @@ func NewInferredProject(
 		compilerOptions = &core.CompilerOptions{
 			Module:               core.ModuleKindESNext,
 			Target:               core.ScriptTargetLatestStandard,
-			Jsx:                  core.JsxEmitReactJSX,
 			StrictNullChecks:     core.TSTrue,
 			StrictFunctionTypes:  core.TSTrue,
 			SourceMap:            core.TSTrue,

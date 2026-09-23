@@ -10,7 +10,6 @@ export var InternalSymbolName: any;
     InternalSymbolName["Missing"] = "__missing";
     InternalSymbolName["Type"] = "__type";
     InternalSymbolName["Object"] = "__object";
-    InternalSymbolName["JSXAttributes"] = "__jsxAttributes";
     InternalSymbolName["Class"] = "__class";
     InternalSymbolName["Function"] = "__function";
     InternalSymbolName["Computed"] = "__computed";

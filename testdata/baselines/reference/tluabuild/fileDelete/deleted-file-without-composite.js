@@ -117,9 +117,7 @@ Output::
 
 ======== Resolving module 'child2' from '/home/src/workspaces/solution/child/child.tlua'. ========
 File '/home/src/workspaces/solution/child/child2.tlua' does not exist.
-File '/home/src/workspaces/solution/child/child2.tsx' does not exist.
 File '/home/src/workspaces/solution/child/child2/init.tlua' does not exist.
-File '/home/src/workspaces/solution/child/child2/init.tsx' does not exist.
 File '/home/src/workspaces/solution/child/child2.lua' does not exist.
 File '/home/src/workspaces/solution/child/child2/init.lua' does not exist.
 ======== Module name 'child2' was not resolved. ========

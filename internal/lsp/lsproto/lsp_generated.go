@@ -9240,17 +9240,9 @@ type ProjectInfoTelemetryMeasurements struct {
 
 	JsFileSize float64 `json:"jsFileSize,omitzero" lsp:"nullable"`
 
-	JsxFileCount float64 `json:"jsxFileCount,omitzero" lsp:"nullable"`
-
-	JsxFileSize float64 `json:"jsxFileSize,omitzero" lsp:"nullable"`
-
 	TsFileCount float64 `json:"tsFileCount,omitzero" lsp:"nullable"`
 
 	TsFileSize float64 `json:"tsFileSize,omitzero" lsp:"nullable"`
-
-	TsxFileCount float64 `json:"tsxFileCount,omitzero" lsp:"nullable"`
-
-	TsxFileSize float64 `json:"tsxFileSize,omitzero" lsp:"nullable"`
 
 	DtsFileCount float64 `json:"dtsFileCount,omitzero" lsp:"nullable"`
 

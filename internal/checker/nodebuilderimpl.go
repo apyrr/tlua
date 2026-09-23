@@ -870,11 +870,11 @@ func canUsePropertyAccess(name string) bool {
 	// TODO: in strada, this only used `isIdentifierStart` on the first character, while this checks the whole string for validity
 	// - possible strada bug?
 	if strings.HasPrefix(name, "#") {
-		return len(name) > 1 && scanner.IsIdentifierText(name[1:], core.LanguageVariantStandard)
+		return len(name) > 1 && scanner.IsIdentifierText(name[1:])
 	}
 	// A word operator (`and`, `or`, `not`) needs the element-access form:
 	// `M.and` does not parse.
-	return scanner.IsBareWritableName(name, core.LanguageVariantStandard)
+	return scanner.IsBareWritableName(name)
 }
 
 func startsWithSingleOrDoubleQuote(str string) bool {
@@ -911,7 +911,7 @@ func (b *NodeBuilderImpl) getNameOfSymbolFromNameType(symbol *ast.Symbol) string
 				// String keys print quoted unless they can be written bare, so
 				// the string key "1" stays distinct from the number key 1 and a
 				// word-operator key like "and" keeps its quotes.
-				if !scanner.IsBareWritableName(v, core.LanguageVariantStandard) {
+				if !scanner.IsBareWritableName(v) {
 					return b.ch.valueToString(nameType.AsLiteralType().value)
 				}
 				return v
@@ -2335,7 +2335,7 @@ func classifyPropertyName(name string, isMethod bool) propertyNameNodeKind {
 	}
 	// A word operator like `and` must not print as a bare `and: number` -- it
 	// would not parse back in from an emitted declaration.
-	if scanner.IsBareWritableName(name, core.LanguageVariantStandard) {
+	if scanner.IsBareWritableName(name) {
 		return propertyNameNodeKindIdentifier
 	}
 	return propertyNameNodeKindStringLiteral
@@ -2359,7 +2359,7 @@ func (b *NodeBuilderImpl) createNumberKeyPropertyNameNode(value string, symbol *
 	if strings.HasPrefix(value, "-") {
 		return b.f.NewComputedPropertyName(b.f.NewPrefixUnaryExpression(ast.KindMinusToken, b.f.NewNumericLiteral(value[1:], ast.TokenFlagsNone)))
 	}
-	if scanner.IsIdentifierText(value, core.LanguageVariantStandard) {
+	if scanner.IsIdentifierText(value) {
 		return b.newIdentifier(value, symbol)
 	}
 	return b.f.NewNumericLiteral(value, ast.TokenFlagsNone)

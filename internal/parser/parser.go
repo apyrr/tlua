@@ -4,14 +4,12 @@ import (
 	"slices"
 	"strings"
 	"sync"
-	"unicode/utf8"
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/debug"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/scanner"
-	"github.com/apyrr/tlua/internal/stringutil"
 	"github.com/apyrr/tlua/internal/tspath"
 )
 
@@ -30,8 +28,6 @@ const (
 	PCArrayBindingElements                        // Binding elements in array binding list
 	PCArgumentExpressions                         // Expressions in argument list
 	PCObjectLiteralMembers                        // Members in object literal
-	PCJsxAttributes                               // Attributes in jsx element
-	PCJsxChildren                                 // Things between opening and closing JSX tags
 	PCArrayLiteralMembers                         // Members in array literal
 	PCParameters                                  // Parameters in parameter list
 	PCJSDocParameters                             // JSDoc parameters in parameter list of JSDoc function type
@@ -68,7 +64,6 @@ type Parser struct {
 
 	scriptKind        core.ScriptKind
 	isDeclarationFile bool
-	languageVariant   core.LanguageVariant
 	diagnostics       []*ast.Diagnostic
 	jsDiagnostics     []*ast.Diagnostic
 	jsdocDiagnostics  []*ast.Diagnostic
@@ -151,7 +146,7 @@ func (p *Parser) initializeClosures() {
 }
 
 func (p *Parser) isJavaScript() bool {
-	return p.scriptKind == core.ScriptKindJS || p.scriptKind == core.ScriptKindJSX
+	return p.scriptKind == core.ScriptKindJS
 }
 
 func (p *Parser) parseJSONText() *ast.SourceFile {
@@ -276,15 +271,6 @@ func (p *Parser) validateJsonObjectLiteral(sourceFile *ast.SourceFile, node *ast
 	}
 }
 
-func ParseIsolatedEntityName(text string) *ast.EntityName {
-	p := getParser()
-	defer putParser(p)
-	p.initializeState(ast.SourceFileParseOptions{}, text, core.ScriptKindJS)
-	p.nextToken()
-	entityName := p.parseEntityName(true, nil)
-	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
-}
-
 func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText string, scriptKind core.ScriptKind) {
 	if scriptKind == core.ScriptKindUnknown {
 		panic("ScriptKind must be specified when parsing source file: " + opts.FileName)
@@ -299,9 +285,8 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	p.sourceText = sourceText
 	p.scriptKind = scriptKind
 	p.isDeclarationFile = tspath.IsDeclarationFileName(opts.FileName)
-	p.languageVariant = getLanguageVariant(p.scriptKind)
 	switch p.scriptKind {
-	case core.ScriptKindJS, core.ScriptKindJSX:
+	case core.ScriptKindJS:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
 	case core.ScriptKindJSON:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile | ast.NodeFlagsJsonFile
@@ -310,7 +295,6 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	}
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
-	p.scanner.SetLanguageVariant(p.languageVariant)
 	p.listRecoveryResumePos = -1
 }
 
@@ -468,7 +452,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
-	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
@@ -692,7 +675,7 @@ func (p *Parser) parsingContextErrors(context ParsingContext) {
 		p.parseErrorAtCurrentToken(diagnostics.Type_expected)
 	case PCHeritageClauses:
 		p.parseErrorAtCurrentToken(diagnostics.Unexpected_token_expected)
-	case PCJsxAttributes, PCJsxChildren, PCJSDocComment:
+	case PCJSDocComment:
 		p.parseErrorAtCurrentToken(diagnostics.Identifier_expected)
 	default:
 		panic("Unhandled case in parsingContextErrors")
@@ -772,13 +755,6 @@ func (p *Parser) isListElement(parsingContext ParsingContext, inErrorRecovery bo
 		return p.token == ast.KindCommaToken || p.isStartOfType(false /*inStartOfParameter*/)
 	case PCHeritageClauses:
 		return p.isHeritageClause()
-	case PCJsxAttributes:
-		// `{` no longer starts an attribute: spread attributes are gone. It must not
-		// be reported as an element start either, or the list would never advance
-		// past it -- parseJsxAttribute cannot consume it, so parseList would spin.
-		return p.tokenIsJsxName()
-	case PCJsxChildren:
-		return true
 	case PCJSDocComment:
 		return true
 	}
@@ -827,10 +803,6 @@ func (p *Parser) isListTerminator(kind ParsingContext) bool {
 		return p.token != ast.KindCommaToken
 	case PCHeritageClauses:
 		return p.token == ast.KindOpenBraceToken || p.token == ast.KindCloseBraceToken
-	case PCJsxAttributes:
-		return p.token == ast.KindGreaterThanToken || p.token == ast.KindSlashToken
-	case PCJsxChildren:
-		return p.token == ast.KindLessThanToken && p.lookAhead((*Parser).nextTokenIsSlash)
 	}
 	return false
 }
@@ -871,18 +843,12 @@ func (p *Parser) parseOptional(token ast.Kind) bool {
 }
 
 func (p *Parser) parseExpected(kind ast.Kind) bool {
-	return p.parseExpectedWithDiagnostic(kind, nil, true)
+	return p.parseExpectedWithDiagnostic(kind, nil)
 }
 
-func (p *Parser) parseExpectedWithoutAdvancing(kind ast.Kind) bool {
-	return p.parseExpectedWithDiagnostic(kind, nil, false)
-}
-
-func (p *Parser) parseExpectedWithDiagnostic(kind ast.Kind, message *diagnostics.Message, shouldAdvance bool) bool {
+func (p *Parser) parseExpectedWithDiagnostic(kind ast.Kind, message *diagnostics.Message) bool {
 	if p.token == kind {
-		if shouldAdvance {
-			p.nextToken()
-		}
+		p.nextToken()
 		return true
 	}
 	// Report specific message if provided with one.  Otherwise, report generic fallback message.
@@ -1074,7 +1040,7 @@ func (p *Parser) parseBlock(diagnosticMessage *diagnostics.Message) *ast.Node {
 	pos := p.nodePos()
 	jsdoc := p.jsdocScannerInfo()
 	openBracePosition := p.scanner.TokenStart()
-	openBraceParsed := p.parseExpectedWithDiagnostic(ast.KindOpenBraceToken, diagnosticMessage, true /*shouldAdvance*/)
+	openBraceParsed := p.parseExpectedWithDiagnostic(ast.KindOpenBraceToken, diagnosticMessage)
 	multiline := false
 	if openBraceParsed {
 		multiline = p.hasPrecedingLineBreak()
@@ -2356,11 +2322,6 @@ func (p *Parser) parsePrivateIdentifier() *ast.Node {
 	return p.finishNode(p.factory.NewPrivateIdentifier(p.internIdentifier(text)), pos)
 }
 
-func (p *Parser) reScanLessThanToken() ast.Kind {
-	p.token = p.scanner.ReScanLessThanToken()
-	return p.token
-}
-
 func (p *Parser) reScanGreaterThanToken() ast.Kind {
 	p.token = p.scanner.ReScanGreaterThanToken()
 	return p.token
@@ -2377,7 +2338,7 @@ func (p *Parser) reScanTemplateToken() ast.Kind {
 }
 
 func (p *Parser) parseTypeArgumentsOfTypeReference() *ast.NodeList {
-	if !p.hasPrecedingLineBreak() && p.reScanLessThanToken() == ast.KindLessThanToken {
+	if !p.hasPrecedingLineBreak() && p.token == ast.KindLessThanToken {
 		return p.parseTypeArguments()
 	}
 	return nil
@@ -3417,14 +3378,6 @@ func (p *Parser) nextTokenIsIdentifierOrKeyword() bool {
 	return tokenIsIdentifierOrKeyword(p.nextToken())
 }
 
-// nextTokenIsIdentifierOrKeywordOrGreaterThan decides whether a `<` opens a JSX
-// element, so it must admit every JSX tag name — including a word-spelled
-// operator, which the scan has already resolved to its punctuation kind.
-func (p *Parser) nextTokenIsIdentifierOrKeywordOrGreaterThan() bool {
-	p.nextToken()
-	return p.token == ast.KindGreaterThanToken || p.tokenIsJsxName()
-}
-
 func (p *Parser) nextTokenIsIdentifierOrKeywordOnSameLine() bool {
 	return p.nextTokenIsIdentifierOrKeyword() && !p.hasPrecedingLineBreak()
 }
@@ -3654,7 +3607,7 @@ func (p *Parser) makeBinaryExpressionWithEnd(left *ast.Expression, operatorToken
 func (p *Parser) parseUnaryExpressionOrHigher() *ast.Expression {
 	if p.isUpdateExpression() {
 		pos := p.nodePos()
-		updateExpression := p.parseUpdateExpression()
+		updateExpression := p.parseLeftHandSideExpressionOrHigher()
 		if p.token == ast.KindAsteriskAsteriskToken {
 			return p.parseBinaryExpressionRest(ast.GetBinaryOperatorPrecedence(p.token), updateExpression, pos)
 		}
@@ -3673,339 +3626,18 @@ func (p *Parser) parseVarargExpression() *ast.Expression {
 
 func (p *Parser) isUpdateExpression() bool {
 	switch p.token {
-	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken, ast.KindVoidKeyword:
+	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken, ast.KindVoidKeyword, ast.KindLessThanToken:
 		return false
 	case ast.KindDotDotDotToken:
 		// The Lua vararg is not a prefixexp: it cannot be called, indexed, or
 		// member-accessed. Declining it here routes it through
-		// parseSimpleUnaryExpression instead of parseUpdateExpression, which is
+		// parseSimpleUnaryExpression instead of parseLeftHandSideExpressionOrHigher, which is
 		// what denies it left-hand-side suffixes -- and it reaches that route
 		// both bare (`local a = ...`) and as the operand of a prefix unary
 		// operator (`not ...`, `-...`), which Lua allows.
 		return false
-	case ast.KindLessThanToken:
-		return p.languageVariant == core.LanguageVariantJSX
 	}
 	return true
-}
-
-func (p *Parser) parseUpdateExpression() *ast.Expression {
-	if p.languageVariant == core.LanguageVariantJSX && p.token == ast.KindLessThanToken && p.lookAhead((*Parser).nextTokenIsIdentifierOrKeywordOrGreaterThan) {
-		// JSXElement is part of primaryExpression
-		return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, false /*mustBeUnary*/)
-	}
-	return p.parseLeftHandSideExpressionOrHigher()
-}
-
-func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionContext bool, topInvalidNodePosition int, openingTag *ast.Node, mustBeUnary bool) *ast.Expression {
-	pos := p.nodePos()
-	opening := p.parseJsxOpeningOrSelfClosingElementOrOpeningFragment(inExpressionContext)
-	var result *ast.Expression
-	switch opening.Kind {
-	case ast.KindJsxOpeningElement:
-		children := p.parseJsxChildren(opening)
-		var closingElement *ast.Node
-		lastChild := core.LastOrNil(children.Nodes)
-		if lastChild != nil && lastChild.Kind == ast.KindJsxElement &&
-			!ast.TagNamesAreEquivalent(lastChild.AsJsxElement().OpeningElement.TagName(), lastChild.AsJsxElement().ClosingElement.TagName()) &&
-			ast.TagNamesAreEquivalent(opening.TagName(), lastChild.AsJsxElement().ClosingElement.TagName()) {
-			// when an unclosed JsxOpeningElement incorrectly parses its parent's JsxClosingElement,
-			// restructure (<div>(...<span>...</div>)) --> (<div>(...<span>...</>)</div>)
-			// (no need to error; the parent will error)
-			end := lastChild.Children().End()
-			missingIdentifier := p.finishNodeWithEnd(p.newIdentifier(""), end, end)
-			newClosingElement := p.finishNodeWithEnd(p.factory.NewJsxClosingElement(missingIdentifier), end, end)
-			newLast := p.finishNodeWithEnd(
-				p.factory.NewJsxElement(lastChild.AsJsxElement().OpeningElement, lastChild.Children(), newClosingElement),
-				lastChild.AsJsxElement().OpeningElement.Pos(),
-				end,
-			)
-			// force reset parent pointers from discarded parse result
-			if lastChild.AsJsxElement().OpeningElement != nil {
-				lastChild.AsJsxElement().OpeningElement.Parent = newLast
-			}
-			if lastChild.Children() != nil {
-				for _, c := range lastChild.Children().Nodes {
-					c.Parent = newLast
-				}
-			}
-			newClosingElement.Parent = newLast
-			children = p.newNodeList(core.NewTextRange(children.Pos(), newLast.End()), append(children.Nodes[0:len(children.Nodes)-1], newLast))
-			closingElement = lastChild.AsJsxElement().ClosingElement
-		} else {
-			closingElement = p.parseJsxClosingElement(opening, inExpressionContext)
-			if !ast.TagNamesAreEquivalent(opening.TagName(), closingElement.TagName()) {
-				if openingTag != nil && ast.IsJsxOpeningElement(openingTag) && ast.TagNamesAreEquivalent(closingElement.TagName(), openingTag.TagName()) {
-					// opening incorrectly matched with its parent's closing -- put error on opening
-					p.parseErrorAtRange(opening.TagName().Loc, diagnostics.JSX_element_0_has_no_corresponding_closing_tag, scanner.GetTextOfNodeFromSourceText(p.sourceText, opening.TagName(), false /*includeTrivia*/))
-				} else {
-					// other opening/closing mismatches -- put error on closing
-					p.parseErrorAtRange(closingElement.TagName().Loc, diagnostics.Expected_corresponding_JSX_closing_tag_for_0, scanner.GetTextOfNodeFromSourceText(p.sourceText, opening.TagName(), false /*includeTrivia*/))
-				}
-			}
-		}
-		result = p.finishNode(p.factory.NewJsxElement(opening, children, closingElement), pos)
-		closingElement.Parent = result // force reset parent pointers from possibly discarded parse result
-	case ast.KindJsxOpeningFragment:
-		result = p.finishNode(p.factory.NewJsxFragment(opening, p.parseJsxChildren(opening), p.parseJsxClosingFragment(inExpressionContext)), pos)
-	case ast.KindJsxSelfClosingElement:
-		// Nothing else to do for self-closing elements
-		result = opening
-	default:
-		panic("Unhandled case in parseJsxElementOrSelfClosingElementOrFragment")
-	}
-	// If the user writes the invalid code '<div></div><div></div>' in an expression context (i.e. not wrapped in
-	// an enclosing tag), we'll naively try to parse   ^ this as a 'less than' operator and the remainder of the tag
-	// as garbage, which will cause the formatter to badly mangle the JSX. Perform a speculative parse of a JSX
-	// element if we see a < token so that we can wrap it in a synthetic binary expression so the formatter
-	// does less damage and we can report a better error.
-	// Since JSX elements are invalid < operands anyway, this lookahead parse will only occur in error scenarios
-	// of one sort or another.
-	// If we are in a unary context, we can't do this recovery; the binary expression we return here is not
-	// a valid UnaryExpression and will cause problems later.
-	if !mustBeUnary && inExpressionContext && p.token == ast.KindLessThanToken {
-		topBadPos := topInvalidNodePosition
-		if topBadPos < 0 {
-			topBadPos = result.Pos()
-		}
-		invalidElement := p.parseJsxElementOrSelfClosingElementOrFragment( /*inExpressionContext*/ true, topBadPos, nil, false)
-		operatorToken := p.factory.NewToken(ast.KindCommaToken)
-		operatorToken.Loc = core.NewTextRange(invalidElement.Pos(), invalidElement.Pos())
-		p.parseErrorAt(scanner.SkipTrivia(p.sourceText, topBadPos), invalidElement.End(), diagnostics.JSX_expressions_must_have_one_parent_element)
-		result = p.finishNode(p.factory.NewBinaryExpression(nil /*modifiers*/, result, nil /*typeNode*/, operatorToken, invalidElement), pos)
-	}
-	return result
-}
-
-func (p *Parser) parseJsxChildren(openingTag *ast.Expression) *ast.NodeList {
-	pos := p.nodePos()
-	saveParsingContexts := p.parsingContexts
-	p.parsingContexts |= 1 << PCJsxChildren
-	var list []*ast.Node
-	for {
-		currentToken := p.scanner.ReScanJsxToken(true /*allowMultilineJsxText*/)
-		child := p.parseJsxChild(openingTag, currentToken)
-		if child == nil {
-			break
-		}
-		list = append(list, child)
-		if ast.IsJsxOpeningElement(openingTag) && child.Kind == ast.KindJsxElement &&
-			!ast.TagNamesAreEquivalent(child.AsJsxElement().OpeningElement.TagName(), child.AsJsxElement().ClosingElement.TagName()) &&
-			ast.TagNamesAreEquivalent(openingTag.TagName(), child.AsJsxElement().ClosingElement.TagName()) {
-			// stop after parsing a mismatched child like <div>...(<span></div>) in order to reattach the </div> higher
-			break
-		}
-	}
-	p.parsingContexts = saveParsingContexts
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), list)
-}
-
-func (p *Parser) parseJsxChild(openingTag *ast.Node, token ast.Kind) *ast.Expression {
-	switch token {
-	case ast.KindEndOfFile:
-		// If we hit EOF, issue the error at the tag that lacks the closing element
-		// rather than at the end of the file (which is useless)
-		if ast.IsJsxOpeningFragment(openingTag) {
-			p.parseErrorAtRange(openingTag.Loc, diagnostics.JSX_fragment_has_no_corresponding_closing_tag)
-		} else {
-			// We want the error span to cover only 'Foo.Bar' in < Foo.Bar >
-			// or to cover only 'Foo' in < Foo >
-			tag := openingTag.TagName()
-			start := min(scanner.SkipTrivia(p.sourceText, tag.Pos()), tag.End())
-			p.parseErrorAt(start, tag.End(), diagnostics.JSX_element_0_has_no_corresponding_closing_tag,
-				scanner.GetTextOfNodeFromSourceText(p.sourceText, openingTag.TagName(), false /*includeTrivia*/))
-		}
-		return nil
-	case ast.KindLessThanSlashToken, ast.KindConflictMarkerTrivia:
-		return nil
-	case ast.KindJsxText, ast.KindJsxTextAllWhiteSpaces:
-		return p.parseJsxText()
-	case ast.KindOpenBraceToken:
-		return p.parseJsxExpression(false /*inExpressionContext*/)
-	case ast.KindLessThanToken:
-		return p.parseJsxElementOrSelfClosingElementOrFragment(false /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, openingTag, false)
-	}
-	panic("Unhandled case in parseJsxChild")
-}
-
-func (p *Parser) parseJsxText() *ast.Node {
-	pos := p.nodePos()
-	result := p.factory.NewJsxText(p.scanner.TokenValue(), p.token == ast.KindJsxTextAllWhiteSpaces)
-	p.scanJsxText()
-	return p.finishNode(result, pos)
-}
-
-func (p *Parser) parseJsxExpression(inExpressionContext bool) *ast.Node {
-	pos := p.nodePos()
-	if !p.parseExpected(ast.KindOpenBraceToken) {
-		return nil
-	}
-	// No children spread: `<div>{...items}</div>` is gone. The token is left for
-	// ordinary expression parsing, where `...` is the Lua vararg.
-	var dotDotDotToken *ast.Node
-	var expression *ast.Expression
-	if p.token != ast.KindCloseBraceToken {
-		// Only an AssignmentExpression is valid here per the JSX spec,
-		// but we can unambiguously parse a comma sequence and provide
-		// a better error message in grammar checking.
-		expression = p.parseExpression()
-	}
-	if inExpressionContext {
-		p.parseExpected(ast.KindCloseBraceToken)
-	} else if p.parseExpectedWithoutAdvancing(ast.KindCloseBraceToken) {
-		p.scanJsxText()
-	}
-	return p.finishNode(p.factory.NewJsxExpression(dotDotDotToken, expression), pos)
-}
-
-func (p *Parser) scanJsxText() ast.Kind {
-	p.token = p.scanner.ScanJsxToken()
-	return p.token
-}
-
-func (p *Parser) scanJsxIdentifier() ast.Kind {
-	p.token = p.scanner.ScanJsxIdentifier()
-	return p.token
-}
-
-func (p *Parser) scanJsxAttributeValue() ast.Kind {
-	p.token = p.scanner.ScanJsxAttributeValue()
-	return p.token
-}
-
-func (p *Parser) parseJsxClosingElement(open *ast.Node, inExpressionContext bool) *ast.Node {
-	pos := p.nodePos()
-	p.parseExpected(ast.KindLessThanSlashToken)
-	tagName := p.parseJsxElementName()
-	if p.parseExpectedWithDiagnostic(ast.KindGreaterThanToken, nil /*diagnosticMessage*/, false /*shouldAdvance*/) {
-		// manually advance the scanner in order to look for jsx text inside jsx
-		if inExpressionContext || !ast.TagNamesAreEquivalent(open.TagName(), tagName) {
-			p.nextToken()
-		} else {
-			p.scanJsxText()
-		}
-	}
-	return p.finishNode(p.factory.NewJsxClosingElement(tagName), pos)
-}
-
-func (p *Parser) parseJsxOpeningOrSelfClosingElementOrOpeningFragment(inExpressionContext bool) *ast.Expression {
-	pos := p.nodePos()
-	p.parseExpected(ast.KindLessThanToken)
-	if p.token == ast.KindGreaterThanToken {
-		// See below for explanation of scanJsxText
-		p.scanJsxText()
-		return p.finishNode(p.factory.NewJsxOpeningFragment(), pos)
-	}
-	tagName := p.parseJsxElementName()
-	var typeArguments *ast.NodeList
-	if p.contextFlags&ast.NodeFlagsJavaScriptFile == 0 {
-		typeArguments = p.parseTypeArguments()
-	}
-	attributes := p.parseJsxAttributes()
-	var result *ast.Expression
-	if p.token == ast.KindGreaterThanToken {
-		// Closing tag, so scan the immediately-following text with the JSX scanning instead
-		// of regular scanning to avoid treating illegal characters (e.g. '#') as immediate
-		// scanning errors
-		p.scanJsxText()
-		result = p.factory.NewJsxOpeningElement(tagName, typeArguments, attributes)
-	} else {
-		p.parseExpected(ast.KindSlashToken)
-		if p.parseExpectedWithoutAdvancing(ast.KindGreaterThanToken) {
-			if inExpressionContext {
-				p.nextToken()
-			} else {
-				p.scanJsxText()
-			}
-		}
-		result = p.factory.NewJsxSelfClosingElement(tagName, typeArguments, attributes)
-	}
-	return p.finishNode(result, pos)
-}
-
-func (p *Parser) parseJsxElementName() *ast.Expression {
-	pos := p.nodePos()
-	// JsxElement can have name in the form of
-	//      propertyAccessExpression
-	//      primaryExpression in the form of an identifier and "this" keyword
-	// We can't just simply use parseLeftHandSideExpressionOrHigher because then we will start consider class,function etc as a keyword
-	// We only want to consider "this" as a primaryExpression
-	initialExpression := p.parseJsxTagName()
-	if ast.IsJsxNamespacedName(initialExpression) {
-		return initialExpression // `a:b.c` is invalid syntax, don't even look for the `.` if we parse `a:b`, and let `parseAttribute` report "unexpected :" instead.
-	}
-	expression := initialExpression
-	for p.parseOptional(ast.KindDotToken) {
-		expression = p.finishNode(p.factory.NewPropertyAccessExpression(expression, nil, nil /*colonToken*/, p.parseRightSideOfDot(true /*allowIdentifierNames*/, false /*allowPrivateIdentifiers*/, false /*allowUnicodeEscapeSequenceInIdentifierName*/), ast.NodeFlagsNone), pos)
-	}
-	return expression
-}
-
-func (p *Parser) parseJsxTagName() *ast.Expression {
-	pos := p.nodePos()
-	p.scanJsxIdentifier()
-	// `this` is removed from tlua, so `<this.Foo/>` no longer produces a
-	// this-expression tag name; the keyword is consumed as an ordinary
-	// identifier name and resolves (and errors) like any other unknown tag.
-	tagName := p.parseIdentifierNameErrorOnUnicodeEscapeSequence()
-	if p.parseOptional(ast.KindColonToken) {
-		p.scanJsxIdentifier()
-		return p.finishNode(p.factory.NewJsxNamespacedName(tagName, p.parseIdentifierNameErrorOnUnicodeEscapeSequence()), pos)
-	}
-	return tagName
-}
-
-func (p *Parser) parseJsxAttributes() *ast.Node {
-	pos := p.nodePos()
-	return p.finishNode(p.factory.NewJsxAttributes(p.parseList(PCJsxAttributes, (*Parser).parseJsxAttribute)), pos)
-}
-
-func (p *Parser) parseJsxAttribute() *ast.Node {
-	// No spread attribute: `<Foo {...props} />` is gone with every other spread
-	// form. A `{` in attribute position is now a parse error.
-	pos := p.nodePos()
-	return p.finishNode(p.factory.NewJsxAttribute(p.parseJsxAttributeName(), p.parseJsxAttributeValue()), pos)
-}
-
-func (p *Parser) parseJsxAttributeName() *ast.Node {
-	pos := p.nodePos()
-	p.scanJsxIdentifier()
-	attrName := p.parseIdentifierNameErrorOnUnicodeEscapeSequence()
-	if p.parseOptional(ast.KindColonToken) {
-		p.scanJsxIdentifier()
-		return p.finishNode(p.factory.NewJsxNamespacedName(attrName, p.parseIdentifierNameErrorOnUnicodeEscapeSequence()), pos)
-	}
-	return attrName
-}
-
-func (p *Parser) parseJsxAttributeValue() *ast.Expression {
-	if p.token == ast.KindEqualsToken {
-		if p.scanJsxAttributeValue() == ast.KindStringLiteral {
-			return p.parseLiteralExpression(false /*intern*/)
-		}
-		if p.token == ast.KindOpenBraceToken {
-			return p.parseJsxExpression( /*inExpressionContext*/ true)
-		}
-		if p.token == ast.KindLessThanToken {
-			return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1, nil, false)
-		}
-		p.parseErrorAtCurrentToken(diagnostics.X_or_JSX_element_expected)
-	}
-	return nil
-}
-
-func (p *Parser) parseJsxClosingFragment(inExpressionContext bool) *ast.Node {
-	pos := p.nodePos()
-	p.parseExpected(ast.KindLessThanSlashToken)
-	if p.parseExpectedWithDiagnostic(ast.KindGreaterThanToken, diagnostics.Expected_corresponding_closing_tag_for_JSX_fragment, false /*shouldAdvance*/) {
-		// manually advance the scanner in order to look for jsx text inside jsx
-		if inExpressionContext {
-			p.nextToken()
-		} else {
-			p.scanJsxText()
-		}
-	}
-	return p.finishNode(p.factory.NewJsxClosingFragment(), pos)
 }
 
 func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
@@ -4017,18 +3649,13 @@ func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken:
 		return p.parsePrefixUnaryExpression()
 	case ast.KindLessThanToken:
-		// Just like in parseUpdateExpression, we need to avoid parsing type assertions when
-		// in JSX and we see an expression like "+ <foo> bar".
-		if p.languageVariant == core.LanguageVariantJSX {
-			return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, true /*mustBeUnary*/)
-		}
 		// // This is modified UnaryExpression grammar in TypeScript
 		// //  UnaryExpression (modified):
 		// //      < type > UnaryExpression
 		return p.parseTypeAssertion()
 	default:
 		// `await` is an ordinary identifier in tlua: no AwaitExpression.
-		return p.parseUpdateExpression()
+		return p.parseLeftHandSideExpressionOrHigher()
 	}
 }
 
@@ -4043,7 +3670,6 @@ func (p *Parser) parsePrefixUnaryExpression() *ast.Node {
 }
 
 func (p *Parser) parseTypeAssertion() *ast.Node {
-	debug.Assert(p.languageVariant != core.LanguageVariantJSX, "Type assertions should never be parsed in JSX; they should be parsed as comparisons or JSX elements/fragments.")
 	pos := p.nodePos()
 	p.parseExpected(ast.KindLessThanToken)
 	typeNode := p.parseType()
@@ -4130,19 +3756,17 @@ func (p *Parser) tryParseTypeArgumentsInExpression() *ast.NodeList {
 		return nil
 	}
 	state := p.mark()
-	if p.reScanLessThanToken() == ast.KindLessThanToken {
+	p.nextToken()
+	typeArguments := p.parseDelimitedList(PCTypeArguments, (*Parser).parseTypeArgument)
+	// If it doesn't have the closing `>` then it's definitely not an type argument list.
+	if p.reScanGreaterThanToken() == ast.KindGreaterThanToken {
 		p.nextToken()
-		typeArguments := p.parseDelimitedList(PCTypeArguments, (*Parser).parseTypeArgument)
-		// If it doesn't have the closing `>` then it's definitely not an type argument list.
-		if p.reScanGreaterThanToken() == ast.KindGreaterThanToken {
-			p.nextToken()
-			// We successfully parsed a type argument list. The next token determines whether we want to
-			// treat it as such. If the type argument list is followed by `(` or a template literal, as in
-			// `f<number>(42)`, we favor the type argument interpretation even though JavaScript would view
-			// it as a relational expression.
-			if p.canFollowTypeArgumentsInExpression() {
-				return typeArguments
-			}
+		// We successfully parsed a type argument list. The next token determines whether we want to
+		// treat it as such. If the type argument list is followed by `(` or a template literal, as in
+		// `f<number>(42)`, we favor the type argument interpretation even though JavaScript would view
+		// it as a relational expression.
+		if p.canFollowTypeArgumentsInExpression() {
+			return typeArguments
 		}
 	}
 	p.rewind(state)
@@ -4771,10 +4395,6 @@ func (p *Parser) overrideParentInImmediateChildren(node *ast.Node) {
 	p.currentParent = nil
 }
 
-func (p *Parser) nextTokenIsSlash() bool {
-	return p.nextToken() == ast.KindSlashToken
-}
-
 func (p *Parser) scanTypeMemberStart() bool {
 	// Return true if we have the start of a signature member
 	if p.token == ast.KindOpenParenToken || p.token == ast.KindLessThanToken || p.token == ast.KindGetKeyword || p.token == ast.KindSetKeyword {
@@ -5151,15 +4771,6 @@ func (p *Parser) tokenIsExclamationPunctuation() bool {
 	return p.token == ast.KindExclamationToken && !p.scanner.TokenIsWordOperator()
 }
 
-// tokenIsJsxName reports whether the current token can start a JSX tag or
-// attribute name. A JSX name is an IdentifierName, so keywords qualify; so do
-// the word-spelled operators, which the ordinary scan has already resolved to
-// their punctuation kind — scanJsxIdentifier turns them back into identifiers,
-// but the list-element test runs first.
-func (p *Parser) tokenIsJsxName() bool {
-	return tokenIsIdentifierOrKeyword(p.token) || p.scanner.TokenIsWordOperator()
-}
-
 func (p *Parser) inDisallowConditionalTypesContext() bool {
 	return p.contextFlags&ast.NodeFlagsDisallowConditionalTypesContext != 0
 }
@@ -5248,49 +4859,6 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 			}}
 		}
 	}
-	if commentRange.Kind == ast.KindMultiLineCommentTrivia {
-		text = strings.TrimSuffix(text, "*/")
-		pos := 2
-		var pragmas []ast.Pragma
-		for {
-			if pos = skipTo(text, pos, "@"); pos < 0 {
-				break
-			}
-			// Mirrors the /@(\S+)(\s+(?:\S.*)?)?$/gm pragma regex used by TypeScript: the '@'
-			// must be immediately followed by a non-whitespace pragma name, and the remainder
-			// of the line is consumed as that pragma's arguments. As a consequence, only the
-			// first '@'-token on a line is considered, so an unrelated '@token' earlier on the
-			// line (e.g. an email address) prevents a later '@jsx' on the same line from being
-			// treated as a pragma.
-			namePos := pos + 1
-			nameEnd := skipNonBlanks(text, namePos)
-			if nameEnd == namePos {
-				pos++
-				continue
-			}
-			lineEnd := lineEndPos(text, pos)
-			pragmaName := strings.ToLower(text[namePos:nameEnd])
-			if pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime" {
-				start := skipBlanks(text, nameEnd)
-				argEnd := skipNonBlanks(text, start)
-				if argEnd != start {
-					args := make(map[string]ast.PragmaArgument, 1)
-					args["factory"] = ast.PragmaArgument{
-						Name:      "factory",
-						Value:     text[start:argEnd],
-						TextRange: core.NewTextRange(commentRange.Pos()+start, commentRange.Pos()+argEnd),
-					}
-					pragmas = append(pragmas, ast.Pragma{
-						CommentRange: commentRange,
-						Name:         pragmaName,
-						Args:         args,
-					})
-				}
-			}
-			pos = lineEnd
-		}
-		return pragmas
-	}
 	return nil
 }
 
@@ -5303,35 +4871,6 @@ func skipBlanks(text string, pos int) int {
 		pos++
 	}
 	return pos
-}
-
-func skipNonBlanks(text string, pos int) int {
-	for pos < len(text) && (text[pos] != ' ' && text[pos] != '\t' && text[pos] != '\r' && text[pos] != '\n') {
-		pos++
-	}
-	return pos
-}
-
-func skipTo(text string, pos int, s string) int {
-	if pos >= len(text) {
-		return -1
-	}
-	i := strings.Index(text[pos:], s)
-	if i < 0 {
-		return -1
-	}
-	return pos + i
-}
-
-func lineEndPos(text string, pos int) int {
-	for pos < len(text) {
-		ch, size := utf8.DecodeRuneInString(text[pos:])
-		if stringutil.IsLineBreak(ch) {
-			return pos
-		}
-		pos += size
-	}
-	return len(text)
 }
 
 func extractName(text string, pos int) string {
@@ -5413,8 +4952,6 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 					Range:   pragma.CommentRange,
 				}
 			}
-		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":
-			// Nothing to do here
 		default:
 			panic("Unhandled pragma kind: " + pragma.Name)
 		}
@@ -5512,9 +5049,7 @@ func (p *Parser) checkJSSyntax(node *ast.Node) *ast.Node {
 			p.jsErrorAtRange(node.Modifiers().Loc, diagnostics.Parameter_modifiers_can_only_be_used_in_tlua_files)
 		}
 	case ast.KindCallExpression,
-		ast.KindExpressionWithTypeArguments,
-		ast.KindJsxSelfClosingElement,
-		ast.KindJsxOpeningElement:
+		ast.KindExpressionWithTypeArguments:
 		if list := node.TypeArgumentList(); list != nil && core.Some(list.Nodes, func(n *ast.Node) bool { return n.Flags&ast.NodeFlagsReparsed == 0 }) {
 			p.jsErrorAtRange(list.Loc, diagnostics.Type_arguments_can_only_be_used_in_tlua_files)
 		}

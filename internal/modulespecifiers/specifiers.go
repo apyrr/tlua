@@ -485,11 +485,11 @@ func tryGetLuaModuleName(moduleFileName string, compilerOptions *core.CompilerOp
 	}
 	rel = tspath.RemoveFileExtension(rel)
 	if withoutInit, hadInit := strings.CutSuffix(rel, "/init"); hadInit {
-		// resolveLua probes `?.tlua` and `?.tsx` before `?/init.*`, so the
+		// resolveLua probes `?.tlua` before `?/init.*`, so the
 		// stripped name reaches this init file only when no sibling shadows
 		// it. A shadowed init file has no round-tripping name.
 		sibling := tspath.CombinePaths(base, withoutInit)
-		if host.FileExists(sibling+tspath.ExtensionTs) || host.FileExists(sibling+tspath.ExtensionTsx) {
+		if host.FileExists(sibling + tspath.ExtensionTs) {
 			return ""
 		}
 		rel = withoutInit
@@ -553,7 +553,7 @@ func processEnding(
 	case ModuleSpecifierEndingIndex:
 		return noExtension
 	case ModuleSpecifierEndingJsExtension:
-		return noExtension + getJSExtensionForFile(fileName, options)
+		return noExtension + getJSExtensionForFile(fileName)
 	case ModuleSpecifierEndingTsExtension:
 		// For now, we don't know if this import is going to be type-only, which means we don't
 		// know if a .d.ts extension is valid, so use no extension or a .js extension
@@ -568,7 +568,7 @@ func processEnding(
 			if extensionlessPriority != -1 && extensionlessPriority < jsPriority {
 				return noExtension
 			}
-			return noExtension + getJSExtensionForFile(fileName, options)
+			return noExtension + getJSExtensionForFile(fileName)
 		}
 		return fileName
 	default:
@@ -688,7 +688,7 @@ func tryDirectoryWithPackageJson(
 		// No package.json exists; an index.js will still resolve as the package name
 		fileName := moduleFileToTry[parts.PackageRootIndex+1:]
 		if fileName == "index"+tspath.ExtensionDts || fileName == "index"+tspath.ExtensionJs ||
-			fileName == "index"+tspath.ExtensionTs || fileName == "index"+tspath.ExtensionTsx {
+			fileName == "index"+tspath.ExtensionTs {
 			return pkgJsonDirAttemptResult{moduleFileToTry: moduleFileToTry, packageRootPath: packageRootPath}
 		} else {
 			return pkgJsonDirAttemptResult{moduleFileToTry: moduleFileToTry}
@@ -974,7 +974,7 @@ func tryGetModuleNameFromExportsOrImports(
 		pathOrPattern := tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(packageDirectory, strValue), "")
 		var extensionSwappedTarget string
 		if tspath.HasTSFileExtension(targetFilePath) {
-			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + module.TryGetJSExtensionForFile(targetFilePath, options)
+			extensionSwappedTarget = tspath.RemoveFileExtension(targetFilePath) + module.TryGetJSExtensionForFile(targetFilePath)
 		}
 
 		compareOpts := tspath.ComparePathsOptions{

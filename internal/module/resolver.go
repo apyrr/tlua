@@ -1177,7 +1177,7 @@ func (r *resolutionState) luaSearchRoot() string {
 }
 
 // probeLuaCandidates probes the package.path ladder for one base path:
-// `?.tlua`, `?.tsx`, `?/init.tlua`, `?/init.tsx`, then the opaque
+// `?.tlua`, `?/init.tlua`, then the opaque
 // implementation forms `?.lua`, `?/init.lua`. Declaration files are not
 // probed: a .d.tlua is a global script, not a module. Candidates are probed
 // as files unconditionally — no DirectoryExists gate — so the tracking FS
@@ -1189,9 +1189,7 @@ func (r *resolutionState) probeLuaCandidates(base string) *resolved {
 		extension string
 	}{
 		{base + tspath.ExtensionTs, tspath.ExtensionTs},
-		{base + tspath.ExtensionTsx, tspath.ExtensionTsx},
 		{tspath.CombinePaths(base, "init"+tspath.ExtensionTs), tspath.ExtensionTs},
-		{tspath.CombinePaths(base, "init"+tspath.ExtensionTsx), tspath.ExtensionTsx},
 		{base + tspath.ExtensionJs, tspath.ExtensionJs},
 		{tspath.CombinePaths(base, "init"+tspath.ExtensionJs), tspath.ExtensionJs},
 	}
@@ -1398,38 +1396,9 @@ func (r *resolutionState) tryAddingExtensions(extensionless string, extensions e
 			}
 		}
 		return continueSearching()
-	case tspath.ExtensionTsx, tspath.ExtensionJsx:
-		// basically idendical to the ts/js case below, but prefers matching tsx and jsx files exactly before falling back to the ts or js file path
-		// (historically, we disallow having both a a.ts and a.tsx file in the same compilation, since their outputs clash)
-		// TODO: We should probably error if `"./a.tsx"` resolved to `"./a.ts"`, right?
-		if extensions&extensionsTypeScript != 0 {
-			if resolved := r.tryExtension(tspath.ExtensionTsx, extensionless, originalExtension == tspath.ExtensionTsx); !resolved.shouldContinueSearching() {
-				return resolved
-			}
-			if resolved := r.tryExtension(tspath.ExtensionTs, extensionless, originalExtension == tspath.ExtensionTsx); !resolved.shouldContinueSearching() {
-				return resolved
-			}
-		}
-		if extensions&extensionsDeclaration != 0 {
-			if resolved := r.tryExtension(tspath.ExtensionDts, extensionless, originalExtension == tspath.ExtensionTsx); !resolved.shouldContinueSearching() {
-				return resolved
-			}
-		}
-		if extensions&extensionsJavaScript != 0 {
-			if resolved := r.tryExtension(tspath.ExtensionJsx, extensionless, false); !resolved.shouldContinueSearching() {
-				return resolved
-			}
-			if resolved := r.tryExtension(tspath.ExtensionJs, extensionless, false); !resolved.shouldContinueSearching() {
-				return resolved
-			}
-		}
-		return continueSearching()
 	case tspath.ExtensionTs, tspath.ExtensionDts, tspath.ExtensionJs, "":
 		if extensions&extensionsTypeScript != 0 {
 			if resolved := r.tryExtension(tspath.ExtensionTs, extensionless, originalExtension == tspath.ExtensionTs || originalExtension == tspath.ExtensionDts); !resolved.shouldContinueSearching() {
-				return resolved
-			}
-			if resolved := r.tryExtension(tspath.ExtensionTsx, extensionless, originalExtension == tspath.ExtensionTs || originalExtension == tspath.ExtensionDts); !resolved.shouldContinueSearching() {
 				return resolved
 			}
 		}
@@ -1440,9 +1409,6 @@ func (r *resolutionState) tryAddingExtensions(extensionless string, extensions e
 		}
 		if extensions&extensionsJavaScript != 0 {
 			if resolved := r.tryExtension(tspath.ExtensionJs, extensionless, false); !resolved.shouldContinueSearching() {
-				return resolved
-			}
-			if resolved := r.tryExtension(tspath.ExtensionJsx, extensionless, false); !resolved.shouldContinueSearching() {
 				return resolved
 			}
 		}
@@ -1947,10 +1913,10 @@ func matchesPatternWithTrailer(target string, name string) bool {
 
 /** True if `extension` is one of the supported `extensions`. */
 func extensionIsOk(extensions extensions, extension string) bool {
-	return (extensions&extensionsJavaScript != 0 && (extension == tspath.ExtensionJs || extension == tspath.ExtensionJsx) ||
-		(extensions&extensionsTypeScript != 0 && (extension == tspath.ExtensionTs || extension == tspath.ExtensionTsx)) ||
-		(extensions&extensionsDeclaration != 0 && extension == tspath.ExtensionDts) ||
-		(extensions&extensionsJson != 0 && extension == tspath.ExtensionJson))
+	return extensions&extensionsJavaScript != 0 && extension == tspath.ExtensionJs ||
+		extensions&extensionsTypeScript != 0 && extension == tspath.ExtensionTs ||
+		extensions&extensionsDeclaration != 0 && extension == tspath.ExtensionDts ||
+		extensions&extensionsJson != 0 && extension == tspath.ExtensionJson
 }
 
 func ResolveConfig(moduleName string, containingFile string, host ResolutionHost) *ResolvedModule {
@@ -2236,7 +2202,7 @@ func (r *resolutionState) getMatchedStarForPatternEntrypoint(file string, leadin
 		return file[len(leadingSlice) : len(file)-len(trailingSlice)], true
 	}
 
-	if jsExtension := TryGetJSExtensionForFile(file, r.compilerOptions); len(jsExtension) > 0 {
+	if jsExtension := TryGetJSExtensionForFile(file); len(jsExtension) > 0 {
 		swapped := tspath.ChangeFullExtension(file, jsExtension)
 		if stringutil.HasPrefixAndSuffixWithoutOverlap(swapped, leadingSlice, trailingSlice, caseSensitive) {
 			return swapped[len(leadingSlice) : len(swapped)-len(trailingSlice)], true

@@ -361,22 +361,6 @@ var optionsForCompiler = []*CommandLineOption{
 		transpileOptionValue:     core.TSUnknown,
 	},
 	{
-		Name:                    "jsx",
-		Kind:                    CommandLineOptionTypeEnum, // jsxOptionMap,
-		AffectsSourceFile:       true,
-		AffectsEmit:             true,
-		AffectsBuildInfo:        true,
-		AffectsModuleResolution: true,
-		// The checker emits an error when it sees JSX but this option is not set in compilerOptions.
-		// This is effectively a semantic error, so mark this option as affecting semantic diagnostics
-		// so we know to refresh errors when this option is changed.
-		AffectsSemanticDiagnostics: true,
-		ShowInSimplifiedHelpView:   true,
-		Category:                   diagnostics.Language_and_Environment,
-		Description:                diagnostics.Specify_what_JSX_code_is_generated,
-		DefaultValueDescription:    core.TSUnknown,
-	},
-	{
 		Name:                     "outFile",
 		Kind:                     CommandLineOptionTypeString,
 		AffectsEmit:              true,
@@ -743,32 +727,6 @@ var optionsForCompiler = []*CommandLineOption{
 
 	// Advanced
 	{
-		Name:                    "jsxFactory",
-		Kind:                    CommandLineOptionTypeString,
-		Category:                diagnostics.Language_and_Environment,
-		Description:             diagnostics.Specify_the_JSX_factory_function_used_when_targeting_React_JSX_emit_e_g_React_createElement_or_h,
-		DefaultValueDescription: "`React.createElement`",
-	},
-	{
-		Name:                    "jsxFragmentFactory",
-		Kind:                    CommandLineOptionTypeString,
-		Category:                diagnostics.Language_and_Environment,
-		Description:             diagnostics.Specify_the_JSX_Fragment_reference_used_for_fragments_when_targeting_React_JSX_emit_e_g_React_Fragment_or_Fragment,
-		DefaultValueDescription: "React.Fragment",
-	},
-	{
-		Name:                       "jsxImportSource",
-		Kind:                       CommandLineOptionTypeString,
-		AffectsSemanticDiagnostics: true,
-		AffectsEmit:                true,
-		AffectsBuildInfo:           true,
-		AffectsModuleResolution:    true,
-		AffectsSourceFile:          true,
-		Category:                   diagnostics.Language_and_Environment,
-		Description:                diagnostics.Specify_module_specifier_used_to_import_the_JSX_factory_functions_when_using_jsx_Colon_react_jsx_Asterisk,
-		DefaultValueDescription:    "react",
-	},
-	{
 		Name:                    "allowArbitraryExtensions",
 		Kind:                    CommandLineOptionTypeBoolean,
 		AffectsProgramStructure: true,
@@ -777,15 +735,6 @@ var optionsForCompiler = []*CommandLineOption{
 		DefaultValueDescription: false,
 	},
 
-	{
-		Name:                    "reactNamespace",
-		Kind:                    CommandLineOptionTypeString,
-		AffectsEmit:             true,
-		AffectsBuildInfo:        true,
-		Category:                diagnostics.Language_and_Environment,
-		Description:             diagnostics.Specify_the_object_invoked_for_createElement_This_only_applies_when_targeting_react_JSX_emit,
-		DefaultValueDescription: "`React`",
-	},
 	{
 		Name: "skipDefaultLibCheck",
 		Kind: CommandLineOptionTypeBoolean,

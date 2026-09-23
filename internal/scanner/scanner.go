@@ -158,7 +158,6 @@ var textToToken = func() map[string]ast.Kind {
 		"*":   ast.KindAsteriskToken,
 		"/":   ast.KindSlashToken,
 		"%":   ast.KindPercentToken,
-		"</":  ast.KindLessThanSlashToken,
 		"&":   ast.KindAmpersandToken,
 		"|":   ast.KindBarToken,
 		"!":   ast.KindExclamationToken,
@@ -189,12 +188,11 @@ type ScannerState struct {
 }
 
 type Scanner struct {
-	text            string
-	end             int
-	languageVariant core.LanguageVariant
-	scriptTarget    core.ScriptTarget
-	onError         ErrorCallback
-	skipTrivia      bool
+	text         string
+	end          int
+	scriptTarget core.ScriptTarget
+	onError      ErrorCallback
+	skipTrivia   bool
 	ScannerState
 
 	numberCache    map[string]string
@@ -391,10 +389,6 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 	s.onError = errorCallback
 }
 
-func (s *Scanner) SetLanguageVariant(languageVariant core.LanguageVariant) {
-	s.languageVariant = languageVariant
-}
-
 func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
 	s.scriptTarget = scriptTarget
 }
@@ -514,7 +508,7 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindExclamationToken
 			}
 		case '"', '\'':
-			s.tokenValue = s.scanString(false /*jsxAttributeString*/)
+			s.tokenValue = s.scanString()
 			s.token = ast.KindStringLiteral
 		case '`':
 			s.token = s.scanTemplateAndSetTokenValue(false /*shouldEmitInvalidEscapeError*/)
@@ -742,9 +736,6 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '=' {
 				s.pos += 2
 				s.token = ast.KindLessThanEqualsToken
-			} else if s.languageVariant == core.LanguageVariantJSX && s.charAt(1) == '/' && s.charAt(2) != '*' {
-				s.pos += 2
-				s.token = ast.KindLessThanSlashToken
 			} else {
 				s.pos++
 				s.token = ast.KindLessThanToken
@@ -1002,10 +993,6 @@ func (s *Scanner) processCommentDirective(start int, end int, multiline bool) {
 	s.commentDirectives = append(s.commentDirectives, ast.CommentDirective{Loc: core.NewTextRange(start, end), Kind: kind})
 }
 
-func (s *Scanner) ReScanLessThanToken() ast.Kind {
-	return s.token
-}
-
 func (s *Scanner) ReScanGreaterThanToken() ast.Kind {
 	if s.token == ast.KindGreaterThanToken {
 		s.reScanGreaterThanTokenInner()
@@ -1185,144 +1172,12 @@ func (s *Scanner) ReScanSlashToken(reportErrors ...bool) ast.Kind {
 	return s.token
 }
 
-func (s *Scanner) ReScanJsxToken(allowMultilineJsxText bool) ast.Kind {
-	s.pos = s.fullStartPos
-	s.tokenStart = s.fullStartPos
-	s.token = s.ScanJsxTokenEx(allowMultilineJsxText)
-	return s.token
-}
-
 func (s *Scanner) ReScanHashToken() ast.Kind {
 	if s.token == ast.KindPrivateIdentifier {
 		s.pos = s.tokenStart + 1
 		s.token = ast.KindHashToken
 	}
 	return s.token
-}
-
-func (s *Scanner) ScanJsxToken() ast.Kind {
-	return s.ScanJsxTokenEx(true /*allowMultilineJsxText*/)
-}
-
-func (s *Scanner) ScanJsxTokenEx(allowMultilineJsxText bool) ast.Kind {
-	s.fullStartPos = s.pos
-	s.tokenStart = s.pos
-	ch := s.char()
-	switch {
-	case ch < 0:
-		s.token = ast.KindEndOfFile
-	case ch == '<':
-		if s.charAt(1) == '/' {
-			s.pos += 2
-			s.token = ast.KindLessThanSlashToken
-		} else {
-			s.pos++
-			s.token = ast.KindLessThanToken
-		}
-	case ch == '{':
-		s.pos++
-		s.token = ast.KindOpenBraceToken
-	default:
-		// First non-whitespace character on this line.
-		firstNonWhitespace := 0
-		// These initial values are special because the first line is:
-		// firstNonWhitespace = 0 to indicate that we want leading whitespace
-		for {
-			ch, size := s.charAndSize()
-			if size == 0 || ch == '{' {
-				break
-			}
-			if ch == '<' {
-				if isConflictMarkerTrivia(s.text, s.pos) {
-					s.pos = scanConflictMarkerTrivia(s.text, s.pos, s.errorAt)
-					s.token = ast.KindConflictMarkerTrivia
-					return s.token
-				}
-				break
-			}
-			if ch == '>' {
-				s.errorAt(diagnostics.Unexpected_token_Did_you_mean_or_gt, s.pos, 1)
-			} else if ch == '}' {
-				s.errorAt(diagnostics.Unexpected_token_Did_you_mean_or_rbrace, s.pos, 1)
-			}
-			// FirstNonWhitespace is 0, then we only see whitespaces so far. If we see a linebreak, we want to ignore that whitespaces.
-			// i.e (- : whitespace)
-			//      <div>----
-			//      </div> becomes <div></div>
-			//
-			//      <div>----</div> becomes <div>----</div>
-			if stringutil.IsLineBreak(ch) && firstNonWhitespace == 0 {
-				firstNonWhitespace = -1
-			} else if !allowMultilineJsxText && stringutil.IsLineBreak(ch) && firstNonWhitespace > 0 {
-				// Stop JsxText on each line during formatting. This allows the formatter to
-				// indent each line correctly.
-				break
-			} else if !stringutil.IsWhiteSpaceLike(ch) {
-				firstNonWhitespace = s.pos
-			}
-			s.pos += size
-		}
-		s.tokenValue = s.text[s.fullStartPos:s.pos]
-		s.token = ast.KindJsxText
-		if firstNonWhitespace == -1 {
-			s.token = ast.KindJsxTextAllWhiteSpaces
-		}
-	}
-	return s.token
-}
-
-// Scans a JSX identifier; these differ from normal identifiers in that they allow dashes
-// and, in tlua, in that a word-spelled operator is a name here rather than an operator.
-func (s *Scanner) ScanJsxIdentifier() ast.Kind {
-	if tokenIsIdentifierOrKeyword(s.token) || s.TokenIsWordOperator() {
-		// An identifier or keyword has already been parsed - check for a `-` or a single instance of `:` and then append it and
-		// everything after it to the token
-		// Do note that this means that `scanJsxIdentifier` effectively _mutates_ the visible token without advancing to a new token
-		// Any caller should be expecting this behavior and should only read the pos or token value after calling it.
-		for {
-			ch := s.char()
-			if ch < 0 {
-				break
-			}
-			if ch == '-' {
-				s.tokenValue += "-"
-				s.pos++
-				continue
-			}
-			oldPos := s.pos
-			s.tokenValue += s.scanIdentifierParts() // reuse `scanIdentifierParts` so unicode escapes are handled
-			if s.pos == oldPos {
-				break
-			}
-		}
-		s.token = s.jsxIdentifierToken()
-	}
-	return s.token
-}
-
-func (s *Scanner) ScanJsxAttributeValue() ast.Kind {
-	s.fullStartPos = s.pos
-	// Skip whitespace between '=' and the value so tokenStart lands on the
-	// opening quote, not on trivia.
-	for ch, size := s.charAndSize(); size > 0 && stringutil.IsWhiteSpaceLike(ch); ch, size = s.charAndSize() {
-		s.pos += size
-	}
-	s.tokenStart = s.pos
-	switch s.char() {
-	case '"', '\'':
-		s.tokenValue = s.scanString(true /*jsxAttributeString*/)
-		s.token = ast.KindStringLiteral
-		return s.token
-	default:
-		// If this scans anything other than `{`, it's a parse error.
-		return s.Scan()
-	}
-}
-
-func (s *Scanner) ReScanJsxAttributeValue() ast.Kind {
-	s.pos = s.fullStartPos
-	s.tokenStart = s.fullStartPos
-	return s.ScanJsxAttributeValue()
 }
 
 /** In addition to the usual JSDoc ast.Kinds, can also return ast.KindJSDocCommentTextToken */
@@ -1538,7 +1393,7 @@ func (s *Scanner) scanIdentifierParts() string {
 	return sb.String()
 }
 
-func (s *Scanner) scanString(jsxAttributeString bool) string {
+func (s *Scanner) scanString() string {
 	quote := s.char()
 	if quote == '\'' {
 		s.tokenFlags |= ast.TokenFlagsSingleQuote
@@ -1552,8 +1407,7 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 	}
 	if strLen > 0 {
 		str := s.text[s.pos : s.pos+strLen]
-		if jsxAttributeString ||
-			strings.IndexByte(str, '\\') < 0 && strings.IndexByte(str, '\r') < 0 && strings.IndexByte(str, '\n') < 0 {
+		if strings.IndexByte(str, '\\') < 0 && strings.IndexByte(str, '\r') < 0 && strings.IndexByte(str, '\n') < 0 {
 			s.pos += strLen + 1
 			return str
 		}
@@ -1573,13 +1427,13 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 			s.pos++
 			break
 		}
-		if ch == '\\' && !jsxAttributeString {
+		if ch == '\\' {
 			sb.WriteString(s.text[start:s.pos])
 			sb.WriteString(s.scanEscapeSequence(EscapeSequenceScanningFlagsString | EscapeSequenceScanningFlagsReportErrors))
 			start = s.pos
 			continue
 		}
-		if (ch == '\n' || ch == '\r') && !jsxAttributeString {
+		if ch == '\n' || ch == '\r' {
 			sb.WriteString(s.text[start:s.pos])
 			s.tokenFlags |= ast.TokenFlagsUnterminated
 			s.error(diagnostics.Unterminated_string_literal)
@@ -2057,34 +1911,6 @@ func (s *Scanner) identifierToken() ast.Kind {
 	return kind
 }
 
-// jsxIdentifierToken resolves just-scanned JSX name text to its token kind. A
-// JSX name is an IdentifierName, where keywords are legal, and the word-spelled
-// operators are ordinary names too: an attribute or tag named `and`/`or`/`not`
-// has no alternative spelling to fall back on, the way the member name `t.and`
-// has `t["and"]`.
-func (s *Scanner) jsxIdentifierToken() ast.Kind {
-	// No token in a JSX name position is a word operator, including one that
-	// merely starts with the word (`not-foo` scans `not` before the dash).
-	s.tokenFlags &^= ast.TokenFlagsWordOperator
-	kind := GetIdentifierToken(s.tokenValue)
-	if isWordOperatorKind(kind) {
-		return ast.KindIdentifier
-	}
-	return kind
-}
-
-func IsValidIdentifier(s string) bool {
-	if len(s) == 0 {
-		return false
-	}
-	for i, ch := range s {
-		if i == 0 && !IsIdentifierStart(ch) || i != 0 && !IsIdentifierPart(ch) {
-			return false
-		}
-	}
-	return true
-}
-
 // Section 6.1.4
 func isWordCharacter(ch rune) bool {
 	return stringutil.IsASCIILetter(ch) || stringutil.IsDigit(ch) || ch == '_'
@@ -2095,13 +1921,8 @@ func IsIdentifierStart(ch rune) bool {
 }
 
 func IsIdentifierPart(ch rune) bool {
-	return IsIdentifierPartEx(ch, core.LanguageVariantStandard)
-}
-
-func IsIdentifierPartEx(ch rune, languageVariant core.LanguageVariant) bool {
 	return isWordCharacter(ch) || ch == '$' ||
-		ch >= utf8.RuneSelf && stringutil.IsUnicodeIdentifierPart(ch) ||
-		languageVariant == core.LanguageVariantJSX && (ch == '-' || ch == ':') // "-" and ":" are valid in JSX Identifiers
+		ch >= utf8.RuneSelf && stringutil.IsUnicodeIdentifierPart(ch)
 }
 
 var tokenToText = func() [ast.KindCount]string {
@@ -2123,8 +1944,8 @@ var tokenToText = func() [ast.KindCount]string {
 	result[ast.KindExclamationToken] = "!"
 	// These words were demoted from keywords to identifiers (they no longer
 	// appear in textToToken), but their token kinds are still synthesized —
-	// e.g. the JSX transform emits an ImportDeclaration and the declarations
-	// transform emits export modifiers — so pin their printed spellings.
+	// e.g. the declarations transform emits export modifiers — so pin their
+	// printed spellings.
 	result[ast.KindExportKeyword] = "export"
 	result[ast.KindDefaultKeyword] = "default"
 	result[ast.KindFromKeyword] = "from"
@@ -2418,7 +2239,6 @@ func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s.text = sourceFile.Text()
 	s.pos = pos
 	s.end = len(s.text)
-	s.languageVariant = sourceFile.LanguageVariant
 	s.Scan()
 	return s
 }
@@ -2439,8 +2259,7 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc 
 	if ast.NodeIsMissing(node) {
 		return node.Pos()
 	}
-	if ast.IsJSDocNode(node) || node.Kind == ast.KindJsxText {
-		// JsxText cannot actually contain comments, even though the scanner will think it sees comments
+	if ast.IsJSDocNode(node) {
 		return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{StopAtComments: true})
 	}
 	if includeJSDoc && len(node.JSDoc(sourceFile)) > 0 {
@@ -2536,7 +2355,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		return GetRangeOfTokenAtPosition(sourceFile, node.Pos())
 	}
 	pos := errorNode.Pos()
-	if !ast.NodeIsMissing(errorNode) && !ast.IsJsxText(errorNode) {
+	if !ast.NodeIsMissing(errorNode) {
 		pos = SkipTrivia(sourceFile.Text(), pos)
 	}
 	return core.NewTextRange(pos, errorNode.End())

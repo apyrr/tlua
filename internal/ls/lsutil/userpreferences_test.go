@@ -42,8 +42,6 @@ func getValidStringValue(t reflect.Type) string {
 	switch typeName {
 	case "lsutil.QuotePreference":
 		return string(QuotePreferenceSingle)
-	case "lsutil.JsxAttributeCompletionStyle":
-		return string(JsxAttributeCompletionStyleBraces)
 	case "lsutil.IncludeInlayParameterNameHints":
 		return string(IncludeInlayParameterNameHintsAll)
 	case "lsutil.SemicolonPreference":
@@ -465,49 +463,38 @@ func TestUserPreferencesParseServerFeaturePreferences(t *testing.T) {
 			"js/ts": map[string]any{
 				"validate": map[string]any{"enabled": false},
 				"format":   map[string]any{"enabled": false},
-				"autoClosingTags": map[string]any{
-					"enabled": false,
-				},
 			},
 		})
 		assert.Equal(t, prefs.EnableValidation, core.TSFalse)
 		assert.Equal(t, prefs.EnableFormatting, core.TSFalse)
-		assert.Equal(t, prefs.EnableAutoClosingTags, core.TSFalse)
 	})
 
 	t.Run("legacy server feature fallbacks", func(t *testing.T) {
 		t.Parallel()
 		prefs := ParseUserPreferences(map[string]any{
 			"typescript": map[string]any{
-				"validate":        map[string]any{"enable": false},
-				"format":          map[string]any{"enable": false},
-				"autoClosingTags": false,
+				"validate": map[string]any{"enable": false},
+				"format":   map[string]any{"enable": false},
 			},
 		})
 		assert.Equal(t, prefs.EnableValidation, core.TSFalse)
 		assert.Equal(t, prefs.EnableFormatting, core.TSFalse)
-		assert.Equal(t, prefs.EnableAutoClosingTags, core.TSFalse)
 	})
 
 	t.Run("preferred settings take precedence over fallbacks", func(t *testing.T) {
 		t.Parallel()
 		prefs := ParseUserPreferences(map[string]any{
 			"typescript": map[string]any{
-				"validate":        map[string]any{"enable": false},
-				"format":          map[string]any{"enable": false},
-				"autoClosingTags": false,
+				"validate": map[string]any{"enable": false},
+				"format":   map[string]any{"enable": false},
 			},
 			"js/ts": map[string]any{
 				"validate": map[string]any{"enabled": true},
 				"format":   map[string]any{"enabled": true},
-				"autoClosingTags": map[string]any{
-					"enabled": true,
-				},
 			},
 		})
 		assert.Equal(t, prefs.EnableValidation, core.TSTrue)
 		assert.Equal(t, prefs.EnableFormatting, core.TSTrue)
-		assert.Equal(t, prefs.EnableAutoClosingTags, core.TSTrue)
 	})
 }
 

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"slices"
 	"strings"
-	"unicode"
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/astnav"
@@ -532,7 +531,7 @@ func makeImport(ct *change.Tracker, defaultImport *ast.IdentifierNode, namedImpo
 	return ct.NodeFactory.NewImportDeclaration( /*modifiers*/ nil, importClause, moduleSpecifier)
 }
 
-func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isValidTypeOnlyUseSite bool, usagePosition *lsproto.Position) []*Fix {
+func (v *View) GetFixes(ctx context.Context, export *Export, isValidTypeOnlyUseSite bool, usagePosition *lsproto.Position) []*Fix {
 	var fixes []*Fix
 	if namespaceFix := v.tryUseExistingNamespaceImport(ctx, export, usagePosition); namespaceFix != nil {
 		fixes = append(fixes, namespaceFix)
@@ -576,14 +575,6 @@ func (v *View) GetFixes(ctx context.Context, export *Export, forJSX bool, isVali
 	addAsTypeOnly := getAddAsTypeOnly(isValidTypeOnlyUseSite, export, v.program.Options())
 
 	name := export.Name()
-	startsWithUpper := unicode.IsUpper(rune(name[0]))
-	if forJSX && !startsWithUpper {
-		if export.IsRenameable() {
-			name = fmt.Sprintf("%c%s", unicode.ToUpper(rune(name[0])), name[1:])
-		} else {
-			return nil
-		}
-	}
 
 	return append(fixes, &Fix{
 		AutoImportFix: &lsproto.AutoImportFix{
@@ -1077,8 +1068,9 @@ func isIndexFileName(fileName string) bool {
 	}
 	fileName = fileName[lastSlash+1:]
 	switch fileName {
-	case "index" + tspath.ExtensionJs, "index" + tspath.ExtensionJsx, "index" + tspath.ExtensionDts,
-		"index" + tspath.ExtensionTs, "index" + tspath.ExtensionTsx:
+	case "index" + tspath.ExtensionJs,
+		"index" + tspath.ExtensionDts,
+		"index" + tspath.ExtensionTs:
 		return true
 	}
 	return false

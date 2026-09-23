@@ -34,7 +34,7 @@ import (
 )
 
 // Posix-style path to additional test libraries (the TypeScript submodule's
-// tests/lib folder); referenced by a few JSX tests via /// <reference path="/.lib/react16.d.ts" />.
+// tests/lib folder).
 const testLibFolder = "/.lib"
 
 const FakeTSVersion = "FakeTSVersion"
@@ -693,7 +693,7 @@ func newCompilationResult(
 			input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
 			c.inputs = append(c.inputs, input)
 			if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
-				extname := outputpaths.GetOutputExtension(sourceFile.FileName(), options.Jsx)
+				extname := outputpaths.GetOutputExtension(sourceFile.FileName())
 				outputs := &CompilationOutput{
 					Inputs: []*TestFile{input},
 					JS:     js.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname)),

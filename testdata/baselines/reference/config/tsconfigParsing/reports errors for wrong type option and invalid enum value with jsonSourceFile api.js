@@ -6,8 +6,7 @@ Fs::
 {
 			    "compilerOptions": {
 				"target": "invalid value",
-				"removeComments": "should be a boolean",
-				"jsx": "invalid value"
+				"removeComments": "should be a boolean"
 			    }
 			}
 
@@ -31,11 +30,6 @@ Errors::
 
 [96mtluaconfig.json[0m:[93m4[0m:[93m23[0m - [91merror[0m[90m TLUA5024: [0mCompiler option 'removeComments' requires a value of type boolean.
 
-[7m4[0m     "removeComments": "should be a boolean",
+[7m4[0m     "removeComments": "should be a boolean"
 [7m [0m [91m                      ~~~~~~~~~~~~~~~~~~~~~[0m
-
-[96mtluaconfig.json[0m:[93m5[0m:[93m12[0m - [91merror[0m[90m TLUA6046: [0mArgument for '--jsx' option must be: 'preserve', 'react-native', 'react-jsx', 'react-jsxdev', 'react'.
-
-[7m5[0m     "jsx": "invalid value"
-[7m [0m [91m           ~~~~~~~~~~~~~~~[0m
 

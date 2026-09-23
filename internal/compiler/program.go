@@ -21,7 +21,6 @@ import (
 	"github.com/apyrr/tlua/internal/modulespecifiers"
 	"github.com/apyrr/tlua/internal/outputpaths"
 	"github.com/apyrr/tlua/internal/packagejson"
-	"github.com/apyrr/tlua/internal/parser"
 	"github.com/apyrr/tlua/internal/printer"
 	"github.com/apyrr/tlua/internal/scanner"
 	"github.com/apyrr/tlua/internal/sourcemap"
@@ -260,7 +259,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 		}
 	}
 
-	// Only try adding extensions from the first supported group (which should be .ts/.tsx/.d.ts)
+	// Only try adding extensions from the first supported group (which should be .ts/.d.ts)
 	for _, ext := range supportedExtensions[0] {
 		result := p.GetSourceFileForResolvedModule(fileName + ext)
 		if result != nil {
@@ -662,15 +661,15 @@ func (p *Program) canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile) 
 		return false
 	}
 
-	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
+	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindExternal {
 		return true
 	}
 
-	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isJS := sourceFile.ScriptKind == core.ScriptKindJS
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile)
 	isPlainJS := ast.IsPlainJSFile(sourceFile)
 
-	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
+	// By default, only type-check .ts, Deferred, plain JS, checked JS and External
 	// - plain JS: .js files with no // ts-check
 	// - check JS: .js files with // ts-check
 	// - external: files that are added by plugins
@@ -948,44 +947,6 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
-	if options.JsxFactory != "" {
-		if options.ReactNamespace != "" {
-			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "reactNamespace", "jsxFactory")
-		}
-		if options.Jsx == core.JsxEmitReactJSX || options.Jsx == core.JsxEmitReactJSXDev {
-			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "jsxFactory", options.Jsx.String())
-		}
-		if parser.ParseIsolatedEntityName(options.JsxFactory) == nil {
-			createOptionValueDiagnostic("jsxFactory", diagnostics.Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name, options.JsxFactory)
-		}
-	} else if options.ReactNamespace != "" && !scanner.IsIdentifierText(options.ReactNamespace, core.LanguageVariantStandard) {
-		createOptionValueDiagnostic("reactNamespace", diagnostics.Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier, options.ReactNamespace)
-	}
-
-	if options.JsxFragmentFactory != "" {
-		if options.JsxFactory == "" {
-			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "jsxFragmentFactory", "jsxFactory")
-		}
-		if options.Jsx == core.JsxEmitReactJSX || options.Jsx == core.JsxEmitReactJSXDev {
-			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "jsxFragmentFactory", options.Jsx.String())
-		}
-		if parser.ParseIsolatedEntityName(options.JsxFragmentFactory) == nil {
-			createOptionValueDiagnostic("jsxFragmentFactory", diagnostics.Invalid_value_for_jsxFragmentFactory_0_is_not_a_valid_identifier_or_qualified_name, options.JsxFragmentFactory)
-		}
-	}
-
-	if options.ReactNamespace != "" {
-		if options.Jsx == core.JsxEmitReactJSX || options.Jsx == core.JsxEmitReactJSXDev {
-			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "reactNamespace", options.Jsx.String())
-		}
-	}
-
-	if options.JsxImportSource != "" {
-		if options.Jsx == core.JsxEmitReact {
-			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "jsxImportSource", options.Jsx.String())
-		}
-	}
-
 	moduleKind := options.GetEmitModuleKind()
 
 	moduleResolution := options.GetModuleResolutionKind()
@@ -1173,7 +1134,7 @@ func (p *Program) getBindAndCheckDiagnosticsWithChecker(ctx context.Context, fil
 		})
 	}
 
-	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isJS := sourceFile.ScriptKind == core.ScriptKindJS
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile)
 	if isCheckJS {
 		diags = append(diags, sourceFile.JSDocDiagnostics()...)
@@ -1750,13 +1711,6 @@ func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
 	return p.sourceFilesFoundSearchingNodeModules.Has(file.Path())
 }
 
-func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
-	if result := p.jsxRuntimeImportSpecifiers[path]; result != nil {
-		return result.moduleReference, result.specifier
-	}
-	return "", nil
-}
-
 func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 	return p.importHelpersImportSpecifiers[path]
 }
@@ -1981,10 +1935,6 @@ var plainJSErrors = collections.NewSetFromItems(
 	diagnostics.Did_you_mean_to_use_a_Colon_An_can_only_follow_a_property_name_when_the_containing_object_literal_is_part_of_a_destructuring_pattern.Code(),
 	diagnostics.Duplicate_label_0.Code(),
 	diagnostics.X_for_await_loops_cannot_be_used_inside_a_class_static_block.Code(),
-	diagnostics.JSX_attributes_must_only_be_assigned_a_non_empty_expression.Code(),
-	diagnostics.JSX_elements_cannot_have_multiple_attributes_with_the_same_name.Code(),
-	diagnostics.JSX_expressions_may_not_use_the_comma_operator_Did_you_mean_to_write_an_array.Code(),
-	diagnostics.JSX_property_access_expressions_cannot_include_JSX_namespace_names.Code(),
 	diagnostics.Jump_target_cannot_cross_function_boundary.Code(),
 	diagnostics.Line_terminator_not_permitted_before_arrow.Code(),
 	diagnostics.Modifiers_cannot_appear_here.Code(),

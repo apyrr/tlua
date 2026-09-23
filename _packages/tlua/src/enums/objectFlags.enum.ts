@@ -13,7 +13,6 @@ export enum ObjectFlags {
     EvolvingArray = 1 << 8,
     ObjectLiteralPatternWithComputedProperties = 1 << 9,
     ReverseMapped = 1 << 10,
-    JsxAttributes = 1 << 11,
     JSLiteral = 1 << 12,
     FreshLiteral = 1 << 13,
     ArrayLiteral = 1 << 14,

@@ -454,10 +454,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
 
     // ═══ Generated boolean property getters ═══
 
-    get containsOnlyTriviaWhiteSpaces(): boolean {
-        return (this.data & (1 << 24)) !== 0;
-    }
-
     get isArrayType(): boolean {
         return (this.data & (1 << 24)) !== 0;
     }
@@ -566,26 +562,17 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get assertsModifier(): RemoteNode | undefined {
         return this.getNamedChild("assertsModifier") as RemoteNode;
     }
-    get attributes(): RemoteNode | undefined {
-        return this.getNamedChild("attributes") as RemoteNode;
-    }
     get body(): RemoteNode | undefined {
         return this.getNamedChild("body") as RemoteNode;
     }
     get checkType(): RemoteNode | undefined {
         return this.getNamedChild("checkType") as RemoteNode;
     }
-    get children(): RemoteNode | RemoteNodeList | undefined {
-        return this.getNamedChild("children") as RemoteNode | RemoteNodeList;
+    get children(): RemoteNode | undefined {
+        return this.getNamedChild("children") as RemoteNode;
     }
     get className(): RemoteNode | undefined {
         return this.getNamedChild("className") as RemoteNode;
-    }
-    get closingElement(): RemoteNode | undefined {
-        return this.getNamedChild("closingElement") as RemoteNode;
-    }
-    get closingFragment(): RemoteNode | undefined {
-        return this.getNamedChild("closingFragment") as RemoteNode;
     }
     get colonToken(): RemoteNode | undefined {
         return this.getNamedChild("colonToken") as RemoteNode;
@@ -692,20 +679,11 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get nameExpression(): RemoteNode | undefined {
         return this.getNamedChild("nameExpression") as RemoteNode;
     }
-    get namespace(): RemoteNode | undefined {
-        return this.getNamedChild("namespace") as RemoteNode;
-    }
     get nameType(): RemoteNode | undefined {
         return this.getNamedChild("nameType") as RemoteNode;
     }
     get objectType(): RemoteNode | undefined {
         return this.getNamedChild("objectType") as RemoteNode;
-    }
-    get openingElement(): RemoteNode | undefined {
-        return this.getNamedChild("openingElement") as RemoteNode;
-    }
-    get openingFragment(): RemoteNode | undefined {
-        return this.getNamedChild("openingFragment") as RemoteNode;
     }
     get operand(): RemoteNode | undefined {
         return this.getNamedChild("operand") as RemoteNode;
@@ -807,7 +785,6 @@ export class RemoteNode extends RemoteNodeBase implements Node {
         switch (this.kind) {
             case SyntaxKind.Identifier:
             case SyntaxKind.PrivateIdentifier:
-            case SyntaxKind.JsxText:
             case SyntaxKind.JSDocText:
             case SyntaxKind.JSDocLink:
             case SyntaxKind.JSDocLinkPlain:
