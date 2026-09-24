@@ -2685,6 +2685,11 @@
                 ],
                 "members": [
                     {
+                        "name": "ReturnType",
+                        "type": "TypeNode",
+                        "optional": true
+                    },
+                    {
                         "name": "AssertsModifier",
                         "type": "AssertsKeyword",
                         "optional": true

@@ -1,12 +1,10 @@
-tluaMetatableShadowed.tlua(12,22): error TLUA2339: Property 'describe' does not exist on type 'table'.
-tluaMetatableShadowed.tlua(13,25): error TLUA2339: Property 'n' does not exist on type 'table'.
-tluaMetatableShadowed.tlua(20,26): error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
+tluaMetatableShadowed.tlua(11,22): error TLUA2339: Property 'describe' does not exist on type 'table'.
+tluaMetatableShadowed.tlua(12,25): error TLUA2339: Property 'n' does not exist on type 'table'.
 
 
-==== tluaMetatableShadowed.tlua (3 errors) ====
-    // Only the real globals carry the protocol. A shadowing local, or a call through an alias,
-    // resolves to a different symbol and keeps whatever it declares -- the rule the type()
-    // narrowing builtins already follow.
+==== tluaMetatableShadowed.tlua (2 errors) ====
+    // Only the real globals carry the protocol. A shadowing local resolves to a different symbol
+    // and keeps whatever it declares.
     
     local Helpers = { describe = function(self: table): string return "d"; end };
     local mt = { __index = Helpers };
@@ -24,12 +22,11 @@ tluaMetatableShadowed.tlua(20,26): error TLUA2339: Property 'describe' does not 
       local back = getmetatable(obj);
     end
     
-    // An alias is a different symbol too.
+    // A never-reassigned alias, renamed or not, is the global like any other builtin's:
+    // the call pairs, so describe resolves through __index.
     local alias = setmetatable;
     local aliased = alias({ n = 1 }, mt);
-    local aliasBad = aliased.describe;
-                             ~~~~~~~~
-!!! error TLUA2339: Property 'describe' does not exist on type '{ n: number; }'.
+    local aliasGood: string = aliased.describe(aliased);
     local aliasOwn: number = aliased.n;
     
     // The globals themselves still work in the same file.

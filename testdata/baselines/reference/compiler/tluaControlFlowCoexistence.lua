@@ -61,7 +61,7 @@ function loopForms(flag)
   end
   repeat
     flag = false;
-  until !(flag);
+  until not (flag);
   return 0;
 end
 -- Nested control flow.

@@ -53,37 +53,48 @@ func (k luaMetatableCallKind) isGet() bool {
 }
 
 // getLuaMetatableCall reports which metatable global a call invokes. Only the real globals carry
-// the protocol: a shadowing local, or a call through an alias, resolves to a different symbol and
-// keeps whatever it declares, as it does for the type() narrowing builtins. The debug library's
-// setmetatable and getmetatable are recognized as member calls, the way io.type is: the callee's
-// base must be the debug global.
+// the protocol: a shadowing local resolves to a different symbol and keeps whatever it declares,
+// while a local alias (`local sm = setmetatable`) is the global. The debug library's setmetatable
+// and getmetatable are recognized as member calls, the way io.type is: the callee's base must be
+// the debug global, possibly through an alias (`local dbg = debug`).
 func (c *Checker) getLuaMetatableCall(node *ast.Node) luaMetatableCallKind {
 	if !ast.IsCallExpression(node) {
 		return luaMetatableCallNone
 	}
 	callee := ast.SkipParentheses(node.Expression())
 	if ast.IsIdentifier(callee) {
-		switch callee.Text() {
-		case "setmetatable":
-			if c.isLuaGlobalReference(callee, c.getLuaSetmetatableGlobalSymbol()) {
-				return luaMetatableCallSet
-			}
-		case "getmetatable":
-			if c.isLuaGlobalReference(callee, c.getLuaGetmetatableGlobalSymbol()) {
-				return luaMetatableCallGet
-			}
+		// This runs on every flow walk over a call statement; the name gate keeps it a string
+		// compare for ordinary calls (measured: resolving every callee cost ~10% on call-heavy
+		// code), and a callee that passes it is resolved once for both globals.
+		if !c.mayNameLuaBuiltins(callee, ast.LuaBuiltinSetmetatable|ast.LuaBuiltinGetmetatable) {
+			return luaMetatableCallNone
+		}
+		switch c.resolveLuaLocalAlias(c.getResolvedSymbol(callee)) {
+		case c.getLuaSetmetatableGlobalSymbol():
+			return luaMetatableCallSet
+		case c.getLuaGetmetatableGlobalSymbol():
+			return luaMetatableCallGet
 		}
 		return luaMetatableCallNone
 	}
-	if ast.IsPropertyAccessExpression(callee) && c.isLuaGlobalReference(ast.SkipParentheses(callee.Expression()), c.getLuaDebugGlobalSymbol()) {
-		switch callee.Name().Text() {
-		case "setmetatable":
-			return luaMetatableCallDebugSet
-		case "getmetatable":
-			return luaMetatableCallDebugGet
-		}
+	// `debug:setmetatable(t, mt)` passes debug as the first argument, so it is not this call.
+	if !ast.IsPropertyAccessExpression(callee) || callee.AsPropertyAccessExpression().ColonToken != nil {
+		return luaMetatableCallNone
 	}
-	return luaMetatableCallNone
+	// The member name first, for the same reason: most method calls end here.
+	var kind luaMetatableCallKind
+	switch callee.Name().Text() {
+	case "setmetatable":
+		kind = luaMetatableCallDebugSet
+	case "getmetatable":
+		kind = luaMetatableCallDebugGet
+	default:
+		return luaMetatableCallNone
+	}
+	if !c.isLuaBuiltinReference(ast.SkipParentheses(callee.Expression()), "debug", c.getLuaDebugGlobalSymbol) {
+		return luaMetatableCallNone
+	}
+	return kind
 }
 
 // isLuaMetatableCall reports whether the metatable protocol interprets this call. The quick
@@ -855,7 +866,7 @@ func (c *Checker) getLuaSymbolEffectTimeline(merged *ast.Symbol) []luaSymbolEffe
 		if c.isSelfPreservingLuaCapturedTarget(assignment.Target) {
 			continue
 		}
-		if initializer := luaExplicitAssignmentValueAt(assignment.Source.AsBinaryExpression().Right, assignment.ValueIndex); initializer != nil &&
+		if initializer := ast.LuaExplicitAssignmentValueAt(assignment.Source.AsBinaryExpression().Right, assignment.ValueIndex); initializer != nil &&
 			(c.isLuaDefaultedAugmentationGuard(assignment.Target, initializer) ||
 				c.luaStoreMayPreserveTarget(assignment.Target, initializer)) {
 			// A value that may evaluate to the target itself -- `X = cond and X

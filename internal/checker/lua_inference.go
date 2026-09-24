@@ -32,7 +32,7 @@ type luaSnapshotKey struct {
 
 func (c *Checker) getLuaAugmentationInitializerTypeEx(assignment luaAugmentation, resolving map[luaSnapshotKey]bool) *Type {
 	binary := assignment.Source.AsBinaryExpression()
-	if initializer := luaExplicitAssignmentValueAt(binary.Right, assignment.ValueIndex); initializer != nil {
+	if initializer := ast.LuaExplicitAssignmentValueAt(binary.Right, assignment.ValueIndex); initializer != nil {
 		if defaulted := c.luaDefaultedAugmentationInitializer(assignment.Target, initializer); defaulted != initializer {
 			// The default's contribution never consults the resolving stack, so
 			// it is the same for every snapshot that includes this store. Every
@@ -53,7 +53,7 @@ func (c *Checker) getLuaAugmentationInitializerTypeEx(assignment luaAugmentation
 		}
 	}
 	t := c.getLuaAssignmentValueType(binary.Right, assignment.ValueIndex, CheckModeNormal)
-	return c.finalizeLuaAugmentationInitializerType(assignment, luaExplicitAssignmentValueAt(binary.Right, assignment.ValueIndex), t)
+	return c.finalizeLuaAugmentationInitializerType(assignment, ast.LuaExplicitAssignmentValueAt(binary.Right, assignment.ValueIndex), t)
 }
 
 func luaConstructorTypesShareMembers(left *Type, right *Type) bool {

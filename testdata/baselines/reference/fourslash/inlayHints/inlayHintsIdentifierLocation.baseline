@@ -49,13 +49,7 @@ local p = function(a: Foo[]) return a end;
       }
     },
     {
-      "value": "[]"
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
+      "value": "[]) => "
     },
     {
       "value": "Foo",

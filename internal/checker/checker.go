@@ -590,6 +590,8 @@ type Checker struct {
 	luaAugmentationTargets                 map[*ast.Node]*ast.Symbol
 	luaMetatablePairings                   map[*ast.Symbol][]*ast.Node
 	luaMetatablePairingCalls               map[*ast.Node][]*ast.Symbol
+	luaLocalAliasTargets                   map[*ast.Symbol]*ast.Symbol
+	luaBuiltinAliases                      map[string]ast.LuaBuiltins
 	luaOrderedPairingSymbols               []*ast.Symbol
 	luaPairedSymbolsResolved               bool
 	luaDeclaredPairingBases                map[*ast.Symbol]*Type
@@ -901,6 +903,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.luaAugmentationTargets = make(map[*ast.Node]*ast.Symbol)
 	c.luaMetatablePairings = make(map[*ast.Symbol][]*ast.Node)
 	c.luaMetatablePairingCalls = make(map[*ast.Node][]*ast.Symbol)
+	c.luaLocalAliasTargets = make(map[*ast.Symbol]*ast.Symbol)
 	c.luaDeclaredPairingBases = make(map[*ast.Symbol]*Type)
 	c.luaPairingMetatableArgTypes = make(map[*ast.Node]*Type)
 	c.luaMetatableIndexProbes = make(map[*ast.Node]*Type)
@@ -2572,6 +2575,8 @@ func (c *Checker) getDeprecatedSuggestionNode(node *ast.Node) *ast.Node {
 }
 
 func (c *Checker) checkTypePredicate(node *ast.Node) {
+	// The returned type is an ordinary type, checked wherever the clause stands.
+	c.checkSourceElement(node.AsTypePredicateNode().ReturnType)
 	parent := c.getTypePredicateParent(node)
 	if parent == nil {
 		// The parent must not be valid.
@@ -6113,6 +6118,9 @@ func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type
 	if t := c.getLuaRefinedCallType(node, checkMode); t != nil {
 		return c.adjustMultiReturn(t)
 	}
+	// A void assertion exists only to narrow, so one whose target flow analysis cannot see is
+	// an error. One that also returns values (`(T, ...M) asserts x`, Lua's assert) is still an
+	// ordinary call there -- `M.assert(x)`, `fns[1](x)` -- that just does not narrow.
 	if ast.IsCallExpression(node) && node.QuestionDotToken() == nil && ast.IsExpressionStatement(node.Parent) && returnType.flags&TypeFlagsVoid != 0 && c.getTypePredicateOfSignature(signature) != nil {
 		if !ast.IsDottedName(node.Expression()) {
 			c.error(node.Expression(), diagnostics.Assertions_require_the_call_target_to_be_an_identifier_or_qualified_name)
@@ -18564,6 +18572,9 @@ func (c *Checker) getTypeFromTypeNodeWorker(node *ast.Node) *Type {
 	case ast.KindTypeReference, ast.KindExpressionWithTypeArguments:
 		return c.getTypeFromTypeReference(node)
 	case ast.KindTypePredicate:
+		if returnType := node.AsTypePredicateNode().ReturnType; returnType != nil {
+			return c.getTypeFromTypeNode(returnType)
+		}
 		if node.AsTypePredicateNode().AssertsModifier != nil {
 			return c.voidType
 		}

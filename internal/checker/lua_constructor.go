@@ -168,7 +168,7 @@ func (r *luaConstructorResolver) computeArms(symbol *ast.Symbol) ([]*ast.Symbol,
 		}
 		var initialArms []*ast.Symbol
 		initialKnown := true
-		if initializer := luaExplicitVariableInitializer(declaration); initializer != nil {
+		if initializer := ast.LuaExplicitVariableInitializer(declaration); initializer != nil {
 			initialArms, initialKnown = r.initializerArms(initializer)
 		}
 		return r.applyConstructorAssignments(initialArms, initialKnown, assignments)
@@ -192,7 +192,7 @@ func (r *luaConstructorResolver) computeArms(symbol *ast.Symbol) ([]*ast.Symbol,
 			if ast.IsLuaLocal(declaration) && !c.isLuaStableIdentityBinding(symbol) {
 				return nil, false
 			}
-			initializer = luaExplicitVariableInitializer(declaration)
+			initializer = ast.LuaExplicitVariableInitializer(declaration)
 		case ast.IsPropertyAssignment(declaration):
 			initializer = declaration.Initializer()
 		case ast.IsBinaryExpression(declaration):
@@ -216,7 +216,7 @@ func (r *luaConstructorResolver) computeArms(symbol *ast.Symbol) ([]*ast.Symbol,
 // assignmentInitializerArms resolves the constructors one assignment installs.
 // A defaulted guard (`X = X or {}`) contributes its default, not the self-read.
 func (r *luaConstructorResolver) assignmentInitializerArms(assignment luaAugmentation) ([]*ast.Symbol, bool) {
-	initializer := luaExplicitAssignmentValueAt(assignment.Source.AsBinaryExpression().Right, assignment.ValueIndex)
+	initializer := ast.LuaExplicitAssignmentValueAt(assignment.Source.AsBinaryExpression().Right, assignment.ValueIndex)
 	if initializer == nil {
 		return nil, false
 	}

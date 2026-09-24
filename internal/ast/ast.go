@@ -1999,6 +1999,12 @@ type SourceFile struct {
 	// check at its program point, and statement-form calls (IsLuaStatementFormCall)
 	// additionally fold their pairing into the operand's declared type.
 	LuaSetmetatableCandidates []*Node
+	// LuaBuiltinAliases maps the names of locals declared from an identity builtin
+	// (LuaIdentityBuiltin), directly or through another such local -- `local t = type`,
+	// `local tt = t` -- to the builtins they were declared from. Names are not scopes.
+	// Checkers gate on the name before resolving a callee, so an ordinary call never pays
+	// for resolution. Read it through LuaBuiltinsNamedBy.
+	LuaBuiltinAliases map[string]LuaBuiltins
 
 	// Fields set by ECMALineMap
 
@@ -2038,6 +2044,13 @@ func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, st
 
 func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 	return node.parseOptions
+}
+
+// LuaBuiltinsNamedBy returns the identity builtins name may refer to in this file: the one
+// it spells, and those a local of that name was declared from. It is a filter by name only;
+// the checker decides by resolving.
+func (node *SourceFile) LuaBuiltinsNamedBy(name string) LuaBuiltins {
+	return LuaIdentityBuiltin(name) | node.LuaBuiltinAliases[name]
 }
 
 func (node *SourceFile) Text() string {

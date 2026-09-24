@@ -1,9 +1,11 @@
 //// [tests/cases/compiler/tluaTypeGuardIdentity.tlua] ////
 
 === tluaTypeGuardIdentity.tlua ===
-// Only a call to the real global `type` narrows. The binder matches the call by
-// spelling, so every one of these shapes reaches the checker and is turned down
-// there; each unnarrowed use below is an error.
+// Only a call to the real global `type` or `io.type` (or a local alias of either,
+// see tluaLocalBuiltinAlias) narrows. The binder admits a call spelled `type(x)`,
+// `io.type(x)` or through a local alias name, and the checker turns down the
+// ones that are not the builtin; the rest never become conditions. Each
+// unnarrowed use below is an error.
 
 declare v: string | number;
 >v : string | number
@@ -35,27 +37,6 @@ function shadowed(): void
   end
 end
 
-function aliased(): void
->aliased : () => void
-
-  local t = type;
->t : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
-
-  if t(v) == "string" then
->t(v) == "string" : boolean
->t(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
->t : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
->v : string | number
->"string" : "string"
-
-    local s: string = v;
->s : string
->v : string | number
-
-  end
-end
-
 declare holder: { type: (value: any) => string };
 >holder : { type: (value: any) => string; }
 >type : (value: any) => string
@@ -72,6 +53,53 @@ function member(): void
 >type : (value: any) => string
 >v : string | number
 >"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number
+
+  end
+end
+
+function shadowedIo(): void
+>shadowedIo : () => void
+
+  local io = { type = function(value: any): string return "file" end }
+>io : { type: (value: any) => string; }
+>{ type = function(value: any): string return "file" end } : { type: (value: any) => string; }
+>type : (value: any) => string
+>function(value: any): string return "file" end : (value: any) => string
+>value : any
+>"file" : "file"
+
+  if io.type(v) == "string" then
+>io.type(v) == "string" : boolean
+>io.type(v) : string
+>io.type : (value: any) => string
+>io : { type: (value: any) => string; }
+>type : (value: any) => string
+>v : string | number
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number
+
+  end
+end
+
+// A colon call passes io itself as the first argument, so it tests io, not v.
+function colonIo(): void
+>colonIo : () => void
+
+  if io:type(v) == "file" then
+>io:type(v) == "file" : boolean
+>io:type(v) : "closed file" | "file" | nil
+>io:type : (value: any) => "file" | "closed file" | nil
+>io : IOLib
+>type : (value: any) => "file" | "closed file" | nil
+>v : string | number
+>"file" : "file"
 
     local s: string = v;
 >s : string

@@ -54,7 +54,7 @@ a;
 a == b;
 (a);
 t.f;
-!a;
+not a;
 -- valid statement shapes
 t.f();
 a = b;

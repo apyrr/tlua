@@ -1,0 +1,67 @@
+// === SignatureHelp ===
+=== /luaAssertsWithReturnSignatureHelp.tlua ===
+// local function expect(v: unknown): string asserts v is string
+//   return v
+// end
+// expect("x");
+//        ^
+// | ----------------------------------------------------------------------
+// | expect(**v: unknown**): string asserts v is string
+// | ----------------------------------------------------------------------
+// assert(1);
+//        ^
+// | ----------------------------------------------------------------------
+// | assert(**value: number | nil**): number asserts value
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 84,
+      "LSPosition": {
+        "line": 3,
+        "character": 7
+      },
+      "Name": "1",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "expect(v: unknown): string asserts v is string",
+          "parameters": [
+            {
+              "label": "v: unknown"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  },
+  {
+    "marker": {
+      "Position": 97,
+      "LSPosition": {
+        "line": 4,
+        "character": 7
+      },
+      "Name": "2",
+      "Data": {}
+    },
+    "item": {
+      "signatures": [
+        {
+          "label": "assert(value: number | nil): number asserts value",
+          "parameters": [
+            {
+              "label": "value: number | nil"
+            }
+          ],
+          "activeParameter": 0
+        }
+      ],
+      "activeSignature": 0
+    }
+  }
+]

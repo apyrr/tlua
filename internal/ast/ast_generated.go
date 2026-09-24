@@ -4029,36 +4029,41 @@ func IsLiteralTypeNode(node *Node) bool {
 
 type TypePredicateNode struct {
 	TypeNodeBase
+	ReturnType      *TypeNode       // Optional
 	AssertsModifier *AssertsKeyword // Optional
 	ParameterName   *TypePredicateParameterName
 	Type            *TypeNode // Optional
 }
 
-func (f *NodeFactory) NewTypePredicateNode(assertsModifier *AssertsKeyword, parameterName *TypePredicateParameterName, typeNode *TypeNode) *Node {
+func (f *NodeFactory) NewTypePredicateNode(returnType *TypeNode, assertsModifier *AssertsKeyword, parameterName *TypePredicateParameterName, typeNode *TypeNode) *Node {
 	data := &TypePredicateNode{}
+	data.ReturnType = returnType
 	data.AssertsModifier = assertsModifier
 	data.ParameterName = parameterName
 	data.Type = typeNode
 	return f.newNode(KindTypePredicate, data)
 }
 
-func (f *NodeFactory) UpdateTypePredicateNode(node *TypePredicateNode, assertsModifier *AssertsKeyword, parameterName *TypePredicateParameterName, typeNode *TypeNode) *Node {
-	if assertsModifier != node.AssertsModifier || parameterName != node.ParameterName || typeNode != node.Type {
-		return updateNode(f.NewTypePredicateNode(assertsModifier, parameterName, typeNode), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateTypePredicateNode(node *TypePredicateNode, returnType *TypeNode, assertsModifier *AssertsKeyword, parameterName *TypePredicateParameterName, typeNode *TypeNode) *Node {
+	if returnType != node.ReturnType || assertsModifier != node.AssertsModifier || parameterName != node.ParameterName || typeNode != node.Type {
+		return updateNode(f.NewTypePredicateNode(returnType, assertsModifier, parameterName, typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *TypePredicateNode) ForEachChild(v Visitor) bool {
-	return visit(v, node.AssertsModifier) || visit(v, node.ParameterName) || visit(v, node.Type)
+	return visit(v, node.ReturnType) ||
+		visit(v, node.AssertsModifier) ||
+		visit(v, node.ParameterName) ||
+		visit(v, node.Type)
 }
 
 func (node *TypePredicateNode) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateTypePredicateNode(node, v.visitNode(node.AssertsModifier), v.visitNode(node.ParameterName), v.visitNode(node.Type))
+	return v.Factory.UpdateTypePredicateNode(node, v.visitNode(node.ReturnType), v.visitNode(node.AssertsModifier), v.visitNode(node.ParameterName), v.visitNode(node.Type))
 }
 
 func (node *TypePredicateNode) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewTypePredicateNode(node.AssertsModifier, node.ParameterName, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewTypePredicateNode(node.ReturnType, node.AssertsModifier, node.ParameterName, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTypePredicateNode(node *Node) bool {

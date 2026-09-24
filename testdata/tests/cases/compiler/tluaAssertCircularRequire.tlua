@@ -1,0 +1,32 @@
+// @strict: true
+// @noEmit: true
+// @filename: m.tlua
+// Two modules that require each other and assert on the other's exports at top
+// level. A module's type depends on its reachability, which flow analysis reads from
+// each call's declared signature: it never resolves these calls, which would check
+// `a.x` and reach a's type mid-resolution. That holds for a user's generic typed
+// assertion too, whose instantiation matters only to narrowing a reference.
+declare function check<T>(v: unknown, tag: T): asserts v is T
+declare function pick(): number | nil
+local a = require("a")
+assert(a.x)
+check(a.x, 1)
+// Narrowing v walks past check(a.x, 1). Only a reference its argument can narrow
+// resolves the generic call, so v's walk never checks a.x.
+local v = pick()
+if v then
+  return { y = v }
+end
+return { y = 1 }
+
+// @filename: a.tlua
+declare function check<T>(v: unknown, tag: T): asserts v is T
+local m = require("m")
+assert(m.y, "need y")
+check(m.y, 1)
+return { x = 1 }
+
+// @filename: main.tlua
+local m = require("m")
+local a = require("a")
+local _ = m.y + a.x

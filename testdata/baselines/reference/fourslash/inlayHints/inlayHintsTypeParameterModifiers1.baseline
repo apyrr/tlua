@@ -11,16 +11,7 @@ function test1()
       "value": ": "
     },
     {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "void"
+      "value": "() => void"
     }
   ],
   "kind": 1,

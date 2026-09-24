@@ -1,0 +1,101 @@
+// @strict: true
+// @noEmit: true
+
+// A signature can assert a parameter and also return values: the return type
+// comes first and `asserts x` (or `asserts x is T`) follows it. Called as a
+// statement it narrows like any assertion; used as a value it returns its type.
+// The lib's `assert` is declared this way.
+
+local function expectString(value: unknown, message: string): string asserts value is string
+  if type(value) ~= "string" then
+    error(message)
+  end
+  return value
+end
+
+function statementNarrows(u: unknown): string
+  expectString(u, "not a string")
+  return u
+end
+
+function valueReturns(u: unknown): string
+  local s = expectString(u, "not a string")
+  return s
+end
+
+// The body is checked against the return type, not against void.
+local function missingReturn(value: unknown): number asserts value
+end
+
+// A pack return, like the lib's assert.
+local function both(a: string | nil, b: number): (string, number) asserts a
+  return assert(a), b
+end
+
+function packNarrows(a: string | nil): string
+  both(a, 1)
+  return a
+end
+
+// Relating signatures compares the predicate and the returned values.
+local sameShape: (value: unknown, message: string) => string asserts value is string = expectString
+local wrongReturn: (value: unknown, message: string) => number asserts value is string = expectString
+local noPredicate: (value: unknown, message: string) => string = expectString
+
+// The lib's assert, directly and through an alias, as a statement and as a value.
+local check = assert
+
+function libAssert(a: string | nil, b: number | nil): number
+  assert(a)
+  local s: string = a
+  check(b, "b is required")
+  return b
+end
+
+function libAssertValue(a: string | nil): string
+  local s = assert(a)
+  return s
+end
+
+// Only a void assertion must be analyzable to be called: one that returns values
+// is still an ordinary call through a table, an element access or _G -- it just
+// does not narrow there.
+declare maybe: string | nil
+local M = { assert = assert }
+M.assert(maybe)
+local fns = { assert }
+fns[1](maybe)
+_G.assert(maybe)
+
+// A never-returning assertion ends flow like any never-returning call.
+declare function die(v: unknown): never asserts v
+
+function dies(y: string | nil): number
+  die(y)
+end
+
+// Inference reads an assertion's returned values as well as its predicate.
+declare function wrap<R>(f: (v: unknown) => R asserts v is string): R
+declare function numberOf(v: unknown): number asserts v is string
+local wrapped = wrap(numberOf)
+local wrappedNumber: number = wrapped
+
+// A generic typed assertion narrows to its instantiation.
+declare function checkTag<T>(v: unknown, tag: T): asserts v is T
+
+function genericNarrows(u: unknown): number
+  checkTag(u, 1)
+  return u
+end
+
+// Overloads that disagree about returning are told apart by the call.
+declare function maybeFail(v: string): never
+declare function maybeFail(v: number): number
+
+function overloadEnds(): number
+  maybeFail("x")
+end
+
+function overloadReturns(): number
+  maybeFail(1)
+end

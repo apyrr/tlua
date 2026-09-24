@@ -74,7 +74,7 @@ export const childProperties: Readonly<Partial<Record<SyntaxKind, readonly (stri
     [SyntaxKind.TypeReference]: ["typeName", "typeArguments"],
     [SyntaxKind.ExpressionWithTypeArguments]: ["expression", "typeArguments"],
     [SyntaxKind.LiteralType]: ["literal"],
-    [SyntaxKind.TypePredicate]: ["assertsModifier", "parameterName", "type"],
+    [SyntaxKind.TypePredicate]: ["returnType", "assertsModifier", "parameterName", "type"],
     [SyntaxKind.TypeQuery]: ["exprName", "typeArguments"],
     [SyntaxKind.MappedType]: ["readonlyToken", "typeParameter", "nameType", "questionToken", "type", "members"],
     [SyntaxKind.TypeLiteral]: ["members"],

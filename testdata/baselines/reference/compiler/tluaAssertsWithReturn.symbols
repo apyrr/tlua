@@ -1,0 +1,271 @@
+//// [tests/cases/compiler/tluaAssertsWithReturn.tlua] ////
+
+=== tluaAssertsWithReturn.tlua ===
+// A signature can assert a parameter and also return values: the return type
+// comes first and `asserts x` (or `asserts x is T`) follows it. Called as a
+// statement it narrows like any assertion; used as a value it returns its type.
+// The lib's `assert` is declared this way.
+
+local function expectString(value: unknown, message: string): string asserts value is string
+>expectString : Symbol(expectString, Decl(tluaAssertsWithReturn.tlua, 0, 0))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 5, 28))
+>message : Symbol(message, Decl(tluaAssertsWithReturn.tlua, 5, 43))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 5, 28))
+
+  if type(value) ~= "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 5, 28))
+
+    error(message)
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
+>message : Symbol(message, Decl(tluaAssertsWithReturn.tlua, 5, 43))
+
+  end
+  return value
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 5, 28))
+
+end
+
+function statementNarrows(u: unknown): string
+>statementNarrows : Symbol(statementNarrows, Decl(tluaAssertsWithReturn.tlua, 10, 3))
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 12, 26))
+
+  expectString(u, "not a string")
+>expectString : Symbol(expectString, Decl(tluaAssertsWithReturn.tlua, 0, 0))
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 12, 26))
+
+  return u
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 12, 26))
+
+end
+
+function valueReturns(u: unknown): string
+>valueReturns : Symbol(valueReturns, Decl(tluaAssertsWithReturn.tlua, 15, 3))
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 17, 22))
+
+  local s = expectString(u, "not a string")
+>s : Symbol(s, Decl(tluaAssertsWithReturn.tlua, 18, 7))
+>expectString : Symbol(expectString, Decl(tluaAssertsWithReturn.tlua, 0, 0))
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 17, 22))
+
+  return s
+>s : Symbol(s, Decl(tluaAssertsWithReturn.tlua, 18, 7))
+
+end
+
+// The body is checked against the return type, not against void.
+local function missingReturn(value: unknown): number asserts value
+>missingReturn : Symbol(missingReturn, Decl(tluaAssertsWithReturn.tlua, 20, 3))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 23, 29))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 23, 29))
+
+end
+
+// A pack return, like the lib's assert.
+local function both(a: string | nil, b: number): (string, number) asserts a
+>both : Symbol(both, Decl(tluaAssertsWithReturn.tlua, 24, 3))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 27, 20))
+>b : Symbol(b, Decl(tluaAssertsWithReturn.tlua, 27, 36))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 27, 20))
+
+  return assert(a), b
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 27, 20))
+>b : Symbol(b, Decl(tluaAssertsWithReturn.tlua, 27, 36))
+
+end
+
+function packNarrows(a: string | nil): string
+>packNarrows : Symbol(packNarrows, Decl(tluaAssertsWithReturn.tlua, 29, 3))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 31, 21))
+
+  both(a, 1)
+>both : Symbol(both, Decl(tluaAssertsWithReturn.tlua, 24, 3))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 31, 21))
+
+  return a
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 31, 21))
+
+end
+
+// Relating signatures compares the predicate and the returned values.
+local sameShape: (value: unknown, message: string) => string asserts value is string = expectString
+>sameShape : Symbol(sameShape, Decl(tluaAssertsWithReturn.tlua, 37, 5))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 37, 18))
+>message : Symbol(message, Decl(tluaAssertsWithReturn.tlua, 37, 33))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 37, 18))
+>expectString : Symbol(expectString, Decl(tluaAssertsWithReturn.tlua, 0, 0))
+
+local wrongReturn: (value: unknown, message: string) => number asserts value is string = expectString
+>wrongReturn : Symbol(wrongReturn, Decl(tluaAssertsWithReturn.tlua, 38, 5))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 38, 20))
+>message : Symbol(message, Decl(tluaAssertsWithReturn.tlua, 38, 35))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 38, 20))
+>expectString : Symbol(expectString, Decl(tluaAssertsWithReturn.tlua, 0, 0))
+
+local noPredicate: (value: unknown, message: string) => string = expectString
+>noPredicate : Symbol(noPredicate, Decl(tluaAssertsWithReturn.tlua, 39, 5))
+>value : Symbol(value, Decl(tluaAssertsWithReturn.tlua, 39, 20))
+>message : Symbol(message, Decl(tluaAssertsWithReturn.tlua, 39, 35))
+>expectString : Symbol(expectString, Decl(tluaAssertsWithReturn.tlua, 0, 0))
+
+// The lib's assert, directly and through an alias, as a statement and as a value.
+local check = assert
+>check : Symbol(check, Decl(tluaAssertsWithReturn.tlua, 42, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+function libAssert(a: string | nil, b: number | nil): number
+>libAssert : Symbol(libAssert, Decl(tluaAssertsWithReturn.tlua, 42, 20))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 44, 19))
+>b : Symbol(b, Decl(tluaAssertsWithReturn.tlua, 44, 35))
+
+  assert(a)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 44, 19))
+
+  local s: string = a
+>s : Symbol(s, Decl(tluaAssertsWithReturn.tlua, 46, 7))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 44, 19))
+
+  check(b, "b is required")
+>check : Symbol(check, Decl(tluaAssertsWithReturn.tlua, 42, 5))
+>b : Symbol(b, Decl(tluaAssertsWithReturn.tlua, 44, 35))
+
+  return b
+>b : Symbol(b, Decl(tluaAssertsWithReturn.tlua, 44, 35))
+
+end
+
+function libAssertValue(a: string | nil): string
+>libAssertValue : Symbol(libAssertValue, Decl(tluaAssertsWithReturn.tlua, 49, 3))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 51, 24))
+
+  local s = assert(a)
+>s : Symbol(s, Decl(tluaAssertsWithReturn.tlua, 52, 7))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaAssertsWithReturn.tlua, 51, 24))
+
+  return s
+>s : Symbol(s, Decl(tluaAssertsWithReturn.tlua, 52, 7))
+
+end
+
+// Only a void assertion must be analyzable to be called: one that returns values
+// is still an ordinary call through a table, an element access or _G -- it just
+// does not narrow there.
+declare maybe: string | nil
+>maybe : Symbol(maybe, Decl(tluaAssertsWithReturn.tlua, 59, 7))
+
+local M = { assert = assert }
+>M : Symbol(M, Decl(tluaAssertsWithReturn.tlua, 60, 5))
+>assert : Symbol(assert, Decl(tluaAssertsWithReturn.tlua, 60, 11))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+M.assert(maybe)
+>M.assert : Symbol(assert, Decl(tluaAssertsWithReturn.tlua, 60, 11))
+>M : Symbol(M, Decl(tluaAssertsWithReturn.tlua, 60, 5))
+>assert : Symbol(assert, Decl(tluaAssertsWithReturn.tlua, 60, 11))
+>maybe : Symbol(maybe, Decl(tluaAssertsWithReturn.tlua, 59, 7))
+
+local fns = { assert }
+>fns : Symbol(fns, Decl(tluaAssertsWithReturn.tlua, 62, 5))
+
+fns[1](maybe)
+>fns : Symbol(fns, Decl(tluaAssertsWithReturn.tlua, 62, 5))
+>1 : Symbol(1, Decl(tluaAssertsWithReturn.tlua, 62, 13))
+>maybe : Symbol(maybe, Decl(tluaAssertsWithReturn.tlua, 59, 7))
+
+_G.assert(maybe)
+>_G.assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>_G : Symbol(_G)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>maybe : Symbol(maybe, Decl(tluaAssertsWithReturn.tlua, 59, 7))
+
+// A never-returning assertion ends flow like any never-returning call.
+declare function die(v: unknown): never asserts v
+>die : Symbol(die, Decl(tluaAssertsWithReturn.tlua, 64, 16))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 67, 21))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 67, 21))
+
+function dies(y: string | nil): number
+>dies : Symbol(dies, Decl(tluaAssertsWithReturn.tlua, 67, 49))
+>y : Symbol(y, Decl(tluaAssertsWithReturn.tlua, 69, 14))
+
+  die(y)
+>die : Symbol(die, Decl(tluaAssertsWithReturn.tlua, 64, 16))
+>y : Symbol(y, Decl(tluaAssertsWithReturn.tlua, 69, 14))
+
+end
+
+// Inference reads an assertion's returned values as well as its predicate.
+declare function wrap<R>(f: (v: unknown) => R asserts v is string): R
+>wrap : Symbol(wrap, Decl(tluaAssertsWithReturn.tlua, 71, 3))
+>R : Symbol(R, Decl(tluaAssertsWithReturn.tlua, 74, 22))
+>f : Symbol(f, Decl(tluaAssertsWithReturn.tlua, 74, 25))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 74, 29))
+>R : Symbol(R, Decl(tluaAssertsWithReturn.tlua, 74, 22))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 74, 29))
+>R : Symbol(R, Decl(tluaAssertsWithReturn.tlua, 74, 22))
+
+declare function numberOf(v: unknown): number asserts v is string
+>numberOf : Symbol(numberOf, Decl(tluaAssertsWithReturn.tlua, 74, 69))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 75, 26))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 75, 26))
+
+local wrapped = wrap(numberOf)
+>wrapped : Symbol(wrapped, Decl(tluaAssertsWithReturn.tlua, 76, 5))
+>wrap : Symbol(wrap, Decl(tluaAssertsWithReturn.tlua, 71, 3))
+>numberOf : Symbol(numberOf, Decl(tluaAssertsWithReturn.tlua, 74, 69))
+
+local wrappedNumber: number = wrapped
+>wrappedNumber : Symbol(wrappedNumber, Decl(tluaAssertsWithReturn.tlua, 77, 5))
+>wrapped : Symbol(wrapped, Decl(tluaAssertsWithReturn.tlua, 76, 5))
+
+// A generic typed assertion narrows to its instantiation.
+declare function checkTag<T>(v: unknown, tag: T): asserts v is T
+>checkTag : Symbol(checkTag, Decl(tluaAssertsWithReturn.tlua, 77, 37))
+>T : Symbol(T, Decl(tluaAssertsWithReturn.tlua, 80, 26))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 80, 29))
+>tag : Symbol(tag, Decl(tluaAssertsWithReturn.tlua, 80, 40))
+>T : Symbol(T, Decl(tluaAssertsWithReturn.tlua, 80, 26))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 80, 29))
+>T : Symbol(T, Decl(tluaAssertsWithReturn.tlua, 80, 26))
+
+function genericNarrows(u: unknown): number
+>genericNarrows : Symbol(genericNarrows, Decl(tluaAssertsWithReturn.tlua, 80, 64))
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 82, 24))
+
+  checkTag(u, 1)
+>checkTag : Symbol(checkTag, Decl(tluaAssertsWithReturn.tlua, 77, 37))
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 82, 24))
+
+  return u
+>u : Symbol(u, Decl(tluaAssertsWithReturn.tlua, 82, 24))
+
+end
+
+// Overloads that disagree about returning are told apart by the call.
+declare function maybeFail(v: string): never
+>maybeFail : Symbol(maybeFail, Decl(tluaAssertsWithReturn.tlua, 85, 3), Decl(tluaAssertsWithReturn.tlua, 88, 44))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 88, 27))
+
+declare function maybeFail(v: number): number
+>maybeFail : Symbol(maybeFail, Decl(tluaAssertsWithReturn.tlua, 85, 3), Decl(tluaAssertsWithReturn.tlua, 88, 44))
+>v : Symbol(v, Decl(tluaAssertsWithReturn.tlua, 89, 27))
+
+function overloadEnds(): number
+>overloadEnds : Symbol(overloadEnds, Decl(tluaAssertsWithReturn.tlua, 89, 45))
+
+  maybeFail("x")
+>maybeFail : Symbol(maybeFail, Decl(tluaAssertsWithReturn.tlua, 85, 3), Decl(tluaAssertsWithReturn.tlua, 88, 44))
+
+end
+
+function overloadReturns(): number
+>overloadReturns : Symbol(overloadReturns, Decl(tluaAssertsWithReturn.tlua, 93, 3))
+
+  maybeFail(1)
+>maybeFail : Symbol(maybeFail, Decl(tluaAssertsWithReturn.tlua, 85, 3), Decl(tluaAssertsWithReturn.tlua, 88, 44))
+
+end
+

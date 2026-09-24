@@ -6,9 +6,11 @@ tluaStringFormat.tlua(31,35): error TLUA2345: Argument of type 'string' is not a
 tluaStringFormat.tlua(32,1): error TLUA2554: Expected 2 arguments, but got 3.
 tluaStringFormat.tlua(37,21): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 tluaStringFormat.tlua(38,1): error TLUA2554: Expected 1 arguments, but got 2.
+tluaStringFormat.tlua(42,1): error TLUA2554: Expected 2 arguments, but got 3.
+tluaStringFormat.tlua(42,26): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
 
 
-==== tluaStringFormat.tlua (8 errors) ====
+==== tluaStringFormat.tlua (10 errors) ====
     string.format("%d/%s", 1, "x");
     string.format("%d", "notnum");
                         ~~~~~~~~
@@ -64,8 +66,13 @@ tluaStringFormat.tlua(38,1): error TLUA2554: Expected 1 arguments, but got 2.
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TLUA2554: Expected 1 arguments, but got 2.
     
+    // A never-reassigned local alias is the string library itself, so it is checked too.
     local stringAlias = string;
     stringAlias.format("%d", "aliased", "extra");
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2554: Expected 2 arguments, but got 3.
+                             ~~~~~~~~~
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
     
     function shadowedString(): void
       local string = {

@@ -3,9 +3,9 @@
 === tluaAndOrNot.tlua ===
 // `and`, `or` and `not` are Lua's spellings of `&&`, `||` and `!`. They are
 // aliases -- the same token kinds -- so the two spellings parse, check and emit
-// identically, and the words are canonical on the way out. `not` is the one
-// exception: its token kind is shared with the non-null and definite-assignment
-// `!`, which must stay punctuation, so `not x` emits as `!x`.
+// identically, and the words are canonical on the way out. `not` shares its
+// token kind with the non-null and definite-assignment `!`, which stay
+// punctuation; only the logical operator emits as `not`.
 
 declare s: string;
 >s : string
@@ -52,6 +52,23 @@ local w3 = not b;
 local p3 = !b;
 >p3 : boolean
 >!b : boolean
+>b : boolean
+
+// Comments around either spelling stay where they were.
+local c1 = !b -- trailing
+>c1 : boolean
+>!b : boolean
+>b : boolean
+
+local c2 = !b
+>c2 : boolean
+>!b : boolean
+>b : boolean
+
+-- next line
+local c3 = not --[[mid]] b
+>c3 : boolean
+>not --[[mid]] b : boolean
 >b : boolean
 
 // Mixed within one expression.

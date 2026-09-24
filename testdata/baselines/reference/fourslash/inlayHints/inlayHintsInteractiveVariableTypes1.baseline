@@ -132,10 +132,7 @@ local f = {} as const;
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": "}"
+      "value": "{}"
     }
   ],
   "kind": 1,
@@ -154,10 +151,7 @@ local g = (({} as const));
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": "}"
+      "value": "{}"
     }
   ],
   "kind": 1,
@@ -233,10 +227,7 @@ local k = { a = 1, b = 1 };
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
+      "value": "{ "
     },
     {
       "value": "a",
@@ -255,13 +246,7 @@ local k = { a = 1, b = 1 };
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": "; "
+      "value": ": number; "
     },
     {
       "value": "b",
@@ -280,16 +265,7 @@ local k = { a = 1, b = 1 };
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": ": number; }"
     }
   ],
   "kind": 1,
@@ -308,10 +284,7 @@ local l = ((({ a = 1, b = 1 })));
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
+      "value": "{ "
     },
     {
       "value": "a",
@@ -330,13 +303,7 @@ local l = ((({ a = 1, b = 1 })));
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": "; "
+      "value": ": number; "
     },
     {
       "value": "b",
@@ -355,16 +322,7 @@ local l = ((({ a = 1, b = 1 })));
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": ": number; }"
     }
   ],
   "kind": 1,
@@ -383,16 +341,7 @@ local l = ((({ a = 1, b = 1 })));
       "value": ": "
     },
     {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "number"
+      "value": "() => number"
     }
   ],
   "kind": 1,
@@ -411,19 +360,7 @@ local l = ((({ a = 1, b = 1 })));
       "value": ": "
     },
     {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "-"
-    },
-    {
-      "value": "1"
+      "value": "() => -1"
     }
   ],
   "kind": 1,
@@ -461,19 +398,7 @@ local l = ((({ a = 1, b = 1 })));
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "any"
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "any"
+      "value": ": any) => any"
     }
   ],
   "kind": 1,
@@ -492,31 +417,7 @@ local l = ((({ a = 1, b = 1 })));
       "value": ": "
     },
     {
-      "value": "("
-    },
-    {
-      "value": "{"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "a"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "{"
-    },
-    {
-      "value": " "
+      "value": "({ a }: { "
     },
     {
       "value": "a",
@@ -554,16 +455,7 @@ local l = ((({ a = 1, b = 1 })));
       }
     },
     {
-      "value": " "
-    },
-    {
-      "value": "}"
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
+      "value": "; }) => "
     },
     {
       "value": "Foo",

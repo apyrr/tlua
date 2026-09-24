@@ -88,7 +88,7 @@ end
 function coexist(flag)
   repeat
     flag = false;
-  until !(flag);
+  until not (flag);
   do
     local x = 1;
     local _ = x;

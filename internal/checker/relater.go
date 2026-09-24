@@ -1459,11 +1459,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 	if sourceRestType != nil || targetRestType != nil {
 		c.instantiateType(core.IfElse(sourceRestType != nil, sourceRestType, targetRestType), reportUnreliableMarkers)
 	}
-	kind := ast.KindUnknown
-	if target.declaration != nil {
-		kind = target.declaration.Kind
-	}
-	strictVariance := checkMode&SignatureCheckModeCallback == 0 && c.strictFunctionTypes && kind != ast.KindMethodSignature
+	strictVariance := checkMode&SignatureCheckModeCallback == 0 && c.strictFunctionTypes && !isMethodSignature(target)
 	result := TernaryTrue
 	sourceThisType := c.getThisTypeOfSignature(source)
 	if sourceThisType != nil && sourceThisType != c.voidType {
@@ -1588,13 +1584,19 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 			sourceTypePredicate := c.getTypePredicateOfSignature(source)
 			if sourceTypePredicate != nil {
 				result &= c.compareTypePredicateRelatedTo(sourceTypePredicate, targetTypePredicate, reportErrors, errorReporter, compareTypes)
+				if result == TernaryFalse {
+					return TernaryFalse
+				}
 			} else if targetTypePredicate.kind == TypePredicateKindIdentifier {
 				if reportErrors {
 					errorReporter(diagnostics.Signature_0_must_be_a_type_predicate, c.signatureToString(source))
 				}
 				return TernaryFalse
 			}
-		} else {
+		}
+		// An assertion that returns values (`(T, ...M) asserts x`; a void one returned above)
+		// relates its values too.
+		if targetTypePredicate == nil || targetTypePredicate.kind == TypePredicateKindAssertsIdentifier {
 			// When relating callback signatures, we still need to relate return types bi-variantly as otherwise
 			// the containing type wouldn't be co-variant. For example, interface Foo<T> { add(cb: () => T): void }
 			// wouldn't be co-variant for T without this rule.
@@ -2262,7 +2264,10 @@ func (c *Checker) compareSignaturesIdentical(source *Signature, target *Signatur
 		targetTypePredicate := c.getTypePredicateOfSignature(target)
 		if sourceTypePredicate != nil || targetTypePredicate != nil {
 			result &= c.compareTypePredicatesIdentical(sourceTypePredicate, targetTypePredicate, compareTypes)
-		} else {
+		}
+		// Assertions compare their returned values as well (void for a TypeScript assertion).
+		if sourceTypePredicate == nil && targetTypePredicate == nil ||
+			sourceTypePredicate != nil && sourceTypePredicate.kind == TypePredicateKindAssertsIdentifier {
 			result &= compareTypes(c.getReturnTypeOfSignature(source), c.getReturnTypeOfSignature(target))
 		}
 	}
@@ -5020,4 +5025,23 @@ func (r *Relater) traceUnionsOrIntersectionsTooLarge(source *Type, target *Type)
 			tr.Instant(tracing.PhaseCheckTypes, "traceUnionsOrIntersectionsTooLarge_DepthLimit", map[string]any{"sourceId": source.id, "sourceSize": sourceSize, "targetId": target.id, "targetSize": targetSize})
 		}
 	}
+}
+
+// isMethodSignature reports whether signature is a method's, whose parameters compare
+// bivariantly. tlua's method declaration is a member function statement that takes the
+// receiver, `function T:m()` or `function T.m(self)`. A member statement without one is a
+// module function (`function M.parse(s)`), and a function value assigned to a member
+// (`T.m = function(self) end`) is a property: both stay strict.
+func isMethodSignature(signature *Signature) bool {
+	if signature.declaration == nil {
+		return false
+	}
+	switch signature.declaration.Kind {
+	case ast.KindMethodSignature:
+		return true
+	case ast.KindFunctionDeclaration:
+		return signature.declaration.AsFunctionDeclaration().Target != nil &&
+			len(signature.parameters) > 0 && signature.parameters[0].Name == ast.InternalSymbolNameSelf
+	}
+	return false
 }

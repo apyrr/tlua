@@ -105,7 +105,7 @@ local dotRead = handle.read(handle, "*a");
 // io.lines still reserves its first argument for the filename.
 for line in io.lines("name.txt", "*a") do
 >line : string
->io.lines("name.txt", "*a") : () => (string)
+>io.lines("name.txt", "*a") : () => string
 >io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
 >lines : (filename?: string, ...: LuaReadFormat) => function

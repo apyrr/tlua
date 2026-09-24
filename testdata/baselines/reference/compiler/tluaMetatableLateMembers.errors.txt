@@ -68,7 +68,7 @@ tluaMetatableLateMembers.tlua(46,17): error TLUA2339: Property 'm' does not exis
     local Broken = setmetatable()
                    ~~~~~~~~~~~~
 !!! error TLUA2554: Expected 2 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:174:48: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:175:48: An argument for 'value' was not provided.
     function Broken.m() return 1 end
                     ~
 !!! error TLUA2339: Property 'm' does not exist on type 'table'.

@@ -1,0 +1,100 @@
+//// [tests/cases/compiler/tluaAssertCircularRequire.tlua] ////
+
+=== main.tlua ===
+local m = require("m")
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local a = require("a")
+>a : Symbol(a, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local _ = m.y + a.x
+>_ : Symbol(_, Decl(main.tlua, 2, 5))
+>m.y : Symbol(y, Decl(m.tlua, 14, 10), Decl(m.tlua, 16, 8))
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>y : Symbol(y, Decl(m.tlua, 14, 10), Decl(m.tlua, 16, 8))
+>a.x : Symbol(x, Decl(a.tlua, 4, 8))
+>a : Symbol(a, Decl(main.tlua, 1, 5))
+>x : Symbol(x, Decl(a.tlua, 4, 8))
+
+=== m.tlua ===
+// Two modules that require each other and assert on the other's exports at top
+// level. A module's type depends on its reachability, which flow analysis reads from
+// each call's declared signature: it never resolves these calls, which would check
+// `a.x` and reach a's type mid-resolution. That holds for a user's generic typed
+// assertion too, whose instantiation matters only to narrowing a reference.
+declare function check<T>(v: unknown, tag: T): asserts v is T
+>check : Symbol(check, Decl(m.tlua, 0, 0))
+>T : Symbol(T, Decl(m.tlua, 5, 23))
+>v : Symbol(v, Decl(m.tlua, 5, 26))
+>tag : Symbol(tag, Decl(m.tlua, 5, 37))
+>T : Symbol(T, Decl(m.tlua, 5, 23))
+>v : Symbol(v, Decl(m.tlua, 5, 26))
+>T : Symbol(T, Decl(m.tlua, 5, 23))
+
+declare function pick(): number | nil
+>pick : Symbol(pick, Decl(m.tlua, 5, 61))
+
+local a = require("a")
+>a : Symbol(a, Decl(m.tlua, 7, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+assert(a.x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>a.x : Symbol(x, Decl(a.tlua, 4, 8))
+>a : Symbol(a, Decl(m.tlua, 7, 5))
+>x : Symbol(x, Decl(a.tlua, 4, 8))
+
+check(a.x, 1)
+>check : Symbol(check, Decl(m.tlua, 0, 0))
+>a.x : Symbol(x, Decl(a.tlua, 4, 8))
+>a : Symbol(a, Decl(m.tlua, 7, 5))
+>x : Symbol(x, Decl(a.tlua, 4, 8))
+
+// Narrowing v walks past check(a.x, 1). Only a reference its argument can narrow
+// resolves the generic call, so v's walk never checks a.x.
+local v = pick()
+>v : Symbol(v, Decl(m.tlua, 12, 5))
+>pick : Symbol(pick, Decl(m.tlua, 5, 61))
+
+if v then
+>v : Symbol(v, Decl(m.tlua, 12, 5))
+
+  return { y = v }
+>y : Symbol(y, Decl(m.tlua, 14, 10))
+>v : Symbol(v, Decl(m.tlua, 12, 5))
+
+end
+return { y = 1 }
+>y : Symbol(y, Decl(m.tlua, 16, 8))
+
+=== a.tlua ===
+declare function check<T>(v: unknown, tag: T): asserts v is T
+>check : Symbol(check, Decl(a.tlua, 0, 0))
+>T : Symbol(T, Decl(a.tlua, 0, 23))
+>v : Symbol(v, Decl(a.tlua, 0, 26))
+>tag : Symbol(tag, Decl(a.tlua, 0, 37))
+>T : Symbol(T, Decl(a.tlua, 0, 23))
+>v : Symbol(v, Decl(a.tlua, 0, 26))
+>T : Symbol(T, Decl(a.tlua, 0, 23))
+
+local m = require("m")
+>m : Symbol(m, Decl(a.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+assert(m.y, "need y")
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>m.y : Symbol(y, Decl(m.tlua, 14, 10), Decl(m.tlua, 16, 8))
+>m : Symbol(m, Decl(a.tlua, 1, 5))
+>y : Symbol(y, Decl(m.tlua, 14, 10), Decl(m.tlua, 16, 8))
+
+check(m.y, 1)
+>check : Symbol(check, Decl(a.tlua, 0, 0))
+>m.y : Symbol(y, Decl(m.tlua, 14, 10), Decl(m.tlua, 16, 8))
+>m : Symbol(m, Decl(a.tlua, 1, 5))
+>y : Symbol(y, Decl(m.tlua, 14, 10), Decl(m.tlua, 16, 8))
+
+return { x = 1 }
+>x : Symbol(x, Decl(a.tlua, 4, 8))
+

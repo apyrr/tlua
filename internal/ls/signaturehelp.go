@@ -474,22 +474,16 @@ func returnTypeToDisplayParts(candidateSignature *checker.Signature, c *checker.
 	// Add ": " prefix
 	dpw.WritePunctuation(": ")
 
-	predicate := c.GetTypePredicateOfSignature(candidateSignature)
-	if predicate != nil {
-		dpw.Write(c.TypePredicateToString(predicate))
-	} else {
-		returnType := c.GetReturnTypeOfSignature(candidateSignature)
-		typeNode := c.TypeToTypeNode(returnType, enclosingDeclaration, signatureHelpNodeBuilderFlags, nil)
-		if typeNode != nil {
-			p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, printer.NewEmitContext())
-			// Use a temporary writer for p.Write since the printer calls Clear() on its writer
-			tempDpw := newDisplayPartsWriter(vsCapability)
-			p.Write(typeNode, sourceFile, tempDpw, nil)
-			dpw.WriteFrom(tempDpw)
-		} else {
-			dpw.Write(c.TypeToString(returnType))
-		}
-	}
+	// Printed as its declaration would spell it, so a predicate, a return type and an
+	// assertion that returns values (`R asserts x`) come out the way hover prints them.
+	emitContext := printer.NewEmitContext()
+	typeNode := checker.NewNodeBuilder(c, emitContext).ReturnTypeOfSignatureToTypeNode(candidateSignature, enclosingDeclaration, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil /*tracker*/)
+	debug.Assert(typeNode != nil, "only FlagsSuppressAnyReturnType omits a return type, and signature help never sets it")
+	p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
+	// Use a temporary writer for p.Write since the printer calls Clear() on its writer
+	tempDpw := newDisplayPartsWriter(vsCapability)
+	p.Write(typeNode, sourceFile, tempDpw, nil)
+	dpw.WriteFrom(tempDpw)
 	return dpw
 }
 

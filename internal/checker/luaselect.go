@@ -10,11 +10,11 @@ import (
 // declared signature can name (Luau special-cases it the same way, as a magic
 // function). The lib deliberately declares select non-generically -- `(index:
 // number, ...: any): (any?, ...any)` -- as the safe fallback for a shadowed or
-// aliased select; this refinement replaces that type for calls to the real global.
+// reassigned select; this refinement replaces that type for calls to the real global.
 //
-// Only a call to the *global* `select` is refined: a shadowing local, or a call
-// through an alias, resolves to a different symbol and keeps the declared type, as
-// the metatable and type() builtins do. The `"#"` form is a separate overload
+// Only a call to the *global* `select` (or a never-reassigned local alias of it) is
+// refined: a shadowing local resolves to a different symbol and keeps the declared
+// type, as the metatable and type() builtins do. The `"#"` form is a separate overload
 // returning `number`, so a non-numeric index is left alone here.
 
 // isLuaSelectCall reports whether the refinement interprets this call. The quick
@@ -27,7 +27,7 @@ func (c *Checker) isLuaSelectCall(node *ast.Node) bool {
 		return false
 	}
 	callee := ast.SkipParentheses(node.Expression())
-	return ast.IsIdentifier(callee) && callee.Text() == "select" && c.isLuaGlobalReference(callee, c.getLuaSelectGlobalSymbol())
+	return c.isLuaBuiltinReference(callee, "select", c.getLuaSelectGlobalSymbol)
 }
 
 // checkLuaSelectCall returns the refined pack of a select call, or nil when the

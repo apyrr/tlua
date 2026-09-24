@@ -449,6 +449,9 @@ export class NodeObject {
     get referencedFiles(): any {
         return this._data?.referencedFiles;
     }
+    get returnType(): any {
+        return this._data?.returnType;
+    }
     get right(): any {
         return this._data?.right;
     }
@@ -749,7 +752,7 @@ function cloneNodeData(node: Node): any {
         case SyntaxKind.LiteralType:
             return { literal: n.literal };
         case SyntaxKind.TypePredicate:
-            return { assertsModifier: n.assertsModifier, parameterName: n.parameterName, type: n.type };
+            return { returnType: n.returnType, assertsModifier: n.assertsModifier, parameterName: n.parameterName, type: n.type };
         case SyntaxKind.TypeQuery:
             return { exprName: n.exprName, typeArguments: n.typeArguments };
         case SyntaxKind.MappedType:
@@ -1093,6 +1096,7 @@ const forEachChildTable: Record<number, ForEachChildFunction> = {
         visitNodes(cbNode, cbNodes, data.typeArguments),
     [SyntaxKind.LiteralType]: (data, cbNode, cbNodes) => visitNode(cbNode, data.literal),
     [SyntaxKind.TypePredicate]: (data, cbNode, cbNodes) =>
+        visitNode(cbNode, data.returnType) ||
         visitNode(cbNode, data.assertsModifier) ||
         visitNode(cbNode, data.parameterName) ||
         visitNode(cbNode, data.type),
@@ -1873,8 +1877,9 @@ export function createLiteralTypeNode(literal: Node): LiteralTypeNode {
     }) as unknown as LiteralTypeNode;
 }
 
-export function createTypePredicateNode(assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {
+export function createTypePredicateNode(returnType: TypeNode | undefined, assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {
     return new NodeObject(SyntaxKind.TypePredicate, {
+        returnType,
         assertsModifier,
         parameterName,
         type,
@@ -2629,8 +2634,8 @@ export function updateLiteralTypeNode(node: LiteralTypeNode, literal: Node): Lit
     return node.literal !== literal ? createLiteralTypeNode(literal) : node;
 }
 
-export function updateTypePredicateNode(node: TypePredicateNode, assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {
-    return node.assertsModifier !== assertsModifier || node.parameterName !== parameterName || node.type !== type ? createTypePredicateNode(assertsModifier, parameterName, type) : node;
+export function updateTypePredicateNode(node: TypePredicateNode, returnType: TypeNode | undefined, assertsModifier: AssertsKeyword | undefined, parameterName: TypePredicateParameterName, type?: TypeNode): TypePredicateNode {
+    return node.returnType !== returnType || node.assertsModifier !== assertsModifier || node.parameterName !== parameterName || node.type !== type ? createTypePredicateNode(returnType, assertsModifier, parameterName, type) : node;
 }
 
 export function updateTypeQueryNode(node: TypeQueryNode, exprName: EntityName, typeArguments?: readonly TypeNode[]): TypeQueryNode {

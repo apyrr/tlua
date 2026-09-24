@@ -1,0 +1,259 @@
+//// [tests/cases/compiler/tluaMemberFunctionBivariance.tlua] ////
+
+=== tluaMemberFunctionBivariance.tlua ===
+-- A member function statement taking the receiver (`function T.m(self)`,
+-- `function T:m()`) is a method declaration, so an override may narrow `self`
+-- like an interface method.
+
+local Base = {}
+>Base : { __index: any; describe(self: Animal): string; }
+>{} : { __index: { __index: any; describe(self: Animal): string; }; describe(self: Animal): string; }
+
+Base.__index = Base
+>Base.__index = Base : { __index: any; describe(self: Animal): string; }
+>Base.__index : { __index: any; describe(self: Animal): string; }
+>Base : { __index: any; describe(self: Animal): string; }
+>__index : { __index: any; describe(self: Animal): string; }
+>Base : { __index: any; describe(self: Animal): string; }
+
+function Base.describe(self: Animal): string
+>Base : { __index: any; describe(self: Animal): string; }
+>describe : (self: Animal) => string
+>self : Animal
+
+    return self.name
+>self.name : string
+>self : Animal
+>name : string
+
+end
+
+local type AnimalMethods = Omit<typeof Base, "__index">
+>AnimalMethods : AnimalMethods
+>Base : { __index: any; describe(self: Animal): string; }
+
+interface Animal extends AnimalMethods {
+    name: string;
+>name : string
+}
+
+-- Statement-form subclass: the instance is assignable to the base.
+local Dog = {}
+>Dog : { __index: any; describe(self: DogInstance): string; }
+>{} : { __index: { __index: any; describe(self: DogInstance): string; }; describe(self: DogInstance): string; }
+
+Dog.__index = Dog
+>Dog.__index = Dog : { __index: any; describe(self: DogInstance): string; }
+>Dog.__index : { __index: any; describe(self: DogInstance): string; }
+>Dog : { __index: any; describe(self: DogInstance): string; }
+>__index : { __index: any; describe(self: DogInstance): string; }
+>Dog : { __index: any; describe(self: DogInstance): string; }
+
+setmetatable(Dog, { __index = Base })
+>setmetatable(Dog, { __index = Base }) : { __index: { __index: any; describe(self: DogInstance): string; }; describe(self: DogInstance): string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>Dog : { __index: any; describe(self: DogInstance): string; }
+>{ __index = Base } : { __index: { __index: any; describe(self: Animal): string; }; }
+>__index : { __index: any; describe(self: Animal): string; }
+>Base : { __index: any; describe(self: Animal): string; }
+
+function Dog.describe(self: DogInstance): string
+>Dog : { __index: { __index: any; describe(self: DogInstance): string; }; describe(self: DogInstance): string; }
+>describe : (self: DogInstance) => string
+>self : DogInstance
+
+    return self.name .. " (" .. self.breed .. ")"
+>self.name .. " (" .. self.breed .. ")" : string
+>self.name : string
+>self : DogInstance
+>name : string
+>" (" .. self.breed .. ")" : string
+>" (" : " ("
+>self.breed .. ")" : string
+>self.breed : string
+>self : DogInstance
+>breed : string
+>")" : ")"
+
+end
+
+local type DogMethods = Omit<typeof Dog, "__index">
+>DogMethods : DogMethods
+>Dog : { __index: { __index: any; describe(self: DogInstance): string; }; describe(self: DogInstance): string; }
+
+interface DogInstance extends Omit<Animal, keyof DogMethods>, DogMethods {
+    breed: string;
+>breed : string
+}
+
+local function printAnimal(animal: Animal)
+>printAnimal : (animal: Animal) => void
+>animal : Animal
+
+    print(animal:describe())
+>print(animal:describe()) : void
+>print : (...: any) => void
+>animal:describe() : string
+>animal:describe : (self: Animal) => string
+>animal : Animal
+>describe : (self: Animal) => string
+
+end
+
+local dog = setmetatable({ name = "Rex", breed = "Husky" }, Dog) as unknown as DogInstance
+>dog : DogInstance
+>setmetatable({ name = "Rex", breed = "Husky" }, Dog) as unknown as DogInstance : DogInstance
+>setmetatable({ name = "Rex", breed = "Husky" }, Dog) as unknown : unknown
+>setmetatable({ name = "Rex", breed = "Husky" }, Dog) : { __index: { __index: any; describe(self: DogInstance): string; }; describe(self: DogInstance): string; name: string; breed: string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ name = "Rex", breed = "Husky" } : { name: string; breed: string; }
+>name : string
+>"Rex" : "Rex"
+>breed : string
+>"Husky" : "Husky"
+>Dog : { __index: { __index: any; describe(self: DogInstance): string; }; describe(self: DogInstance): string; }
+
+printAnimal(dog)
+>printAnimal(dog) : void
+>printAnimal : (animal: Animal) => void
+>dog : DogInstance
+
+-- Expression-form subclass: the self-referencing `__index` accepts the override.
+local Cat = setmetatable({}, { __index = Base })
+>Cat : { __index: { __index: any; describe(self: Animal): string; }; describe(self: CatInstance): string; }
+>setmetatable({}, { __index = Base }) : { __index: { __index: any; describe(self: Animal): string; }; describe(self: CatInstance): string; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : { describe(self: CatInstance): string; }
+>{ __index = Base } : { __index: { __index: any; describe(self: Animal): string; }; }
+>__index : { __index: any; describe(self: Animal): string; }
+>Base : { __index: any; describe(self: Animal): string; }
+
+Cat.__index = Cat
+>Cat.__index = Cat : { __index: { __index: any; describe(self: Animal): string; }; describe(self: CatInstance): string; }
+>Cat.__index : { __index: any; describe(self: Animal): string; }
+>Cat : { __index: { __index: any; describe(self: Animal): string; }; describe(self: CatInstance): string; }
+>__index : { __index: any; describe(self: Animal): string; }
+>Cat : { __index: { __index: any; describe(self: Animal): string; }; describe(self: CatInstance): string; }
+
+function Cat.describe(self: CatInstance): string
+>Cat : { __index: { __index: any; describe(self: Animal): string; }; describe(self: CatInstance): string; }
+>describe : (self: CatInstance) => string
+>self : CatInstance
+
+    return self.name .. " says " .. self.sound
+>self.name .. " says " .. self.sound : string
+>self.name : string
+>self : CatInstance
+>name : string
+>" says " .. self.sound : string
+>" says " : " says "
+>self.sound : string
+>self : CatInstance
+>sound : string
+
+end
+
+interface CatInstance extends Animal {
+    sound: string;
+>sound : string
+}
+
+-- The colon form declares a method too: its parameters compare bivariantly.
+local Counter = {}
+>Counter : { add(self: any, n: string | number): number; }
+>{} : { add(self: { add(self: any, n: string | number): number; }, n: string | number): number; }
+
+function Counter:add(n: string | number): number
+>Counter : { add(self: any, n: string | number): number; }
+>add : (self: { add(self: any, n: string | number): number; }, n: string | number) => number
+>n : string | number
+
+    return 1
+>1 : 1
+
+end
+local NarrowCounter = {}
+>NarrowCounter : { add(self: any, n: number): number; }
+>{} : { add(self: { add(self: any, n: number): number; }, n: number): number; }
+
+function NarrowCounter:add(n: number): number
+>NarrowCounter : { add(self: any, n: number): number; }
+>add : (self: { add(self: any, n: number): number; }, n: number) => number
+>n : number
+
+    return n
+>n : number
+
+end
+local counter: typeof Counter = NarrowCounter
+>counter : { add(self: any, n: string | number): number; }
+>Counter : { add(self: any, n: string | number): number; }
+>NarrowCounter : { add(self: any, n: number): number; }
+
+-- A function value assigned to a member is a property: still strict.
+local Plain = {}
+>Plain : { run: (self: string) => number; }
+>{} : { run: (self: string) => number; }
+
+Plain.run = function(self: string): number
+>Plain.run = function(self: string): number    return 1end : (self: string) => number
+>Plain.run : (self: string) => number
+>Plain : { run: (self: string) => number; }
+>run : (self: string) => number
+>function(self: string): number    return 1end : (self: string) => number
+>self : string
+
+    return 1
+>1 : 1
+
+end
+local Narrow = {}
+>Narrow : { run: (self: "a") => number; }
+>{} : { run: (self: "a") => number; }
+
+Narrow.run = function(self: "a"): number
+>Narrow.run = function(self: "a"): number    return 1end : (self: "a") => number
+>Narrow.run : (self: "a") => number
+>Narrow : { run: (self: "a") => number; }
+>run : (self: "a") => number
+>function(self: "a"): number    return 1end : (self: "a") => number
+>self : "a"
+
+    return 1
+>1 : 1
+
+end
+local plain: typeof Plain = Narrow
+>plain : { run: (self: string) => number; }
+>Plain : { run: (self: string) => number; }
+>Narrow : { run: (self: "a") => number; }
+
+-- A member statement without a receiver is a module function: still strict.
+local M = {}
+>M : { parse(s: string | number): string; }
+>{} : { parse(s: string | number): string; }
+
+function M.parse(s: string | number): string
+>M : { parse(s: string | number): string; }
+>parse : (s: string | number) => string
+>s : string | number
+
+    return tostring(s)
+>tostring(s) : string
+>tostring : (value: any) => string
+>s : string | number
+
+end
+M.parse = function(s: string): string
+>M.parse = function(s: string): string    return send : (s: string) => string
+>M.parse : (s: string | number) => string
+>M : { parse(s: string | number): string; }
+>parse : (s: string | number) => string
+>function(s: string): string    return send : (s: string) => string
+>s : string
+
+    return s
+>s : string
+
+end
+

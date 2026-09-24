@@ -12,6 +12,7 @@ const (
 	FlowFlagsAssignment     FlowFlags = 1 << 4  // Assignment
 	FlowFlagsTrueCondition  FlowFlags = 1 << 5  // Condition known to be true
 	FlowFlagsFalseCondition FlowFlags = 1 << 6  // Condition known to be false
+	FlowFlagsNarrowingArg   FlowFlags = 1 << 7  // Call with an argument (or colon receiver) that could narrow as a condition
 	FlowFlagsArrayMutation  FlowFlags = 1 << 8  // Potential array mutation
 	FlowFlagsCall           FlowFlags = 1 << 9  // Potential assertion call
 	FlowFlagsReduceLabel    FlowFlags = 1 << 10 // Temporarily reduce antecedents of label

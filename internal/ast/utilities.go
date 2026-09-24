@@ -726,6 +726,89 @@ func HasLuaLocalValueList(node *Node) bool {
 	return len(node.Parent.AsVariableDeclarationList().Declarations.Nodes) > 1 || valueList.Kind == KindExpressionList
 }
 
+// LuaExplicitAssignmentValueAt returns the expression syntactically aligned
+// with a target. It is for source-shape questions only; semantic values must be
+// projected from the full value-list pack.
+func LuaExplicitAssignmentValueAt(valueList *Node, index int) *Node {
+	if valueList.Kind == KindExpressionList {
+		elements := valueList.Elements()
+		if index < len(elements) {
+			return elements[index]
+		}
+		return nil
+	}
+	if index == 0 {
+		return valueList
+	}
+	return nil
+}
+
+// LuaExplicitVariableInitializer returns only the source expression aligned
+// with this local name. It never invents a value from a trailing call's pack.
+func LuaExplicitVariableInitializer(declaration *Node) *Node {
+	if !HasLuaLocalValueList(declaration) {
+		return declaration.Initializer()
+	}
+	declarations := declaration.Parent.AsVariableDeclarationList().Declarations.Nodes
+	index := IndexOfNode(declarations, declaration)
+	return LuaExplicitAssignmentValueAt(LuaLocalValueList(declaration.Parent), index)
+}
+
+// LuaBuiltins is a set of the builtin globals the checker recognizes by identity rather
+// than by their declared type: the type guards, select, the metatable functions, and the
+// namespaces whose members it refines.
+type LuaBuiltins uint8
+
+const (
+	LuaBuiltinType LuaBuiltins = 1 << iota
+	LuaBuiltinIO
+	LuaBuiltinSelect
+	LuaBuiltinSetmetatable
+	LuaBuiltinGetmetatable
+	LuaBuiltinDebug
+	LuaBuiltinString
+)
+
+// LuaIdentityBuiltin returns the identity builtin spelled name, or 0.
+func LuaIdentityBuiltin(name string) LuaBuiltins {
+	switch name {
+	case "type":
+		return LuaBuiltinType
+	case "io":
+		return LuaBuiltinIO
+	case "select":
+		return LuaBuiltinSelect
+	case "setmetatable":
+		return LuaBuiltinSetmetatable
+	case "getmetatable":
+		return LuaBuiltinGetmetatable
+	case "debug":
+		return LuaBuiltinDebug
+	case "string":
+		return LuaBuiltinString
+	}
+	return 0
+}
+
+// LuaLocalAliasInitializer returns the bare name a `local` statement initializes
+// declaration from (`type` in `local t = type`), or nil. It is purely syntactic,
+// so the binder can gate on it before any symbol exists. An annotated local is not
+// an alias: its declared type wins, as it does for every other read of the local.
+func LuaLocalAliasInitializer(declaration *Node) *Node {
+	if !IsVariableDeclaration(declaration) || !IsLuaLocal(declaration) || !IsVariableStatement(declaration.Parent.Parent) || declaration.Type() != nil {
+		return nil
+	}
+	initializer := LuaExplicitVariableInitializer(declaration)
+	if initializer == nil {
+		return nil
+	}
+	initializer = SkipParentheses(initializer)
+	if !IsIdentifier(initializer) {
+		return nil
+	}
+	return initializer
+}
+
 // IsLuaBlock reports whether node is a keyword-delimited Lua block
 // (`then`/`do`/`else` ... `end`), as opposed to a braced TS block.
 func IsLuaBlock(node *Node) bool {
@@ -1912,11 +1995,11 @@ func IsPackTypeReferencePosition(node *Node) bool {
 	return false
 }
 
-// LuaTypeGuardCall matches the shape of Lua's runtime type guards, `type(x)` and
+// LuaTypeGuardCallShape matches the shape of Lua's runtime type guards, `type(x)` and
 // `io.type(x)`, returning the callee and the guarded argument. The match is by
-// spelling only: the binder has no symbols when it decides which expressions get
-// flow nodes, so the checker re-resolves the callee before narrowing anything.
-func LuaTypeGuardCall(expr *Node) (callee *Node, argument *Node) {
+// shape only, since the callee may be a local alias of either global: the binder
+// gates it by name, and the checker resolves it before narrowing anything.
+func LuaTypeGuardCallShape(expr *Node) (callee *Node, argument *Node) {
 	expr = SkipParentheses(expr)
 	if !IsCallExpression(expr) {
 		return nil, nil
@@ -1926,10 +2009,11 @@ func LuaTypeGuardCall(expr *Node) (callee *Node, argument *Node) {
 		return nil, nil
 	}
 	callee = SkipParentheses(call.Expression)
-	isGlobalType := IsIdentifier(callee) && callee.Text() == "type"
-	isIOType := IsPropertyAccessExpression(callee) && callee.Name().Text() == "type" &&
-		IsIdentifier(SkipParentheses(callee.Expression())) && SkipParentheses(callee.Expression()).Text() == "io"
-	if !isGlobalType && !isIOType {
+	isBareCall := IsIdentifier(callee)
+	// `io:type(x)` passes io as the first argument, so x is not what it tests.
+	isIOType := IsPropertyAccessExpression(callee) && callee.AsPropertyAccessExpression().ColonToken == nil &&
+		callee.Name().Text() == "type" && IsIdentifier(SkipParentheses(callee.Expression()))
+	if !isBareCall && !isIOType {
 		return nil, nil
 	}
 	return callee, call.Arguments.Nodes[0]

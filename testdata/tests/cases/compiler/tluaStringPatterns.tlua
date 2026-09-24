@@ -114,11 +114,13 @@ local balancedMatch, balancedCapture = balancedText:match("%b()");
 local balancedMatchType: string | nil = balancedMatch;
 local noBalancedCapture: nil = balancedCapture;
 
+// A never-reassigned local alias is the string library itself: the pattern's two
+// captures are counted, so a third result is nil.
 local stringAlias = string;
 local aliasFirst, aliasSecond, aliasThird = stringAlias.match("42", "(%d+)-?(%d*)");
 local aliasFirstType: string | nil = aliasFirst;
 local aliasSecondType: string | nil = aliasSecond;
-local aliasThirdType: string | nil = aliasThird;
+local aliasThirdType: nil = aliasThird;
 
 function shadowedStringPattern(): void
   local string = {

@@ -235,6 +235,13 @@ func (b *NodeBuilder) TypePredicateToTypePredicateNode(predicate *TypePredicate,
 	return b.exitContext(b.impl.typePredicateToTypePredicateNode(predicate))
 }
 
+// ReturnTypeOfSignatureToTypeNode builds the return type annotation of signature: its return
+// type, its type predicate, or both for an assertion that returns values (`R asserts x`).
+func (b *NodeBuilder) ReturnTypeOfSignatureToTypeNode(signature *Signature, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
+	return b.exitContext(b.impl.serializeReturnTypeForSignature(signature, false /*tryReuse*/))
+}
+
 // TypeToTypeNode implements NodeBuilderInterface.
 func (b *NodeBuilder) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)

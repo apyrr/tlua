@@ -193,6 +193,7 @@ methodFormat:format(2, "extra");
 >2 : 2
 >"extra" : "extra"
 
+// A never-reassigned local alias is the string library itself, so it is checked too.
 local stringAlias = string;
 >stringAlias : StringLib
 >string : StringLib

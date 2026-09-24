@@ -1940,7 +1940,7 @@ var tokenToText = func() [ast.KindCount]string {
 	result[ast.KindBarBarToken] = "or"
 	// `not` is deliberately NOT canonical: KindExclamationToken is also the
 	// definite-assignment and non-null token (`local x!: T`, `x!.y`), where the
-	// word would be wrong. `not x` therefore prints as `!x`.
+	// word would be wrong. The printer spells the prefix operator `not` itself.
 	result[ast.KindExclamationToken] = "!"
 	// These words were demoted from keywords to identifiers (they no longer
 	// appear in textToToken), but their token kinds are still synthesized —

@@ -131,32 +131,33 @@ methodFormat:format(2, "extra");
 >methodFormat : Symbol(methodFormat, Decl(tluaStringFormat.tlua, 25, 5))
 >format : Symbol(String.format, Decl(lib.luajit.d.tlua, --, --))
 
+// A never-reassigned local alias is the string library itself, so it is checked too.
 local stringAlias = string;
->stringAlias : Symbol(stringAlias, Decl(tluaStringFormat.tlua, 39, 5))
+>stringAlias : Symbol(stringAlias, Decl(tluaStringFormat.tlua, 40, 5))
 >string : Symbol(string, Decl(lib.luajit.d.tlua, --, --))
 
 stringAlias.format("%d", "aliased", "extra");
 >stringAlias.format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
->stringAlias : Symbol(stringAlias, Decl(tluaStringFormat.tlua, 39, 5))
+>stringAlias : Symbol(stringAlias, Decl(tluaStringFormat.tlua, 40, 5))
 >format : Symbol(StringLib.format, Decl(lib.luajit.d.tlua, --, --))
 
 function shadowedString(): void
->shadowedString : Symbol(shadowedString, Decl(tluaStringFormat.tlua, 40, 45))
+>shadowedString : Symbol(shadowedString, Decl(tluaStringFormat.tlua, 41, 45))
 
   local string = {
->string : Symbol(string, Decl(tluaStringFormat.tlua, 43, 7))
+>string : Symbol(string, Decl(tluaStringFormat.tlua, 44, 7))
 
     format = function(format: string, ...: any): string return format; end,
->format : Symbol(format, Decl(tluaStringFormat.tlua, 43, 18))
->format : Symbol(format, Decl(tluaStringFormat.tlua, 44, 22))
-> : Symbol((Missing), Decl(tluaStringFormat.tlua, 44, 37))
->format : Symbol(format, Decl(tluaStringFormat.tlua, 44, 22))
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 44, 18))
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 45, 22))
+> : Symbol((Missing), Decl(tluaStringFormat.tlua, 45, 37))
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 45, 22))
 
   };
   string.format("%d", "shadowed", "extra");
->string.format : Symbol(format, Decl(tluaStringFormat.tlua, 43, 18))
->string : Symbol(string, Decl(tluaStringFormat.tlua, 43, 7))
->format : Symbol(format, Decl(tluaStringFormat.tlua, 43, 18))
+>string.format : Symbol(format, Decl(tluaStringFormat.tlua, 44, 18))
+>string : Symbol(string, Decl(tluaStringFormat.tlua, 44, 7))
+>format : Symbol(format, Decl(tluaStringFormat.tlua, 44, 18))
 
 end
 

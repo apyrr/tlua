@@ -11,13 +11,7 @@ test(function(state) end);
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "["
+      "value": "{ ["
     },
     {
       "value": "STATE_SIGNAL",
@@ -36,19 +30,7 @@ test(function(state) end);
       }
     },
     {
-      "value": "]"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "unknown"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": "]: unknown; }"
     }
   ],
   "kind": 1,

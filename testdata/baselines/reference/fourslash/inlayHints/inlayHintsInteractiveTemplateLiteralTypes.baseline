@@ -11,19 +11,7 @@ local lit1 = getTemplateLiteral1();
       "value": ": "
     },
     {
-      "value": "`${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "},${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "}`"
+      "value": "`${string},${string}`"
     }
   ],
   "kind": 1,
@@ -42,19 +30,7 @@ local lit2 = getTemplateLiteral2();
       "value": ": "
     },
     {
-      "value": "`\\${${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "},${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "}`"
+      "value": "`\\${${string},${string}`"
     }
   ],
   "kind": 1,
@@ -73,19 +49,7 @@ local lit3 = getTemplateLiteral3();
       "value": ": "
     },
     {
-      "value": "`start${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "}\\${,$${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "}end`"
+      "value": "`start${string}\\${,$${string}end`"
     }
   ],
   "kind": 1,
@@ -104,19 +68,7 @@ local lit4 = getTemplateLiteral4();
       "value": ": "
     },
     {
-      "value": "`${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "}\\`,${"
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "}`"
+      "value": "`${string}\\`,${string}`"
     }
   ],
   "kind": 1,

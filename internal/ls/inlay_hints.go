@@ -271,27 +271,38 @@ func (s *inlayHintState) getParameterDeclarationTypeHints(symbol *ast.Symbol) *l
 }
 
 func (s *inlayHintState) typeToInlayHintParts(t *checker.Type) lsproto.StringOrInlayHintLabelParts {
-	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
-		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
-	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
-	// !!! Avoid type node reuse so we collect identifier symbols.
-	typeNode := s.checker.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags, idToSymbol)
-	debug.Assert(typeNode != nil, "should always get typenode")
-	return lsproto.StringOrInlayHintLabelParts{
-		InlayHintLabelParts: new(s.getInlayHintLabelParts(typeNode, idToSymbol)),
-	}
+	return s.printInlayHintParts(func(nb *checker.NodeBuilder, flags nodebuilder.Flags) *ast.Node {
+		return nb.TypeToTypeNode(t, nil /*enclosingDeclaration*/, flags, nodebuilder.InternalFlagsNone, nil /*tracker*/)
+	})
 }
 
 func (s *inlayHintState) typePredicateToInlayHintParts(typePredicate *checker.TypePredicate) lsproto.StringOrInlayHintLabelParts {
+	return s.printInlayHintParts(func(nb *checker.NodeBuilder, flags nodebuilder.Flags) *ast.Node {
+		return nb.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags, nodebuilder.InternalFlagsNone, nil /*tracker*/)
+	})
+}
+
+// printInlayHintParts prints the node build returns with the printer hover and signature help
+// use, so a hint spells every type the way the rest of the language service does. The printer
+// reports each name with its symbol, which becomes a part linking to the declaration.
+func (s *inlayHintState) printInlayHintParts(build func(nb *checker.NodeBuilder, flags nodebuilder.Flags) *ast.Node) lsproto.StringOrInlayHintLabelParts {
 	flags := nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsAllowUniqueESSymbolType |
 		nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
+	if s.quotePreference == lsutil.QuotePreferenceSingle {
+		flags |= nodebuilder.FlagsUseSingleQuotesForStringLiteralType
+	}
+	// The printer reads emit flags (single-line object types) from the context the node
+	// builder set them in, so the two share one.
+	emitContext := printer.NewEmitContext()
 	idToSymbol := make(map[*ast.IdentifierNode]*ast.Symbol)
 	// !!! Avoid type node reuse so we collect identifier symbols.
-	typeNode := s.checker.TypePredicateToTypePredicateNode(typePredicate, nil /*enclosingDeclaration*/, flags, idToSymbol)
-	debug.Assert(typeNode != nil, "should always get typePredicateNode")
-	return lsproto.StringOrInlayHintLabelParts{
-		InlayHintLabelParts: new(s.getInlayHintLabelParts(typeNode, idToSymbol)),
-	}
+	node := build(checker.NewNodeBuilderEx(s.checker, emitContext, idToSymbol), flags)
+	debug.Assert(node != nil, "should always get a type node")
+	p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
+	p.IdToSymbol = idToSymbol
+	writer := &inlayHintPartsWriter{state: s}
+	p.Write(node, nil /*sourceFile*/, writer, nil /*sourceMapGenerator*/)
+	return lsproto.StringOrInlayHintLabelParts{InlayHintLabelParts: new(writer.labelParts())}
 }
 
 func (s *inlayHintState) addTypeHints(hint lsproto.StringOrInlayHintLabelParts, position int) {
@@ -370,340 +381,6 @@ func isModuleReferenceType(t *checker.Type) bool {
 	return symbol != nil && symbol.Flags&ast.SymbolFlagsModule != 0
 }
 
-func (s *inlayHintState) getInlayHintLabelParts(node *ast.Node, idToSymbol map[*ast.IdentifierNode]*ast.Symbol) []*lsproto.InlayHintLabelPart {
-	var parts []*lsproto.InlayHintLabelPart
-
-	var visitForDisplayParts func(node *ast.Node)
-	var visitDisplayPartList func(nodes []*ast.Node, separator string)
-	var visitParametersAndTypeParameters func(node *ast.SignatureDeclaration)
-
-	visitForDisplayParts = func(node *ast.Node) {
-		if node == nil {
-			return
-		}
-
-		tokenString := scanner.TokenToString(node.Kind)
-		if tokenString != "" {
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: tokenString})
-			return
-		}
-
-		if ast.IsLiteralExpression(node) {
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: s.getLiteralText(node)})
-			return
-		}
-
-		switch node.Kind {
-		case ast.KindIdentifier:
-			identifierText := node.Text()
-			var name *ast.Node
-			if symbol := idToSymbol[node]; symbol != nil && len(symbol.Declarations) != 0 {
-				name = ast.GetNameOfDeclaration(symbol.Declarations[0])
-			}
-			if name != nil {
-				parts = append(parts, s.getNodeDisplayPart(identifierText, name))
-			} else {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: identifierText})
-			}
-		case ast.KindQualifiedName:
-			visitForDisplayParts(node.AsQualifiedName().Left)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "."})
-			visitForDisplayParts(node.AsQualifiedName().Right)
-		case ast.KindTypePredicate:
-			if node.AsTypePredicateNode().AssertsModifier != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "asserts "})
-			}
-			visitForDisplayParts(node.AsTypePredicateNode().ParameterName)
-			if node.Type() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " is "})
-				visitForDisplayParts(node.Type())
-			}
-		case ast.KindTypeReference:
-			visitForDisplayParts(node.AsTypeReferenceNode().TypeName)
-			if len(node.TypeArguments()) > 0 {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "<"})
-				visitDisplayPartList(node.TypeArguments(), ",")
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ">"})
-			}
-		case ast.KindTypeParameter:
-			if len(node.ModifierNodes()) > 0 {
-				visitDisplayPartList(node.ModifierNodes(), "")
-			}
-			visitForDisplayParts(node.Name())
-			if node.AsTypeParameterDeclaration().Constraint != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " extends "})
-				visitForDisplayParts(node.AsTypeParameterDeclaration().Constraint)
-			}
-			if node.AsTypeParameterDeclaration().DefaultType != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " = "})
-				visitForDisplayParts(node.AsTypeParameterDeclaration().DefaultType)
-			}
-		case ast.KindParameter:
-			if len(node.ModifierNodes()) > 0 {
-				visitDisplayPartList(node.ModifierNodes(), " ")
-			}
-			if node.AsParameterDeclaration().DotDotDotToken != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "..."})
-			}
-			visitForDisplayParts(node.Name())
-			if node.QuestionToken() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "?"})
-			}
-			if node.Type() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-				visitForDisplayParts(node.Type())
-			}
-		case ast.KindTypeQuery:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "typeof "})
-			visitForDisplayParts(node.AsTypeQueryNode().ExprName)
-			if len(node.TypeArguments()) > 0 {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "<"})
-				visitDisplayPartList(node.TypeArguments(), ", ")
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ">"})
-			}
-		case ast.KindTypeLiteral:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "{"})
-			if len(node.Members()) > 0 {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " "})
-				visitDisplayPartList(node.Members(), "; ")
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " "})
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "}"})
-		case ast.KindArrayType:
-			visitForDisplayParts(node.AsArrayTypeNode().ElementType)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "[]"})
-		case ast.KindTupleType:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
-			visitDisplayPartList(node.Elements(), ", ")
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
-		case ast.KindNamedTupleMember:
-			if node.AsNamedTupleMember().DotDotDotToken != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "..."})
-			}
-			visitForDisplayParts(node.Name())
-			if node.QuestionToken() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "?"})
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-			visitForDisplayParts(node.Type())
-		case ast.KindOptionalType:
-			visitForDisplayParts(node.Type())
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "?"})
-		case ast.KindRestType:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "..."})
-			visitForDisplayParts(node.Type())
-		case ast.KindUnionType:
-			if node.AsUnionTypeNode().Types != nil {
-				visitDisplayPartList(node.AsUnionTypeNode().Types.Nodes, " | ")
-			}
-		case ast.KindIntersectionType:
-			if node.AsIntersectionTypeNode().Types != nil {
-				visitDisplayPartList(node.AsIntersectionTypeNode().Types.Nodes, " & ")
-			}
-		case ast.KindConditionalType:
-			visitForDisplayParts(node.AsConditionalTypeNode().CheckType)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: " extends "})
-			visitForDisplayParts(node.AsConditionalTypeNode().ExtendsType)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: " ? "})
-			visitForDisplayParts(node.AsConditionalTypeNode().TrueType)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: " : "})
-			visitForDisplayParts(node.AsConditionalTypeNode().FalseType)
-		case ast.KindInferType:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "infer "})
-			visitForDisplayParts(node.AsInferTypeNode().TypeParameter)
-		case ast.KindParenthesizedType:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "("})
-			visitForDisplayParts(node.Type())
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: ")"})
-		case ast.KindSelfKeyword:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "self"})
-		case ast.KindTypeOperator:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: scanner.TokenToString(node.AsTypeOperatorNode().Operator)})
-			visitForDisplayParts(node.Type())
-		case ast.KindIndexedAccessType:
-			visitForDisplayParts(node.AsIndexedAccessTypeNode().ObjectType)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
-			visitForDisplayParts(node.AsIndexedAccessTypeNode().IndexType)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
-		case ast.KindMappedType:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "{ "})
-			if node.AsMappedTypeNode().ReadonlyToken != nil {
-				if node.AsMappedTypeNode().ReadonlyToken.Kind == ast.KindPlusToken {
-					parts = append(parts, &lsproto.InlayHintLabelPart{Value: "+"})
-				} else if node.AsMappedTypeNode().ReadonlyToken.Kind == ast.KindMinusToken {
-					parts = append(parts, &lsproto.InlayHintLabelPart{Value: "-"})
-				}
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "readonly "})
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
-			visitForDisplayParts(node.AsMappedTypeNode().TypeParameter)
-			if node.AsMappedTypeNode().NameType != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " as "})
-				visitForDisplayParts(node.AsMappedTypeNode().NameType)
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
-			if node.QuestionToken() != nil {
-				if node.QuestionToken().Kind == ast.KindPlusToken {
-					parts = append(parts, &lsproto.InlayHintLabelPart{Value: "+"})
-				} else if node.QuestionToken().Kind == ast.KindMinusToken {
-					parts = append(parts, &lsproto.InlayHintLabelPart{Value: "-"})
-				}
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "?"})
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-			if node.Type() != nil {
-				visitForDisplayParts(node.Type())
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "; }"})
-		case ast.KindLiteralType:
-			visitForDisplayParts(node.AsLiteralTypeNode().Literal)
-		case ast.KindFunctionType:
-			visitParametersAndTypeParameters(node)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: " => "})
-			visitForDisplayParts(node.Type())
-		case ast.KindImportType:
-			if node.AsImportTypeNode().IsTypeOf {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "typeof "})
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "import("})
-			visitForDisplayParts(node.AsImportTypeNode().Argument)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: ")"})
-			if node.AsImportTypeNode().Qualifier != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "."})
-				visitForDisplayParts(node.AsImportTypeNode().Qualifier)
-			}
-			if len(node.TypeArguments()) > 0 {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: "<"})
-				visitDisplayPartList(node.TypeArguments(), ", ")
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ">"})
-			}
-		case ast.KindPropertySignature:
-			if len(node.ModifierNodes()) > 0 {
-				visitDisplayPartList(node.ModifierNodes(), " ")
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " "})
-			}
-			visitForDisplayParts(node.Name())
-			if node.PostfixToken() != nil {
-				parts = append(
-					parts,
-					&lsproto.InlayHintLabelPart{
-						Value: scanner.TokenToString(node.PostfixToken().Kind),
-					},
-				)
-			}
-			if node.Type() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-				visitForDisplayParts(node.Type())
-			}
-		case ast.KindIndexSignature:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
-			visitDisplayPartList(node.Parameters(), ", ")
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
-			if node.Type() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-				visitForDisplayParts(node.Type())
-			}
-		case ast.KindMethodSignature:
-			if len(node.ModifierNodes()) > 0 {
-				visitDisplayPartList(node.ModifierNodes(), " ")
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " "})
-			}
-			visitForDisplayParts(node.Name())
-			if node.PostfixToken() != nil {
-				parts = append(
-					parts,
-					&lsproto.InlayHintLabelPart{
-						Value: scanner.TokenToString(node.PostfixToken().Kind),
-					},
-				)
-			}
-			visitParametersAndTypeParameters(node)
-			if node.Type() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-				visitForDisplayParts(node.Type())
-			}
-		case ast.KindCallSignature:
-			visitParametersAndTypeParameters(node)
-			if node.Type() != nil {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: ": "})
-				visitForDisplayParts(node.Type())
-			}
-		case ast.KindArrayBindingPattern:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
-			visitDisplayPartList(node.Elements(), ", ")
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
-		case ast.KindObjectBindingPattern:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "{"})
-			if len(node.Elements()) > 0 {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " "})
-				visitDisplayPartList(node.Elements(), ", ")
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: " "})
-			}
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "}"})
-		case ast.KindBindingElement:
-			visitForDisplayParts(node.Name())
-		case ast.KindPrefixUnaryExpression:
-			parts = append(
-				parts,
-				&lsproto.InlayHintLabelPart{
-					Value: scanner.TokenToString(node.AsPrefixUnaryExpression().Operator),
-				},
-			)
-			visitForDisplayParts(node.AsPrefixUnaryExpression().Operand)
-		case ast.KindTemplateLiteralType:
-			visitForDisplayParts(node.AsTemplateLiteralTypeNode().Head)
-			for _, span := range node.AsTemplateLiteralTypeNode().TemplateSpans.Nodes {
-				visitForDisplayParts(span)
-			}
-		case ast.KindTemplateHead:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: s.getLiteralText(node)})
-		case ast.KindTemplateLiteralTypeSpan:
-			visitForDisplayParts(node.Type())
-			visitForDisplayParts(node.AsTemplateLiteralTypeSpan().Literal)
-		case ast.KindTemplateMiddle, ast.KindTemplateTail:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: s.getLiteralText(node)})
-		case ast.KindComputedPropertyName:
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
-			visitForDisplayParts(node.Expression())
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
-		case ast.KindPropertyAccessExpression:
-			visitForDisplayParts(node.Expression())
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "."})
-			visitForDisplayParts(node.Name())
-		case ast.KindElementAccessExpression:
-			visitForDisplayParts(node.Expression())
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "["})
-			visitForDisplayParts(node.AsElementAccessExpression().ArgumentExpression)
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "]"})
-		default:
-			debug.FailBadSyntaxKind(node)
-		}
-	}
-
-	visitDisplayPartList = func(nodes []*ast.Node, separator string) {
-		for i, n := range nodes {
-			if i > 0 {
-				parts = append(parts, &lsproto.InlayHintLabelPart{Value: separator})
-			}
-			visitForDisplayParts(n)
-		}
-	}
-
-	visitParametersAndTypeParameters = func(node *ast.SignatureDeclaration) {
-		if len(node.TypeParameters()) > 0 {
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: "<"})
-			visitDisplayPartList(node.TypeParameters(), ", ")
-			parts = append(parts, &lsproto.InlayHintLabelPart{Value: ">"})
-		}
-		parts = append(parts, &lsproto.InlayHintLabelPart{Value: "("})
-		visitDisplayPartList(node.Parameters(), ", ")
-		parts = append(parts, &lsproto.InlayHintLabelPart{Value: ")"})
-	}
-
-	visitForDisplayParts(node)
-	return parts
-}
-
 func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsproto.InlayHintLabelPart {
 	file := ast.GetSourceFileOfNode(node)
 	pos := astnav.GetStartOfNode(node, file, false /*includeJSDoc*/)
@@ -715,30 +392,6 @@ func (s *inlayHintState) getNodeDisplayPart(text string, node *ast.Node) *lsprot
 			Range: s.converters.ToLSPRange(file, core.NewTextRange(pos, end)),
 		},
 	}
-}
-
-func (s *inlayHintState) getLiteralText(node *ast.LiteralLikeNode) string {
-	switch node.Kind {
-	case ast.KindStringLiteral:
-		if s.quotePreference == lsutil.QuotePreferenceSingle {
-			return `'` + printer.EscapeString(node.Text(), printer.QuoteCharSingleQuote) + `'`
-		}
-		return `"` + printer.EscapeString(node.Text(), printer.QuoteCharDoubleQuote) + `"`
-	case ast.KindTemplateHead, ast.KindTemplateMiddle, ast.KindTemplateTail:
-		rawText := node.RawText()
-		if rawText == "" {
-			rawText = printer.EscapeString(node.Text(), printer.QuoteCharBacktick)
-		}
-		switch node.Kind {
-		case ast.KindTemplateHead:
-			return "`" + rawText + "${"
-		case ast.KindTemplateMiddle:
-			return "}" + rawText + "${"
-		case ast.KindTemplateTail:
-			return "}" + rawText + "`"
-		}
-	}
-	return node.Text()
 }
 
 type parameterInfo struct {

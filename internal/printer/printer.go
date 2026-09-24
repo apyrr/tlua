@@ -1689,6 +1689,20 @@ func (p *Printer) emitTypePredicateParameterName(node *ast.TypePredicateParamete
 
 func (p *Printer) emitTypePredicate(node *ast.TypePredicateNode) {
 	state := p.enterNode(node.AsNode())
+	if node.ReturnType != nil {
+		// `(T, ...M) asserts x`. A type that can end in a function type -- a function type, or
+		// a conditional one of whose branches is -- is parenthesized, or the clause would
+		// attach to that function type's own return.
+		if node.ReturnType.Kind == ast.KindMultiReturnType {
+			p.emitTypeNodeOutsideExtendsWithMultiReturnParens(node.ReturnType)
+		} else {
+			savedInExtends := p.inExtends
+			p.inExtends = false
+			p.emitTypeNodePreservingExtends(node.ReturnType, ast.TypePrecedenceUnion)
+			p.inExtends = savedInExtends
+		}
+		p.writeSpace()
+	}
 	if node.AssertsModifier != nil {
 		p.emitTokenNode(node.AssertsModifier)
 		p.writeSpace()
@@ -2478,19 +2492,30 @@ func (p *Printer) emitPrefixUnaryExpression(node *ast.PrefixUnaryExpression) {
 	state := p.enterNode(node.AsNode())
 	operator := node.Operator
 	operand := node.Operand
-	p.emitToken(operator, node.Pos(), WriteKindOperator, node.AsNode())
+	if operator == ast.KindExclamationToken {
+		// Logical not prints as Lua's `not`. The kind's canonical text stays `!` because
+		// it is also the definite-assignment token, but `!` as an operator is GMod-only.
+		tokenState, pos := p.enterToken(operator, node.Pos(), node.AsNode(), tefNone)
+		p.writeAs("not", WriteKindKeyword)
+		if p.currentSourceFile != nil && !ast.PositionIsSynthesized(pos) {
+			// The source may spell it `!` or `not`: trailing comments and source maps
+			// resume after the source token, not after the emitted text.
+			text := p.currentSourceFile.Text()
+			pos += core.IfElse(pos < len(text) && strings.HasPrefix(text[pos:], "not"), len("not"), len("!"))
+		}
+		p.exitToken(operator, pos, node.AsNode(), tokenState)
+		p.writeSpace()
+	} else {
+		p.emitToken(operator, node.Pos(), WriteKindOperator, node.AsNode())
+	}
 
-	// In some cases, we need to emit a space between the operator and the operand. One obvious case
-	// is when the operator is an identifier, like delete or typeof. We also need to do this for plus
-	// and minus expressions when the operand uses the same operator, so separate
-	// tokens do not accidentally form a removed `++` or Lua's `--` comment opener.
+	// In some cases, we need to emit a space between the operator and the operand. We need
+	// to do this for plus and minus expressions when the operand uses the same operator, so
+	// separate tokens do not accidentally form a removed `++` or Lua's `--` comment opener.
 	if operand.Kind == ast.KindPrefixUnaryExpression {
 		inner := operand.AsPrefixUnaryExpression().Operator
 		if (operator == ast.KindPlusToken && inner == ast.KindPlusToken) ||
-			(operator == ast.KindMinusToken && inner == ast.KindMinusToken) ||
-			// `#` followed by `!` would re-scan as the `#!` shebang, which is only legal at
-			// the start of a file; a space keeps the length operator distinct.
-			(operator == ast.KindHashToken && inner == ast.KindExclamationToken) {
+			(operator == ast.KindMinusToken && inner == ast.KindMinusToken) {
 			p.writeSpace()
 		}
 	}

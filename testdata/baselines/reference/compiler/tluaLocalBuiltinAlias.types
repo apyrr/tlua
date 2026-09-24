@@ -1,0 +1,423 @@
+//// [tests/cases/compiler/tluaLocalBuiltinAlias.tlua] ////
+
+=== tluaLocalBuiltinAlias.tlua ===
+// Caching a builtin in a local -- `local type = type`, or under another name --
+// keeps everything the checker knows about the builtin, as long as the local is
+// never reassigned. (Renamed metatable aliases: see tluaMetatableShadowed.)
+
+local type = type
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+
+local error = error
+>error : (message?: any, level?: number) => never
+>error : (message?: any, level?: number) => never
+
+local t = type
+>t : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+
+local check = assert
+>check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+
+local setmetatable = setmetatable
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+
+declare v: string | number | nil
+>v : string | number | nil
+
+function typeGuards(): void
+>typeGuards : () => void
+
+  if type(v) == "string" then
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number | nil
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string
+
+  end
+  if t(v) == "number" then
+>t(v) == "number" : boolean
+>t(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>t : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number | nil
+>"number" : "number"
+
+    local n: number = v;
+>n : number
+>v : number
+
+  end
+end
+
+function assertNarrows(a: string | nil, b: number | nil): void
+>assertNarrows : (a: string | nil, b: number | nil) => void
+>a : string | nil
+>b : number | nil
+
+  assert(a)
+>assert(a) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>a : string | nil
+
+  local s: string = a;
+>s : string
+>a : string
+
+  check(b and type(v) == "string")
+>check(b and type(v) == "string") : boolean
+>check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>b and type(v) == "string" : boolean | nil
+>b : number | nil
+>type(v) == "string" : boolean
+>type(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number | nil
+>"string" : "string"
+
+  local n: number = b;
+>n : number
+>b : number
+
+  local w: string = v;
+>w : string
+>v : string
+
+end
+
+local function fail(message: string): never
+>fail : (message: string) => never
+>message : string
+
+  error(message, 0)
+>error(message, 0) : never
+>error : (message?: any, level?: number) => never
+>message : string
+>0 : 0
+
+end
+
+function callerNarrows(x: string | nil): string
+>callerNarrows : (x: string | nil) => string
+>x : string | nil
+
+  if x == nil then fail("missing") end
+>x == nil : boolean
+>x : string | nil
+>fail("missing") : never
+>fail : (message: string) => never
+>"missing" : "missing"
+
+  return x
+>x : string
+
+end
+
+function assertFalseEnds(): number
+>assertFalseEnds : () => number
+
+  assert(false)
+>assert(false) : boolean
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>false : false
+
+end
+
+function assertNilEnds(): number
+>assertNilEnds : () => number
+
+  assert(nil, "unreachable")
+>assert(nil, "unreachable") : nil
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>"unreachable" : "unreachable"
+
+end
+
+function assertFalsyChainEnds(x: string | nil): number
+>assertFalsyChainEnds : (x: string | nil) => number
+>x : string | nil
+
+  assert(x and nil)
+>assert(x and nil) : nil
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>x and nil : nil
+>x : string | nil
+
+end
+
+function metatableAlias(): number
+>metatableAlias : () => number
+
+  local o = { value = 1 }
+>o : { value: number; }
+>{ value = 1 } : { value: number; }
+>value : number
+>1 : 1
+
+  setmetatable(o, { __call = function(self: { value: number }): number return self.value end })
+>setmetatable(o, { __call = function(self: { value: number }): number return self.value end }) : { (): number; value: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>o : { value: number; }
+>{ __call = function(self: { value: number }): number return self.value end } : { __call: (self: { value: number; }) => number; }
+>__call : (self: { value: number; }) => number
+>function(self: { value: number }): number return self.value end : (self: { value: number; }) => number
+>self : { value: number; }
+>value : number
+>self.value : number
+>self : { value: number; }
+>value : number
+
+  return o()
+>o() : number
+>o : { (): number; value: number; }
+
+end
+
+// A reassigned local or a shadowing function is not the builtin: each use below
+// is an error.
+
+function reassigned(): void
+>reassigned : () => void
+
+  local ty = type
+>ty : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+
+  ty = function(x: any): "string" return "string" end
+>ty = function(x: any): "string" return "string" end : (x: any) => "string"
+>ty : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>function(x: any): "string" return "string" end : (x: any) => "string"
+>x : any
+>"string" : "string"
+
+  if ty(v) == "string" then
+>ty(v) == "string" : boolean
+>ty(v) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>ty : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>v : string | number | nil
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number | nil
+
+  end
+end
+
+function shadowed(): void
+>shadowed : () => void
+
+  local assert = function(value: any): void end
+>assert : (value: any) => void
+>function(value: any): void end : (value: any) => void
+>value : any
+
+  assert(v)
+>assert(v) : void
+>assert : (value: any) => void
+>v : string | number | nil
+
+  local s: string | number = v;
+>s : string | number
+>v : string | number | nil
+
+end
+
+// An alias of a function without an explicit type is not an assertion either,
+// and the annotation it needs is asked of the alias the call spelled.
+
+local unannotated = function(x: unknown): asserts x end
+>unannotated : (x: unknown) => asserts x
+>function(x: unknown): asserts x end : (x: unknown) => asserts x
+>x : unknown
+
+local viaAlias = unannotated
+>viaAlias : (x: unknown) => asserts x
+>unannotated : (x: unknown) => asserts x
+
+function aliasNeedsAnnotation(w: string | nil): void
+>aliasNeedsAnnotation : (w: string | nil) => void
+>w : string | nil
+
+  viaAlias(w)
+>viaAlias(w) : void
+>viaAlias : (x: unknown) => asserts x
+>w : string | nil
+
+end
+
+// An annotation opts out: the local is its declared type, not the builtin.
+
+function annotatedOptsOut(): void
+>annotatedOptsOut : () => void
+
+  local ty: any = type
+>ty : any
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+
+  if ty(v) == "string" then
+>ty(v) == "string" : boolean
+>ty(v) : any
+>ty : any
+>v : string | number | nil
+>"string" : "string"
+
+    local s: string = v;
+>s : string
+>v : string | number | nil
+
+  end
+end
+
+// Asserts narrow in one pass over the statements rather than one recursion each,
+// so a long run of them does not exhaust flow analysis. Conditions are only
+// narrowed by, never resolved name by name: field names, casts and nested
+// function bodies stay as they are.
+
+declare function tick(): number
+>tick : () => number
+
+interface Flag { ok: boolean }
+>ok : boolean
+
+function manyAsserts(x: string | nil): string
+>manyAsserts : (x: string | nil) => string
+>x : string | nil
+
+  if x == nil then return "" end
+>x == nil : boolean
+>x : string | nil
+>"" : ""
+
+  assert(tick() == 1)
+>assert(tick() == 1) : boolean
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>tick() == 1 : boolean
+>tick() : number
+>tick : () => number
+>1 : 1
+
+  assert(tick() == 2, "two")
+>assert(tick() == 2, "two") : boolean
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>tick() == 2 : boolean
+>tick() : number
+>tick : () => number
+>2 : 2
+>"two" : "two"
+
+  assert(tick())
+>assert(tick()) : number
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>tick() : number
+>tick : () => number
+
+  assert(select("#", { key = 1 }) == 1)
+>assert(select("#", { key = 1 }) == 1) : boolean
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>select("#", { key = 1 }) == 1 : boolean
+>select("#", { key = 1 }) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>"#" : "#"
+>{ key = 1 } : { key: number; }
+>key : number
+>1 : 1
+>1 : 1
+
+  assert((x as any as Flag).ok)
+>assert((x as any as Flag).ok) : boolean
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>(x as any as Flag).ok : boolean
+>(x as any as Flag) : Flag
+>x as any as Flag : Flag
+>x as any : any
+>x : string
+>ok : boolean
+
+  assert(pcall(function()
+>assert(pcall(function()    local inner = 1    return inner  end)) : boolean
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>pcall(function()    local inner = 1    return inner  end) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
+>function()    local inner = 1    return inner  end : () => number
+
+    local inner = 1
+>inner : number
+>1 : 1
+
+    return inner
+>inner : number
+
+  end))
+  return x
+>x : string
+
+end
+
+// A stable local alias is the same reference, as it is for `if`.
+
+declare function box(): { x: string | nil }
+>box : () => { x: string | nil; }
+>x : string | nil
+
+function assertThroughAlias(): string
+>assertThroughAlias : () => string
+
+  local a = box()
+>a : { x: string | nil; }
+>box() : { x: string | nil; }
+>box : () => { x: string | nil; }
+
+  local b = a
+>b : { x: string | nil; }
+>a : { x: string | nil; }
+
+  assert(b.x)
+>assert(b.x) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>b.x : string | nil
+>b : { x: string | nil; }
+>x : string | nil
+
+  return a.x
+>a.x : string
+>a : { x: string | nil; }
+>x : string
+
+end
+
+// A local list is a pseudo-reference with no root name: asserting one name still
+// narrows its siblings.
+
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : (s: string) => (number, nil) | (nil, string)
+>s : string
+
+function listAssert(): number
+>listAssert : () => number
+
+  local value, err = parse("12")
+>value : number | nil
+>err : string | nil
+>parse("12") : number | nil
+>parse : (s: string) => (number, nil) | (nil, string)
+>"12" : "12"
+
+  assert(err == nil)
+>assert(err == nil) : boolean
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>err == nil : boolean
+>err : string | nil
+
+  return value
+>value : number
+
+end
+

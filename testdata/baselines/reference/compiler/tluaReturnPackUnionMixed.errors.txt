@@ -1,4 +1,4 @@
-tluaReturnPackUnionMixed.tlua(19,3): error TLUA2322: Type 'boolean, boolean' is not assignable to type '(nil) | (number, string)'.
+tluaReturnPackUnionMixed.tlua(19,3): error TLUA2322: Type 'boolean, boolean' is not assignable to type 'nil | (number, string)'.
   Type 'boolean, boolean' is not assignable to type 'number, string'.
     Type at position 1 in source is not compatible with type at position 1 in target.
       Type 'boolean' is not assignable to type 'number'.
@@ -29,7 +29,7 @@ tluaReturnPackUnionMixed.tlua(43,60): error TLUA1005: '=>' expected.
     local function badFwd(): (number, string) | nil
       return other()
       ~~~~~~
-!!! error TLUA2322: Type 'boolean, boolean' is not assignable to type '(nil) | (number, string)'.
+!!! error TLUA2322: Type 'boolean, boolean' is not assignable to type 'nil | (number, string)'.
 !!! error TLUA2322:   Type 'boolean, boolean' is not assignable to type 'number, string'.
 !!! error TLUA2322:     Type at position 1 in source is not compatible with type at position 1 in target.
 !!! error TLUA2322:       Type 'boolean' is not assignable to type 'number'.

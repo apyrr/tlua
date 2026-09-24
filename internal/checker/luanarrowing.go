@@ -4,12 +4,15 @@ import (
 	"slices"
 
 	"github.com/apyrr/tlua/internal/ast"
+	"github.com/apyrr/tlua/internal/collections"
 	"github.com/apyrr/tlua/internal/core"
+	"github.com/apyrr/tlua/internal/debug"
 )
 
 // Lua discriminates values with the `type` function instead of a `typeof`
 // operator, and file handles with `io.type`. Both are ordinary global functions,
-// so a guard only narrows when its callee resolves to the real global.
+// so a guard only narrows when its callee resolves to the real global -- directly
+// or through a local alias such as `local type = type` (see resolveLuaLocalAlias).
 type luaGuardKind int32
 
 const (
@@ -26,30 +29,133 @@ var luaFileTagNames = []string{"file", "closed file"}
 
 // getLuaTypeGuardCall returns the guarded argument of a `type(x)` or `io.type(x)`
 // call, provided the callee resolves to the corresponding global. A shadowing
-// `local type` or an alias `local t = type` therefore never narrows.
+// `local type = function ... end` therefore never narrows, while an alias
+// `local t = type` does.
 func (c *Checker) getLuaTypeGuardCall(expr *ast.Node) (luaGuardKind, *ast.Node) {
-	callee, argument := ast.LuaTypeGuardCall(expr)
+	callee, argument := ast.LuaTypeGuardCallShape(expr)
 	if callee == nil {
 		return luaGuardNone, nil
 	}
 	if ast.IsIdentifier(callee) {
-		if c.isLuaGlobalReference(callee, c.getLuaTypeGlobalSymbol()) {
+		if c.isLuaBuiltinReference(callee, "type", c.getLuaTypeGlobalSymbol) {
 			return luaGuardType, argument
 		}
 		return luaGuardNone, nil
 	}
-	if c.isLuaGlobalReference(ast.SkipParentheses(callee.Expression()), c.getLuaIOGlobalSymbol()) {
+	if c.isLuaBuiltinReference(ast.SkipParentheses(callee.Expression()), "io", c.getLuaIOGlobalSymbol) {
 		return luaGuardIOType, argument
 	}
 	return luaGuardNone, nil
 }
 
-// isLuaGlobalReference reports whether name resolves to the given global. A global
-// that the program does not declare matches nothing, including an unresolved name.
-// Only an identifier can reference a global: any other expression (for example the
-// `f()` in `f().setmetatable`) matches nothing rather than being resolved.
-func (c *Checker) isLuaGlobalReference(name *ast.Node, global *ast.Symbol) bool {
-	return global != nil && ast.IsIdentifier(name) && c.getMergedSymbol(c.getResolvedSymbol(name)) == global
+// isLuaBuiltinReference reports whether name refers to the builtin global spelled
+// spelling (one of ast.LuaIdentityBuiltin): it may name the builtin
+// (mayNameLuaBuiltins) and resolves to the global, directly or through never-reassigned
+// local aliases. A global the program does not declare matches nothing, and only an
+// identifier can name one: `f()` in `f().setmetatable` matches nothing.
+func (c *Checker) isLuaBuiltinReference(name *ast.Node, spelling string, global func() *ast.Symbol) bool {
+	builtin := ast.LuaIdentityBuiltin(spelling)
+	debug.Assert(builtin != 0, "builtin recognized by identity but missing from ast.LuaIdentityBuiltin, so the binder records none of its aliases")
+	if !c.mayNameLuaBuiltins(name, builtin) {
+		return false
+	}
+	symbol := global()
+	return symbol != nil && c.resolveLuaLocalAlias(c.getResolvedSymbol(name)) == symbol
+}
+
+// mayNameLuaBuiltins is the name gate in front of resolving a builtin reference: name is
+// an identifier spelled like one of builtins or like a local the binder recorded as an
+// alias of one -- the string compare every ordinary name stops at.
+func (c *Checker) mayNameLuaBuiltins(name *ast.Node, builtins ast.LuaBuiltins) bool {
+	if !ast.IsIdentifier(name) {
+		return false
+	}
+	// An alias is a local, so it is exact to ask the name's own file; the program-wide map
+	// answers first, so an ordinary name never walks up to its file.
+	text := name.Text()
+	if ast.LuaIdentityBuiltin(text)&builtins != 0 {
+		return true
+	}
+	return c.getLuaBuiltinAliases()[text]&builtins != 0 && ast.GetSourceFileOfNode(name).LuaBuiltinsNamedBy(text)&builtins != 0
+}
+
+// getLuaBuiltinAliases merges every file's LuaBuiltinAliases: a filter that rejects most
+// names without finding their file.
+func (c *Checker) getLuaBuiltinAliases() map[string]ast.LuaBuiltins {
+	if c.luaBuiltinAliases == nil {
+		aliases := make(map[string]ast.LuaBuiltins)
+		for _, file := range c.files {
+			for name, builtins := range file.LuaBuiltinAliases {
+				aliases[name] |= builtins
+			}
+		}
+		c.luaBuiltinAliases = aliases
+	}
+	return c.luaBuiltinAliases
+}
+
+// resolveLuaLocalAlias follows locals that are initialized from a bare name and
+// never reassigned -- `local type = type`, `local t = type` -- to the symbol the
+// chain ends at. Caching builtins in locals is idiomatic Lua, and such a local
+// holds the same value for its whole life, so it is that value for every check
+// that keys on the identity of a builtin. Any other symbol is returned as is.
+func (c *Checker) resolveLuaLocalAlias(symbol *ast.Symbol) *ast.Symbol {
+	symbol = c.getMergedSymbol(symbol)
+	if getLuaLocalAliasInitializer(symbol) == nil {
+		return symbol
+	}
+	if target, ok := c.luaLocalAliasTargets[symbol]; ok {
+		return target
+	}
+	// A local's initializer is resolved outside the local's own scope, so each
+	// hop names a lexically earlier declaration and the chain cannot cycle. A long
+	// chain is legal, so only an actual cycle asserts; the seen-set that detects
+	// one is kept off the short chains real code has.
+	target := symbol
+	var seen collections.Set[*ast.Symbol]
+	for hops := 0; ; hops++ {
+		next := c.getLuaLocalAliasTarget(target)
+		if next == nil {
+			break
+		}
+		if hops >= 64 {
+			debug.Assert(!seen.Has(next), "cyclic Lua local alias chain")
+			seen.Add(next)
+		}
+		target = next
+	}
+	// Name resolution stays uncached while augmentation discovery may still add
+	// an implicit global under the initializer's name; so does the result.
+	if !c.attachingLuaAugmentations {
+		c.luaLocalAliasTargets[symbol] = target
+	}
+	return target
+}
+
+// getLuaLocalAliasInitializer returns the bare-name initializer of a Lua local,
+// or nil when symbol is not declared by one. It is purely syntactic, so an
+// ordinary symbol leaves resolveLuaLocalAlias without touching any cache.
+func getLuaLocalAliasInitializer(symbol *ast.Symbol) *ast.Node {
+	if symbol == nil || len(symbol.Declarations) != 1 {
+		return nil
+	}
+	return ast.LuaLocalAliasInitializer(symbol.Declarations[0])
+}
+
+// getLuaLocalAliasTarget returns the symbol a never-reassigned alias local's
+// initializer names, or nil when symbol is not such an alias.
+func (c *Checker) getLuaLocalAliasTarget(symbol *ast.Symbol) *ast.Symbol {
+	initializer := getLuaLocalAliasInitializer(symbol)
+	if initializer == nil || c.isSymbolAssigned(symbol) {
+		return nil
+	}
+	// Uncached, as in canonicalLuaAliasSymbol: this also runs while augmentation
+	// discovery may still create an implicit global with this name.
+	next := c.resolveName(initializer, initializer.Text(), ast.SymbolFlagsValue, nil, false /*isUse*/, false /*excludeGlobals*/)
+	if next == nil || next == c.unknownSymbol {
+		return nil
+	}
+	return c.getMergedSymbol(next)
 }
 
 // isLuaTypeGuardLiteral reports whether a comparison operand is one a type guard

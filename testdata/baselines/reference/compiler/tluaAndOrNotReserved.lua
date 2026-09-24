@@ -52,36 +52,36 @@ local obj = { x = 1 };
 local a1 = obj. and ;
 local a2 = obj. or ;
 local a3 = obj.;
-!;
+not ;
 -- Property names in a table literal.
 local o1 = {  and , 1 };
 local o2 = {  or , 1 };
-local o3 = { !, 1 };
+local o3 = { not , 1 };
 -- Binding names.
 local ;
  and  = 1;
 local ;
  or  = 2;
 local ;
-! = 3;
+not  = 3;
 -- Declaration names.
 function ()
    or ();
 end
 local n1 = maybe;
-!;
+not ;
 local n2;
-!;
+not ;
 number;
 -- The punctuation spelling keeps both roles.
 local n3 = maybe;
 local n4;
-!;
+not ;
 number;
 -- And the word keeps its own: prefix negation.
-local n5 = !maybe;
+local n5 = not maybe;
 -- The type-position `!` (the JSDoc non-nullable operator) is punctuation-only
 -- as well: the word `not` never silently becomes a type operator.
 local n6;
-!;
-!number;
+not ;
+not number;

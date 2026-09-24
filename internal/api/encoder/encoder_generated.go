@@ -239,7 +239,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		return (boolToByte(n.Literal != nil) << 0)
 	case ast.KindTypePredicate:
 		n := node.AsTypePredicateNode()
-		return (boolToByte(n.AssertsModifier != nil) << 0) | (boolToByte(n.ParameterName != nil) << 1) | (boolToByte(n.Type != nil) << 2)
+		return (boolToByte(n.ReturnType != nil) << 0) | (boolToByte(n.AssertsModifier != nil) << 1) | (boolToByte(n.ParameterName != nil) << 2) | (boolToByte(n.Type != nil) << 3)
 	case ast.KindTypeQuery:
 		n := node.AsTypeQueryNode()
 		return (boolToByte(n.ExprName != nil) << 0) | (boolToByte(n.TypeArguments != nil) << 1)

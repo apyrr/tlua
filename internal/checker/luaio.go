@@ -13,7 +13,7 @@ type luaIOCall struct {
 }
 
 func (c *Checker) getLuaIOCall(node *ast.Node, checkMode CheckMode) *luaIOCall {
-	call := c.resolveLuaBuiltinCall(node, checkMode, luaIONames, c.getLuaIOGlobalSymbol, c.getLuaFileType)
+	call := c.resolveLuaBuiltinCall(node, checkMode, luaIONames, "io", c.getLuaIOGlobalSymbol, c.getLuaFileType)
 	if call == nil {
 		return nil
 	}

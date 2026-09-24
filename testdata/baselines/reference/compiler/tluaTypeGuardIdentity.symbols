@@ -1,102 +1,124 @@
 //// [tests/cases/compiler/tluaTypeGuardIdentity.tlua] ////
 
 === tluaTypeGuardIdentity.tlua ===
-// Only a call to the real global `type` narrows. The binder matches the call by
-// spelling, so every one of these shapes reaches the checker and is turned down
-// there; each unnarrowed use below is an error.
+// Only a call to the real global `type` or `io.type` (or a local alias of either,
+// see tluaLocalBuiltinAlias) narrows. The binder admits a call spelled `type(x)`,
+// `io.type(x)` or through a local alias name, and the checker turns down the
+// ones that are not the builtin; the rest never become conditions. Each
+// unnarrowed use below is an error.
 
 declare v: string | number;
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
 declare function use(x: unknown): void;
->use : Symbol(use, Decl(tluaTypeGuardIdentity.tlua, 4, 27))
->x : Symbol(x, Decl(tluaTypeGuardIdentity.tlua, 5, 21))
+>use : Symbol(use, Decl(tluaTypeGuardIdentity.tlua, 6, 27))
+>x : Symbol(x, Decl(tluaTypeGuardIdentity.tlua, 7, 21))
 
 function shadowed(): void
->shadowed : Symbol(shadowed, Decl(tluaTypeGuardIdentity.tlua, 5, 39))
+>shadowed : Symbol(shadowed, Decl(tluaTypeGuardIdentity.tlua, 7, 39))
 
   local type = function(value: any) return "string"; end;
->type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 8, 7))
->value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 8, 24))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 10, 7))
+>value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 10, 24))
 
   if type(v) == "string" then
->type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 8, 7))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 10, 7))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
     local s: string = v;
->s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 10, 9))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
-
-  end
-end
-
-function aliased(): void
->aliased : Symbol(aliased, Decl(tluaTypeGuardIdentity.tlua, 12, 3))
-
-  local t = type;
->t : Symbol(t, Decl(tluaTypeGuardIdentity.tlua, 15, 7))
->type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
-
-  if t(v) == "string" then
->t : Symbol(t, Decl(tluaTypeGuardIdentity.tlua, 15, 7))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
-
-    local s: string = v;
->s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 17, 9))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 12, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
   end
 end
 
 declare holder: { type: (value: any) => string };
->holder : Symbol(holder, Decl(tluaTypeGuardIdentity.tlua, 21, 7))
->type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 21, 17))
->value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 21, 25))
+>holder : Symbol(holder, Decl(tluaTypeGuardIdentity.tlua, 16, 7))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 16, 17))
+>value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 16, 25))
 
 function member(): void
->member : Symbol(member, Decl(tluaTypeGuardIdentity.tlua, 21, 49))
+>member : Symbol(member, Decl(tluaTypeGuardIdentity.tlua, 16, 49))
 
   if holder.type(v) == "string" then
->holder.type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 21, 17))
->holder : Symbol(holder, Decl(tluaTypeGuardIdentity.tlua, 21, 7))
->type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 21, 17))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>holder.type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 16, 17))
+>holder : Symbol(holder, Decl(tluaTypeGuardIdentity.tlua, 16, 7))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 16, 17))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
     local s: string = v;
->s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 25, 9))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 20, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
+
+  end
+end
+
+function shadowedIo(): void
+>shadowedIo : Symbol(shadowedIo, Decl(tluaTypeGuardIdentity.tlua, 22, 3))
+
+  local io = { type = function(value: any): string return "file" end }
+>io : Symbol(io, Decl(tluaTypeGuardIdentity.tlua, 25, 7))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 25, 14))
+>value : Symbol(value, Decl(tluaTypeGuardIdentity.tlua, 25, 31))
+
+  if io.type(v) == "string" then
+>io.type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 25, 14))
+>io : Symbol(io, Decl(tluaTypeGuardIdentity.tlua, 25, 7))
+>type : Symbol(type, Decl(tluaTypeGuardIdentity.tlua, 25, 14))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 27, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
+
+  end
+end
+
+// A colon call passes io itself as the first argument, so it tests io, not v.
+function colonIo(): void
+>colonIo : Symbol(colonIo, Decl(tluaTypeGuardIdentity.tlua, 29, 3))
+
+  if io:type(v) == "file" then
+>io:type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>type : Symbol(IOLib.type, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 34, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
   end
 end
 
 function wrongArity(): void
->wrongArity : Symbol(wrongArity, Decl(tluaTypeGuardIdentity.tlua, 27, 3))
+>wrongArity : Symbol(wrongArity, Decl(tluaTypeGuardIdentity.tlua, 36, 3))
 
   if type() == "string" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
 
     local s: string = v;
->s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 31, 9))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 40, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
   end
 end
 
 // The global still narrows in the same file, once the shadow is out of scope.
 function global(): void
->global : Symbol(global, Decl(tluaTypeGuardIdentity.tlua, 33, 3))
+>global : Symbol(global, Decl(tluaTypeGuardIdentity.tlua, 42, 3))
 
   if type(v) == "string" then
 >type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
     local s: string = v;
->s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 38, 9))
->v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 4, 7))
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 47, 9))
+>v : Symbol(v, Decl(tluaTypeGuardIdentity.tlua, 6, 7))
 
     use(s);
->use : Symbol(use, Decl(tluaTypeGuardIdentity.tlua, 4, 27))
->s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 38, 9))
+>use : Symbol(use, Decl(tluaTypeGuardIdentity.tlua, 6, 27))
+>s : Symbol(s, Decl(tluaTypeGuardIdentity.tlua, 47, 9))
 
   end
 end

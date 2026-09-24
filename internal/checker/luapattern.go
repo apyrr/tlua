@@ -11,7 +11,7 @@ type luaPatternCall struct {
 }
 
 func (c *Checker) getLuaPatternCall(node *ast.Node, checkMode CheckMode) *luaPatternCall {
-	call := c.resolveLuaBuiltinCall(node, checkMode, luaPatternNames, c.getLuaStringGlobalSymbol, func() *Type { return c.globalStringType })
+	call := c.resolveLuaBuiltinCall(node, checkMode, luaPatternNames, "string", c.getLuaStringGlobalSymbol, func() *Type { return c.globalStringType })
 	if call == nil {
 		return nil
 	}

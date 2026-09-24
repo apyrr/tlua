@@ -3,9 +3,11 @@
 // @strict: true
 // @noEmit: true
 
-// Only a call to the real global `type` narrows. The binder matches the call by
-// spelling, so every one of these shapes reaches the checker and is turned down
-// there; each unnarrowed use below is an error.
+// Only a call to the real global `type` or `io.type` (or a local alias of either,
+// see tluaLocalBuiltinAlias) narrows. The binder admits a call spelled `type(x)`,
+// `io.type(x)` or through a local alias name, and the checker turns down the
+// ones that are not the builtin; the rest never become conditions. Each
+// unnarrowed use below is an error.
 
 declare v: string | number;
 declare function use(x: unknown): void;
@@ -17,17 +19,24 @@ function shadowed(): void
   end
 end
 
-function aliased(): void
-  local t = type;
-  if t(v) == "string" then
-    local s: string = v;
-  end
-end
-
 declare holder: { type: (value: any) => string };
 
 function member(): void
   if holder.type(v) == "string" then
+    local s: string = v;
+  end
+end
+
+function shadowedIo(): void
+  local io = { type = function(value: any): string return "file" end }
+  if io.type(v) == "string" then
+    local s: string = v;
+  end
+end
+
+// A colon call passes io itself as the first argument, so it tests io, not v.
+function colonIo(): void
+  if io:type(v) == "file" then
     local s: string = v;
   end
 end

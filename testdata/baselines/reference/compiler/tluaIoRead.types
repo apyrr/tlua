@@ -101,7 +101,7 @@ local explicitWholeType: string = explicitWhole;
 
 for fileLine in f:lines("*l") do
 >fileLine : string
->f:lines("*l") : () => (string | nil)
+>f:lines("*l") : () => string | nil
 >f:lines : (self: LuaFile, ...: LuaReadFormat) => function
 >f : LuaFile
 >lines : (self: LuaFile, ...: LuaReadFormat) => function
@@ -115,7 +115,7 @@ end
 
 for explicitLine in f.lines(f, "*a") do
 >explicitLine : string
->f.lines(f, "*a") : () => (string)
+>f.lines(f, "*a") : () => string
 >f.lines : (self: LuaFile, ...: LuaReadFormat) => function
 >f : LuaFile
 >lines : (self: LuaFile, ...: LuaReadFormat) => function
@@ -130,7 +130,7 @@ end
 
 for line in io.lines() do
 >line : string
->io.lines() : () => (string | nil)
+>io.lines() : () => string | nil
 >io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
 >lines : (filename?: string, ...: LuaReadFormat) => function
@@ -143,7 +143,7 @@ end
 
 for chunk in io.lines("file", "*a") do
 >chunk : string
->io.lines("file", "*a") : () => (string)
+>io.lines("file", "*a") : () => string
 >io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
 >lines : (filename?: string, ...: LuaReadFormat) => function
@@ -158,7 +158,7 @@ end
 
 for filenameOnly in io.lines("*n") do
 >filenameOnly : string
->io.lines("*n") : () => (string | nil)
+>io.lines("*n") : () => string | nil
 >io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
 >lines : (filename?: string, ...: LuaReadFormat) => function

@@ -1547,6 +1547,7 @@ func (b *NodeBuilderImpl) typePredicateToTypePredicateNode(predicate *TypePredic
 		typeNode = b.typeToTypeNode(predicate.t)
 	}
 	return b.f.NewTypePredicateNode(
+		nil, /*returnType*/
 		assertsModifier,
 		parameterName,
 		typeNode,
@@ -1740,7 +1741,7 @@ func (b *NodeBuilderImpl) serializeInferredReturnTypeForSignature(signature *Sig
 		} else {
 			predicate = typePredicate
 		}
-		returnTypeNode = b.typePredicateToTypePredicateNodeHelper(predicate)
+		returnTypeNode = b.typePredicateToTypePredicateNodeHelper(predicate, returnType)
 	} else {
 		returnTypeNode = b.typeToTypeNode(returnType)
 	}
@@ -1748,7 +1749,7 @@ func (b *NodeBuilderImpl) serializeInferredReturnTypeForSignature(signature *Sig
 	return returnTypeNode
 }
 
-func (b *NodeBuilderImpl) typePredicateToTypePredicateNodeHelper(typePredicate *TypePredicate) *ast.Node {
+func (b *NodeBuilderImpl) typePredicateToTypePredicateNodeHelper(typePredicate *TypePredicate, returnType *Type) *ast.Node {
 	var assertsModifier *ast.Node
 	if typePredicate.kind == TypePredicateKindAssertsIdentifier {
 		assertsModifier = b.f.NewToken(ast.KindAssertsKeyword)
@@ -1761,7 +1762,13 @@ func (b *NodeBuilderImpl) typePredicateToTypePredicateNodeHelper(typePredicate *
 	if typePredicate.t != nil {
 		typeNode = b.typeToTypeNode(typePredicate.t)
 	}
-	return b.f.NewTypePredicateNode(assertsModifier, parameterName, typeNode)
+	// An assertion that also returns values (`(T, ...M) asserts value`) keeps its return type;
+	// a plain TypeScript assertion returns void, which the clause alone implies.
+	var returnTypeNode *ast.Node
+	if typePredicate.kind == TypePredicateKindAssertsIdentifier && returnType != nil && returnType != b.ch.voidType {
+		returnTypeNode = b.typeToTypeNode(returnType)
+	}
+	return b.f.NewTypePredicateNode(returnTypeNode, assertsModifier, parameterName, typeNode)
 }
 
 type SignatureToSignatureDeclarationOptions struct {
@@ -2885,6 +2892,11 @@ func (b *NodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 				// variable element is `...T` — zero or more trailing values
 				// of type T — never the tuple `...T[]` spelling.
 				if t.Target().AsTupleType().isPack {
+					// A pack of exactly one value is that value, as an empty pack is void:
+					// `number`, not `(number)`. The two relate, infer and destructure alike.
+					if len(tupleConstituentNodes.Nodes) == 1 && t.Target().AsTupleType().elementInfos[0].flags&ElementFlagsRequired != 0 {
+						return tupleConstituentNodes.Nodes[0]
+					}
 					for i := 0; i < len(tupleConstituentNodes.Nodes); i++ {
 						switch flags := t.Target().AsTupleType().elementInfos[i].flags; {
 						case flags&ElementFlagsVariable != 0:

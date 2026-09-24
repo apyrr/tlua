@@ -373,8 +373,10 @@ type SourceFileLinks struct {
 // Signature specific links
 
 type SignatureLinks struct {
-	resolvedSignature *Signature // Cached signature of signature node or call expression
-	effectsSignature  *Signature // Signature with possible control flow effects
+	resolvedSignature *Signature     // Cached signature of signature node or call expression
+	effectsSignature  *Signature     // Signature with possible control flow effects
+	flowCallEffect    flowCallEffect // Effect of a call statement on flow analysis (getFlowCallEffect)
+	flowCallSignature *Signature     // The signature a flowCallAssertion narrows by, declared or resolved
 }
 
 type TypeFlags uint32

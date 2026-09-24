@@ -718,6 +718,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get readonlyToken(): RemoteNode | undefined {
         return this.getNamedChild("readonlyToken") as RemoteNode;
     }
+    get returnType(): RemoteNode | undefined {
+        return this.getNamedChild("returnType") as RemoteNode;
+    }
     get right(): RemoteNode | undefined {
         return this.getNamedChild("right") as RemoteNode;
     }

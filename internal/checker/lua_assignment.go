@@ -51,7 +51,7 @@ func (slot luaAssignmentSlot) targetList() *ast.Node {
 }
 
 func (slot luaAssignmentSlot) targetAt(index int) *ast.Node {
-	return luaExplicitAssignmentValueAt(slot.targetList(), index)
+	return ast.LuaExplicitAssignmentValueAt(slot.targetList(), index)
 }
 
 func (slot luaAssignmentSlot) target() *ast.Node {
@@ -59,7 +59,7 @@ func (slot luaAssignmentSlot) target() *ast.Node {
 }
 
 func (slot luaAssignmentSlot) explicitValue(index int) *ast.Node {
-	return luaExplicitAssignmentValueAt(slot.assignment.AsBinaryExpression().Right, index)
+	return ast.LuaExplicitAssignmentValueAt(slot.assignment.AsBinaryExpression().Right, index)
 }
 
 // targetCount reports how many positional stores the commit performs.
@@ -109,24 +109,7 @@ func luaAssignmentSlotForNode(node *ast.Node) (luaAssignmentSlot, bool) {
 	return luaAssignmentSlot{assignment: assignment, index: index}, true
 }
 
-// luaExplicitAssignmentValueAt returns the expression syntactically aligned
-// with a target. It is for source-shape questions only; semantic values must be
-// projected from the full value-list pack.
-func luaExplicitAssignmentValueAt(valueList *ast.Node, index int) *ast.Node {
-	if valueList.Kind == ast.KindExpressionList {
-		elements := valueList.Elements()
-		if index < len(elements) {
-			return elements[index]
-		}
-		return nil
-	}
-	if index == 0 {
-		return valueList
-	}
-	return nil
-}
-
-// luaAssignmentTargetForExplicitValue inverts luaExplicitAssignmentValueAt for
+// luaAssignmentTargetForExplicitValue inverts ast.LuaExplicitAssignmentValueAt for
 // direct RHS expressions. Surplus values have no assignment target.
 func luaAssignmentTargetForExplicitValue(value *ast.Node) *ast.Node {
 	valueList, index, ok := luaValueListPosition(value)
@@ -137,10 +120,10 @@ func luaAssignmentTargetForExplicitValue(value *ast.Node) *ast.Node {
 	if assignment.OperatorToken.Kind != ast.KindEqualsToken || assignment.Right != valueList {
 		return nil
 	}
-	return luaExplicitAssignmentValueAt(assignment.Left, index)
+	return ast.LuaExplicitAssignmentValueAt(assignment.Left, index)
 }
 
-// luaValueListPosition inverts luaExplicitAssignmentValueAt: it maps a direct
+// luaValueListPosition inverts ast.LuaExplicitAssignmentValueAt: it maps a direct
 // value expression to the list that holds it and its position in that list. A
 // value outside a list is its own single-element list.
 func luaValueListPosition(value *ast.Node) (valueList *ast.Node, index int, ok bool) {
@@ -268,7 +251,7 @@ func (c *Checker) canonicalLuaAliasSymbol(symbol *ast.Symbol) *ast.Symbol {
 		if !ast.IsVariableDeclaration(declaration) || !ast.IsLuaLocal(declaration) {
 			return symbol
 		}
-		initializer := luaExplicitVariableInitializer(declaration)
+		initializer := ast.LuaExplicitVariableInitializer(declaration)
 		if initializer == nil {
 			return symbol
 		}
@@ -294,17 +277,6 @@ func (c *Checker) canonicalLuaAliasSymbol(symbol *ast.Symbol) *ast.Symbol {
 		symbol = next
 	}
 	return original
-}
-
-// luaExplicitVariableInitializer returns only the source expression aligned
-// with this local name. It never invents a value from a trailing call's pack.
-func luaExplicitVariableInitializer(declaration *ast.Node) *ast.Node {
-	if !ast.HasLuaLocalValueList(declaration) {
-		return declaration.Initializer()
-	}
-	declarations := declaration.Parent.AsVariableDeclarationList().Declarations.Nodes
-	index := ast.IndexOfNode(declarations, declaration)
-	return luaExplicitAssignmentValueAt(ast.LuaLocalValueList(declaration.Parent), index)
 }
 
 func (c *Checker) isLuaStableIdentityBinding(symbol *ast.Symbol) bool {
@@ -542,7 +514,7 @@ func isLuaDirectAliasInitializerValue(node *ast.Node) bool {
 		return false
 	}
 	declarations := list.AsVariableDeclarationList().Declarations.Nodes
-	return index < len(declarations) && luaExplicitVariableInitializer(declarations[index]) == value
+	return index < len(declarations) && ast.LuaExplicitVariableInitializer(declarations[index]) == value
 }
 
 // isSameLuaCapturedReference compares addresses within one LHS-capture phase.
@@ -662,7 +634,7 @@ func (c *Checker) checkLuaAssignment(left *ast.Node, right *ast.Node, checkMode 
 		}
 		// Elaborate against the value actually aligned with this target; the whole
 		// list is not an object or array literal, so it cannot carry elaboration.
-		valueExpression := luaExplicitAssignmentValueAt(right, i)
+		valueExpression := ast.LuaExplicitAssignmentValueAt(right, i)
 		if valueExpression == nil {
 			valueExpression = right
 		}

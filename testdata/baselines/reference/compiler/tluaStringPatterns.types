@@ -338,7 +338,7 @@ end
 
 for word in string.gmatch("one two", "(%a+)") do
 >word : string
->string.gmatch("one two", "(%a+)") : () => (string | nil)
+>string.gmatch("one two", "(%a+)") : () => string | nil
 >string.gmatch : (value: string, pattern: string) => () => string
 >string : StringLib
 >gmatch : (value: string, pattern: string) => () => string
@@ -463,6 +463,8 @@ local noBalancedCapture: nil = balancedCapture;
 >noBalancedCapture : nil
 >balancedCapture : nil
 
+// A never-reassigned local alias is the string library itself: the pattern's two
+// captures are counted, so a third result is nil.
 local stringAlias = string;
 >stringAlias : StringLib
 >string : StringLib
@@ -470,7 +472,7 @@ local stringAlias = string;
 local aliasFirst, aliasSecond, aliasThird = stringAlias.match("42", "(%d+)-?(%d*)");
 >aliasFirst : string | nil
 >aliasSecond : string | nil
->aliasThird : string | nil
+>aliasThird : nil
 >stringAlias.match("42", "(%d+)-?(%d*)") : string | nil
 >stringAlias.match : (value: string, pattern: string, init?: number) => (string?, ...string)
 >stringAlias : StringLib
@@ -486,9 +488,9 @@ local aliasSecondType: string | nil = aliasSecond;
 >aliasSecondType : string | nil
 >aliasSecond : string | nil
 
-local aliasThirdType: string | nil = aliasThird;
->aliasThirdType : string | nil
->aliasThird : string | nil
+local aliasThirdType: nil = aliasThird;
+>aliasThirdType : nil
+>aliasThird : nil
 
 function shadowedStringPattern(): void
 >shadowedStringPattern : () => void

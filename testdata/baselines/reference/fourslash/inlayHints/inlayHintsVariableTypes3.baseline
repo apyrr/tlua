@@ -11,10 +11,7 @@ local div = getCtor("div");
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
+      "value": "{ "
     },
     {
       "value": "prototype",
@@ -52,19 +49,7 @@ local div = getCtor("div");
       }
     },
     {
-      "value": "; "
-    },
-    {
-      "value": "\"new\""
-    },
-    {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": ": "
+      "value": "; \"new\"(): "
     },
     {
       "value": "DivElement",
@@ -83,16 +68,7 @@ local div = getCtor("div");
       }
     },
     {
-      "value": " "
-    },
-    {
-      "value": "}"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "nil"
+      "value": "; } | nil"
     }
   ],
   "kind": 1,

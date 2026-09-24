@@ -771,10 +771,11 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
         return updateLiteralTypeNode(node, _literal);
     },
     [SyntaxKind.TypePredicate]: (node: TypePredicateNode, visitor: Visitor): TypePredicateNode => {
+        const _returnType = visitNode(node.returnType, visitor, isTypeNode);
         const _assertsModifier = visitNode(node.assertsModifier, visitor, isAssertsKeyword);
         const _parameterName = visitNode(node.parameterName, visitor, isTypePredicateParameterName);
         const _type = visitNode(node.type, visitor, isTypeNode);
-        return updateTypePredicateNode(node, _assertsModifier, _parameterName, _type);
+        return updateTypePredicateNode(node, _returnType, _assertsModifier, _parameterName, _type);
     },
     [SyntaxKind.TypeQuery]: (node: TypeQueryNode, visitor: Visitor): TypeQueryNode => {
         const _exprName = visitNode(node.exprName, visitor, isEntityName);

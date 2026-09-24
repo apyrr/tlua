@@ -87,13 +87,7 @@
       "value": ": "
     },
     {
-      "value": "2"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "3"
+      "value": "2 | 3"
     }
   ],
   "kind": 1,
@@ -131,10 +125,7 @@
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "("
+      "value": ": ("
     },
     {
       "value": "d",
@@ -153,34 +144,7 @@
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "2"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "3"
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "void"
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "void"
+      "value": ": 2 | 3) => void) => void"
     }
   ],
   "kind": 1,
@@ -199,13 +163,7 @@
       "value": ": "
     },
     {
-      "value": "2"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "3"
+      "value": "2 | 3"
     }
   ],
   "kind": 1,
@@ -243,13 +201,7 @@
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "<"
+      "value": "{ <"
     },
     {
       "value": "X",
@@ -287,10 +239,7 @@
       }
     },
     {
-      "value": ">"
-    },
-    {
-      "value": "("
+      "value": ">("
     },
     {
       "value": "x",
@@ -328,10 +277,7 @@
       }
     },
     {
-      "value": ")"
-    },
-    {
-      "value": ": "
+      "value": "): "
     },
     {
       "value": "Y",
@@ -350,31 +296,7 @@
       }
     },
     {
-      "value": "; "
-    },
-    {
-      "value": "["
-    },
-    {
-      "value": "i"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "]"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": "; "
+      "value": "; [i: string]: number; "
     },
     {
       "value": "a",
@@ -393,13 +315,7 @@
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": "; "
+      "value": ": number; "
     },
     {
       "value": "b",
@@ -418,19 +334,7 @@
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "; "
-    },
-    {
-      "value": "readonly"
-    },
-    {
-      "value": " "
+      "value": ": string; readonly "
     },
     {
       "value": "c",
@@ -449,13 +353,7 @@
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "boolean"
-    },
-    {
-      "value": "; "
+      "value": ": boolean; "
     },
     {
       "value": "d",
@@ -474,22 +372,7 @@
       }
     },
     {
-      "value": "?"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "nil"
-    },
-    {
-      "value": "; "
+      "value": "?: number | nil; "
     },
     {
       "value": "e",
@@ -508,19 +391,7 @@
       }
     },
     {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "; "
+      "value": "(): string; "
     },
     {
       "value": "f",
@@ -539,22 +410,7 @@
       }
     },
     {
-      "value": "?"
-    },
-    {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "boolean"
-    },
-    {
-      "value": "; "
+      "value": "?(): boolean; "
     },
     {
       "value": "g",
@@ -592,16 +448,7 @@
       }
     },
     {
-      "value": ">"
-    },
-    {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": ": "
+      "value": ">(): "
     },
     {
       "value": "T",
@@ -639,10 +486,7 @@
       }
     },
     {
-      "value": "?"
-    },
-    {
-      "value": "<"
+      "value": "?<"
     },
     {
       "value": "X",
@@ -680,10 +524,7 @@
       }
     },
     {
-      "value": ">"
-    },
-    {
-      "value": "("
+      "value": ">("
     },
     {
       "value": "x",
@@ -721,10 +562,7 @@
       }
     },
     {
-      "value": ")"
-    },
-    {
-      "value": ": "
+      "value": "): "
     },
     {
       "value": "Y",
@@ -743,10 +581,7 @@
       }
     },
     {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": "; }"
     }
   ],
   "kind": 1,
@@ -765,16 +600,7 @@
       "value": ": "
     },
     {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "42"
+      "value": "() => 42"
     }
   ],
   "kind": 1,
@@ -825,37 +651,7 @@ foo4(function(p) end)
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "["
-    },
-    {
-      "value": "x"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": "]"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": "{ [x: string]: number; }"
     }
   ],
   "kind": 1,

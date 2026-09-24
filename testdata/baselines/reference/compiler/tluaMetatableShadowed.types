@@ -1,9 +1,8 @@
 //// [tests/cases/compiler/tluaMetatableShadowed.tlua] ////
 
 === tluaMetatableShadowed.tlua ===
-// Only the real globals carry the protocol. A shadowing local, or a call through an alias,
-// resolves to a different symbol and keeps whatever it declares -- the rule the type()
-// narrowing builtins already follow.
+// Only the real globals carry the protocol. A shadowing local resolves to a different symbol
+// and keeps whatever it declares.
 
 local Helpers = { describe = function(self: table): string return "d"; end };
 >Helpers : { describe: (self: table) => string; }
@@ -64,30 +63,33 @@ function shadowed(): void
 
 end
 
-// An alias is a different symbol too.
+// A never-reassigned alias, renamed or not, is the global like any other builtin's:
+// the call pairs, so describe resolves through __index.
 local alias = setmetatable;
 >alias : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 
 local aliased = alias({ n = 1 }, mt);
->aliased : { n: number; }
->alias({ n = 1 }, mt) : { n: number; }
+>aliased : { describe: (self: table) => string; n: number; }
+>alias({ n = 1 }, mt) : { describe: (self: table) => string; n: number; }
 >alias : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{ n = 1 } : { n: number; }
 >n : number
 >1 : 1
 >mt : { __index: { describe: (self: table) => string; }; }
 
-local aliasBad = aliased.describe;
->aliasBad : any
->aliased.describe : any
->aliased : { n: number; }
->describe : any
+local aliasGood: string = aliased.describe(aliased);
+>aliasGood : string
+>aliased.describe(aliased) : string
+>aliased.describe : (self: table) => string
+>aliased : { describe: (self: table) => string; n: number; }
+>describe : (self: table) => string
+>aliased : { describe: (self: table) => string; n: number; }
 
 local aliasOwn: number = aliased.n;
 >aliasOwn : number
 >aliased.n : number
->aliased : { n: number; }
+>aliased : { describe: (self: table) => string; n: number; }
 >n : number
 
 // The globals themselves still work in the same file.

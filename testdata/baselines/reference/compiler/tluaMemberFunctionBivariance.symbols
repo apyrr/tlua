@@ -1,0 +1,233 @@
+//// [tests/cases/compiler/tluaMemberFunctionBivariance.tlua] ////
+
+=== tluaMemberFunctionBivariance.tlua ===
+-- A member function statement taking the receiver (`function T.m(self)`,
+-- `function T:m()`) is a method declaration, so an override may narrow `self`
+-- like an interface method.
+
+local Base = {}
+>Base : Symbol(Base, Decl(tluaMemberFunctionBivariance.tlua, 4, 5))
+
+Base.__index = Base
+>Base.__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 4, 15))
+>Base : Symbol(Base, Decl(tluaMemberFunctionBivariance.tlua, 4, 5))
+>__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 4, 15))
+>Base : Symbol(Base, Decl(tluaMemberFunctionBivariance.tlua, 4, 5))
+
+function Base.describe(self: Animal): string
+>Base : Symbol(Base, Decl(tluaMemberFunctionBivariance.tlua, 4, 5))
+>describe : Symbol(describe, Decl(tluaMemberFunctionBivariance.tlua, 5, 19))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 7, 23))
+>Animal : Symbol(Animal, Decl(tluaMemberFunctionBivariance.tlua, 11, 55))
+
+    return self.name
+>self.name : Symbol(Animal.name, Decl(tluaMemberFunctionBivariance.tlua, 13, 40))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 7, 23))
+>name : Symbol(Animal.name, Decl(tluaMemberFunctionBivariance.tlua, 13, 40))
+
+end
+
+local type AnimalMethods = Omit<typeof Base, "__index">
+>AnimalMethods : Symbol(AnimalMethods, Decl(tluaMemberFunctionBivariance.tlua, 9, 3))
+>Omit : Symbol(Omit, Decl(lib.luajit.d.tlua, --, --))
+>Base : Symbol(Base, Decl(tluaMemberFunctionBivariance.tlua, 4, 5))
+
+interface Animal extends AnimalMethods {
+>Animal : Symbol(Animal, Decl(tluaMemberFunctionBivariance.tlua, 11, 55))
+>AnimalMethods : Symbol(AnimalMethods, Decl(tluaMemberFunctionBivariance.tlua, 9, 3))
+
+    name: string;
+>name : Symbol(Animal.name, Decl(tluaMemberFunctionBivariance.tlua, 13, 40))
+}
+
+-- Statement-form subclass: the instance is assignable to the base.
+local Dog = {}
+>Dog : Symbol(Dog, Decl(tluaMemberFunctionBivariance.tlua, 18, 5))
+
+Dog.__index = Dog
+>Dog.__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 18, 14))
+>Dog : Symbol(Dog, Decl(tluaMemberFunctionBivariance.tlua, 18, 5))
+>__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 18, 14))
+>Dog : Symbol(Dog, Decl(tluaMemberFunctionBivariance.tlua, 18, 5))
+
+setmetatable(Dog, { __index = Base })
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Dog : Symbol(Dog, Decl(tluaMemberFunctionBivariance.tlua, 18, 5))
+>__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 20, 19))
+>Base : Symbol(Base, Decl(tluaMemberFunctionBivariance.tlua, 4, 5))
+
+function Dog.describe(self: DogInstance): string
+>Dog : Symbol(Dog, Decl(tluaMemberFunctionBivariance.tlua, 18, 5))
+>describe : Symbol(describe, Decl(tluaMemberFunctionBivariance.tlua, 20, 37))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 22, 22))
+>DogInstance : Symbol(DogInstance, Decl(tluaMemberFunctionBivariance.tlua, 26, 51))
+
+    return self.name .. " (" .. self.breed .. ")"
+>self.name : Symbol(name, Decl(tluaMemberFunctionBivariance.tlua, 13, 40))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 22, 22))
+>name : Symbol(name, Decl(tluaMemberFunctionBivariance.tlua, 13, 40))
+>self.breed : Symbol(DogInstance.breed, Decl(tluaMemberFunctionBivariance.tlua, 28, 74))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 22, 22))
+>breed : Symbol(DogInstance.breed, Decl(tluaMemberFunctionBivariance.tlua, 28, 74))
+
+end
+
+local type DogMethods = Omit<typeof Dog, "__index">
+>DogMethods : Symbol(DogMethods, Decl(tluaMemberFunctionBivariance.tlua, 24, 3))
+>Omit : Symbol(Omit, Decl(lib.luajit.d.tlua, --, --))
+>Dog : Symbol(Dog, Decl(tluaMemberFunctionBivariance.tlua, 18, 5))
+
+interface DogInstance extends Omit<Animal, keyof DogMethods>, DogMethods {
+>DogInstance : Symbol(DogInstance, Decl(tluaMemberFunctionBivariance.tlua, 26, 51))
+>Omit : Symbol(Omit, Decl(lib.luajit.d.tlua, --, --))
+>Animal : Symbol(Animal, Decl(tluaMemberFunctionBivariance.tlua, 11, 55))
+>DogMethods : Symbol(DogMethods, Decl(tluaMemberFunctionBivariance.tlua, 24, 3))
+>DogMethods : Symbol(DogMethods, Decl(tluaMemberFunctionBivariance.tlua, 24, 3))
+
+    breed: string;
+>breed : Symbol(DogInstance.breed, Decl(tluaMemberFunctionBivariance.tlua, 28, 74))
+}
+
+local function printAnimal(animal: Animal)
+>printAnimal : Symbol(printAnimal, Decl(tluaMemberFunctionBivariance.tlua, 30, 1))
+>animal : Symbol(animal, Decl(tluaMemberFunctionBivariance.tlua, 32, 27))
+>Animal : Symbol(Animal, Decl(tluaMemberFunctionBivariance.tlua, 11, 55))
+
+    print(animal:describe())
+>print : Symbol(print, Decl(lib.luajit.d.tlua, --, --))
+>animal:describe : Symbol(describe, Decl(tluaMemberFunctionBivariance.tlua, 5, 19))
+>animal : Symbol(animal, Decl(tluaMemberFunctionBivariance.tlua, 32, 27))
+>describe : Symbol(describe, Decl(tluaMemberFunctionBivariance.tlua, 5, 19))
+
+end
+
+local dog = setmetatable({ name = "Rex", breed = "Husky" }, Dog) as unknown as DogInstance
+>dog : Symbol(dog, Decl(tluaMemberFunctionBivariance.tlua, 36, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>name : Symbol(name, Decl(tluaMemberFunctionBivariance.tlua, 36, 26))
+>breed : Symbol(breed, Decl(tluaMemberFunctionBivariance.tlua, 36, 40))
+>Dog : Symbol(Dog, Decl(tluaMemberFunctionBivariance.tlua, 18, 5))
+>DogInstance : Symbol(DogInstance, Decl(tluaMemberFunctionBivariance.tlua, 26, 51))
+
+printAnimal(dog)
+>printAnimal : Symbol(printAnimal, Decl(tluaMemberFunctionBivariance.tlua, 30, 1))
+>dog : Symbol(dog, Decl(tluaMemberFunctionBivariance.tlua, 36, 5))
+
+-- Expression-form subclass: the self-referencing `__index` accepts the override.
+local Cat = setmetatable({}, { __index = Base })
+>Cat : Symbol(Cat, Decl(tluaMemberFunctionBivariance.tlua, 40, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 40, 30))
+>Base : Symbol(Base, Decl(tluaMemberFunctionBivariance.tlua, 4, 5))
+
+Cat.__index = Cat
+>Cat.__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 4, 15))
+>Cat : Symbol(Cat, Decl(tluaMemberFunctionBivariance.tlua, 40, 5))
+>__index : Symbol(__index, Decl(tluaMemberFunctionBivariance.tlua, 4, 15))
+>Cat : Symbol(Cat, Decl(tluaMemberFunctionBivariance.tlua, 40, 5))
+
+function Cat.describe(self: CatInstance): string
+>Cat : Symbol(Cat, Decl(tluaMemberFunctionBivariance.tlua, 40, 5))
+>describe : Symbol(describe, Decl(tluaMemberFunctionBivariance.tlua, 41, 17))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 43, 22))
+>CatInstance : Symbol(CatInstance, Decl(tluaMemberFunctionBivariance.tlua, 45, 3))
+
+    return self.name .. " says " .. self.sound
+>self.name : Symbol(Animal.name, Decl(tluaMemberFunctionBivariance.tlua, 13, 40))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 43, 22))
+>name : Symbol(Animal.name, Decl(tluaMemberFunctionBivariance.tlua, 13, 40))
+>self.sound : Symbol(CatInstance.sound, Decl(tluaMemberFunctionBivariance.tlua, 47, 38))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 43, 22))
+>sound : Symbol(CatInstance.sound, Decl(tluaMemberFunctionBivariance.tlua, 47, 38))
+
+end
+
+interface CatInstance extends Animal {
+>CatInstance : Symbol(CatInstance, Decl(tluaMemberFunctionBivariance.tlua, 45, 3))
+>Animal : Symbol(Animal, Decl(tluaMemberFunctionBivariance.tlua, 11, 55))
+
+    sound: string;
+>sound : Symbol(CatInstance.sound, Decl(tluaMemberFunctionBivariance.tlua, 47, 38))
+}
+
+-- The colon form declares a method too: its parameters compare bivariantly.
+local Counter = {}
+>Counter : Symbol(Counter, Decl(tluaMemberFunctionBivariance.tlua, 52, 5))
+
+function Counter:add(n: string | number): number
+>Counter : Symbol(Counter, Decl(tluaMemberFunctionBivariance.tlua, 52, 5))
+>add : Symbol(add, Decl(tluaMemberFunctionBivariance.tlua, 52, 18))
+>n : Symbol(n, Decl(tluaMemberFunctionBivariance.tlua, 53, 21))
+
+    return 1
+end
+local NarrowCounter = {}
+>NarrowCounter : Symbol(NarrowCounter, Decl(tluaMemberFunctionBivariance.tlua, 56, 5))
+
+function NarrowCounter:add(n: number): number
+>NarrowCounter : Symbol(NarrowCounter, Decl(tluaMemberFunctionBivariance.tlua, 56, 5))
+>add : Symbol(add, Decl(tluaMemberFunctionBivariance.tlua, 56, 24))
+>n : Symbol(n, Decl(tluaMemberFunctionBivariance.tlua, 57, 27))
+
+    return n
+>n : Symbol(n, Decl(tluaMemberFunctionBivariance.tlua, 57, 27))
+
+end
+local counter: typeof Counter = NarrowCounter
+>counter : Symbol(counter, Decl(tluaMemberFunctionBivariance.tlua, 60, 5))
+>Counter : Symbol(Counter, Decl(tluaMemberFunctionBivariance.tlua, 52, 5))
+>NarrowCounter : Symbol(NarrowCounter, Decl(tluaMemberFunctionBivariance.tlua, 56, 5))
+
+-- A function value assigned to a member is a property: still strict.
+local Plain = {}
+>Plain : Symbol(Plain, Decl(tluaMemberFunctionBivariance.tlua, 63, 5))
+
+Plain.run = function(self: string): number
+>Plain.run : Symbol(run, Decl(tluaMemberFunctionBivariance.tlua, 63, 16))
+>Plain : Symbol(Plain, Decl(tluaMemberFunctionBivariance.tlua, 63, 5))
+>run : Symbol(run, Decl(tluaMemberFunctionBivariance.tlua, 63, 16))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 64, 21))
+
+    return 1
+end
+local Narrow = {}
+>Narrow : Symbol(Narrow, Decl(tluaMemberFunctionBivariance.tlua, 67, 5))
+
+Narrow.run = function(self: "a"): number
+>Narrow.run : Symbol(run, Decl(tluaMemberFunctionBivariance.tlua, 67, 17))
+>Narrow : Symbol(Narrow, Decl(tluaMemberFunctionBivariance.tlua, 67, 5))
+>run : Symbol(run, Decl(tluaMemberFunctionBivariance.tlua, 67, 17))
+>self : Symbol(self, Decl(tluaMemberFunctionBivariance.tlua, 68, 22))
+
+    return 1
+end
+local plain: typeof Plain = Narrow
+>plain : Symbol(plain, Decl(tluaMemberFunctionBivariance.tlua, 71, 5))
+>Plain : Symbol(Plain, Decl(tluaMemberFunctionBivariance.tlua, 63, 5))
+>Narrow : Symbol(Narrow, Decl(tluaMemberFunctionBivariance.tlua, 67, 5))
+
+-- A member statement without a receiver is a module function: still strict.
+local M = {}
+>M : Symbol(M, Decl(tluaMemberFunctionBivariance.tlua, 74, 5))
+
+function M.parse(s: string | number): string
+>M : Symbol(M, Decl(tluaMemberFunctionBivariance.tlua, 74, 5))
+>parse : Symbol(parse, Decl(tluaMemberFunctionBivariance.tlua, 74, 12), Decl(tluaMemberFunctionBivariance.tlua, 77, 3))
+>s : Symbol(s, Decl(tluaMemberFunctionBivariance.tlua, 75, 17))
+
+    return tostring(s)
+>tostring : Symbol(tostring, Decl(lib.luajit.d.tlua, --, --))
+>s : Symbol(s, Decl(tluaMemberFunctionBivariance.tlua, 75, 17))
+
+end
+M.parse = function(s: string): string
+>M.parse : Symbol(parse, Decl(tluaMemberFunctionBivariance.tlua, 74, 12), Decl(tluaMemberFunctionBivariance.tlua, 77, 3))
+>M : Symbol(M, Decl(tluaMemberFunctionBivariance.tlua, 74, 5))
+>parse : Symbol(parse, Decl(tluaMemberFunctionBivariance.tlua, 74, 12), Decl(tluaMemberFunctionBivariance.tlua, 77, 3))
+>s : Symbol(s, Decl(tluaMemberFunctionBivariance.tlua, 78, 19))
+
+    return s
+>s : Symbol(s, Decl(tluaMemberFunctionBivariance.tlua, 78, 19))
+
+end
+

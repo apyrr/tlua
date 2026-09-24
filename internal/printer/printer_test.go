@@ -80,12 +80,11 @@ func TestEmit(t *testing.T) {
 		{title: "PrefixUnaryExpression#7", input: `local _ = - -a`, output: `local _ = - -a;`},
 		{title: "PrefixUnaryExpression#9", input: `local _ = +-a`, output: `local _ = +-a;`},
 		{title: "PrefixUnaryExpression#11", input: `local _ = -+a`, output: `local _ = -+a;`},
-		{title: "PrefixUnaryExpression#14", input: `local _ = !a`, output: `local _ = !a;`},
+		{title: "PrefixUnaryExpression#14", input: `local _ = !a`, output: `local _ = not a;`},
 		// Lua length operator.
 		{title: "PrefixUnaryExpression#len", input: `local _ = #a`, output: `local _ = #a;`},
 		{title: "PrefixUnaryExpression#len2", input: `local _ = #a + #b`, output: `local _ = #a + #b;`},
-		// `#` before `!` keeps a space, else the emitted `#!a` would re-scan as a shebang.
-		{title: "PrefixUnaryExpression#lenNot", input: `local _ = # !a`, output: `local _ = # !a;`},
+		{title: "PrefixUnaryExpression#lenNot", input: `local _ = # !a`, output: `local _ = #not a;`},
 		// Lua has no comma operator, so `(a, b)` does not parse; `or` is the
 		// lowest-precedence binary operator and stands in for it here.
 		{title: "BinaryExpression#1", input: `local _ = (a or b)`, output: `local _ = (a or b);`},
@@ -103,9 +102,10 @@ func TestEmit(t *testing.T) {
 		{title: "BinaryExpression#7", input: "local _ = a &&\nb", output: "local _ = a and\n    b;"},
 		{title: "BinaryExpression#8", input: "local _ = a and b", output: "local _ = a and b;"},
 		{title: "BinaryExpression#9", input: "local _ = a or b", output: "local _ = a or b;"},
-		// `not` is spelled `!` on the way out: the token kind is shared with the
-		// non-null and definite-assignment `!`, which must stay punctuation.
-		{title: "PrefixUnaryExpression#not", input: "local _ = not a", output: "local _ = !a;"},
+		// `!` is an alias of `not` and prints as `not`, which stock Lua also accepts.
+		{title: "PrefixUnaryExpression#not", input: "local _ = not a", output: "local _ = not a;"},
+		{title: "PrefixUnaryExpression#notParen", input: "local _ = not (a or b)", output: "local _ = not (a or b);"},
+		{title: "PrefixUnaryExpression#notNot", input: "local _ = not not a", output: "local _ = not not a;"},
 		// tlua has no conditional expression in source; the node survives only in
 		// emit-time synthesis (`?.`/`??` lowering), covered by the factory-built
 		// TestParenthesizeConditional tests below.
@@ -159,6 +159,12 @@ func TestEmit(t *testing.T) {
 		{title: "KeywordTypeNode#13", input: `type T = intrinsic`, output: `type T = intrinsic;`},
 		{title: "TypePredicateNode#1", input: `function f(): asserts a;`, output: `function f(): asserts a;`},
 		{title: "TypePredicateNode#2", input: `function f(): asserts a is b;`, output: `function f(): asserts a is b;`},
+		// A trailing clause asserts and also returns the type before it.
+		{title: "TypePredicateNode#trailing", input: `function f(a): string asserts a;`, output: `function f(a): string asserts a;`},
+		{title: "TypePredicateNode#trailingIs", input: `function f(a): string asserts a is b;`, output: `function f(a): string asserts a is b;`},
+		{title: "TypePredicateNode#trailingPack", input: `function f(a): (string, number) asserts a;`, output: `function f(a): (string, number) asserts a;`},
+		{title: "TypePredicateNode#trailingFunctionType", input: `local f: (a: any) => ((b: any) => string) asserts a`, output: `local f: (a: any) => ((b: any) => string) asserts a;`},
+		{title: "TypePredicateNode#trailingConditional", input: `local f: (a: any) => (T extends string ? number : (x: T) => T) asserts a`, output: `local f: (a: any) => (T extends string ? number : (x: T) => T) asserts a;`},
 		{title: "TypeReferenceNode#1", input: `type T = a`, output: `type T = a;`},
 		{title: "TypeReferenceNode#2", input: `type T = a.b`, output: `type T = a.b;`},
 		{title: "TypeReferenceNode#3", input: `type T = a<U>`, output: `type T = a<U>;`},

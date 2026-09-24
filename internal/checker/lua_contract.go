@@ -127,7 +127,7 @@ func (c *Checker) composeLuaLocalConstructorContract(declaration *ast.Node, t *T
 		declaration.Type() != nil {
 		return t
 	}
-	initializer := luaExplicitVariableInitializer(declaration)
+	initializer := ast.LuaExplicitVariableInitializer(declaration)
 	if initializer == nil {
 		return t
 	}

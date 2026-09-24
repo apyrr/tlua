@@ -87,13 +87,7 @@ foo2(function(a) end)
       "value": ": "
     },
     {
-      "value": "2"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "3"
+      "value": "2 | 3"
     }
   ],
   "kind": 1,
@@ -131,10 +125,7 @@ foo3(function(a)
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "("
+      "value": ": ("
     },
     {
       "value": "d",
@@ -153,34 +144,7 @@ foo3(function(a)
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "2"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "3"
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "void"
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "void"
+      "value": ": 2 | 3) => void) => void"
     }
   ],
   "kind": 1,
@@ -199,13 +163,7 @@ foo3(function(a)
       "value": ": "
     },
     {
-      "value": "2"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "3"
+      "value": "2 | 3"
     }
   ],
   "kind": 1,
@@ -243,10 +201,7 @@ local foo5: F2 = function(a) end
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
+      "value": "{ "
     },
     {
       "value": "a",
@@ -265,13 +220,7 @@ local foo5: F2 = function(a) end
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": "; "
+      "value": ": number; "
     },
     {
       "value": "b",
@@ -290,16 +239,7 @@ local foo5: F2 = function(a) end
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "string"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": ": string; }"
     }
   ],
   "kind": 1,

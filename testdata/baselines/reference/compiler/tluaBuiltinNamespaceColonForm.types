@@ -97,7 +97,7 @@ for lineColon in io:lines("name.txt", "*a") do
 end
 for lineDot in io.lines("name.txt", "*a") do
 >lineDot : string
->io.lines("name.txt", "*a") : () => (string)
+>io.lines("name.txt", "*a") : () => string
 >io.lines : (filename?: string, ...: LuaReadFormat) => function
 >io : IOLib
 >lines : (filename?: string, ...: LuaReadFormat) => function

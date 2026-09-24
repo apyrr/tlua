@@ -6,6 +6,7 @@ import (
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/core"
+	"github.com/apyrr/tlua/internal/debug"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/jsnum"
 	"github.com/apyrr/tlua/internal/scanner"
@@ -124,6 +125,11 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 	}
 	f.depth++
 	var sharedFlow *ast.FlowNode
+	// Assertion call statements passed on the way back, latest first. Each narrows the type
+	// found below it, so they are applied once the walk ends instead of recursing per call:
+	// `assert` is dense in Lua code, and one recursion each would exhaust the depth limit.
+	var assertions []*ast.Node
+	sharedAssertions := 0 // len(assertions) when sharedFlow was reached
 	for {
 		flags := flow.Flags
 		if flags&ast.FlowFlagsShared != 0 {
@@ -133,10 +139,11 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 			for i := f.sharedFlowStart; i < len(c.sharedFlows); i++ {
 				if c.sharedFlows[i].flow == flow {
 					f.depth--
-					return c.sharedFlows[i].flowType
+					return c.narrowTypeByAssertionCalls(f, c.sharedFlows[i].flowType, assertions)
 				}
 			}
 			sharedFlow = flow
+			sharedAssertions = len(assertions)
 		}
 		var t FlowType
 		switch {
@@ -147,7 +154,16 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 				continue
 			}
 		case flags&ast.FlowFlagsCall != 0:
-			t = c.getTypeAtFlowCall(f, flow)
+			switch c.getFlowCallEffect(flow) {
+			case flowCallUnreachable:
+				t = FlowType{t: c.unreachableNeverType}
+			case flowCallSetmetatable:
+				t = c.getTypeAtLuaSetmetatableCall(f, flow, luaMetatableCallSet)
+			case flowCallDebugSetmetatable:
+				t = c.getTypeAtLuaSetmetatableCall(f, flow, luaMetatableCallDebugSet)
+			case flowCallAssertion:
+				assertions = append(assertions, flow.Node)
+			}
 			if t.isNil() {
 				flow = flow.Antecedent
 				continue
@@ -196,12 +212,27 @@ func (c *Checker) getTypeAtFlowNode(f *FlowState, flow *ast.FlowNode) FlowType {
 			t = FlowType{t: c.convertAutoToAny(f.declaredType)}
 		}
 		if sharedFlow != nil {
-			// Record visited node and the associated type in the cache.
+			// Record visited node and the associated type in the cache. Only the asserts between
+			// the shared node and this one hold there.
+			t = c.narrowTypeByAssertionCalls(f, t, assertions[sharedAssertions:])
+			assertions = assertions[:sharedAssertions]
 			c.sharedFlows = append(c.sharedFlows, SharedFlow{flow: sharedFlow, flowType: t})
 		}
 		f.depth--
-		return t
+		return c.narrowTypeByAssertionCalls(f, t, assertions)
 	}
+}
+
+// narrowTypeByAssertionCalls applies the assertion calls collected by getTypeAtFlowNode to the
+// type found below them, earliest statement first.
+func (c *Checker) narrowTypeByAssertionCalls(f *FlowState, flowType FlowType, calls []*ast.Node) FlowType {
+	for i := len(calls) - 1; i >= 0; i-- {
+		t := c.finalizeEvolvingArrayType(flowType.t)
+		if narrowedType := c.narrowTypeByAssertionCall(f, t, calls[i]); narrowedType != t {
+			flowType = c.newFlowType(narrowedType, flowType.incomplete)
+		}
+	}
+	return flowType
 }
 
 func getBranchLabelAntecedents(flow *ast.FlowNode, reduceLabels []*ast.FlowReduceLabelData) *ast.FlowList {
@@ -300,7 +331,7 @@ func (c *Checker) isEmptyArrayAssignment(node *ast.Node) bool {
 		binary := node.Parent.AsBinaryExpression()
 		initializer := binary.Right
 		if binary.OperatorToken.Kind == ast.KindEqualsToken && !ast.IsInJSFile(binary.AsNode()) {
-			initializer = luaExplicitAssignmentValueAt(initializer, 0)
+			initializer = ast.LuaExplicitAssignmentValueAt(initializer, 0)
 		}
 		return initializer != nil && c.startsLuaEvolvingArray(initializer)
 	}
@@ -324,39 +355,141 @@ func isEmptyEvolvingArrayInitializer(node *ast.Node) bool {
 	return isEmptyArrayLiteral(node) || ast.IsObjectLiteralExpression(node) && len(node.Properties()) == 0
 }
 
-func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
+// flowCallEffect classifies what a call statement's flow node does, computed once per call:
+// flow analysis visits every call statement on every walk.
+type flowCallEffect uint8
+
+const (
+	flowCallUnknown           flowCallEffect = iota // not yet computed
+	flowCallNone                                    // no effect: the walk continues past it
+	flowCallUnreachable                             // never returns, or asserts a falsy literal
+	flowCallAssertion                               // asserts something that may narrow
+	flowCallSetmetatable                            // `setmetatable(t, mt)` re-pairs t
+	flowCallDebugSetmetatable                       // `debug.setmetatable(t, mt)` re-pairs t
+)
+
+func (c *Checker) getFlowCallEffect(flow *ast.FlowNode) flowCallEffect {
+	links := c.signatureLinks.Get(flow.Node)
+	if links.flowCallEffect == flowCallUnknown {
+		links.flowCallEffect = c.computeFlowCallEffect(flow)
+	}
+	return links.flowCallEffect
+}
+
+func (c *Checker) computeFlowCallEffect(flow *ast.FlowNode) flowCallEffect {
+	// Builtin recognition follows local aliases, whose resolution is not final while
+	// augmentations attach; flow analysis never runs then, and a cached answer must not
+	// predate it.
+	debug.Assert(!c.attachingLuaAugmentations, "flow call effect computed while attaching Lua augmentations")
 	// `setmetatable(t, mt);` as a statement re-pairs t, the way an assertion narrows its
-	// argument. Recognized before getEffectsSignature -- which would resolve the call's signature
-	// only to find no assertion -- via a text switch plus one cached symbol compare. A shadowed
-	// setmetatable resolves to a different symbol and is not this kind, so it reaches the
-	// standard path below.
-	if kind := c.getLuaMetatableCall(flow.Node); kind.isSet() {
-		return c.getTypeAtLuaSetmetatableCall(f, flow, kind)
+	// argument. Recognized before getEffectsSignature, which would resolve the call's
+	// signature only to find no assertion. A shadowed setmetatable resolves to a different
+	// symbol and is not this kind.
+	switch c.getLuaMetatableCall(flow.Node) {
+	case luaMetatableCallSet:
+		return flowCallSetmetatable
+	case luaMetatableCallDebugSet:
+		return flowCallDebugSetmetatable
 	}
-	signature := c.getEffectsSignature(flow.Node)
-	if signature != nil {
-		predicate := c.getTypePredicateOfSignature(signature)
-		if predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier {
-			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
-			t := c.finalizeEvolvingArrayType(flowType.t)
-			narrowedType := t
-			if predicate.t != nil {
-				narrowedType = c.narrowTypeByTypePredicate(f, t, predicate, flow.Node, true /*assumeTrue*/)
-			} else if arg := c.getTypePredicateArgument(predicate, flow.Node); arg != nil {
-				// Typeless `asserts x`: the same colon-aware index mapping
-				// as typed predicates.
-				narrowedType = c.narrowTypeByAssertion(f, t, arg)
-			}
-			if narrowedType == t {
-				return flowType
-			}
-			return c.newFlowType(narrowedType, flowType.incomplete)
-		}
-		if c.getReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
-			return FlowType{t: c.unreachableNeverType}
+	// The effect is read from the callee's declared signatures; the call is resolved only when
+	// they disagree. Resolving checks the arguments, which at a module's top level can be
+	// another module's exports -- and a module's type depends on its reachability, so resolving
+	// here turned a require cycle into a circular type.
+	call := flow.Node
+	links := c.signatureLinks.Get(call)
+	signatures := c.getDeclaredFlowCallSignatures(call)
+	never, asserting := 0, 0
+	for _, signature := range signatures {
+		if c.hasNeverReturnAnnotation(signature) {
+			never++
+		} else if predicate := c.getTypePredicateOfSignature(signature); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier {
+			asserting++
 		}
 	}
-	return FlowType{}
+	switch {
+	case never == 0 && asserting == 0:
+		return flowCallNone
+	case never == len(signatures):
+		return flowCallUnreachable
+	case len(signatures) == 1:
+		links.flowCallSignature = signatures[0]
+		return c.getAssertionFlowCallEffect(flow, signatures[0])
+	}
+	// Overloads that disagree: the one the call picks decides.
+	signature := c.getEffectsSignature(call)
+	if signature == nil {
+		return flowCallNone
+	}
+	if c.hasNeverReturnAnnotation(signature) {
+		return flowCallUnreachable
+	}
+	links.flowCallSignature = signature
+	return c.getAssertionFlowCallEffect(flow, signature)
+}
+
+// getDeclaredFlowCallSignatures returns the signatures a call statement's callee is declared
+// with -- those getEffectsSignature resolves among -- without resolving the call. Like it, it
+// sees only a callee whose every name has an explicit type (TLUA2775).
+func (c *Checker) getDeclaredFlowCallSignatures(call *ast.Node) []*Signature {
+	// Lua has no comma operator, so the binder gives flow nodes only to call statements.
+	debug.Assert(ast.IsExpressionStatement(call.Parent), "flow call node outside a call statement")
+	funcType := c.getTypeOfDottedName(call.Expression(), nil /*diagnostic*/)
+	if funcType == nil {
+		return nil
+	}
+	return c.getSignaturesOfType(c.getApparentType(funcType), SignatureKindCall)
+}
+
+// getAssertionFlowCallEffect classifies a call to signature, which returns: an assertion, an
+// assertion that always fails, or nothing to flow analysis.
+func (c *Checker) getAssertionFlowCallEffect(flow *ast.FlowNode, signature *Signature) flowCallEffect {
+	predicate := c.getTypePredicateOfSignature(signature)
+	if predicate == nil || predicate.kind != TypePredicateKindAssertsIdentifier {
+		return flowCallNone
+	}
+	if predicate.t == nil {
+		// `assert(false)`, `assert(nil)`: the assertion always fails. Same colon-aware
+		// index mapping as typed predicates.
+		if arg := c.getTypePredicateArgument(predicate, flow.Node); arg != nil && c.isFalseExpression(arg) {
+			return flowCallUnreachable
+		}
+	}
+	// The binder's test that keeps a non-narrowing `if` out of the flow graph found
+	// nothing in the call's arguments that could narrow.
+	if flow.Flags&ast.FlowFlagsNarrowingArg == 0 {
+		return flowCallNone
+	}
+	return flowCallAssertion
+}
+
+// narrowTypeByAssertionCall narrows t by a call statement getTypeAtFlowNode deferred as a
+// flowCallAssertion. The declared predicate serves unless it is typed and generic: then only
+// the call's instantiation knows the type it asserts, and the call is resolved after all.
+func (c *Checker) narrowTypeByAssertionCall(f *FlowState, t *Type, call *ast.Node) *Type {
+	signature := c.signatureLinks.Get(call).flowCallSignature
+	predicate := c.getTypePredicateOfSignature(signature)
+	if predicate.t != nil && len(signature.typeParameters) != 0 {
+		// Resolving checks the call's arguments -- at a module's top level possibly another
+		// module's exports mid-resolution -- so only a reference the asserted argument can
+		// narrow pays for it. The argument's position does not depend on the instantiation.
+		if arg := c.getTypePredicateArgument(predicate, call); arg == nil || !c.isTypePredicateArgumentFor(f, t, arg) {
+			return t
+		}
+		resolved := c.getEffectsSignature(call)
+		if resolved == nil {
+			return t // circular or failed resolution
+		}
+		predicate = c.getTypePredicateOfSignature(resolved)
+		debug.Assert(predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier, "resolved assertion call lost its declared asserts predicate")
+	}
+	if predicate.t != nil {
+		return c.narrowTypeByTypePredicate(f, t, predicate, call, true /*assumeTrue*/)
+	}
+	// Typeless `asserts x`: the same colon-aware index mapping as typed predicates.
+	if arg := c.getTypePredicateArgument(predicate, call); arg != nil {
+		return c.narrowTypeByAssertion(f, t, arg)
+	}
+	return t
 }
 
 // getTypeAtLuaSetmetatableCall narrows the table operand of a `setmetatable(t, mt);` statement to
@@ -398,6 +531,15 @@ func (c *Checker) getTypeAtLuaSetmetatableCall(f *FlowState, flow *ast.FlowNode,
 	return c.newFlowType(narrowedType, flowType.incomplete)
 }
 
+// isTypePredicateArgumentFor reports whether narrowTypeByTypePredicate can narrow f's reference
+// through predicateArgument, whatever type the predicate asserts: the tests it applies.
+func (c *Checker) isTypePredicateArgumentFor(f *FlowState, t *Type, predicateArgument *ast.Node) bool {
+	return c.isMatchingReference(f.reference, predicateArgument) ||
+		c.optionalChainContainsReference(predicateArgument, f.reference) ||
+		c.getDiscriminantPropertyAccess(f, predicateArgument, t) != nil
+}
+
+// A reference this narrows must pass isTypePredicateArgumentFor, which repeats its tests.
 func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *TypePredicate, callExpression *ast.Node, assumeTrue bool) *Type {
 	if predicate.t != nil {
 		predicateArgument := c.getTypePredicateArgument(predicate, callExpression)
@@ -421,7 +563,7 @@ func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *Ty
 
 func (c *Checker) narrowTypeByAssertion(f *FlowState, t *Type, expr *ast.Node) *Type {
 	node := ast.SkipParentheses(expr)
-	if node.Kind == ast.KindFalseKeyword {
+	if node.Kind == ast.KindFalseKeyword || node.Kind == ast.KindNilKeyword {
 		return c.unreachableNeverType
 	}
 	if node.Kind == ast.KindBinaryExpression {
@@ -528,7 +670,8 @@ func (c *Checker) narrowTypeByTruthiness(f *FlowState, t *Type, expr *ast.Node, 
 func (c *Checker) narrowTypeByCallExpression(f *FlowState, t *Type, callExpression *ast.Node, assumeTrue bool) *Type {
 	// `io.type(x)` is truthy exactly for file handles; it returns nil for everything
 	// else. (`type(x)` always returns a non-empty string, so it narrows nothing.)
-	if guard, argument := c.getLuaTypeGuardCall(callExpression); guard == luaGuardIOType && c.isMatchingReference(f.reference, c.getReferenceCandidate(argument)) {
+	if kind, argument := c.getLuaTypeGuardCall(callExpression); kind == luaGuardIOType &&
+		c.isMatchingReference(f.reference, c.getReferenceCandidate(argument)) {
 		return c.narrowTypeByLuaFile(t, assumeTrue)
 	}
 	if c.hasMatchingArgument(callExpression, f.reference) {
@@ -563,11 +706,16 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 		operator := expr.OperatorToken.Kind
 		left := c.getReferenceCandidate(expr.Left)
 		right := c.getReferenceCandidate(expr.Right)
-		if guard, argument := c.getLuaTypeGuardCall(left); guard != luaGuardNone && isLuaTypeGuardLiteral(right) {
-			return c.narrowTypeByLuaTypeGuard(f, t, guard, argument, operator, right, assumeTrue)
+		// The literal test is syntactic; resolving a guard's callee is not.
+		if isLuaTypeGuardLiteral(right) {
+			if guard, argument := c.getLuaTypeGuardCall(left); guard != luaGuardNone {
+				return c.narrowTypeByLuaTypeGuard(f, t, guard, argument, operator, right, assumeTrue)
+			}
 		}
-		if guard, argument := c.getLuaTypeGuardCall(right); guard != luaGuardNone && isLuaTypeGuardLiteral(left) {
-			return c.narrowTypeByLuaTypeGuard(f, t, guard, argument, operator, left, assumeTrue)
+		if isLuaTypeGuardLiteral(left) {
+			if guard, argument := c.getLuaTypeGuardCall(right); guard != luaGuardNone {
+				return c.narrowTypeByLuaTypeGuard(f, t, guard, argument, operator, left, assumeTrue)
+			}
 		}
 		if c.isMatchingReference(f.reference, left) {
 			return c.narrowTypeByEquality(t, operator, right, assumeTrue)
@@ -2024,6 +2172,9 @@ func (c *Checker) getEffectsSignature(node *ast.Node) *Signature {
 	links := c.signatureLinks.Get(node)
 	signature := links.effectsSignature
 	if signature == nil {
+		// getTypeOfDottedName follows Lua local aliases (`local check = assert`), whose resolution
+		// is not final while augmentations attach; flow analysis never runs then.
+		debug.Assert(!c.attachingLuaAugmentations, "effects signature computed while attaching Lua augmentations")
 		// A call expression parented by an expression statement is a potential assertion. Other call
 		// expressions are potential type predicate function calls. In order to avoid triggering
 		// circularities in control flow analysis, we use getTypeOfDottedName when resolving the call
@@ -2116,6 +2267,15 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 			if c.isDeclarationWithExplicitTypeAnnotation(declaration) {
 				return c.getTypeOfSymbol(symbol)
 			}
+			// A Lua local alias (`local error = error`) holds its target for its whole life,
+			// so the target's explicit type is its own -- and resolving it cannot recurse
+			// into flow analysis any more than a direct reference to the target would.
+			// Without one, the annotation is asked of the alias the call spelled.
+			if target := c.resolveLuaLocalAlias(symbol); target != c.getMergedSymbol(symbol) {
+				if t := c.getExplicitTypeOfSymbol(target, nil /*diagnostic*/); t != nil {
+					return t
+				}
+			}
 			// (Upstream had a JS `for (x of y)` element-type branch here. tlua's
 			// only ForOfStatement producer is the Lua generic-for, which always
 			// sets NodeFlagsLuaLocal, so a non-Lua for-of can never reach this
@@ -2143,7 +2303,14 @@ func (c *Checker) isExpandoPropertyFunctionWithReturnTypeAnnotation(node *ast.No
 }
 
 func (c *Checker) hasTypePredicateOrNeverReturnType(sig *Signature) bool {
-	return c.getTypePredicateOfSignature(sig) != nil || sig.declaration != nil && core.OrElse(c.getReturnTypeFromAnnotation(sig.declaration), c.unknownType).flags&TypeFlagsNever != 0
+	return c.getTypePredicateOfSignature(sig) != nil || c.hasNeverReturnAnnotation(sig)
+}
+
+// hasNeverReturnAnnotation reports whether sig is declared to return never. Flow analysis
+// reads only the annotation: an inferred return type needs the body's flow, which may be the
+// very flow being analyzed.
+func (c *Checker) hasNeverReturnAnnotation(sig *Signature) bool {
+	return sig.declaration != nil && core.OrElse(c.getReturnTypeFromAnnotation(sig.declaration), c.unknownType).flags&TypeFlagsNever != 0
 }
 
 func (c *Checker) getExplicitThisType(node *ast.Node) *Type {
@@ -2405,16 +2572,8 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		case flags&(ast.FlowFlagsAssignment|ast.FlowFlagsCondition|ast.FlowFlagsArrayMutation) != 0:
 			flow = flow.Antecedent
 		case flags&ast.FlowFlagsCall != 0:
-			if signature := c.getEffectsSignature(flow.Node); signature != nil {
-				if predicate := c.getTypePredicateOfSignature(signature); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
-					// Same colon-aware index mapping as typed predicates.
-					if arg := c.getTypePredicateArgument(predicate, flow.Node); arg != nil && c.isFalseExpression(arg) {
-						return false
-					}
-				}
-				if c.getReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
-					return false
-				}
+			if c.getFlowCallEffect(flow) == flowCallUnreachable {
+				return false
 			}
 			flow = flow.Antecedent
 		case flags&ast.FlowFlagsBranchLabel != 0:
@@ -2444,9 +2603,11 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 	}
 }
 
+// isFalseExpression reports whether expr is always falsy: built from Lua's falsy literals,
+// `false` and `nil`.
 func (c *Checker) isFalseExpression(expr *ast.Node) bool {
 	node := ast.SkipParentheses(expr)
-	if node.Kind == ast.KindFalseKeyword {
+	if node.Kind == ast.KindFalseKeyword || node.Kind == ast.KindNilKeyword {
 		return true
 	}
 	if ast.IsBinaryExpression(node) {

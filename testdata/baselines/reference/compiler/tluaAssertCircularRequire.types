@@ -1,0 +1,114 @@
+//// [tests/cases/compiler/tluaAssertCircularRequire.tlua] ////
+
+=== main.tlua ===
+local m = require("m")
+>m : { y: number; } | { y: number; }
+>require("m") : { y: number; } | { y: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+local a = require("a")
+>a : { x: number; }
+>require("a") : { x: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"a" : "a"
+
+local _ = m.y + a.x
+>_ : number
+>m.y + a.x : number
+>m.y : number
+>m : { y: number; } | { y: number; }
+>y : number
+>a.x : number
+>a : { x: number; }
+>x : number
+
+=== m.tlua ===
+// Two modules that require each other and assert on the other's exports at top
+// level. A module's type depends on its reachability, which flow analysis reads from
+// each call's declared signature: it never resolves these calls, which would check
+// `a.x` and reach a's type mid-resolution. That holds for a user's generic typed
+// assertion too, whose instantiation matters only to narrowing a reference.
+declare function check<T>(v: unknown, tag: T): asserts v is T
+>check : <T>(v: unknown, tag: T) => asserts v is T
+>v : unknown
+>tag : T
+
+declare function pick(): number | nil
+>pick : () => number | nil
+
+local a = require("a")
+>a : { x: number; }
+>require("a") : { x: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"a" : "a"
+
+assert(a.x)
+>assert(a.x) : number
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>a.x : number
+>a : { x: number; }
+>x : number
+
+check(a.x, 1)
+>check(a.x, 1) : void
+>check : <T>(v: unknown, tag: T) => asserts v is T
+>a.x : number
+>a : { x: number; }
+>x : number
+>1 : 1
+
+// Narrowing v walks past check(a.x, 1). Only a reference its argument can narrow
+// resolves the generic call, so v's walk never checks a.x.
+local v = pick()
+>v : number | nil
+>pick() : number | nil
+>pick : () => number | nil
+
+if v then
+>v : number | nil
+
+  return { y = v }
+>{ y = v } : { y: number; }
+>y : number
+>v : number
+
+end
+return { y = 1 }
+>{ y = 1 } : { y: number; }
+>y : number
+>1 : 1
+
+=== a.tlua ===
+declare function check<T>(v: unknown, tag: T): asserts v is T
+>check : <T>(v: unknown, tag: T) => asserts v is T
+>v : unknown
+>tag : T
+
+local m = require("m")
+>m : { y: number; } | { y: number; }
+>require("m") : { y: number; } | { y: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+assert(m.y, "need y")
+>assert(m.y, "need y") : number
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>m.y : number
+>m : { y: number; } | { y: number; }
+>y : number
+>"need y" : "need y"
+
+check(m.y, 1)
+>check(m.y, 1) : void
+>check : <T>(v: unknown, tag: T) => asserts v is T
+>m.y : number
+>m : { y: number; } | { y: number; }
+>y : number
+>1 : 1
+
+return { x = 1 }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+

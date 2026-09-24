@@ -1,0 +1,190 @@
+// === Inlay Hints ===
+local check = assert;
+           ^
+{
+  "position": {
+    "line": 0,
+    "character": 11
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "<"
+    },
+    {
+      "value": "T",
+      "location": {
+        "uri": "bundled:///libs/lib.luajit.d.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      }
+    },
+    {
+      "value": ", ..."
+    },
+    {
+      "value": "M",
+      "location": {
+        "uri": "bundled:///libs/lib.luajit.d.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      }
+    },
+    {
+      "value": ">("
+    },
+    {
+      "value": "value",
+      "location": {
+        "uri": "bundled:///libs/lib.luajit.d.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      }
+    },
+    {
+      "value": ": "
+    },
+    {
+      "value": "T",
+      "location": {
+        "uri": "bundled:///libs/lib.luajit.d.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      }
+    },
+    {
+      "value": " | nil, ...: "
+    },
+    {
+      "value": "M",
+      "location": {
+        "uri": "bundled:///libs/lib.luajit.d.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      }
+    },
+    {
+      "value": ") => ("
+    },
+    {
+      "value": "T",
+      "location": {
+        "uri": "bundled:///libs/lib.luajit.d.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      }
+    },
+    {
+      "value": ", ..."
+    },
+    {
+      "value": "M",
+      "location": {
+        "uri": "bundled:///libs/lib.luajit.d.tlua",
+        "range": {
+          "start": {
+            "line": 0,
+            "character": 0
+          },
+          "end": {
+            "line": 0,
+            "character": 0
+          }
+        }
+      }
+    },
+    {
+      "value": ") asserts value"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}
+
+local expect = function(v: unknown): string asserts v is string
+            ^
+{
+  "position": {
+    "line": 1,
+    "character": 12
+  },
+  "label": [
+    {
+      "value": ": "
+    },
+    {
+      "value": "("
+    },
+    {
+      "value": "v",
+      "location": {
+        "uri": "file:///luaAssertsWithReturnInlayHints.tlua",
+        "range": {
+          "start": {
+            "line": 1,
+            "character": 24
+          },
+          "end": {
+            "line": 1,
+            "character": 25
+          }
+        }
+      }
+    },
+    {
+      "value": ": unknown) => string asserts v is string"
+    }
+  ],
+  "kind": 1,
+  "paddingLeft": true
+}

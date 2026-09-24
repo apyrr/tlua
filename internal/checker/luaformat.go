@@ -10,7 +10,7 @@ var luaFormatNames = []string{"format"}
 // getLuaFormatCall returns the literal format expression and the number of
 // effective call arguments preceding its substitutions.
 func (c *Checker) getLuaFormatCall(node *ast.Node, checkMode CheckMode) (*ast.Node, int) {
-	call := c.resolveLuaBuiltinCall(node, checkMode, luaFormatNames, c.getLuaStringGlobalSymbol, func() *Type { return c.globalStringType })
+	call := c.resolveLuaBuiltinCall(node, checkMode, luaFormatNames, "string", c.getLuaStringGlobalSymbol, func() *Type { return c.globalStringType })
 	if call == nil {
 		return nil, 0
 	}

@@ -118,7 +118,7 @@ local asserted, message = assert(1, "ok");
 >asserted : number
 >message : string
 >assert(1, "ok") : number
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M)
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
 >1 : 1
 >"ok" : "ok"
 
@@ -162,13 +162,13 @@ local first, second = string.find("typed lua", "lua");
 local ok: number = assert(first);
 >ok : number
 >assert(first) : number
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M)
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
 >first : number | nil
 
 local finish: number = assert(second);
 >finish : number
 >assert(second) : number
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M)
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
 >second : number | nil
 
 bitlib.band("wrong", 1);

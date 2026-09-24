@@ -124,11 +124,11 @@ function narrowBoolean()
   end
 end
 -- `not` on a truthy value is `false`.
-local notZero = !zero;
-local notEmpty = !empty;
-local notString = !s;
-local notFalse = !false;
-local notNil = !nothing;
+local notZero = not zero;
+local notEmpty = not empty;
+local notString = not s;
+local notFalse = not false;
+local notNil = not nothing;
 -- `and` yields its right operand whenever the left is always truthy.
 local and1 = zero and n;
 local and2 = empty and n;

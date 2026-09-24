@@ -1,0 +1,350 @@
+//// [tests/cases/compiler/tluaLocalBuiltinAlias.tlua] ////
+
+=== tluaLocalBuiltinAlias.tlua ===
+// Caching a builtin in a local -- `local type = type`, or under another name --
+// keeps everything the checker knows about the builtin, as long as the local is
+// never reassigned. (Renamed metatable aliases: see tluaMetatableShadowed.)
+
+local type = type
+>type : Symbol(type, Decl(tluaLocalBuiltinAlias.tlua, 4, 5))
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+
+local error = error
+>error : Symbol(error, Decl(tluaLocalBuiltinAlias.tlua, 5, 5))
+>error : Symbol(error, Decl(lib.luajit.d.tlua, --, --))
+
+local t = type
+>t : Symbol(t, Decl(tluaLocalBuiltinAlias.tlua, 6, 5))
+>type : Symbol(type, Decl(tluaLocalBuiltinAlias.tlua, 4, 5))
+
+local check = assert
+>check : Symbol(check, Decl(tluaLocalBuiltinAlias.tlua, 7, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+local setmetatable = setmetatable
+>setmetatable : Symbol(setmetatable, Decl(tluaLocalBuiltinAlias.tlua, 8, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+declare v: string | number | nil
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+function typeGuards(): void
+>typeGuards : Symbol(typeGuards, Decl(tluaLocalBuiltinAlias.tlua, 10, 32))
+
+  if type(v) == "string" then
+>type : Symbol(type, Decl(tluaLocalBuiltinAlias.tlua, 4, 5))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaLocalBuiltinAlias.tlua, 14, 9))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+  end
+  if t(v) == "number" then
+>t : Symbol(t, Decl(tluaLocalBuiltinAlias.tlua, 6, 5))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+    local n: number = v;
+>n : Symbol(n, Decl(tluaLocalBuiltinAlias.tlua, 17, 9))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+  end
+end
+
+function assertNarrows(a: string | nil, b: number | nil): void
+>assertNarrows : Symbol(assertNarrows, Decl(tluaLocalBuiltinAlias.tlua, 19, 3))
+>a : Symbol(a, Decl(tluaLocalBuiltinAlias.tlua, 21, 23))
+>b : Symbol(b, Decl(tluaLocalBuiltinAlias.tlua, 21, 39))
+
+  assert(a)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaLocalBuiltinAlias.tlua, 21, 23))
+
+  local s: string = a;
+>s : Symbol(s, Decl(tluaLocalBuiltinAlias.tlua, 23, 7))
+>a : Symbol(a, Decl(tluaLocalBuiltinAlias.tlua, 21, 23))
+
+  check(b and type(v) == "string")
+>check : Symbol(check, Decl(tluaLocalBuiltinAlias.tlua, 7, 5))
+>b : Symbol(b, Decl(tluaLocalBuiltinAlias.tlua, 21, 39))
+>type : Symbol(type, Decl(tluaLocalBuiltinAlias.tlua, 4, 5))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+  local n: number = b;
+>n : Symbol(n, Decl(tluaLocalBuiltinAlias.tlua, 25, 7))
+>b : Symbol(b, Decl(tluaLocalBuiltinAlias.tlua, 21, 39))
+
+  local w: string = v;
+>w : Symbol(w, Decl(tluaLocalBuiltinAlias.tlua, 26, 7))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+end
+
+local function fail(message: string): never
+>fail : Symbol(fail, Decl(tluaLocalBuiltinAlias.tlua, 27, 3))
+>message : Symbol(message, Decl(tluaLocalBuiltinAlias.tlua, 29, 20))
+
+  error(message, 0)
+>error : Symbol(error, Decl(tluaLocalBuiltinAlias.tlua, 5, 5))
+>message : Symbol(message, Decl(tluaLocalBuiltinAlias.tlua, 29, 20))
+
+end
+
+function callerNarrows(x: string | nil): string
+>callerNarrows : Symbol(callerNarrows, Decl(tluaLocalBuiltinAlias.tlua, 31, 3))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 33, 23))
+
+  if x == nil then fail("missing") end
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 33, 23))
+>fail : Symbol(fail, Decl(tluaLocalBuiltinAlias.tlua, 27, 3))
+
+  return x
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 33, 23))
+
+end
+
+function assertFalseEnds(): number
+>assertFalseEnds : Symbol(assertFalseEnds, Decl(tluaLocalBuiltinAlias.tlua, 36, 3))
+
+  assert(false)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+function assertNilEnds(): number
+>assertNilEnds : Symbol(assertNilEnds, Decl(tluaLocalBuiltinAlias.tlua, 40, 3))
+
+  assert(nil, "unreachable")
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+function assertFalsyChainEnds(x: string | nil): number
+>assertFalsyChainEnds : Symbol(assertFalsyChainEnds, Decl(tluaLocalBuiltinAlias.tlua, 44, 3))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 46, 30))
+
+  assert(x and nil)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 46, 30))
+
+end
+
+function metatableAlias(): number
+>metatableAlias : Symbol(metatableAlias, Decl(tluaLocalBuiltinAlias.tlua, 48, 3))
+
+  local o = { value = 1 }
+>o : Symbol(o, Decl(tluaLocalBuiltinAlias.tlua, 51, 7))
+>value : Symbol(value, Decl(tluaLocalBuiltinAlias.tlua, 51, 13))
+
+  setmetatable(o, { __call = function(self: { value: number }): number return self.value end })
+>setmetatable : Symbol(setmetatable, Decl(tluaLocalBuiltinAlias.tlua, 8, 5))
+>o : Symbol(o, Decl(tluaLocalBuiltinAlias.tlua, 51, 7))
+>__call : Symbol(__call, Decl(tluaLocalBuiltinAlias.tlua, 52, 19))
+>self : Symbol(self, Decl(tluaLocalBuiltinAlias.tlua, 52, 38))
+>value : Symbol(value, Decl(tluaLocalBuiltinAlias.tlua, 52, 45))
+>self.value : Symbol(value, Decl(tluaLocalBuiltinAlias.tlua, 52, 45))
+>self : Symbol(self, Decl(tluaLocalBuiltinAlias.tlua, 52, 38))
+>value : Symbol(value, Decl(tluaLocalBuiltinAlias.tlua, 52, 45))
+
+  return o()
+>o : Symbol(o, Decl(tluaLocalBuiltinAlias.tlua, 51, 7))
+
+end
+
+// A reassigned local or a shadowing function is not the builtin: each use below
+// is an error.
+
+function reassigned(): void
+>reassigned : Symbol(reassigned, Decl(tluaLocalBuiltinAlias.tlua, 54, 3))
+
+  local ty = type
+>ty : Symbol(ty, Decl(tluaLocalBuiltinAlias.tlua, 60, 7))
+>type : Symbol(type, Decl(tluaLocalBuiltinAlias.tlua, 4, 5))
+
+  ty = function(x: any): "string" return "string" end
+>ty : Symbol(ty, Decl(tluaLocalBuiltinAlias.tlua, 60, 7))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 61, 16))
+
+  if ty(v) == "string" then
+>ty : Symbol(ty, Decl(tluaLocalBuiltinAlias.tlua, 60, 7))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaLocalBuiltinAlias.tlua, 63, 9))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+  end
+end
+
+function shadowed(): void
+>shadowed : Symbol(shadowed, Decl(tluaLocalBuiltinAlias.tlua, 65, 3))
+
+  local assert = function(value: any): void end
+>assert : Symbol(assert, Decl(tluaLocalBuiltinAlias.tlua, 68, 7))
+>value : Symbol(value, Decl(tluaLocalBuiltinAlias.tlua, 68, 26))
+
+  assert(v)
+>assert : Symbol(assert, Decl(tluaLocalBuiltinAlias.tlua, 68, 7))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+  local s: string | number = v;
+>s : Symbol(s, Decl(tluaLocalBuiltinAlias.tlua, 70, 7))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+end
+
+// An alias of a function without an explicit type is not an assertion either,
+// and the annotation it needs is asked of the alias the call spelled.
+
+local unannotated = function(x: unknown): asserts x end
+>unannotated : Symbol(unannotated, Decl(tluaLocalBuiltinAlias.tlua, 76, 5))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 76, 29))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 76, 29))
+
+local viaAlias = unannotated
+>viaAlias : Symbol(viaAlias, Decl(tluaLocalBuiltinAlias.tlua, 77, 5))
+>unannotated : Symbol(unannotated, Decl(tluaLocalBuiltinAlias.tlua, 76, 5))
+
+function aliasNeedsAnnotation(w: string | nil): void
+>aliasNeedsAnnotation : Symbol(aliasNeedsAnnotation, Decl(tluaLocalBuiltinAlias.tlua, 77, 28))
+>w : Symbol(w, Decl(tluaLocalBuiltinAlias.tlua, 79, 30))
+
+  viaAlias(w)
+>viaAlias : Symbol(viaAlias, Decl(tluaLocalBuiltinAlias.tlua, 77, 5))
+>w : Symbol(w, Decl(tluaLocalBuiltinAlias.tlua, 79, 30))
+
+end
+
+// An annotation opts out: the local is its declared type, not the builtin.
+
+function annotatedOptsOut(): void
+>annotatedOptsOut : Symbol(annotatedOptsOut, Decl(tluaLocalBuiltinAlias.tlua, 81, 3))
+
+  local ty: any = type
+>ty : Symbol(ty, Decl(tluaLocalBuiltinAlias.tlua, 86, 7))
+>type : Symbol(type, Decl(tluaLocalBuiltinAlias.tlua, 4, 5))
+
+  if ty(v) == "string" then
+>ty : Symbol(ty, Decl(tluaLocalBuiltinAlias.tlua, 86, 7))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+    local s: string = v;
+>s : Symbol(s, Decl(tluaLocalBuiltinAlias.tlua, 88, 9))
+>v : Symbol(v, Decl(tluaLocalBuiltinAlias.tlua, 10, 7))
+
+  end
+end
+
+// Asserts narrow in one pass over the statements rather than one recursion each,
+// so a long run of them does not exhaust flow analysis. Conditions are only
+// narrowed by, never resolved name by name: field names, casts and nested
+// function bodies stay as they are.
+
+declare function tick(): number
+>tick : Symbol(tick, Decl(tluaLocalBuiltinAlias.tlua, 90, 3))
+
+interface Flag { ok: boolean }
+>Flag : Symbol(Flag, Decl(tluaLocalBuiltinAlias.tlua, 97, 31))
+>ok : Symbol(Flag.ok, Decl(tluaLocalBuiltinAlias.tlua, 98, 16))
+
+function manyAsserts(x: string | nil): string
+>manyAsserts : Symbol(manyAsserts, Decl(tluaLocalBuiltinAlias.tlua, 98, 30))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 100, 21))
+
+  if x == nil then return "" end
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 100, 21))
+
+  assert(tick() == 1)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>tick : Symbol(tick, Decl(tluaLocalBuiltinAlias.tlua, 90, 3))
+
+  assert(tick() == 2, "two")
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>tick : Symbol(tick, Decl(tluaLocalBuiltinAlias.tlua, 90, 3))
+
+  assert(tick())
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>tick : Symbol(tick, Decl(tluaLocalBuiltinAlias.tlua, 90, 3))
+
+  assert(select("#", { key = 1 }) == 1)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>key : Symbol(key, Decl(tluaLocalBuiltinAlias.tlua, 105, 22))
+
+  assert((x as any as Flag).ok)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>(x as any as Flag).ok : Symbol(Flag.ok, Decl(tluaLocalBuiltinAlias.tlua, 98, 16))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 100, 21))
+>Flag : Symbol(Flag, Decl(tluaLocalBuiltinAlias.tlua, 97, 31))
+>ok : Symbol(Flag.ok, Decl(tluaLocalBuiltinAlias.tlua, 98, 16))
+
+  assert(pcall(function()
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+    local inner = 1
+>inner : Symbol(inner, Decl(tluaLocalBuiltinAlias.tlua, 108, 9))
+
+    return inner
+>inner : Symbol(inner, Decl(tluaLocalBuiltinAlias.tlua, 108, 9))
+
+  end))
+  return x
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 100, 21))
+
+end
+
+// A stable local alias is the same reference, as it is for `if`.
+
+declare function box(): { x: string | nil }
+>box : Symbol(box, Decl(tluaLocalBuiltinAlias.tlua, 112, 3))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 116, 25))
+
+function assertThroughAlias(): string
+>assertThroughAlias : Symbol(assertThroughAlias, Decl(tluaLocalBuiltinAlias.tlua, 116, 43))
+
+  local a = box()
+>a : Symbol(a, Decl(tluaLocalBuiltinAlias.tlua, 119, 7))
+>box : Symbol(box, Decl(tluaLocalBuiltinAlias.tlua, 112, 3))
+
+  local b = a
+>b : Symbol(b, Decl(tluaLocalBuiltinAlias.tlua, 120, 7))
+>a : Symbol(a, Decl(tluaLocalBuiltinAlias.tlua, 119, 7))
+
+  assert(b.x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>b.x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 116, 25))
+>b : Symbol(b, Decl(tluaLocalBuiltinAlias.tlua, 120, 7))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 116, 25))
+
+  return a.x
+>a.x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 116, 25))
+>a : Symbol(a, Decl(tluaLocalBuiltinAlias.tlua, 119, 7))
+>x : Symbol(x, Decl(tluaLocalBuiltinAlias.tlua, 116, 25))
+
+end
+
+// A local list is a pseudo-reference with no root name: asserting one name still
+// narrows its siblings.
+
+declare function parse(s: string): (number, nil) | (nil, string)
+>parse : Symbol(parse, Decl(tluaLocalBuiltinAlias.tlua, 123, 3))
+>s : Symbol(s, Decl(tluaLocalBuiltinAlias.tlua, 128, 23))
+
+function listAssert(): number
+>listAssert : Symbol(listAssert, Decl(tluaLocalBuiltinAlias.tlua, 128, 64))
+
+  local value, err = parse("12")
+>value : Symbol(value, Decl(tluaLocalBuiltinAlias.tlua, 131, 7))
+>err : Symbol(err, Decl(tluaLocalBuiltinAlias.tlua, 131, 14))
+>parse : Symbol(parse, Decl(tluaLocalBuiltinAlias.tlua, 123, 3))
+
+  assert(err == nil)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>err : Symbol(err, Decl(tluaLocalBuiltinAlias.tlua, 131, 14))
+
+  return value
+>value : Symbol(value, Decl(tluaLocalBuiltinAlias.tlua, 131, 7))
+
+end
+

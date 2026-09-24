@@ -1,0 +1,158 @@
+tluaLocalBuiltinAlias.tlua(64,11): error TLUA2322: Type 'string | number | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+tluaLocalBuiltinAlias.tlua(71,9): error TLUA2322: Type 'string | number | nil' is not assignable to type 'string | number'.
+  Type 'nil' is not assignable to type 'string | number'.
+tluaLocalBuiltinAlias.tlua(81,3): error TLUA2775: Assertions require every name in the call target to be declared with an explicit type annotation.
+tluaLocalBuiltinAlias.tlua(89,11): error TLUA2322: Type 'string | number | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+
+
+==== tluaLocalBuiltinAlias.tlua (4 errors) ====
+    // Caching a builtin in a local -- `local type = type`, or under another name --
+    // keeps everything the checker knows about the builtin, as long as the local is
+    // never reassigned. (Renamed metatable aliases: see tluaMetatableShadowed.)
+    
+    local type = type
+    local error = error
+    local t = type
+    local check = assert
+    local setmetatable = setmetatable
+    
+    declare v: string | number | nil
+    
+    function typeGuards(): void
+      if type(v) == "string" then
+        local s: string = v;
+      end
+      if t(v) == "number" then
+        local n: number = v;
+      end
+    end
+    
+    function assertNarrows(a: string | nil, b: number | nil): void
+      assert(a)
+      local s: string = a;
+      check(b and type(v) == "string")
+      local n: number = b;
+      local w: string = v;
+    end
+    
+    local function fail(message: string): never
+      error(message, 0)
+    end
+    
+    function callerNarrows(x: string | nil): string
+      if x == nil then fail("missing") end
+      return x
+    end
+    
+    function assertFalseEnds(): number
+      assert(false)
+    end
+    
+    function assertNilEnds(): number
+      assert(nil, "unreachable")
+    end
+    
+    function assertFalsyChainEnds(x: string | nil): number
+      assert(x and nil)
+    end
+    
+    function metatableAlias(): number
+      local o = { value = 1 }
+      setmetatable(o, { __call = function(self: { value: number }): number return self.value end })
+      return o()
+    end
+    
+    // A reassigned local or a shadowing function is not the builtin: each use below
+    // is an error.
+    
+    function reassigned(): void
+      local ty = type
+      ty = function(x: any): "string" return "string" end
+      if ty(v) == "string" then
+        local s: string = v;
+              ~
+!!! error TLUA2322: Type 'string | number | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
+      end
+    end
+    
+    function shadowed(): void
+      local assert = function(value: any): void end
+      assert(v)
+      local s: string | number = v;
+            ~
+!!! error TLUA2322: Type 'string | number | nil' is not assignable to type 'string | number'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string | number'.
+    end
+    
+    // An alias of a function without an explicit type is not an assertion either,
+    // and the annotation it needs is asked of the alias the call spelled.
+    
+    local unannotated = function(x: unknown): asserts x end
+    local viaAlias = unannotated
+    
+    function aliasNeedsAnnotation(w: string | nil): void
+      viaAlias(w)
+      ~~~~~~~~
+!!! error TLUA2775: Assertions require every name in the call target to be declared with an explicit type annotation.
+!!! related TLUA2782 tluaLocalBuiltinAlias.tlua:78:7: 'viaAlias' needs an explicit type annotation.
+    end
+    
+    // An annotation opts out: the local is its declared type, not the builtin.
+    
+    function annotatedOptsOut(): void
+      local ty: any = type
+      if ty(v) == "string" then
+        local s: string = v;
+              ~
+!!! error TLUA2322: Type 'string | number | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
+      end
+    end
+    
+    // Asserts narrow in one pass over the statements rather than one recursion each,
+    // so a long run of them does not exhaust flow analysis. Conditions are only
+    // narrowed by, never resolved name by name: field names, casts and nested
+    // function bodies stay as they are.
+    
+    declare function tick(): number
+    interface Flag { ok: boolean }
+    
+    function manyAsserts(x: string | nil): string
+      if x == nil then return "" end
+      assert(tick() == 1)
+      assert(tick() == 2, "two")
+      assert(tick())
+      assert(select("#", { key = 1 }) == 1)
+      assert((x as any as Flag).ok)
+      assert(pcall(function()
+        local inner = 1
+        return inner
+      end))
+      return x
+    end
+    
+    // A stable local alias is the same reference, as it is for `if`.
+    
+    declare function box(): { x: string | nil }
+    
+    function assertThroughAlias(): string
+      local a = box()
+      local b = a
+      assert(b.x)
+      return a.x
+    end
+    
+    // A local list is a pseudo-reference with no root name: asserting one name still
+    // narrows its siblings.
+    
+    declare function parse(s: string): (number, nil) | (nil, string)
+    
+    function listAssert(): number
+      local value, err = parse("12")
+      assert(err == nil)
+      return value
+    end
+    

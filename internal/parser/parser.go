@@ -2677,6 +2677,10 @@ func (p *Parser) parseReturnType(returnToken ast.Kind, isType bool) *ast.TypeNod
 // parseCallableReturnType accepts an explicitly parenthesized return pack,
 // avoiding collisions with commas in the surrounding type grammar.
 func (p *Parser) parseCallableReturnType(returnToken ast.Kind, isType bool) *ast.TypeNode {
+	return p.parseTrailingAssertsClause(p.parseCallableReturnTypeWorker(returnToken, isType))
+}
+
+func (p *Parser) parseCallableReturnTypeWorker(returnToken ast.Kind, isType bool) *ast.TypeNode {
 	if !p.shouldParseReturnType(returnToken, isType) {
 		return nil
 	}
@@ -2806,6 +2810,28 @@ func (p *Parser) parseFirstReturnTypeListElement() *ast.TypeNode {
 // diagnostic on the list. Callable type positions go through
 // parseCallableReturnType.
 func (p *Parser) parseReturnTypeList(returnToken ast.Kind) *ast.TypeNode {
+	return p.parseTrailingAssertsClause(p.parseReturnTypeListWorker(returnToken))
+}
+
+// parseTrailingAssertsClause completes a return type followed on the same line by
+// `asserts x` or `asserts x is T`: a signature that returns values and also asserts
+// its parameter, as Lua's assert does. A leading `asserts x` (TypeScript's form) is
+// the whole return type and returns nothing.
+func (p *Parser) parseTrailingAssertsClause(returnType *ast.TypeNode) *ast.TypeNode {
+	if returnType == nil || ast.IsTypePredicateNode(returnType) || p.token != ast.KindAssertsKeyword ||
+		p.hasPrecedingLineBreak() || !p.lookAhead((*Parser).nextTokenIsIdentifierOnSameLine) {
+		return returnType
+	}
+	assertsModifier := p.parseExpectedToken(ast.KindAssertsKeyword)
+	parameterName := p.parseIdentifier()
+	var typeNode *ast.TypeNode
+	if p.parseOptional(ast.KindIsKeyword) {
+		typeNode = p.parseType()
+	}
+	return p.finishNode(p.factory.NewTypePredicateNode(returnType, assertsModifier, parameterName, typeNode), returnType.Pos())
+}
+
+func (p *Parser) parseReturnTypeListWorker(returnToken ast.Kind) *ast.TypeNode {
 	if !p.shouldParseReturnType(returnToken, false /*isType*/) {
 		return nil
 	}
@@ -2883,7 +2909,7 @@ func (p *Parser) parseTypeOrTypePredicate() *ast.TypeNode {
 			// it. Consume packsInReturnUnion here so `x is nil | (number, string)` does
 			// not parse a pack; parseReturnTypeAllowingPacks restores it afterward.
 			p.packsInReturnUnion = false
-			return p.finishNode(p.factory.NewTypePredicateNode(nil /*assertsModifier*/, id, p.parseType()), pos)
+			return p.finishNode(p.factory.NewTypePredicateNode(nil /*returnType*/, nil /*assertsModifier*/, id, p.parseType()), pos)
 		}
 		p.rewind(state)
 	}
@@ -3130,7 +3156,7 @@ func (p *Parser) parseAssertsTypePredicate() *ast.TypeNode {
 	if p.parseOptional(ast.KindIsKeyword) {
 		typeNode = p.parseType()
 	}
-	return p.finishNode(p.factory.NewTypePredicateNode(assertsModifier, parameterName, typeNode), pos)
+	return p.finishNode(p.factory.NewTypePredicateNode(nil /*returnType*/, assertsModifier, parameterName, typeNode), pos)
 }
 
 func (p *Parser) parseTemplateType() *ast.Node {

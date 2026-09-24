@@ -11,10 +11,7 @@ local object = { foo = 1, bar = 2 }
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
+      "value": "{ "
     },
     {
       "value": "foo",
@@ -33,13 +30,7 @@ local object = { foo = 1, bar = 2 }
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": "; "
+      "value": ": number; "
     },
     {
       "value": "bar",
@@ -58,16 +49,7 @@ local object = { foo = 1, bar = 2 }
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": ": number; }"
     }
   ],
   "kind": 1,
@@ -105,10 +87,7 @@ local a = object;
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
+      "value": "{ "
     },
     {
       "value": "foo",
@@ -127,13 +106,7 @@ local a = object;
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": "; "
+      "value": ": number; "
     },
     {
       "value": "bar",
@@ -152,16 +125,7 @@ local a = object;
       }
     },
     {
-      "value": ": "
-    },
-    {
-      "value": "number"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": ": number; }"
     }
   ],
   "kind": 1,

@@ -1,18 +1,23 @@
-tluaTypeGuardIdentity.tlua(11,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(13,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
-tluaTypeGuardIdentity.tlua(18,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(21,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
-tluaTypeGuardIdentity.tlua(26,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(28,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
-tluaTypeGuardIdentity.tlua(31,6): error TLUA2554: Expected 1 arguments, but got 0.
-tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(34,14): error TLUA2554: Expected 0 arguments, but got 1.
+tluaTypeGuardIdentity.tlua(35,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+  Type 'number' is not assignable to type 'string'.
+tluaTypeGuardIdentity.tlua(40,6): error TLUA2554: Expected 1 arguments, but got 0.
+tluaTypeGuardIdentity.tlua(41,11): error TLUA2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
 
 
-==== tluaTypeGuardIdentity.tlua (5 errors) ====
-    // Only a call to the real global `type` narrows. The binder matches the call by
-    // spelling, so every one of these shapes reaches the checker and is turned down
-    // there; each unnarrowed use below is an error.
+==== tluaTypeGuardIdentity.tlua (7 errors) ====
+    // Only a call to the real global `type` or `io.type` (or a local alias of either,
+    // see tluaLocalBuiltinAlias) narrows. The binder admits a call spelled `type(x)`,
+    // `io.type(x)` or through a local alias name, and the checker turns down the
+    // ones that are not the builtin; the rest never become conditions. Each
+    // unnarrowed use below is an error.
     
     declare v: string | number;
     declare function use(x: unknown): void;
@@ -20,16 +25,6 @@ tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not
     function shadowed(): void
       local type = function(value: any) return "string"; end;
       if type(v) == "string" then
-        local s: string = v;
-              ~
-!!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
-!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
-      end
-    end
-    
-    function aliased(): void
-      local t = type;
-      if t(v) == "string" then
         local s: string = v;
               ~
 !!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
@@ -48,11 +43,33 @@ tluaTypeGuardIdentity.tlua(32,11): error TLUA2322: Type 'string | number' is not
       end
     end
     
+    function shadowedIo(): void
+      local io = { type = function(value: any): string return "file" end }
+      if io.type(v) == "string" then
+        local s: string = v;
+              ~
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
+      end
+    end
+    
+    // A colon call passes io itself as the first argument, so it tests io, not v.
+    function colonIo(): void
+      if io:type(v) == "file" then
+                 ~
+!!! error TLUA2554: Expected 0 arguments, but got 1.
+        local s: string = v;
+              ~
+!!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
+      end
+    end
+    
     function wrongArity(): void
       if type() == "string" then
          ~~~~
 !!! error TLUA2554: Expected 1 arguments, but got 0.
-!!! related TLUA6210 lib.luajit.d.tlua:177:23: An argument for 'value' was not provided.
+!!! related TLUA6210 lib.luajit.d.tlua:178:23: An argument for 'value' was not provided.
         local s: string = v;
               ~
 !!! error TLUA2322: Type 'string | number' is not assignable to type 'string'.

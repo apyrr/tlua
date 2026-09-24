@@ -1,0 +1,287 @@
+//// [tests/cases/compiler/tluaAssertsWithReturn.tlua] ////
+
+=== tluaAssertsWithReturn.tlua ===
+// A signature can assert a parameter and also return values: the return type
+// comes first and `asserts x` (or `asserts x is T`) follows it. Called as a
+// statement it narrows like any assertion; used as a value it returns its type.
+// The lib's `assert` is declared this way.
+
+local function expectString(value: unknown, message: string): string asserts value is string
+>expectString : (value: unknown, message: string) => string asserts value is string
+>value : unknown
+>message : string
+
+  if type(value) ~= "string" then
+>type(value) ~= "string" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"string" : "string"
+
+    error(message)
+>error(message) : never
+>error : (message?: any, level?: number) => never
+>message : string
+
+  end
+  return value
+>value : string
+
+end
+
+function statementNarrows(u: unknown): string
+>statementNarrows : (u: unknown) => string
+>u : unknown
+
+  expectString(u, "not a string")
+>expectString(u, "not a string") : string
+>expectString : (value: unknown, message: string) => string asserts value is string
+>u : unknown
+>"not a string" : "not a string"
+
+  return u
+>u : string
+
+end
+
+function valueReturns(u: unknown): string
+>valueReturns : (u: unknown) => string
+>u : unknown
+
+  local s = expectString(u, "not a string")
+>s : string
+>expectString(u, "not a string") : string
+>expectString : (value: unknown, message: string) => string asserts value is string
+>u : unknown
+>"not a string" : "not a string"
+
+  return s
+>s : string
+
+end
+
+// The body is checked against the return type, not against void.
+local function missingReturn(value: unknown): number asserts value
+>missingReturn : (value: unknown) => number asserts value
+>value : unknown
+
+end
+
+// A pack return, like the lib's assert.
+local function both(a: string | nil, b: number): (string, number) asserts a
+>both : (a: string | nil, b: number) => (string, number) asserts a
+>a : string | nil
+>b : number
+
+  return assert(a), b
+>assert(a), b : string, number
+>assert(a) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>a : string | nil
+>b : number
+
+end
+
+function packNarrows(a: string | nil): string
+>packNarrows : (a: string | nil) => string
+>a : string | nil
+
+  both(a, 1)
+>both(a, 1) : string
+>both : (a: string | nil, b: number) => (string, number) asserts a
+>a : string | nil
+>1 : 1
+
+  return a
+>a : string
+
+end
+
+// Relating signatures compares the predicate and the returned values.
+local sameShape: (value: unknown, message: string) => string asserts value is string = expectString
+>sameShape : (value: unknown, message: string) => string asserts value is string
+>value : unknown
+>message : string
+>expectString : (value: unknown, message: string) => string asserts value is string
+
+local wrongReturn: (value: unknown, message: string) => number asserts value is string = expectString
+>wrongReturn : (value: unknown, message: string) => number asserts value is string
+>value : unknown
+>message : string
+>expectString : (value: unknown, message: string) => string asserts value is string
+
+local noPredicate: (value: unknown, message: string) => string = expectString
+>noPredicate : (value: unknown, message: string) => string
+>value : unknown
+>message : string
+>expectString : (value: unknown, message: string) => string asserts value is string
+
+// The lib's assert, directly and through an alias, as a statement and as a value.
+local check = assert
+>check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+
+function libAssert(a: string | nil, b: number | nil): number
+>libAssert : (a: string | nil, b: number | nil) => number
+>a : string | nil
+>b : number | nil
+
+  assert(a)
+>assert(a) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>a : string | nil
+
+  local s: string = a
+>s : string
+>a : string
+
+  check(b, "b is required")
+>check(b, "b is required") : number
+>check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>b : number | nil
+>"b is required" : "b is required"
+
+  return b
+>b : number
+
+end
+
+function libAssertValue(a: string | nil): string
+>libAssertValue : (a: string | nil) => string
+>a : string | nil
+
+  local s = assert(a)
+>s : string
+>assert(a) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>a : string | nil
+
+  return s
+>s : string
+
+end
+
+// Only a void assertion must be analyzable to be called: one that returns values
+// is still an ordinary call through a table, an element access or _G -- it just
+// does not narrow there.
+declare maybe: string | nil
+>maybe : string | nil
+
+local M = { assert = assert }
+>M : { assert: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>{ assert = assert } : { assert: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+
+M.assert(maybe)
+>M.assert(maybe) : string
+>M.assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>M : { assert: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>maybe : string | nil
+
+local fns = { assert }
+>fns : { 1: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>{ assert } : { 1: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>assert : any
+
+fns[1](maybe)
+>fns[1](maybe) : string
+>fns[1] : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>fns : { 1: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>1 : 1
+>maybe : string | nil
+
+_G.assert(maybe)
+>_G.assert(maybe) : string
+>_G.assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>_G : typeof _G
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>maybe : string | nil
+
+// A never-returning assertion ends flow like any never-returning call.
+declare function die(v: unknown): never asserts v
+>die : (v: unknown) => never asserts v
+>v : unknown
+
+function dies(y: string | nil): number
+>dies : (y: string | nil) => number
+>y : string | nil
+
+  die(y)
+>die(y) : never
+>die : (v: unknown) => never asserts v
+>y : string | nil
+
+end
+
+// Inference reads an assertion's returned values as well as its predicate.
+declare function wrap<R>(f: (v: unknown) => R asserts v is string): R
+>wrap : <R>(f: (v: unknown) => R asserts v is string) => R
+>f : (v: unknown) => R asserts v is string
+>v : unknown
+
+declare function numberOf(v: unknown): number asserts v is string
+>numberOf : (v: unknown) => number asserts v is string
+>v : unknown
+
+local wrapped = wrap(numberOf)
+>wrapped : number
+>wrap(numberOf) : number
+>wrap : <R>(f: (v: unknown) => R asserts v is string) => R
+>numberOf : (v: unknown) => number asserts v is string
+
+local wrappedNumber: number = wrapped
+>wrappedNumber : number
+>wrapped : number
+
+// A generic typed assertion narrows to its instantiation.
+declare function checkTag<T>(v: unknown, tag: T): asserts v is T
+>checkTag : <T>(v: unknown, tag: T) => asserts v is T
+>v : unknown
+>tag : T
+
+function genericNarrows(u: unknown): number
+>genericNarrows : (u: unknown) => number
+>u : unknown
+
+  checkTag(u, 1)
+>checkTag(u, 1) : void
+>checkTag : <T>(v: unknown, tag: T) => asserts v is T
+>u : unknown
+>1 : 1
+
+  return u
+>u : 1
+
+end
+
+// Overloads that disagree about returning are told apart by the call.
+declare function maybeFail(v: string): never
+>maybeFail : { (v: string): never; (v: number): number; }
+>v : string
+
+declare function maybeFail(v: number): number
+>maybeFail : { (v: string): never; (v: number): number; }
+>v : number
+
+function overloadEnds(): number
+>overloadEnds : () => number
+
+  maybeFail("x")
+>maybeFail("x") : never
+>maybeFail : { (v: string): never; (v: number): number; }
+>"x" : "x"
+
+end
+
+function overloadReturns(): number
+>overloadReturns : () => number
+
+  maybeFail(1)
+>maybeFail(1) : number
+>maybeFail : { (v: string): never; (v: number): number; }
+>1 : 1
+
+end
+

@@ -68,7 +68,7 @@ func (c *Checker) luaSubjectDeclared(node *ast.Node, checkMode CheckMode) bool {
 // resolveLuaBuiltinCall is the shared detector: a call to one of names,
 // either on the namespace global or as a bundled-interface member. The
 // resolvers are passed lazily so non-matching names never touch symbols.
-func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, checkMode CheckMode, names []string, globalSymbol func() *ast.Symbol, interfaceType func() *Type) *luaBuiltinCall {
+func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, checkMode CheckMode, names []string, global string, globalSymbol func() *ast.Symbol, interfaceType func() *Type) *luaBuiltinCall {
 	if !ast.IsCallExpression(node) || node.QuestionDotToken() != nil {
 		return nil
 	}
@@ -81,7 +81,7 @@ func (c *Checker) resolveLuaBuiltinCall(node *ast.Node, checkMode CheckMode, nam
 		return nil
 	}
 	base := ast.SkipParentheses(callee.Expression())
-	if ast.IsIdentifier(base) && c.isLuaGlobalReference(base, globalSymbol()) {
+	if c.isLuaBuiltinReference(base, global, globalSymbol) {
 		return &luaBuiltinCall{name: name, callee: callee, namespaceForm: true}
 	}
 	member := c.getSymbolOfNameOrPropertyAccessExpression(callee)

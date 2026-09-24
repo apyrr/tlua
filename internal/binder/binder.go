@@ -482,7 +482,7 @@ func (b *Binder) createFlowCondition(flags ast.FlowFlags, antecedent *ast.FlowNo
 	if (expression.Kind == ast.KindTrueKeyword && flags&ast.FlowFlagsFalseCondition != 0 || expression.Kind == ast.KindFalseKeyword && flags&ast.FlowFlagsTrueCondition != 0) && !ast.IsExpressionOfOptionalChainRoot(expression) {
 		return b.unreachableFlow
 	}
-	if !isNarrowingExpression(expression) {
+	if !b.isNarrowingExpression(expression) {
 		return antecedent
 	}
 	setFlowNodeReferenced(antecedent)
@@ -967,7 +967,7 @@ func (b *Binder) bindLuaSetmetatableCandidate(node *ast.Node) {
 	callee := ast.SkipParentheses(node.Expression())
 	switch callee.Kind {
 	case ast.KindIdentifier:
-		if callee.Text() != "setmetatable" {
+		if b.file.LuaBuiltinsNamedBy(callee.Text())&ast.LuaBuiltinSetmetatable == 0 {
 			return
 		}
 	case ast.KindPropertyAccessExpression:
@@ -1627,6 +1627,9 @@ func (b *Binder) bindStatementList(statements *ast.NodeList) {
 	for _, node := range statements.Nodes {
 		if isLuaHoistedFunction(node) {
 			b.bind(node)
+		} else {
+			// Before any later hoisted body binds: it can see this local.
+			b.noteLuaLocalAliases(node)
 		}
 	}
 	for _, node := range statements.Nodes {
@@ -1971,6 +1974,12 @@ func (b *Binder) maybeBindExpressionFlowIfCall(node *ast.Node) {
 	if ast.IsCallExpression(node) {
 		if node.Expression().Kind != ast.KindSuperKeyword && ast.IsDottedName(node.Expression()) {
 			b.currentFlow = b.createFlowCall(b.currentFlow, node)
+			// An assertion narrows by its argument as `if` narrows by its condition, so it takes
+			// the same test. Without symbols the binder cannot tell an assertion from any other
+			// call; the checker reads the flag for assertion signatures only.
+			if b.isNarrowingAssertionCall(node) {
+				b.currentFlow.Flags |= ast.FlowFlagsNarrowingArg
+			}
 		}
 	}
 }
@@ -2374,7 +2383,7 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 	return ContainerFlagsNone
 }
 
-func isNarrowingExpression(expr *ast.Node) bool {
+func (b *Binder) isNarrowingExpression(expr *ast.Node) bool {
 	switch expr.Kind {
 	case ast.KindIdentifier, ast.KindThisKeyword:
 		return true
@@ -2383,13 +2392,38 @@ func isNarrowingExpression(expr *ast.Node) bool {
 	case ast.KindCallExpression:
 		return hasNarrowableArgument(expr)
 	case ast.KindParenthesizedExpression, ast.KindNonNullExpression:
-		return isNarrowingExpression(expr.Expression())
+		return b.isNarrowingExpression(expr.Expression())
 	case ast.KindBinaryExpression:
-		return isNarrowingBinaryExpression(expr.AsBinaryExpression())
+		return b.isNarrowingBinaryExpression(expr.AsBinaryExpression())
 	case ast.KindPrefixUnaryExpression:
-		return expr.AsPrefixUnaryExpression().Operator == ast.KindExclamationToken && isNarrowingExpression(expr.AsPrefixUnaryExpression().Operand)
+		return expr.AsPrefixUnaryExpression().Operator == ast.KindExclamationToken && b.isNarrowingExpression(expr.AsPrefixUnaryExpression().Operand)
 	}
 	return false
+}
+
+// isNarrowingAssertionCall reports whether call, were it an assertion, could narrow: any
+// argument, counting the receiver of a colon call, is a condition that could narrow.
+// (Unlike hasNarrowableArgument, a whole condition counts, not just a reference.)
+func (b *Binder) isNarrowingAssertionCall(call *ast.Node) bool {
+	if ast.IsLuaColonCall(call) && b.isNarrowingCondition(call.Expression().Expression()) {
+		return true
+	}
+	return core.Some(call.Arguments(), b.isNarrowingCondition)
+}
+
+// isNarrowingCondition is isNarrowingExpression for a whole condition. An `if` never
+// asks about `and`, `or` or `not`: bindCondition splits them and asks about each
+// operand. An assert condition arrives whole, so it is split here the same way.
+func (b *Binder) isNarrowingCondition(expr *ast.Node) bool {
+	expr = ast.SkipParentheses(expr)
+	switch {
+	case ast.IsLogicalBinaryExpression(expr):
+		binary := expr.AsBinaryExpression()
+		return b.isNarrowingCondition(binary.Left) || b.isNarrowingCondition(binary.Right)
+	case ast.IsPrefixUnaryExpression(expr) && expr.AsPrefixUnaryExpression().Operator == ast.KindExclamationToken:
+		return b.isNarrowingCondition(expr.AsPrefixUnaryExpression().Operand)
+	}
+	return b.isNarrowingExpression(expr)
 }
 
 func containsNarrowableReference(expr *ast.Node) bool {
@@ -2438,7 +2472,7 @@ func hasNarrowableArgument(expr *ast.Node) bool {
 	return false
 }
 
-func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
+func (b *Binder) isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 	switch expr.OperatorToken.Kind {
 	case ast.KindEqualsToken:
 		return containsNarrowableReference(expr.Left)
@@ -2446,12 +2480,12 @@ func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 		left := ast.SkipParentheses(expr.Left)
 		right := ast.SkipParentheses(expr.Right)
 		return isNarrowableOperand(left) || isNarrowableOperand(right) ||
-			isNarrowingLuaTypeGuardOperands(right, left) || isNarrowingLuaTypeGuardOperands(left, right) ||
-			(ast.IsBooleanLiteral(right) && isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && isNarrowingExpression(right))
+			b.isNarrowingLuaTypeGuardOperands(right, left) || b.isNarrowingLuaTypeGuardOperands(left, right) ||
+			(ast.IsBooleanLiteral(right) && b.isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && b.isNarrowingExpression(right))
 	case ast.KindInKeyword:
-		return isNarrowingExpression(expr.Right)
+		return b.isNarrowingExpression(expr.Right)
 	case ast.KindCommaToken:
-		return isNarrowingExpression(expr.Right)
+		return b.isNarrowingExpression(expr.Right)
 	}
 	return false
 }
@@ -2481,12 +2515,41 @@ func isNarrowableOperand(expr *ast.Node) bool {
 }
 
 // A `type(x)`/`io.type(x)` guard compared against a tag literal narrows x. The
-// binder has no symbols, so it matches the call by shape and lets the checker
+// binder has no symbols, so it gates the callee by name -- the global's own, or a
+// name a local alias was declared with (`local t = type`) -- and lets the checker
 // decide whether the callee is really the global function.
-func isNarrowingLuaTypeGuardOperands(expr1 *ast.Node, expr2 *ast.Node) bool {
-	_, argument := ast.LuaTypeGuardCall(expr1)
-	return argument != nil && isNarrowableOperand(argument) &&
-		(ast.IsStringLiteralLike(expr2) || expr2.Kind == ast.KindNilKeyword)
+func (b *Binder) isNarrowingLuaTypeGuardOperands(expr1 *ast.Node, expr2 *ast.Node) bool {
+	callee, argument := ast.LuaTypeGuardCallShape(expr1)
+	if argument == nil || !isNarrowableOperand(argument) || !(ast.IsStringLiteralLike(expr2) || expr2.Kind == ast.KindNilKeyword) {
+		return false
+	}
+	name, builtin := callee, ast.LuaBuiltinType
+	if ast.IsPropertyAccessExpression(callee) {
+		name, builtin = ast.SkipParentheses(callee.Expression()), ast.LuaBuiltinIO
+	}
+	return b.file.LuaBuiltinsNamedBy(name.Text())&builtin != 0
+}
+
+// noteLuaLocalAliases records in LuaBuiltinAliases the names a `local` statement
+// declares from an identity builtin or an alias already recorded, with the builtins
+// they may name. Statement lists are
+// noted in source order, before the calls in them are bound, so a chain is recorded
+// link by link and ahead of its uses. Names are not scopes: a name is recorded for the
+// rest of the file, which at worst sends a call to the checker to be turned down.
+func (b *Binder) noteLuaLocalAliases(node *ast.Node) {
+	if !ast.IsVariableStatement(node) {
+		return
+	}
+	for _, declaration := range node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
+		if initializer := ast.LuaLocalAliasInitializer(declaration); initializer != nil {
+			if builtins := b.file.LuaBuiltinsNamedBy(initializer.Text()); builtins != 0 {
+				if b.file.LuaBuiltinAliases == nil {
+					b.file.LuaBuiltinAliases = make(map[string]ast.LuaBuiltins)
+				}
+				b.file.LuaBuiltinAliases[declaration.Name().Text()] |= builtins
+			}
+		}
+	}
 }
 
 func (b *Binder) errorOnNode(node *ast.Node, message *diagnostics.Message, args ...any) {

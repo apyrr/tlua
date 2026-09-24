@@ -782,6 +782,7 @@ export interface LiteralTypeNode extends TypeNodeBase {
 }
 export interface TypePredicateNode extends TypeNodeBase {
     readonly kind: SyntaxKind.TypePredicate;
+    readonly returnType?: TypeNode;
     readonly assertsModifier?: AssertsKeyword;
     readonly parameterName: TypePredicateParameterName;
     readonly type?: TypeNode;

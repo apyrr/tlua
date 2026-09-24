@@ -11,13 +11,7 @@
       "value": ": "
     },
     {
-      "value": "boolean"
-    },
-    {
-      "value": " | "
-    },
-    {
-      "value": "nil"
+      "value": "boolean | nil"
     }
   ],
   "kind": 1,

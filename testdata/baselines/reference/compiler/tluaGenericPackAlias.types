@@ -50,7 +50,7 @@ empty();
 >empty : Handler<void>
 
 local one: Handler<number> = function(value): void
->one : Handler<(number)>
+>one : Handler<number>
 >function(value): void    local n: number = value;end : (value: number) => void
 >value : number
 
@@ -61,7 +61,7 @@ local one: Handler<number> = function(value): void
 end;
 one(1);
 >one(1) : void
->one : Handler<(number)>
+>one : Handler<number>
 >1 : 1
 
 local strings: Handler<(...string)> = function(...: string): void end;

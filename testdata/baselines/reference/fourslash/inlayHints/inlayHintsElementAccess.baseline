@@ -11,13 +11,7 @@ local foo = {
       "value": ": "
     },
     {
-      "value": "{"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "["
+      "value": "{ ["
     },
     {
       "value": "MySymbol",
@@ -36,37 +30,7 @@ local foo = {
       }
     },
     {
-      "value": "["
-    },
-    {
-      "value": "\"my dispose\""
-    },
-    {
-      "value": "]"
-    },
-    {
-      "value": "]"
-    },
-    {
-      "value": ": "
-    },
-    {
-      "value": "("
-    },
-    {
-      "value": ")"
-    },
-    {
-      "value": " => "
-    },
-    {
-      "value": "void"
-    },
-    {
-      "value": " "
-    },
-    {
-      "value": "}"
+      "value": "[\"my dispose\"]]: () => void; }"
     }
   ],
   "kind": 1,

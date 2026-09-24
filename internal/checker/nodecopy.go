@@ -735,6 +735,7 @@ func getExistingNodeTreeVisitor(b *NodeBuilderImpl, bound *recoveryBoundary) *as
 			}
 			return factory.UpdateTypePredicateNode(
 				node.AsTypePredicateNode(),
+				visitor.VisitNode(node.AsTypePredicateNode().ReturnType),
 				visitor.VisitNode(node.AsTypePredicateNode().AssertsModifier),
 				parameterName,
 				visitor.VisitNode(node.AsTypePredicateNode().Type),

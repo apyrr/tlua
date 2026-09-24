@@ -130,8 +130,9 @@ declare arg: string[];
 
 // `assert` returns everything it was passed when the first value is truthy, so a
 // pack `...M` carries the trailing arguments through unchanged; the first result is
-// the value narrowed to its non-nil part.
-declare function assert<T, ...M>(value: T | nil, ...: M): (T, ...M);
+// the value narrowed to its non-nil part. As a statement it also narrows `value`
+// the way `if value then` would, since execution only continues when it is truthy.
+declare function assert<T, ...M>(value: T | nil, ...: M): (T, ...M) asserts value;
 declare function collectgarbage(option?: "collect" | "stop" | "restart" | "count" | "step" | "setpause" | "setstepmul", argument?: number): any;
 declare function dofile(filename?: string): (any?, ...any);
 // `error()` with no arguments is legal Lua (it raises a nil error), so `message`

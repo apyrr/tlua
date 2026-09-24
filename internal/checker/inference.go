@@ -799,12 +799,8 @@ func (c *Checker) inferFromSignatures(n *InferenceState, source *Type, target *T
 func (c *Checker) inferFromSignature(n *InferenceState, source *Signature, target *Signature) {
 	if source.flags&SignatureFlagsIsNonInferrable == 0 {
 		saveBivariant := n.bivariant
-		kind := ast.KindUnknown
-		if target.declaration != nil {
-			kind = target.declaration.Kind
-		}
 		// Once we descend into a bivariant signature we remain bivariant for all nested inferences
-		n.bivariant = n.bivariant || kind == ast.KindMethodSignature
+		n.bivariant = n.bivariant || isMethodSignature(target)
 		c.applyToParameterTypes(source, target, func(s, t *Type) { c.inferFromContravariantTypesIfStrictFunctionTypes(n, s, t) })
 		n.bivariant = saveBivariant
 	}
@@ -845,7 +841,10 @@ func (c *Checker) applyToReturnTypes(source *Signature, target *Signature, callb
 		sourceTypePredicate := c.getTypePredicateOfSignature(source)
 		if sourceTypePredicate != nil && c.typePredicateKindsMatch(sourceTypePredicate, targetTypePredicate) && sourceTypePredicate.t != nil && targetTypePredicate.t != nil {
 			callback(sourceTypePredicate.t, targetTypePredicate.t)
-			return
+			// An assertion's returned values (`R asserts x is T`) are inferred from as well.
+			if targetTypePredicate.kind != TypePredicateKindAssertsIdentifier {
+				return
+			}
 		}
 	}
 	targetReturnType := c.getReturnTypeOfSignature(target)

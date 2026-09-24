@@ -1,0 +1,83 @@
+// @strict: true
+
+-- A member function statement taking the receiver (`function T.m(self)`,
+-- `function T:m()`) is a method declaration, so an override may narrow `self`
+-- like an interface method.
+
+local Base = {}
+Base.__index = Base
+
+function Base.describe(self: Animal): string
+    return self.name
+end
+
+local type AnimalMethods = Omit<typeof Base, "__index">
+
+interface Animal extends AnimalMethods {
+    name: string;
+}
+
+-- Statement-form subclass: the instance is assignable to the base.
+local Dog = {}
+Dog.__index = Dog
+setmetatable(Dog, { __index = Base })
+
+function Dog.describe(self: DogInstance): string
+    return self.name .. " (" .. self.breed .. ")"
+end
+
+local type DogMethods = Omit<typeof Dog, "__index">
+
+interface DogInstance extends Omit<Animal, keyof DogMethods>, DogMethods {
+    breed: string;
+}
+
+local function printAnimal(animal: Animal)
+    print(animal:describe())
+end
+
+local dog = setmetatable({ name = "Rex", breed = "Husky" }, Dog) as unknown as DogInstance
+printAnimal(dog)
+
+-- Expression-form subclass: the self-referencing `__index` accepts the override.
+local Cat = setmetatable({}, { __index = Base })
+Cat.__index = Cat
+
+function Cat.describe(self: CatInstance): string
+    return self.name .. " says " .. self.sound
+end
+
+interface CatInstance extends Animal {
+    sound: string;
+}
+
+-- The colon form declares a method too: its parameters compare bivariantly.
+local Counter = {}
+function Counter:add(n: string | number): number
+    return 1
+end
+local NarrowCounter = {}
+function NarrowCounter:add(n: number): number
+    return n
+end
+local counter: typeof Counter = NarrowCounter
+
+-- A function value assigned to a member is a property: still strict.
+local Plain = {}
+Plain.run = function(self: string): number
+    return 1
+end
+local Narrow = {}
+Narrow.run = function(self: "a"): number
+    return 1
+end
+local plain: typeof Plain = Narrow
+
+-- A member statement without a receiver is a module function: still strict.
+local M = {}
+function M.parse(s: string | number): string
+    return tostring(s)
+end
+M.parse = function(s: string): string
+    return s
+end

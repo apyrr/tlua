@@ -561,10 +561,11 @@ func (d *astDecoder) createChildrenNode(kind ast.Kind, data uint32, childIndices
 		return d.factory.NewLiteralTypeNode(d.singleChild(childIndices)), nil
 	case ast.KindTypePredicate:
 		it := newChildIter(childIndices)
-		assertsModifier := d.nodeAt(it.nextIf(mask, 0))
-		parameterName := d.nodeAt(it.nextIf(mask, 1))
-		typeNode := d.nodeAt(it.nextIf(mask, 2))
-		return d.factory.NewTypePredicateNode(assertsModifier, parameterName, typeNode), nil
+		returnType := d.nodeAt(it.nextIf(mask, 0))
+		assertsModifier := d.nodeAt(it.nextIf(mask, 1))
+		parameterName := d.nodeAt(it.nextIf(mask, 2))
+		typeNode := d.nodeAt(it.nextIf(mask, 3))
+		return d.factory.NewTypePredicateNode(returnType, assertsModifier, parameterName, typeNode), nil
 	case ast.KindTypeQuery:
 		it := newChildIter(childIndices)
 		exprName := d.nodeAt(it.nextIf(mask, 0))
