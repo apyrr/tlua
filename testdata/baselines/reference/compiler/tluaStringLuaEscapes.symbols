@@ -1,0 +1,39 @@
+//// [tests/cases/compiler/tluaStringLuaEscapes.tlua] ////
+
+=== tluaStringLuaEscapes.tlua ===
+// Lua's own escapes: `\z` skips the whitespace after it, including line
+// breaks, and a backslash before a line break keeps the line break.
+local skipped: "ab" = "a\z
+>skipped : Symbol(skipped, Decl(tluaStringLuaEscapes.tlua, 2, 5))
+
+      b"
+local kept: "a\nb" = "a\
+>kept : Symbol(kept, Decl(tluaStringLuaEscapes.tlua, 4, 5))
+
+b"
+local bell = "\a\b\f\v"
+>bell : Symbol(bell, Decl(tluaStringLuaEscapes.tlua, 6, 5))
+
+// A template literal also escapes its own delimiters.
+local tick = `\`\${x}`
+>tick : Symbol(tick, Decl(tluaStringLuaEscapes.tlua, 9, 5))
+
+// Lua defines no other escapes.
+local unknown = "\q\$\`"
+>unknown : Symbol(unknown, Decl(tluaStringLuaEscapes.tlua, 12, 5))
+
+// `\u{...}` spells a Unicode scalar value in UTF-8, so LuaJIT rejects
+// surrogates.
+local utf8: "H\xc3\xa9" = "\u{48}\u{e9}"
+>utf8 : Symbol(utf8, Decl(tluaStringLuaEscapes.tlua, 16, 5))
+
+local surrogate = "\u{D83D}\u{DCA9}"
+>surrogate : Symbol(surrogate, Decl(tluaStringLuaEscapes.tlua, 17, 5))
+
+// Template literal types report invalid escapes too.
+type BadType = `\q`
+>BadType : Symbol(BadType, Decl(tluaStringLuaEscapes.tlua, 17, 36))
+
+type ShortHex = `ok\x4`
+>ShortHex : Symbol(ShortHex, Decl(tluaStringLuaEscapes.tlua, 20, 19))
+

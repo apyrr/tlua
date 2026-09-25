@@ -28,6 +28,7 @@ const (
 	EscapeSequenceScanningFlagsAnnexB                     EscapeSequenceScanningFlags = 1 << 3
 	EscapeSequenceScanningFlagsAnyUnicodeMode             EscapeSequenceScanningFlags = 1 << 4
 	EscapeSequenceScanningFlagsAtomEscape                 EscapeSequenceScanningFlags = 1 << 5
+	EscapeSequenceScanningFlagsTemplate                   EscapeSequenceScanningFlags = 1 << 6
 	EscapeSequenceScanningFlagsReportInvalidEscapeErrors  EscapeSequenceScanningFlags = EscapeSequenceScanningFlagsRegularExpression | EscapeSequenceScanningFlagsReportErrors
 	EscapeSequenceScanningFlagsAllowExtendedUnicodeEscape EscapeSequenceScanningFlags = EscapeSequenceScanningFlagsString | EscapeSequenceScanningFlagsAnyUnicodeMode
 )
@@ -519,7 +520,7 @@ func (s *Scanner) Scan() ast.Kind {
 			s.tokenValue = s.scanString()
 			s.token = ast.KindStringLiteral
 		case '`':
-			s.token = s.scanTemplateAndSetTokenValue(false /*shouldEmitInvalidEscapeError*/)
+			s.token = s.scanTemplateAndSetTokenValue()
 		case '%':
 			s.pos++
 			s.token = ast.KindPercentToken
@@ -1018,7 +1019,7 @@ func (s *Scanner) reScanGreaterThanTokenInner() {
 
 func (s *Scanner) ReScanTemplateToken() ast.Kind {
 	s.pos = s.tokenStart
-	s.token = s.scanTemplateAndSetTokenValue(true /*shouldEmitInvalidEscapeError*/)
+	s.token = s.scanTemplateAndSetTokenValue()
 	return s.token
 }
 
@@ -1452,7 +1453,10 @@ func (s *Scanner) scanString() string {
 	return sb.String()
 }
 
-func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool) ast.Kind {
+// scanTemplateAndSetTokenValue scans a template literal token. tlua has no tagged
+// templates, so an invalid escape is always an error, reported on the first scan
+// just as it is in a string literal.
+func (s *Scanner) scanTemplateAndSetTokenValue() ast.Kind {
 	startedWithBacktick := s.char() == '`'
 	s.pos++
 	start := s.pos
@@ -1482,7 +1486,7 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 		}
 		if ch == '\\' {
 			parts = append(parts, s.text[start:s.pos])
-			parts = append(parts, s.scanEscapeSequence(EscapeSequenceScanningFlagsString|core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
+			parts = append(parts, s.scanEscapeSequence(EscapeSequenceScanningFlagsString|EscapeSequenceScanningFlagsTemplate|EscapeSequenceScanningFlagsReportErrors))
 			start = s.pos
 			continue
 		}
@@ -1513,6 +1517,11 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		return ""
 	}
 	s.pos++
+	// A tlua string or template literal is a Lua string with Lua's escapes.
+	// Regular expressions and JSON keep their own escape rules below.
+	if flags&EscapeSequenceScanningFlagsString != 0 && !s.json {
+		return s.scanLuaEscape(start, ch, flags)
+	}
 	switch ch {
 	case '0':
 		// Although '0' preceding any digit is treated as LegacyOctalEscapeSequence,
@@ -1666,6 +1675,123 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		}
 		return string(ch)
 	}
+}
+
+// scanLuaEscape scans an escape in a Lua string, following LuaJIT's lexer. A
+// Lua string is a byte string: `\xHH` and decimal `\ddd` denote single bytes,
+// and `\u{X}` the UTF-8 bytes of code point X, which may not be a surrogate
+// (there is no braceless `\uXXXX`). `\a` is BEL, a backslash before a line
+// break keeps the line break, and `\z` skips the whitespace that follows it. Any
+// other escape is an error; a template literal also lets a backslash escape its
+// own delimiters, ` and $. s.pos is just past ch; start is at the backslash.
+func (s *Scanner) scanLuaEscape(start int, ch rune, flags EscapeSequenceScanningFlags) string {
+	switch ch {
+	case 'a':
+		return "\a"
+	case 'b':
+		return "\b"
+	case 'f':
+		return "\f"
+	case 'n':
+		return "\n"
+	case 'r':
+		return "\r"
+	case 't':
+		return "\t"
+	case 'v':
+		return "\v"
+	case '\\', '"', '\'':
+		return string(ch)
+	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		return s.scanLuaDecimalEscape(start, flags)
+	case 'x':
+		if s.scanHexDigits(2, false) == "" {
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
+			if flags&EscapeSequenceScanningFlagsReportErrors != 0 {
+				s.error(diagnostics.Hexadecimal_digit_expected)
+			}
+			return s.text[start:s.pos]
+		}
+		s.tokenFlags |= ast.TokenFlagsHexEscape
+		value, _ := strconv.ParseUint(s.text[start+2:s.pos], 16, 8)
+		// `\xff` is the byte 0xFF, not U+00FF (whose UTF-8 is C3 BF).
+		return string([]byte{byte(value)})
+	case 'u':
+		if s.char() != '{' {
+			break
+		}
+		s.pos -= 2
+		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportErrors != 0)
+		if codePoint < 0 {
+			return s.text[start:s.pos]
+		}
+		if stringutil.IsHighSurrogate(codePoint) || stringutil.IsLowSurrogate(codePoint) {
+			return s.invalidLuaEscape(start, flags)
+		}
+		return string(codePoint)
+	case 'z':
+		for {
+			c := s.char()
+			if c != ' ' && c != '\t' && c != '\n' && c != '\r' && c != '\v' && c != '\f' {
+				return ""
+			}
+			s.pos++
+		}
+	case '\n', '\r':
+		// Lua reads `\r\n` and `\n\r` as one line break, and keeps it as "\n".
+		if next := s.char(); (next == '\n' || next == '\r') && next != ch {
+			s.pos++
+		}
+		return "\n"
+	case '`', '$':
+		if flags&EscapeSequenceScanningFlagsTemplate != 0 {
+			return string(ch)
+		}
+	}
+	if ch >= utf8.RuneSelf {
+		s.pos--
+		_, size := utf8.DecodeRuneInString(s.text[s.pos:])
+		s.pos += size
+	}
+	return s.invalidLuaEscape(start, flags)
+}
+
+// invalidLuaEscape reports the escape from start to s.pos, which Lua does not
+// define, and keeps its source text as the value.
+func (s *Scanner) invalidLuaEscape(start int, flags EscapeSequenceScanningFlags) string {
+	s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
+	if flags&EscapeSequenceScanningFlagsReportErrors != 0 {
+		s.errorAt(diagnostics.Escape_sequence_0_is_not_allowed, start, s.pos-start, s.text[start:s.pos])
+	}
+	return s.text[start:s.pos]
+}
+
+// UnquoteString returns the value of a quoted tlua string literal by reading it
+// back through the scanner, so every escape the printer writes (`\xHH`, `\u{X}`,
+// ...) decodes to the bytes it stands for.
+func UnquoteString(text string) string {
+	s := NewScanner()
+	s.SetText(text)
+	s.Scan()
+	return s.TokenValue()
+}
+
+// scanLuaDecimalEscape scans Lua's `\ddd`: up to three decimal digits naming one
+// byte, so `\255` is the byte 0xFF and `\0` is NUL. s.pos is just past the first
+// digit; start is at the backslash.
+func (s *Scanner) scanLuaDecimalEscape(start int, flags EscapeSequenceScanningFlags) string {
+	for s.pos < start+4 && stringutil.IsDigit(s.char()) {
+		s.pos++
+	}
+	value, _ := strconv.Atoi(s.text[start+1 : s.pos])
+	if value > 255 {
+		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
+		if flags&EscapeSequenceScanningFlagsReportErrors != 0 {
+			s.errorAt(diagnostics.Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255, start, s.pos-start, s.text[start:s.pos])
+		}
+		return s.text[start:s.pos]
+	}
+	return string([]byte{byte(value)})
 }
 
 // Known to be at \u

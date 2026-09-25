@@ -417,8 +417,8 @@ test("unicode escapes", () => {
     const api = spawnAPI({
         "/tluaconfig.json": "{}",
         "/src/1.tlua": `"😃"`,
-        "/src/2.tlua": `"\\ud83d\\ude03"`,
-        "/src/3.tlua": `"\\ud800a\\udc00"`,
+        "/src/2.tlua": `"\\u{1F603}"`,
+        "/src/3.tlua": `"\\xf0\\x9f\\x98\\x83"`,
     });
     try {
         const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -426,7 +426,7 @@ test("unicode escapes", () => {
         const expectedTexts = new Map([
             ["/src/1.tlua", "😃"],
             ["/src/2.tlua", "😃"],
-            ["/src/3.tlua", "\ud800a\udc00"],
+            ["/src/3.tlua", "😃"],
         ]);
 
         for (const file of expectedTexts.keys()) {
@@ -449,7 +449,7 @@ test("unicode escapes", () => {
 test("template unicode escapes", () => {
     const api = spawnAPI({
         "/tluaconfig.json": "{}",
-        "/src/index.tlua": "`\\ud800${0}\\udc00`",
+        "/src/index.tlua": "`\\u{48}${0}\\xc3\\xa9`",
     });
     try {
         const snapshot = api.updateSnapshot({ openProject: "/tluaconfig.json" });
@@ -461,11 +461,11 @@ test("template unicode escapes", () => {
         let sawTail = false;
         sourceFile.forEachChild(function visit(node) {
             if (isTemplateHead(node)) {
-                assert.equal(node.text, "\ud800");
+                assert.equal(node.text, "H");
                 sawHead = true;
             }
             else if (isTemplateTail(node)) {
-                assert.equal(node.text, "\udc00");
+                assert.equal(node.text, "é");
                 sawTail = true;
             }
             node.forEachChild(visit);

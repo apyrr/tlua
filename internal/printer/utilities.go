@@ -3,7 +3,6 @@ package printer
 import (
 	"fmt"
 	"slices"
-	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -19,7 +18,6 @@ type getLiteralTextFlags int
 
 const (
 	getLiteralTextFlagsNone                          getLiteralTextFlags = 0
-	getLiteralTextFlagsNeverAsciiEscape              getLiteralTextFlags = 1 << 0
 	getLiteralTextFlagsTerminateUnterminatedLiterals getLiteralTextFlags = 1 << 1
 )
 
@@ -31,143 +29,18 @@ const (
 	QuoteCharBacktick    QuoteChar = '`'
 )
 
-var escapedCharsMap = map[rune]string{
-	'\t':     `\t`,
-	'\v':     `\v`,
-	'\f':     `\f`,
-	'\b':     `\b`,
-	'\r':     `\r`,
-	'\n':     `\n`,
-	'\\':     `\\`,
-	'"':      `\"`,
-	'\'':     `\'`,
-	'`':      "\\`",
-	'$':      `\$`,     // when quoteChar == '`'
-	'\u2028': `\u2028`, // lineSeparator
-	'\u2029': `\u2029`, // paragraphSeparator
-	'\u0085': `\u0085`, // nextLine
-}
-
-func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
-	hexCharCode := strings.ToUpper(strconv.FormatUint(uint64(charCode), 16))
-	b.WriteString(`\u`)
-	for i := len(hexCharCode); i < 4; i++ {
-		b.WriteByte('0')
-	}
-	b.WriteString(hexCharCode)
-}
-
-// Based heavily on the abstract 'Quote'/'QuoteJSONString' operation from ECMA-262 (24.3.2.2),
-// but augmented for a few select characters (e.g. lineSeparator, paragraphSeparator, nextLine)
-// Note that this doesn't actually wrap the input in double quotes.
-func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags, b *strings.Builder) {
-	pos := 0
-	i := 0
-	for i < len(s) {
-		ch, size := stringutil.DecodeJSStringRune(s[i:])
-
-		escape := false
-		if ch >= 0xD800 && ch <= 0xDFFF {
-			escape = true
-		} else if ch == utf8.RuneError && size == 1 {
-			// A stray byte that is not valid UTF-8 (for example, a fragment of a
-			// surrogate sentinel left behind by code that sliced the string by
-			// byte). Escape it as the Unicode replacement character so the output
-			// is always well-formed rather than containing raw invalid bytes.
-			escape = true
-		}
-
-		// This consists of the first 19 unprintable ASCII characters, canonical escapes, lineSeparator,
-		// paragraphSeparator, and nextLine. The latter three are just desirable to suppress new lines in
-		// the language service. These characters should be escaped when printing, and if any characters are added,
-		// `escapedCharsMap` must be updated. Note that this *does not* include the 'delete'
-		// character. There is no reason for this other than that JSON.stringify does not handle it either.
-		switch ch {
-		case '\\':
-			escape = true
-		case '$':
-			if quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '{' {
-				escape = true
-			}
-		case rune(quoteChar), '\u2028', '\u2029', '\u0085', '\r':
-			escape = true
-		case '\n':
-			if quoteChar != QuoteCharBacktick {
-				// Template strings preserve simple LF newlines, still encode CRLF (or CR).
-				escape = true
-			}
-		default:
-			if ch <= '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
-				escape = true
-			}
-		}
-
-		if escape {
-			if pos < i {
-				// Write string up to this point
-				b.WriteString(s[pos:i])
-			}
-
-			if ch == '\r' && quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
-				// Template strings preserve simple LF newlines, but still must escape CRLF. Left alone, the
-				// above cases for `\r` and `\n` would inadvertently escape CRLF as two independent characters.
-				size++
-				b.WriteString(`\r\n`)
-			} else if ch > 0xffff {
-				// encode as surrogate pair
-				ch -= 0x10000
-				encodeUtf16EscapeSequence(b, (ch&0b11111111110000000000>>10)+0xD800)
-				encodeUtf16EscapeSequence(b, (ch&0b00000000001111111111)+0xDC00)
-			} else if ch >= 0xD800 && ch <= 0xDFFF {
-				encodeUtf16EscapeSequence(b, ch)
-			} else if ch == 0 {
-				if i+1 < len(s) && stringutil.IsDigit(rune(s[i+1])) {
-					// If the null character is followed by digits, print as a hex escape to prevent the result from
-					// parsing as an octal (which is forbidden in strict mode)
-					b.WriteString(`\x00`)
-				} else {
-					// Otherwise, keep printing a literal \0 for the null character
-					b.WriteString(`\0`)
-				}
-			} else {
-				if match, ok := escapedCharsMap[ch]; ok {
-					b.WriteString(match)
-				} else {
-					encodeUtf16EscapeSequence(b, ch)
-				}
-			}
-			pos = i + size
-		}
-
-		i += size
-	}
-
-	if pos < i {
-		b.WriteString(s[pos:])
-	}
-}
-
-// EscapeString escapes s with ECMAScript rules (`\uXXXX` for control/non-ASCII), used only by
-// the checker/LS value-display paths (diagnostics, hover, symbols) where JS spelling is
-// acceptable. Lua *emit* never uses this — see LuaEscapeString.
-func EscapeString(s string, quoteChar QuoteChar) string {
-	var b strings.Builder
-	b.Grow(len(s) + 2)
-	escapeStringWorker(s, quoteChar, getLiteralTextFlagsNeverAsciiEscape, &b)
-	return b.String()
-}
-
-// LuaEscapeString escapes cooked string content (already-unescaped) for a tlua string or
-// template literal delimited by quoteChar ('"', '\”, or '`'), returning the body without the
-// surrounding quotes. It is the single source of truth for how an *emitted* tlua string is
-// spelled (file emit, `.d.tlua`, and the type display that renders through the printer).
+// EscapeString escapes cooked string content for a tlua string or template
+// literal delimited by quoteChar (a double quote, single quote, or backtick),
+// returning the body without the surrounding quotes. It is the one escaper:
+// emit, `.d.tlua`, type display, diagnostics, symbols, and completions all spell
+// strings through it, so what is shown is what the scanner reads back.
 //
-// tlua targets Lua, so it emits only Lua-valid escapes. Control bytes and any invalid UTF-8
-// (e.g. a WTF-8 lone-surrogate sentinel) become `\xHH`, which round-trips through both tlua's
-// scanner and LuaJIT; every other byte, including valid multibyte UTF-8, is written raw (Lua
-// strings are byte strings). It never emits JS `\uXXXX` (Lua has no `\u` escape) nor legacy
-// octal `\ddd` (tlua's scanner reads `\ddd` as octal and rejects it — it recommends `\x`).
-func LuaEscapeString(s string, quoteChar QuoteChar) string {
+// A tlua string is a Lua string, a byte string. Control bytes and bytes that are
+// not valid UTF-8 become `\xHH`, which tlua's scanner and LuaJIT both read back
+// as that same byte, and so do the UTF-8 bytes of the Unicode line breaks
+// U+2028, U+2029 and U+0085; every other byte, including valid multibyte
+// UTF-8, is written raw. It never writes JavaScript's `\uXXXX`, which Lua does not have.
+func EscapeString(s string, quoteChar QuoteChar) string {
 	var b strings.Builder
 	b.Grow(len(s) + 2)
 	q := byte(quoteChar)
@@ -209,6 +82,18 @@ func LuaEscapeString(s string, quoteChar QuoteChar) string {
 			i++
 			continue
 		}
+		if r == '\u2028' || r == '\u2029' || r == '\u0085' {
+			// Line and paragraph separators and NEL break lines in editors that
+			// show the text; spell their UTF-8 bytes as `\xHH`, which LuaJIT 2.0
+			// reads back as the same bytes (`\u{...}` needs LuaJIT 2.1).
+			for k := range size {
+				b.WriteString(`\x`)
+				b.WriteByte(lowerHexDigit(s[i+k] >> 4))
+				b.WriteByte(lowerHexDigit(s[i+k] & 0xf))
+			}
+			i += size
+			continue
+		}
 		b.WriteString(s[i : i+size])
 		i += size
 	}
@@ -222,12 +107,12 @@ func lowerHexDigit(n byte) byte {
 	return 'a' + (n - 10)
 }
 
-// luaStringLiteral wraps LuaEscapeString in the given quote to form a complete Lua string
+// luaStringLiteral wraps EscapeString in the given quote to form a complete Lua string
 // literal. Used for string-literal emit and for lowering template literals (which have no Lua
 // equivalent) into ordinary Lua strings.
 func luaStringLiteral(cooked string, quoteChar QuoteChar) string {
 	q := string(rune(quoteChar))
-	return q + LuaEscapeString(cooked, quoteChar) + q
+	return q + EscapeString(cooked, quoteChar) + q
 }
 
 func canUseOriginalText(node *ast.LiteralLikeNode, flags getLiteralTextFlags) bool {
@@ -302,7 +187,7 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 			// If rawText is set, it is expected to be valid.
 			b.WriteString(rawText)
 		default:
-			escapeStringWorker(text, QuoteCharBacktick, flags, &b)
+			b.WriteString(EscapeString(text, QuoteCharBacktick))
 		}
 
 		// Write trailing quote character

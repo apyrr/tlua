@@ -1,0 +1,10 @@
+tluaStringDecimalEscapeRange.tlua(3,19): error TLUA100063: Decimal escape sequence '\256' is too large; a Lua string byte is at most 255.
+
+
+==== tluaStringDecimalEscapeRange.tlua (1 errors) ====
+    // Lua's decimal escape names one byte, so it cannot exceed 255.
+    local ok = "\255"
+    local tooLarge = "\256"
+                      ~~~~
+!!! error TLUA100063: Decimal escape sequence '\256' is too large; a Lua string byte is at most 255.
+    

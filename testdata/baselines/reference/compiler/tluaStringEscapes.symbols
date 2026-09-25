@@ -8,19 +8,20 @@
 local esc = "\u{1b}\x41"
 >esc : Symbol(esc, Decl(tluaStringEscapes.tlua, 4, 5))
 
-// A non-ASCII separator (U+2028) is valid UTF-8 and stays raw.
+// The line separator U+2028 is valid UTF-8, but its bytes are written as `\xHH`
+// escapes, which LuaJIT 2.0 reads, so text that shows the string stays on one line.
 local sep = "a\u{2028}b"
->sep : Symbol(sep, Decl(tluaStringEscapes.tlua, 7, 5))
+>sep : Symbol(sep, Decl(tluaStringEscapes.tlua, 8, 5))
 
 // Single-quoted strings keep their quote; the embedded quote is escaped.
 local sq = 'it\'s a "test"'
->sq : Symbol(sq, Decl(tluaStringEscapes.tlua, 10, 5))
+>sq : Symbol(sq, Decl(tluaStringEscapes.tlua, 11, 5))
 
 // Readable whitespace escapes are preserved.
 local ws = "tab\tnl\ncr\r"
->ws : Symbol(ws, Decl(tluaStringEscapes.tlua, 13, 5))
+>ws : Symbol(ws, Decl(tluaStringEscapes.tlua, 14, 5))
 
 // A NUL byte becomes \x00 (never a bare \0 that could swallow a following digit).
 local nul = "\u{0}0"
->nul : Symbol(nul, Decl(tluaStringEscapes.tlua, 16, 5))
+>nul : Symbol(nul, Decl(tluaStringEscapes.tlua, 17, 5))
 

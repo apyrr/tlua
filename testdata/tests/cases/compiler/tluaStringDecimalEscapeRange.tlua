@@ -1,0 +1,5 @@
+// @target: esnext
+
+// Lua's decimal escape names one byte, so it cannot exceed 255.
+local ok = "\255"
+local tooLarge = "\256"

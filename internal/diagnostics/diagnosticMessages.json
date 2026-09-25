@@ -8521,5 +8521,9 @@
     "'{0}' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '[\"{0}\"]' field instead.": {
         "category": "Error",
         "code": 100062
+    },
+    "Decimal escape sequence '{0}' is too large; a Lua string byte is at most 255.": {
+        "category": "Error",
+        "code": 100063
     }
 }

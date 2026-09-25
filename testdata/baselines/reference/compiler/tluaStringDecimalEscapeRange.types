@@ -1,0 +1,12 @@
+//// [tests/cases/compiler/tluaStringDecimalEscapeRange.tlua] ////
+
+=== tluaStringDecimalEscapeRange.tlua ===
+// Lua's decimal escape names one byte, so it cannot exceed 255.
+local ok = "\255"
+>ok : string
+>"\255" : "\xff"
+
+local tooLarge = "\256"
+>tooLarge : string
+>"\256" : "\\256"
+

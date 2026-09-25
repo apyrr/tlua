@@ -1,3 +1,0 @@
-// @noEmit: true
-
-local x: "\uD800" = "\uDC00";

@@ -1,0 +1,24 @@
+// @target: esnext
+
+// Lua's own escapes: `\z` skips the whitespace after it, including line
+// breaks, and a backslash before a line break keeps the line break.
+local skipped: "ab" = "a\z
+      b"
+local kept: "a\nb" = "a\
+b"
+local bell = "\a\b\f\v"
+
+// A template literal also escapes its own delimiters.
+local tick = `\`\${x}`
+
+// Lua defines no other escapes.
+local unknown = "\q\$\`"
+
+// `\u{...}` spells a Unicode scalar value in UTF-8, so LuaJIT rejects
+// surrogates.
+local utf8: "H\xc3\xa9" = "\u{48}\u{e9}"
+local surrogate = "\u{D83D}\u{DCA9}"
+
+// Template literal types report invalid escapes too.
+type BadType = `\q`
+type ShortHex = `ok\x4`

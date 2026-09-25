@@ -3197,9 +3197,6 @@ func (p *Parser) parseTemplateType() *ast.Node {
 }
 
 func (p *Parser) parseTemplateHead() *ast.Node {
-	if p.scanner.TokenFlags()&ast.TokenFlagsIsInvalid != 0 {
-		p.reScanTemplateToken()
-	}
 	pos := p.nodePos()
 	result := p.factory.NewTemplateHead(p.scanner.TokenValue(), p.getTemplateLiteralRawText(2 /*endLength*/), p.scanner.TokenFlags())
 	p.nextToken()
@@ -4153,12 +4150,7 @@ func (p *Parser) parseTemplateSpan() *ast.Node {
 
 func (p *Parser) parsePrimaryExpression() *ast.Expression {
 	switch p.token {
-	case ast.KindNoSubstitutionTemplateLiteral:
-		if p.scanner.TokenFlags()&ast.TokenFlagsIsInvalid != 0 {
-			p.reScanTemplateToken()
-		}
-		fallthrough
-	case ast.KindNumericLiteral, ast.KindStringLiteral:
+	case ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindStringLiteral:
 		return p.parseLiteralExpression(false /*intern*/)
 	// `this` is removed from tlua (Lua methods take an explicit `self`); it is
 	// no longer a primary expression and falls through to the Expression_expected

@@ -1,0 +1,70 @@
+//// [tests/cases/compiler/tluaStringByteEscapes.tlua] ////
+
+//// [tluaStringByteEscapes.tlua]
+// A tlua string is a Lua byte string: `\xHH` and decimal `\ddd` each denote one
+// byte, not a code point. `"\xff"` is the single byte 0xFF, where `"\u{ff}"` is
+// the two UTF-8 bytes of U+00FF; emit writes the bytes back exactly.
+local hex = "\xff"
+local dec = "\255"
+local mixed = "\xffA\x00z\0\65\a"
+local utf8 = "\xc3\xbf"
+local template = `\xff${1}\255`
+
+// The type system tells the byte from the code point, and agrees with UTF-8
+// spelled out in bytes.
+local sameAsUtf8: "\xc3\xbf" = "\u{ff}"
+local notTheByte: "\xff" = "\u{ff}"
+local byteBothWays: "\xff" = "\255"
+
+// Types display a byte that is not valid UTF-8 as `\xHH`, which reads back as
+// the same byte.
+local wrongByte: "\xff" = "\xfe"
+type Prefixed = `\xff${string}`
+local notPrefixed: Prefixed = 1
+
+// Casing maps ASCII letters only, byte by byte, as string.upper does.
+local upper: Uppercase<"\xffa\u{e9}"> = "\xffA\u{e9}"
+local capital: Capitalize<"\xffa"> = "\xffa"
+
+// Bytes that spell a surrogate stay separate bytes when joined: Lua has no
+// surrogates to pair.
+type Joined = `\xed\xa0\xbd${"\xed\xb2\xa9"}`
+local joined: Joined = "\xed\xa0\xbd\xed\xb2\xa9"
+local notAnEmoji: Joined = "\u{1F4A9}"
+
+// Template inference steps over a UTF-8 character whole, and over a byte that
+// is not valid UTF-8 alone; a delimiter matches bytes, so it can split a
+// character.
+type Head<S extends string> = S extends `${infer H}${infer _R}` ? H : never
+local head: Head<"\xc3\xa9x"> = "\u{e9}"
+local byteHead: Head<"\xffx"> = "\xff"
+type Split<S extends string> = S extends `${infer A}\xa9${infer B}` ? [A, B] : never
+local split: Split<"\xc3\xa9x"> = { "\xc3", "x" }
+
+
+//// [tluaStringByteEscapes.lua]
+-- A tlua string is a Lua byte string: `\xHH` and decimal `\ddd` each denote one
+-- byte, not a code point. `"\xff"` is the single byte 0xFF, where `"\u{ff}"` is
+-- the two UTF-8 bytes of U+00FF; emit writes the bytes back exactly.
+local hex = "\xff";
+local dec = "\xff";
+local mixed = "\xffA\x00z\x00A\x07";
+local utf8 = "ÿ";
+local template = "\xff" .. tostring(1) .. "\xff";
+-- The type system tells the byte from the code point, and agrees with UTF-8
+-- spelled out in bytes.
+local sameAsUtf8 = "ÿ";
+local notTheByte = "ÿ";
+local byteBothWays = "\xff";
+-- Types display a byte that is not valid UTF-8 as `\xHH`, which reads back as
+-- the same byte.
+local wrongByte = "\xfe";
+local notPrefixed = 1;
+-- Casing maps ASCII letters only, byte by byte, as string.upper does.
+local upper = "\xffAé";
+local capital = "\xffa";
+local joined = "\xed\xa0\xbd\xed\xb2\xa9";
+local notAnEmoji = "💩";
+local head = "é";
+local byteHead = "\xff";
+local split = { "\xc3", "x" };

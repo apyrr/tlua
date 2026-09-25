@@ -1,0 +1,47 @@
+tluaStringLuaEscapes.tlua(13,18): error TLUA1488: Escape sequence '\q' is not allowed.
+tluaStringLuaEscapes.tlua(13,20): error TLUA1488: Escape sequence '\$' is not allowed.
+tluaStringLuaEscapes.tlua(13,22): error TLUA1488: Escape sequence '\`' is not allowed.
+tluaStringLuaEscapes.tlua(18,20): error TLUA1488: Escape sequence '\u{D83D}' is not allowed.
+tluaStringLuaEscapes.tlua(18,28): error TLUA1488: Escape sequence '\u{DCA9}' is not allowed.
+tluaStringLuaEscapes.tlua(21,17): error TLUA1488: Escape sequence '\q' is not allowed.
+tluaStringLuaEscapes.tlua(22,23): error TLUA1125: Hexadecimal digit expected.
+
+
+==== tluaStringLuaEscapes.tlua (7 errors) ====
+    // Lua's own escapes: `\z` skips the whitespace after it, including line
+    // breaks, and a backslash before a line break keeps the line break.
+    local skipped: "ab" = "a\z
+          b"
+    local kept: "a\nb" = "a\
+    b"
+    local bell = "\a\b\f\v"
+    
+    // A template literal also escapes its own delimiters.
+    local tick = `\`\${x}`
+    
+    // Lua defines no other escapes.
+    local unknown = "\q\$\`"
+                     ~~
+!!! error TLUA1488: Escape sequence '\q' is not allowed.
+                       ~~
+!!! error TLUA1488: Escape sequence '\$' is not allowed.
+                         ~~
+!!! error TLUA1488: Escape sequence '\`' is not allowed.
+    
+    // `\u{...}` spells a Unicode scalar value in UTF-8, so LuaJIT rejects
+    // surrogates.
+    local utf8: "H\xc3\xa9" = "\u{48}\u{e9}"
+    local surrogate = "\u{D83D}\u{DCA9}"
+                       ~~~~~~~~
+!!! error TLUA1488: Escape sequence '\u{D83D}' is not allowed.
+                               ~~~~~~~~
+!!! error TLUA1488: Escape sequence '\u{DCA9}' is not allowed.
+    
+    // Template literal types report invalid escapes too.
+    type BadType = `\q`
+                    ~~
+!!! error TLUA1488: Escape sequence '\q' is not allowed.
+    type ShortHex = `ok\x4`
+                          
+!!! error TLUA1125: Hexadecimal digit expected.
+    

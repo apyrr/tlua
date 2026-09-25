@@ -45,7 +45,7 @@ type PrinterOptions struct {
 	OmitBraceSourceMapPositions bool
 	// ExtendedDiagnostics           bool
 	OnlyPrintJSDocStyle bool
-	NeverAsciiEscape    bool
+	NeverAsciiEscape    bool // no effect: every string is spelled by EscapeString
 	// StripInternal                 bool
 	PreserveSourceNewlines        bool
 	TerminateUnterminatedLiterals bool // !!!
@@ -218,9 +218,6 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 		return luaStringLiteral(text, quoteChar)
 	}
 	// !!! Printer option to control whether to terminate unterminated literals
-	if p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0 {
-		flags |= getLiteralTextFlagsNeverAsciiEscape
-	}
 	return getLiteralText(node, core.Coalesce(sourceFile, p.currentSourceFile), flags)
 }
 
@@ -1033,10 +1030,6 @@ func (p *Printer) emitTokenNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 //	SyntaxKindTemplateMiddle
 //	SyntaxKindTemplateTail
 func (p *Printer) emitLiteral(node *ast.LiteralLikeNode, flags getLiteralTextFlags) {
-	// Add NeverAsciiEscape flag if the printer option is set
-	if p.Options.NeverAsciiEscape {
-		flags |= getLiteralTextFlagsNeverAsciiEscape
-	}
 	if p.Options.TerminateUnterminatedLiterals {
 		flags |= getLiteralTextFlagsTerminateUnterminatedLiterals
 	}

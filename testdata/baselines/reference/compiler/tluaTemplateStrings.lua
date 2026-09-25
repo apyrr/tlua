@@ -29,8 +29,9 @@ local s5 = `outer ${`inner ${a}`} end`
 // An expression substitution.
 local s6 = `sum is ${a + a}`
 
-// Control characters must use Lua's `\ddd` decimal escape, not JS `\uXXXX` (invalid Lua).
-// Here \x1b is an ANSI escape (ESC, 0x1B) and \u{2028} is a non-ASCII separator kept raw.
+// Control characters are written with Lua's `\xHH` escape, not JS `\uXXXX` (invalid Lua).
+// Here \x1b is an ANSI escape (ESC, 0x1B), and the line separator \u{2028} is written
+// as its UTF-8 bytes in `\xHH` form.
 local s7 = `color ${a}\x1b[0m`
 local s8 = `\u{2028}sep`
 
@@ -54,7 +55,8 @@ local s4 = "line \"one\"\nline two " .. tostring(a);
 local s5 = "outer " .. tostring("inner " .. tostring(a)) .. " end";
 -- An expression substitution.
 local s6 = "sum is " .. tostring(a + a);
--- Control characters must use Lua's `\ddd` decimal escape, not JS `\uXXXX` (invalid Lua).
--- Here \x1b is an ANSI escape (ESC, 0x1B) and \u{2028} is a non-ASCII separator kept raw.
+-- Control characters are written with Lua's `\xHH` escape, not JS `\uXXXX` (invalid Lua).
+-- Here \x1b is an ANSI escape (ESC, 0x1B), and the line separator \u{2028} is written
+-- as its UTF-8 bytes in `\xHH` form.
 local s7 = "color " .. tostring(a) .. "\x1b[0m";
-local s8 = " sep";
+local s8 = "\xe2\x80\xa8sep";

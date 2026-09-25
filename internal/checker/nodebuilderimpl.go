@@ -845,7 +845,7 @@ func (b *NodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 
 	var expression *ast.Expression
 	if startsWithSingleOrDoubleQuote(symbolName) {
-		literalText := stringutil.UnquoteString(symbolName)
+		literalText := scanner.UnquoteString(symbolName)
 		b.ctx.approximateLength += len(literalText) + 2
 		expression = b.newStringLiteralEx(literalText, symbolName[0] == '\'')
 	} else if jsnum.FromString(symbolName).String() == symbolName {

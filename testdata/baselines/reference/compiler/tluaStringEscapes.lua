@@ -7,7 +7,8 @@
 // \u{1b} (ESC) and \x41 (A) cook, then re-emit in Lua form: "\x1bA".
 local esc = "\u{1b}\x41"
 
-// A non-ASCII separator (U+2028) is valid UTF-8 and stays raw.
+// The line separator U+2028 is valid UTF-8, but its bytes are written as `\xHH`
+// escapes, which LuaJIT 2.0 reads, so text that shows the string stays on one line.
 local sep = "a\u{2028}b"
 
 // Single-quoted strings keep their quote; the embedded quote is escaped.
@@ -25,8 +26,9 @@ local nul = "\u{0}0"
 -- control bytes use \xHH, and the author's quote style is preserved.
 -- \u{1b} (ESC) and \x41 (A) cook, then re-emit in Lua form: "\x1bA".
 local esc = "\x1bA";
--- A non-ASCII separator (U+2028) is valid UTF-8 and stays raw.
-local sep = "a b";
+-- The line separator U+2028 is valid UTF-8, but its bytes are written as `\xHH`
+-- escapes, which LuaJIT 2.0 reads, so text that shows the string stays on one line.
+local sep = "a\xe2\x80\xa8b";
 -- Single-quoted strings keep their quote; the embedded quote is escaped.
 local sq = 'it\'s a "test"';
 -- Readable whitespace escapes are preserved.

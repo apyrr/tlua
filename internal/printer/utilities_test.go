@@ -9,7 +9,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-func TestLuaEscapeString(t *testing.T) {
+func TestEscapeString(t *testing.T) {
 	t.Parallel()
 	data := []struct {
 		s         string
@@ -34,11 +34,17 @@ func TestLuaEscapeString(t *testing.T) {
 		// Non-ASCII (valid UTF-8, incl. astral) is written verbatim, not escaped.
 		{s: "\u008f", quoteChar: QuoteCharDoubleQuote, expected: "\u008f"},
 		{s: "𝟘𝟙", quoteChar: QuoteCharDoubleQuote, expected: "𝟘𝟙"},
+		// A byte that is not valid UTF-8 reads back as itself through `\xHH`; bytes
+		// that spell a surrogate are not valid UTF-8 either.
+		{s: "\xffa", quoteChar: QuoteCharDoubleQuote, expected: `\xffa`},
+		{s: "\xed\xa0\xbd", quoteChar: QuoteCharDoubleQuote, expected: `\xed\xa0\xbd`},
+		// Unicode line breaks stay on one line.
+		{s: "a\u2028b\u0085", quoteChar: QuoteCharDoubleQuote, expected: `a\xe2\x80\xa8b\xc2\x85`},
 	}
 	for i, rec := range data {
-		t.Run(fmt.Sprintf("[%d] LuaEscapeString(%q, %v)", i, rec.s, rec.quoteChar), func(t *testing.T) {
+		t.Run(fmt.Sprintf("[%d] EscapeString(%q, %v)", i, rec.s, rec.quoteChar), func(t *testing.T) {
 			t.Parallel()
-			actual := LuaEscapeString(rec.s, rec.quoteChar)
+			actual := EscapeString(rec.s, rec.quoteChar)
 			assert.Equal(t, actual, rec.expected)
 		})
 	}

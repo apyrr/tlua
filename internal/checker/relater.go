@@ -4,13 +4,13 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/collections"
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/diagnostics"
 	"github.com/apyrr/tlua/internal/jsnum"
-	"github.com/apyrr/tlua/internal/stringutil"
 	"github.com/apyrr/tlua/internal/tracing"
 )
 
@@ -2466,7 +2466,7 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 	addMatch := func(s int, p int) {
 		var matchType *Type
 		if s == seg {
-			matchType = c.getStringLiteralType(stringutil.CombineSurrogatePairs(getSourceText(s)[pos:p]))
+			matchType = c.getStringLiteralType(getSourceText(s)[pos:p])
 		} else {
 			matchTexts := make([]string, s-seg+1)
 			matchTexts[0] = sourceTexts[seg][pos:]
@@ -2498,23 +2498,12 @@ func (c *Checker) inferFromLiteralPartsToTemplateLiteral(sourceTexts []string, s
 			addMatch(s, p)
 			pos += len(delim)
 		} else if sourceText := getSourceText(seg); pos < len(sourceText) {
-			// Consume one code point at a time, matching the string iterator
-			// (`[x, ..._] = s`) rather than UTF-16 code-unit indexing (`s[0]`).
-			// DecodeJSStringRune is required rather than utf8.DecodeRuneInString
-			// because a lone surrogate is stored as an invalid-UTF-8 sentinel;
-			// utf8 would treat that as an error and advance a single byte,
-			// breaking the sentinel into stray bytes, whereas DecodeJSStringRune
-			// pulls the whole sentinel off as one code point.
-			//
-			// This intentionally diverges from Strada, which advances one UTF-16
-			// code unit at a time (`s[0]` semantics) and therefore splits a
-			// supplementary code point such as an emoji into its surrogate
-			// halves. If we ever need to match that, expand sourceTexts and
-			// targetTexts into code-unit space up front with a SplitSurrogatePairs
-			// helper (the inverse of CombineSurrogatePairs) and decode by code
-			// unit here; the CombineSurrogatePairs call in addMatch already
-			// recombines captured halves back into canonical form.
-			_, size := stringutil.DecodeJSStringRune(sourceText[pos:])
+			// Consume one UTF-8 character, or a single byte where the bytes are
+			// not valid UTF-8. Any split is a valid decomposition of the byte
+			// string (the delimiter search above may split a character, since it
+			// matches bytes); stepping by character keeps the familiar
+			// `${infer Head}${infer Rest}` idiom whole on UTF-8 text.
+			_, size := utf8.DecodeRuneInString(sourceText[pos:])
 			addMatch(seg, pos+size)
 		} else if seg < lastSourceIndex {
 			addMatch(seg+1, 0)

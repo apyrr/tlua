@@ -60,8 +60,9 @@ local s6 = `sum is ${a + a}`
 >a : number
 >a : number
 
-// Control characters must use Lua's `\ddd` decimal escape, not JS `\uXXXX` (invalid Lua).
-// Here \x1b is an ANSI escape (ESC, 0x1B) and \u{2028} is a non-ASCII separator kept raw.
+// Control characters are written with Lua's `\xHH` escape, not JS `\uXXXX` (invalid Lua).
+// Here \x1b is an ANSI escape (ESC, 0x1B), and the line separator \u{2028} is written
+// as its UTF-8 bytes in `\xHH` form.
 local s7 = `color ${a}\x1b[0m`
 >s7 : string
 >`color ${a}\x1b[0m` : string
@@ -69,5 +70,5 @@ local s7 = `color ${a}\x1b[0m`
 
 local s8 = `\u{2028}sep`
 >s8 : string
->`\u{2028}sep` : " sep"
+>`\u{2028}sep` : "\xe2\x80\xa8sep"
 

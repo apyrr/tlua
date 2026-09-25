@@ -24777,7 +24777,7 @@ func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
 				sb.WriteString(texts[i+1])
 			case c.isGenericIndexType(t) || c.isPatternLiteralPlaceholderType(t):
 				newTypes = append(newTypes, t)
-				newTexts = append(newTexts, stringutil.CombineSurrogatePairs(sb.String()))
+				newTexts = append(newTexts, sb.String())
 				sb.Reset()
 				sb.WriteString(texts[i+1])
 			default:
@@ -24790,9 +24790,9 @@ func (c *Checker) getTemplateLiteralType(texts []string, types []*Type) *Type {
 		return c.stringType
 	}
 	if len(newTypes) == 0 {
-		return c.getStringLiteralType(stringutil.CombineSurrogatePairs(sb.String()))
+		return c.getStringLiteralType(sb.String())
 	}
-	newTexts = append(newTexts, stringutil.CombineSurrogatePairs(sb.String()))
+	newTexts = append(newTexts, sb.String())
 	if core.Every(newTexts, func(t string) bool { return t == "" }) {
 		if core.Every(newTypes, func(t *Type) bool { return t.flags&TypeFlagsString != 0 }) {
 			return c.stringType
@@ -24842,16 +24842,22 @@ func (c *Checker) getStringMappingType(symbol *ast.Symbol, t *Type) *Type {
 
 func applyStringMapping(symbol *ast.Symbol, str string) string {
 	switch intrinsicTypeKinds[symbol.Name] {
+	// Lua strings are byte strings, cased as string.upper and string.lower case
+	// them: ASCII letters only, so capitalizing touches only the first byte.
 	case IntrinsicTypeKindUppercase:
-		return stringutil.ToUpperJS(str)
+		return stringutil.ToUpperLua(str)
 	case IntrinsicTypeKindLowercase:
-		return stringutil.ToLowerJS(str)
+		return stringutil.ToLowerLua(str)
 	case IntrinsicTypeKindCapitalize:
-		_, size := stringutil.DecodeJSStringRune(str)
-		return stringutil.ToUpperJS(str[:size]) + str[size:]
+		if str == "" {
+			return str
+		}
+		return stringutil.ToUpperLua(str[:1]) + str[1:]
 	case IntrinsicTypeKindUncapitalize:
-		_, size := stringutil.DecodeJSStringRune(str)
-		return stringutil.ToLowerJS(str[:size]) + str[size:]
+		if str == "" {
+			return str
+		}
+		return stringutil.ToLowerLua(str[:1]) + str[1:]
 	}
 	return str
 }

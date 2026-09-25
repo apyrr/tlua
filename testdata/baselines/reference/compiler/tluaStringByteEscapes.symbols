@@ -1,0 +1,98 @@
+//// [tests/cases/compiler/tluaStringByteEscapes.tlua] ////
+
+=== tluaStringByteEscapes.tlua ===
+// A tlua string is a Lua byte string: `\xHH` and decimal `\ddd` each denote one
+// byte, not a code point. `"\xff"` is the single byte 0xFF, where `"\u{ff}"` is
+// the two UTF-8 bytes of U+00FF; emit writes the bytes back exactly.
+local hex = "\xff"
+>hex : Symbol(hex, Decl(tluaStringByteEscapes.tlua, 3, 5))
+
+local dec = "\255"
+>dec : Symbol(dec, Decl(tluaStringByteEscapes.tlua, 4, 5))
+
+local mixed = "\xffA\x00z\0\65\a"
+>mixed : Symbol(mixed, Decl(tluaStringByteEscapes.tlua, 5, 5))
+
+local utf8 = "\xc3\xbf"
+>utf8 : Symbol(utf8, Decl(tluaStringByteEscapes.tlua, 6, 5))
+
+local template = `\xff${1}\255`
+>template : Symbol(template, Decl(tluaStringByteEscapes.tlua, 7, 5))
+
+// The type system tells the byte from the code point, and agrees with UTF-8
+// spelled out in bytes.
+local sameAsUtf8: "\xc3\xbf" = "\u{ff}"
+>sameAsUtf8 : Symbol(sameAsUtf8, Decl(tluaStringByteEscapes.tlua, 11, 5))
+
+local notTheByte: "\xff" = "\u{ff}"
+>notTheByte : Symbol(notTheByte, Decl(tluaStringByteEscapes.tlua, 12, 5))
+
+local byteBothWays: "\xff" = "\255"
+>byteBothWays : Symbol(byteBothWays, Decl(tluaStringByteEscapes.tlua, 13, 5))
+
+// Types display a byte that is not valid UTF-8 as `\xHH`, which reads back as
+// the same byte.
+local wrongByte: "\xff" = "\xfe"
+>wrongByte : Symbol(wrongByte, Decl(tluaStringByteEscapes.tlua, 17, 5))
+
+type Prefixed = `\xff${string}`
+>Prefixed : Symbol(Prefixed, Decl(tluaStringByteEscapes.tlua, 17, 32))
+
+local notPrefixed: Prefixed = 1
+>notPrefixed : Symbol(notPrefixed, Decl(tluaStringByteEscapes.tlua, 19, 5))
+>Prefixed : Symbol(Prefixed, Decl(tluaStringByteEscapes.tlua, 17, 32))
+
+// Casing maps ASCII letters only, byte by byte, as string.upper does.
+local upper: Uppercase<"\xffa\u{e9}"> = "\xffA\u{e9}"
+>upper : Symbol(upper, Decl(tluaStringByteEscapes.tlua, 22, 5))
+>Uppercase : Symbol(Uppercase, Decl(lib.luajit.d.tlua, --, --))
+
+local capital: Capitalize<"\xffa"> = "\xffa"
+>capital : Symbol(capital, Decl(tluaStringByteEscapes.tlua, 23, 5))
+>Capitalize : Symbol(Capitalize, Decl(lib.luajit.d.tlua, --, --))
+
+// Bytes that spell a surrogate stay separate bytes when joined: Lua has no
+// surrogates to pair.
+type Joined = `\xed\xa0\xbd${"\xed\xb2\xa9"}`
+>Joined : Symbol(Joined, Decl(tluaStringByteEscapes.tlua, 23, 44))
+
+local joined: Joined = "\xed\xa0\xbd\xed\xb2\xa9"
+>joined : Symbol(joined, Decl(tluaStringByteEscapes.tlua, 28, 5))
+>Joined : Symbol(Joined, Decl(tluaStringByteEscapes.tlua, 23, 44))
+
+local notAnEmoji: Joined = "\u{1F4A9}"
+>notAnEmoji : Symbol(notAnEmoji, Decl(tluaStringByteEscapes.tlua, 29, 5))
+>Joined : Symbol(Joined, Decl(tluaStringByteEscapes.tlua, 23, 44))
+
+// Template inference steps over a UTF-8 character whole, and over a byte that
+// is not valid UTF-8 alone; a delimiter matches bytes, so it can split a
+// character.
+type Head<S extends string> = S extends `${infer H}${infer _R}` ? H : never
+>Head : Symbol(Head, Decl(tluaStringByteEscapes.tlua, 29, 38))
+>S : Symbol(S, Decl(tluaStringByteEscapes.tlua, 34, 10))
+>S : Symbol(S, Decl(tluaStringByteEscapes.tlua, 34, 10))
+>H : Symbol(H, Decl(tluaStringByteEscapes.tlua, 34, 48))
+>_R : Symbol(_R, Decl(tluaStringByteEscapes.tlua, 34, 58))
+>H : Symbol(H, Decl(tluaStringByteEscapes.tlua, 34, 48))
+
+local head: Head<"\xc3\xa9x"> = "\u{e9}"
+>head : Symbol(head, Decl(tluaStringByteEscapes.tlua, 35, 5))
+>Head : Symbol(Head, Decl(tluaStringByteEscapes.tlua, 29, 38))
+
+local byteHead: Head<"\xffx"> = "\xff"
+>byteHead : Symbol(byteHead, Decl(tluaStringByteEscapes.tlua, 36, 5))
+>Head : Symbol(Head, Decl(tluaStringByteEscapes.tlua, 29, 38))
+
+type Split<S extends string> = S extends `${infer A}\xa9${infer B}` ? [A, B] : never
+>Split : Symbol(Split, Decl(tluaStringByteEscapes.tlua, 36, 38))
+>S : Symbol(S, Decl(tluaStringByteEscapes.tlua, 37, 11))
+>S : Symbol(S, Decl(tluaStringByteEscapes.tlua, 37, 11))
+>A : Symbol(A, Decl(tluaStringByteEscapes.tlua, 37, 49))
+>B : Symbol(B, Decl(tluaStringByteEscapes.tlua, 37, 63))
+>A : Symbol(A, Decl(tluaStringByteEscapes.tlua, 37, 49))
+>B : Symbol(B, Decl(tluaStringByteEscapes.tlua, 37, 63))
+
+local split: Split<"\xc3\xa9x"> = { "\xc3", "x" }
+>split : Symbol(split, Decl(tluaStringByteEscapes.tlua, 38, 5))
+>Split : Symbol(Split, Decl(tluaStringByteEscapes.tlua, 36, 38))
+

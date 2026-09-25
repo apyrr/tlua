@@ -2,7 +2,6 @@
 package stringutil
 
 import (
-	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf16"
@@ -240,20 +239,6 @@ func StripQuotes(name string) string {
 	return name
 }
 
-var matchSlashSomething = regexp.MustCompile(`\\.`)
-
-func matchSlashReplacer(in string) string {
-	return in[1:]
-}
-
-func UnquoteString(str string) string {
-	// strconv.Unquote is insufficient as that only handles a single character inside single quotes, as those are character literals in go
-	inner := StripQuotes(str)
-	// In strada we do str.replace(/\\./g, s => s.substring(1)) - which is to say, replace all backslash-something with just something
-	// That's replicated here faithfully, but it seems wrong! This should probably be an actual unquote operation?
-	return matchSlashSomething.ReplaceAllStringFunc(inner, matchSlashReplacer)
-}
-
 func LowerFirstChar(str string) string {
 	char, size := utf8.DecodeRuneInString(str)
 	if size > 0 {
@@ -294,10 +279,6 @@ func IsLowSurrogate(ch rune) bool {
 	return utf16.IsSurrogate(ch) && ch >= SurrogateLowStart
 }
 
-func IsSurrogate(ch rune) bool {
-	return utf16.IsSurrogate(ch)
-}
-
 func SurrogatePairToCodePoint(high rune, low rune) rune {
 	return utf16.DecodeRune(high, low)
 }
@@ -330,7 +311,7 @@ const (
 )
 
 func EncodeJSStringRune(ch rune) string {
-	if IsSurrogate(ch) {
+	if utf16.IsSurrogate(ch) {
 		return string([]byte{
 			surrogateUTF8Lead,
 			byte(utf8ContMarker | ((ch >> 6) & utf8ContMask)),
@@ -350,30 +331,25 @@ func DecodeJSStringRune(s string) (rune, int) {
 	return utf8.DecodeRuneInString(s)
 }
 
-// CombineSurrogatePairs canonicalizes a JS-string value produced by
-// concatenation, merging any adjacent high+low surrogate sentinel pair (as
-// written by EncodeJSStringRune) into the single supplementary code point they
-// represent. This mirrors how concatenating two UTF-16 code units forms a
-// surrogate pair in a JavaScript string. It must be applied wherever separately
-// scanned string values are joined, since each half is only a lone surrogate
-// until it meets its partner. Strings without a lone-surrogate sentinel (the
-// common case) are returned unchanged.
-func CombineSurrogatePairs(s string) string {
-	if strings.IndexByte(s, surrogateUTF8Lead) < 0 {
+// EscapeInvalidUTF8 spells each byte of s that is not valid UTF-8 as `\xHH`, the
+// Lua escape for that byte, and keeps everything else as is. It makes a Lua byte
+// string printable text without two different bytes looking alike.
+func EscapeInvalidUTF8(s string) string {
+	if utf8.ValidString(s) {
 		return s
 	}
 	var b strings.Builder
-	b.Grow(len(s))
+	b.Grow(len(s) + 8)
 	for i := 0; i < len(s); {
-		r, size := DecodeJSStringRune(s[i:])
-		if IsHighSurrogate(r) {
-			if low, lowSize := DecodeJSStringRune(s[i+size:]); IsLowSurrogate(low) {
-				b.WriteRune(SurrogatePairToCodePoint(r, low))
-				i += size + lowSize
-				continue
-			}
+		r, size := utf8.DecodeRuneInString(s[i:])
+		if r == utf8.RuneError && size == 1 {
+			const hex = "0123456789abcdef"
+			b.WriteString(`\x`)
+			b.WriteByte(hex[s[i]>>4])
+			b.WriteByte(hex[s[i]&0xf])
+		} else {
+			b.WriteString(s[i : i+size])
 		}
-		b.WriteString(s[i : i+size])
 		i += size
 	}
 	return b.String()

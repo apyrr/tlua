@@ -4256,6 +4256,8 @@ var X_0_is_a_reserved_word_in_Lua_and_cannot_name_a_field_here_Use_0_instead = &
 
 var X_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_instead = &Message{code: 100062, category: CategoryError, key: "_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_i_100062", text: "'{0}' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '[\"{0}\"]' field instead."}
 
+var Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255 = &Message{code: 100063, category: CategoryError, key: "Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255_100063", text: "Decimal escape sequence '{0}' is too large; a Lua string byte is at most 255."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8512,6 +8514,8 @@ func keyToMessage(key Key) *Message {
 		return X_0_is_a_reserved_word_in_Lua_and_cannot_name_a_field_here_Use_0_instead
 	case "_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_i_100062":
 		return X_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_instead
+	case "Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255_100063":
+		return Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255
 	default:
 		return nil
 	}
