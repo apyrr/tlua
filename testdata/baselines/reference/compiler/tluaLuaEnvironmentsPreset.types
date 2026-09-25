@@ -1,0 +1,27 @@
+//// [tests/cases/compiler/tluaLuaEnvironmentsPreset.tlua] ////
+
+=== host.d.tlua ===
+interface Entity {
+    GetPos(self: Entity): number;
+>GetPos : (self: Entity) => number
+>self : Entity
+}
+=== addons/a/lua/entities/crate.tlua ===
+function ENT:Weight(): number
+>ENT : Entity & { Weight: (self: Entity & { Weight: any; }) => number; }
+>Weight : (self: Entity & { Weight: any; }) => number
+
+    return self:GetPos()
+>self:GetPos() : number
+>self:GetPos : (self: Entity) => number
+>self : Entity & { Weight: (self: Entity & { Weight: any; }) => number; }
+>GetPos : (self: Entity) => number
+
+end
+local w: string = ENT:Weight()
+>w : string
+>ENT:Weight() : number
+>ENT:Weight : (self: Entity & { Weight: any; }) => number
+>ENT : Entity & { Weight: (self: Entity & { Weight: any; }) => number; }
+>Weight : (self: Entity & { Weight: any; }) => number
+

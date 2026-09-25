@@ -73,6 +73,8 @@ const (
 	extraValidationNone   extraValidation = ""
 	extraValidationSpec   extraValidation = "spec"
 	extraValidationLocale extraValidation = "locale"
+	// extraValidationLuaEnvironment checks one luaEnvironments entry's keys.
+	extraValidationLuaEnvironment extraValidation = "luaEnvironment"
 )
 
 func (o *CommandLineOption) DeprecatedKeys() *collections.Set[string] {
@@ -123,6 +125,11 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 	"plugins": {
 		Name: "plugin",
 		Kind: CommandLineOptionTypeObject,
+	},
+	"luaEnvironments": {
+		Name:            "luaEnvironment",
+		Kind:            CommandLineOptionTypeObject,
+		extraValidation: extraValidationLuaEnvironment,
 	},
 	// For tsconfig root options
 	"references": {

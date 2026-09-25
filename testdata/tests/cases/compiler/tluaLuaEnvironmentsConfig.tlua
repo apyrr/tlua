@@ -1,0 +1,29 @@
+// Malformed luaEnvironments entries are reported where they are written and
+// dropped; well-formed entries naming no global type are reported once.
+// @filename: tluaconfig.json
+{
+    "compilerOptions": {
+        "strict": true,
+        "luaEnvironments": [
+            { "root": "/abs/*", "globals": { "A": "Seed" } },
+            { "root": "a/../b", "globals": { "B": "Seed" } },
+            { "root": "c/[", "globals": { "C": "Seed" } },
+            { "rot": "d/*", "globals": { "D": "Seed" } },
+            { "root": "e/*", "globals": {} },
+            { "root": "f/*", "globals": { "F": 5 } },
+            { "root": "g/*", "globals": { "G": "Seed", "H": "Seed" }, "registry": "Registry" },
+            { "root": "h/*", "globals": { "I": "Seed" }, "registry": 7 },
+            { "root": "./ok/*", "globals": { "OK": "Seed" } },
+            { "root": "missing/*", "globals": { "M": "NoSuchSeed" }, "registry": "NoSuchRegistry" }
+        ]
+    }
+}
+// @filename: host.d.tlua
+interface Seed {
+    Name: string;
+}
+// @filename: ok/one/a.tlua
+OK.Name = "one"
+OK.Extra = 1
+// @filename: missing/one/a.tlua
+M.Name = "m"

@@ -1,0 +1,257 @@
+//// [tests/cases/compiler/tluaLuaContractMembers.tlua] ////
+
+=== tluaLuaContractMembers.tlua ===
+// `function T:m ... end` is `T.m = function(self, ...) ... end`: on a table
+// whose constructor states a contract, both spellings take their contextual
+// type from the contract member and are checked against it.
+
+interface Greeter {
+    greet(self: Greeter, name: string): string;
+>greet : (self: Greeter, name: string) => string
+>self : Greeter
+>name : string
+
+    config: { debug: boolean };
+>config : { debug: boolean; }
+>debug : boolean
+
+    Think: (self: Greeter) => nil;
+>Think : (self: Greeter) => nil
+>self : Greeter
+
+    Gen<T>(self: Greeter, x: T): T;
+>Gen : <T>(self: Greeter, x: T) => T
+>self : Greeter
+>x : T
+
+    Stop(self: Greeter): nil;
+>Stop : (self: Greeter) => nil
+>self : Greeter
+}
+
+local g = {} as unknown as Greeter
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>{} as unknown as Greeter : Greeter
+>{} as unknown : unknown
+>{} : { Count: number; greet: any; Think(self: Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }): nil; Gen<T>(self: Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }, x: T): T; Stop: any; config: { debug: number; verbose: boolean; }; Extra: any; }
+
+g.Count = 1
+>g.Count = 1 : 1
+>g.Count : number
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Count : number
+>1 : 1
+
+-- A body that breaks the contract is an error in either spelling.
+function g.greet(self: Greeter, name: string): number
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>greet : any
+>self : Greeter
+>name : string
+
+    return 42
+>42 : 42
+
+end
+g.greet = function(self: Greeter, name: string): number
+>g.greet = function(self: Greeter, name: string): number    return 42end : (self: Greeter, name: string) => number
+>g.greet : (self: Greeter, name: string) => string
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>greet : (self: Greeter, name: string) => string
+>function(self: Greeter, name: string): number    return 42end : (self: Greeter, name: string) => number
+>self : Greeter
+>name : string
+
+    return 42
+>42 : 42
+
+end
+
+-- Unannotated parameters take the contract's types in either spelling.
+function g:greet(name)
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>greet : any
+>name : string
+
+    local n: number = name
+>n : number
+>name : string
+
+    return name
+>name : string
+
+end
+g.greet = function(self, name)
+>g.greet = function(self, name)    local n: number = name    return nameend : (self: Greeter, name: string) => string
+>g.greet : (self: Greeter, name: string) => string
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>greet : (self: Greeter, name: string) => string
+>function(self, name)    local n: number = name    return nameend : (self: Greeter, name: string) => string
+>self : Greeter
+>name : string
+
+    local n: number = name
+>n : number
+>name : string
+
+    return name
+>name : string
+
+end
+
+-- A colon body's implicit self carries the table's other members; it is
+-- checked with the contract's receiver, even for a member declared as a
+-- function-typed property.
+function g:Think()
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Think : (self: Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }) => nil
+
+    local count: number = self.Count
+>count : number
+>self.Count : number
+>self : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Count : number
+
+end
+
+-- A generic contract member binds its type parameters in the body.
+function g:Gen(x)
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Gen : <T>(self: Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }, x: T) => T
+>x : T
+
+    local s: string = x
+>s : string
+>x : T
+
+    return x
+>x : T
+
+end
+local generic: string = g:Gen("a")
+>generic : string
+>g:Gen("a") : "a"
+>g:Gen : <T>(self: Greeter, x: T) => T
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Gen : <T>(self: Greeter, x: T) => T
+>"a" : "a"
+
+-- Several bodies for a contract member are stores into a declared slot.
+function g:Stop() end
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Stop : any
+
+function g:Stop() end
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Stop : any
+
+-- Members below a contract member keep the contract's type.
+g.config = { debug = 1 }
+>g.config = { debug = 1 } : { debug: number; verbose: boolean; }
+>g.config : { debug: boolean; } & { verbose: boolean; }
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>config : { debug: boolean; } & { verbose: boolean; }
+>{ debug = 1 } : { debug: number; verbose: boolean; }
+>debug : number
+>1 : 1
+
+g.config.verbose = true
+>g.config.verbose = true : true
+>g.config.verbose : boolean
+>g.config : { debug: boolean; } & { verbose: boolean; }
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>config : { debug: boolean; } & { verbose: boolean; }
+>verbose : boolean
+>true : true
+
+local verbose: string = g.config.verbose
+>verbose : string
+>g.config.verbose : true
+>g.config : { debug: boolean; } & { verbose: boolean; }
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>config : { debug: boolean; } & { verbose: boolean; }
+>verbose : true
+
+-- A member initialized from a sibling member is not circular.
+local counters = {} as { Name: string }
+>counters : { Name: string; } & { Count: number; Double: number; }
+>{} as { Name: string } : { Name: string; }
+>{} : { Name: string; Count: number; Double: number; }
+>Name : string
+
+counters.Name = "c"
+>counters.Name = "c" : "c"
+>counters.Name : string
+>counters : { Name: string; } & { Count: number; Double: number; }
+>Name : string
+>"c" : "c"
+
+counters.Count = 1
+>counters.Count = 1 : 1
+>counters.Count : number
+>counters : { Name: string; } & { Count: number; Double: number; }
+>Count : number
+>1 : 1
+
+counters.Double = counters.Count * 2
+>counters.Double = counters.Count * 2 : number
+>counters.Double : number
+>counters : { Name: string; } & { Count: number; Double: number; }
+>Double : number
+>counters.Count * 2 : number
+>counters.Count : number
+>counters : { Name: string; } & { Count: number; Double: number; }
+>Count : number
+>2 : 2
+
+local double: string = counters.Double
+>double : string
+>counters.Double : number
+>counters : { Name: string; } & { Count: number; Double: number; }
+>Double : number
+
+-- A table asserted before its methods are attached converts as built: the
+-- attached members complete it, and stand as the contract's own members.
+interface Tx {
+    undo: (() => nil)[];
+>undo : (() => nil)[]
+
+    open: boolean;
+>open : boolean
+
+    commit: (self: Tx) => nil;
+>commit : (self: Tx) => nil
+>self : Tx
+}
+local tx = { undo = {}, open = true } as Tx
+>tx : Tx
+>{ undo = {}, open = true } as Tx : Tx
+>{ undo = {}, open = true } : { undo: never[]; open: true; commit(self: Tx): nil; }
+>undo : never[]
+>{} : never[]
+>open : true
+>true : true
+
+function tx:commit()
+>tx : Tx
+>commit : (self: Tx) => nil
+
+    self.open = false
+>self.open = false : false
+>self.open : boolean
+>self : Tx
+>open : boolean
+>false : false
+
+end
+
+-- A member the contract does not declare is the table's own, so two bodies
+-- for it are duplicates.
+function g:Extra() end
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Extra : any
+
+function g:Extra() end
+>g : Greeter & { config: { verbose: boolean; }; Count: number; Extra: any; }
+>Extra : any
+

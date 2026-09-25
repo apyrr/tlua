@@ -1,0 +1,26 @@
+// A preset reached through `extends` matches roots against the consuming
+// project's search root, not the preset's own directory.
+// @filename: tluaconfig.json
+{
+    "extends": "host-preset/tluaconfig.json",
+    "compilerOptions": {
+        "strict": true
+    }
+}
+// @filename: node_modules/host-preset/tluaconfig.json
+{
+    "compilerOptions": {
+        "luaEnvironments": [
+            { "root": "**/lua/entities/*", "globals": { "ENT": "Entity" } }
+        ]
+    }
+}
+// @filename: host.d.tlua
+interface Entity {
+    GetPos(self: Entity): number;
+}
+// @filename: addons/a/lua/entities/crate.tlua
+function ENT:Weight(): number
+    return self:GetPos()
+end
+local w: string = ENT:Weight()

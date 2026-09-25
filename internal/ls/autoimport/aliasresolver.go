@@ -171,6 +171,12 @@ func (r *aliasResolver) CommonSourceDirectory() string {
 	panic("unimplemented")
 }
 
+// GetLuaEnvironmentGroups implements checker.Program. Alias resolution reads
+// declarations only, so no file runs in a host environment.
+func (r *aliasResolver) GetLuaEnvironmentGroups() map[tspath.Path]core.LuaEnvironmentGroup {
+	return nil
+}
+
 // FileExists implements checker.Program.
 func (r *aliasResolver) FileExists(fileName string) bool {
 	panic("unimplemented")

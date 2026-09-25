@@ -507,6 +507,9 @@ type Program interface {
 	GetProjectReferenceFromOutputDts(path tspath.Path) *tsoptions.SourceOutputAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
+	// GetLuaEnvironmentGroups maps each file under a luaEnvironments root to its
+	// group. It is computed once per program; checkers only read it.
+	GetLuaEnvironmentGroups() map[tspath.Path]core.LuaEnvironmentGroup
 }
 
 type Host interface {
@@ -603,6 +606,13 @@ type Checker struct {
 	luaSymbolEffectTimelines               map[*ast.Symbol][]luaSymbolEffect
 	luaStableAccessKeys                    map[*ast.Node]luaStableAccessKeyResult
 	luaAugmentationMemberArms              map[*ast.Symbol][]*ast.Symbol
+	luaFileEnvironments                    map[*ast.SourceFile]ast.SymbolTable
+	luaEnvironmentGlobals                  map[*ast.Symbol]*luaEnvironmentGlobal
+	luaEnvironmentArmGlobals               map[*ast.Symbol]*luaEnvironmentGlobal
+	luaEnvironmentRegistryMembers          map[*ast.Symbol][]*ast.Symbol
+	luaContractSurfaceSources              map[*ast.Symbol]*ast.Symbol
+	luaNestedContractSurfaces              map[*ast.Symbol]*luaNestedContractSurface
+	luaDeferredMethodCollisions            collections.Set[*ast.Symbol]
 	luaConstructorResolver                 *luaConstructorResolver
 	luaReportedMethodCollisions            collections.Set[*ast.Node]
 	luaNumericContractTargets              collections.Set[*ast.Node]
@@ -912,6 +922,12 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.luaMetatableAugmentedParamTypes = make(map[LuaMetatableAugmentedParamKey]*Type)
 	c.luaSymbolEffectTimelines = make(map[*ast.Symbol][]luaSymbolEffect)
 	c.luaAugmentationMemberArms = make(map[*ast.Symbol][]*ast.Symbol)
+	c.luaFileEnvironments = make(map[*ast.SourceFile]ast.SymbolTable)
+	c.luaEnvironmentGlobals = make(map[*ast.Symbol]*luaEnvironmentGlobal)
+	c.luaEnvironmentRegistryMembers = make(map[*ast.Symbol][]*ast.Symbol)
+	c.luaEnvironmentArmGlobals = make(map[*ast.Symbol]*luaEnvironmentGlobal)
+	c.luaContractSurfaceSources = make(map[*ast.Symbol]*ast.Symbol)
+	c.luaNestedContractSurfaces = make(map[*ast.Symbol]*luaNestedContractSurface)
 	c.luaGlobalsSymbol.Exports = c.globals
 	c.globals[c.luaGlobalsSymbol.Name] = c.luaGlobalsSymbol
 	c.resolveName = c.createNameResolver().Resolve
@@ -1347,7 +1363,9 @@ func (c *Checker) initializeChecker() {
 	// Lua augmentation eligibility consults c.globals (a type-only global such as
 	// a `declare global` interface is a non-constructor arm that closes the
 	// table), so this must run after every global-scope contribution above and,
-	// like those, before global types are created.
+	// like those, before global types are created. Environment globals exist
+	// first so writes in their files find the group's arm.
+	c.initializeLuaEnvironments()
 	c.initializeLuaAugmentations()
 	// `nil` is a keyword, so no declaration can take its name, but an entity name
 	// can spell it: `typeof nil` resolves it as a global, as TS resolves `typeof
@@ -1374,6 +1392,7 @@ func (c *Checker) initializeChecker() {
 	}
 	c.anyReadonlyArrayType = c.createArrayTypeEx(c.anyType, true /*readonly*/)
 	c.globalThisType = c.getGlobalType("ThisType", 1 /*arity*/, false /*reportErrors*/)
+	c.checkLuaEnvironmentTypes()
 }
 
 func (c *Checker) mergeGlobalSymbol(symbol *ast.Symbol) {
@@ -1420,6 +1439,7 @@ func (c *Checker) createNameResolver() *binder.NameResolver {
 		GetSymbolOfDeclaration:       c.getSymbolOfDeclaration,
 		Error:                        c.error,
 		Globals:                      c.globals,
+		FileGlobals:                  c.getLuaFileEnvironment,
 		ArgumentsSymbol:              c.argumentsSymbol,
 		RequireSymbol:                c.requireSymbol,
 		Lookup:                       c.getSymbol,
@@ -1437,6 +1457,7 @@ func (c *Checker) createNameResolverForSuggestion() *binder.NameResolver {
 		GetSymbolOfDeclaration:      c.getSymbolOfDeclaration,
 		Error:                       c.error,
 		Globals:                     c.globals,
+		FileGlobals:                 c.getLuaFileEnvironment,
 		ArgumentsSymbol:             c.argumentsSymbol,
 		RequireSymbol:               c.requireSymbol,
 		Lookup:                      c.getSuggestionForSymbolNameLookup,
@@ -2850,32 +2871,64 @@ func (c *Checker) checkLuaDottedFunctionDeclaration(node *ast.Node, target *ast.
 	// and so that the language service can resolve the symbols along it.
 	targetType := c.checkExpression(target)
 	mergedSymbol := c.getSymbolOfDeclaration(node)
-	if mergedSymbol.Flags&ast.SymbolFlagsAssignment != 0 {
-		return
-	}
-	if c.luaReportedMethodCollisions.Has(node) {
-		// Augmentation already reported this body as duplicating a member the
-		// constructor declares; checking its signature too would double-report.
-		return
-	}
-	if c.isErrorType(targetType) {
-		return
-	}
 	name := node.Name()
-	property := c.getPropertyOfType(targetType, name.Text())
-	if property == nil {
-		c.error(name, diagnostics.Property_0_does_not_exist_on_type_1, name.Text(), c.TypeToString(targetType))
-		return
-	}
-	if c.getMergedSymbol(property) == c.luaGlobalsSymbol {
-		c.error(name, diagnostics.Declaration_name_conflicts_with_built_in_global_identifier_0, c.luaGlobalsSymbol.Name)
-		return
+	var property *ast.Symbol
+	if mergedSymbol.Flags&ast.SymbolFlagsAssignment != 0 {
+		// The body declares a member of an open table. It implements the member
+		// the table's contract declares, if any; otherwise the member is its own.
+		property = c.getLuaMemberFunctionContract(node)
+		if c.luaDeferredMethodCollisions.Has(mergedSymbol) {
+			c.reportLuaDeferredMethodCollision(node, mergedSymbol, property != nil)
+		}
+		if property == nil {
+			return
+		}
+	} else {
+		if c.luaReportedMethodCollisions.Has(node) {
+			// Augmentation already reported this body as duplicating a member the
+			// constructor declares; checking its signature too would double-report.
+			return
+		}
+		if c.isErrorType(targetType) {
+			return
+		}
+		property = c.getPropertyOfType(targetType, name.Text())
+		if property == nil {
+			c.error(name, diagnostics.Property_0_does_not_exist_on_type_1, name.Text(), c.TypeToString(targetType))
+			return
+		}
+		if c.getMergedSymbol(property) == c.luaGlobalsSymbol {
+			c.error(name, diagnostics.Declaration_name_conflicts_with_built_in_global_identifier_0, c.luaGlobalsSymbol.Name)
+			return
+		}
 	}
 	// Use the binder symbol for the implementation signature. Navigation may
 	// merge that symbol into an existing declared property, whose type is the
 	// assignment target rather than the function being checked.
-	implementationType := c.getOrCreateTypeFromSignature(c.getSignatureFromDeclaration(node))
-	c.checkTypeAssignableTo(implementationType, c.getTypeOfSymbol(property), name, nil)
+	propertyType := c.getTypeOfSymbol(property)
+	implementationType := c.getOrCreateTypeFromSignature(c.getLuaReceiverCheckSignature(node, propertyType))
+	c.checkTypeAssignableTo(implementationType, propertyType, name, nil)
+}
+
+// reportLuaDeferredMethodCollision reports a body that duplicates another body
+// of its member. A member of the table's own has one body. Bodies implementing
+// a contract member are stores into a declared slot, as `T.m = function` is,
+// so any number of them may exist: a host commonly runs a different body per
+// realm, from separate files or separate branches. Each body reports for
+// itself, so the diagnostic lands in the checker that owns the body's file.
+func (c *Checker) reportLuaDeferredMethodCollision(node *ast.Node, member *ast.Symbol, implementsContract bool) {
+	if implementsContract {
+		return
+	}
+	var related []*ast.Node
+	for _, declaration := range member.Declarations {
+		if declaration != node && ast.IsFunctionDeclaration(declaration) {
+			related = append(related, declaration)
+		}
+	}
+	if len(related) != 0 {
+		c.addDuplicateDeclarationError(node, diagnostics.Duplicate_identifier_0, ast.KeyDisplayName(member.Name), related)
+	}
 }
 
 func (c *Checker) checkFunctionOrMethodDeclaration(node *ast.Node) {
@@ -8897,6 +8950,7 @@ func (c *Checker) checkAssertionDeferred(node *ast.Node) {
 	typeNode := node.Type()
 	exprType := c.getRegularTypeOfObjectLiteral(c.getBaseTypeOfLiteralType(c.assertionLinks.Get(node).exprType))
 	targetType := c.getTypeFromTypeNode(typeNode)
+	exprType = c.getLuaConstructorTypeForAssertion(node.Expression(), exprType, targetType)
 	if !c.isErrorType(targetType) {
 		widenedType := c.getWidenedType(exprType)
 		if !c.isTypeComparableTo(targetType, widenedType) {
@@ -12649,6 +12703,12 @@ func (c *Checker) getWriteTypeOfSymbol(symbol *ast.Symbol) *Type {
 		if symbol.CheckFlags&ast.CheckFlagsDeferredType != 0 {
 			return c.getWriteTypeOfSymbolWithDeferredType(symbol)
 		}
+		if source := c.luaContractSurfaceSources[symbol]; source != nil {
+			return c.getWriteTypeOfSymbol(source)
+		}
+		if c.luaNestedContractSurfaces[symbol] != nil {
+			return c.getTypeOfSymbol(symbol)
+		}
 		links := c.valueSymbolLinks.Get(symbol)
 		return core.OrElse(links.writeType, links.resolvedType)
 	}
@@ -12760,7 +12820,18 @@ func (c *Checker) getTypeOfVariableOrParameterOrProperty(symbol *ast.Symbol) *Ty
 				return links.resolvedType
 			}
 		}
-		t := c.getTypeOfVariableOrParameterOrPropertyWorker(symbol)
+		var t *Type
+		if environmentGlobal := c.luaEnvironmentGlobals[symbol]; environmentGlobal != nil {
+			t = c.getTypeOfLuaEnvironmentGlobal(symbol, environmentGlobal)
+		} else if registered := c.luaEnvironmentRegistryMembers[symbol]; registered != nil {
+			t = c.getTypeOfLuaEnvironmentRegistryMember(registered)
+		} else if source := c.luaContractSurfaceSources[symbol]; source != nil {
+			t = c.getTypeOfSymbol(source)
+		} else if nested := c.luaNestedContractSurfaces[symbol]; nested != nil {
+			t = c.getTypeOfLuaNestedContractSurface(nested)
+		} else {
+			t = c.getTypeOfVariableOrParameterOrPropertyWorker(symbol)
+		}
 		if t == nil {
 			panic("Unexpected nil type")
 		}
@@ -15867,6 +15938,15 @@ func (c *Checker) getSignatureFromDeclaration(declaration *ast.Node) *Signature 
 		}
 	}
 	typeParameters := c.getTypeParametersFromDeclaration(declaration)
+	if len(typeParameters) == 0 && isLuaMemberFunctionDeclaration(declaration) &&
+		core.Some(declaration.Parameters(), func(param *ast.Node) bool { return param.Type() == nil }) {
+		// A declaration implementing a generic contract member takes the member's
+		// type parameters, which its unannotated parameters' contextual types name,
+		// as assignContextualParameterTypes does for a function expression.
+		if contextualSignature := c.getContextualSignature(declaration); contextualSignature != nil {
+			typeParameters = contextualSignature.typeParameters
+		}
+	}
 	if hasRestParameter(declaration) {
 		flags |= SignatureFlagsHasRestParameter
 	}
@@ -24976,6 +25056,9 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 	if index >= 0 {
 		return c.contextualInfos[index].t
 	}
+	if isLuaMemberFunctionDeclaration(node) {
+		return c.getContextualTypeForLuaMemberFunction(node)
+	}
 	parent := node.Parent
 	switch parent.Kind {
 	case ast.KindVariableDeclaration, ast.KindParameter, ast.KindPropertySignature, ast.KindBindingElement:
@@ -25064,6 +25147,19 @@ func (c *Checker) getContextualTypeForVariableLikeDeclaration(declaration *ast.N
 // Return contextual type of parameter or undefined if no contextual type is available
 func (c *Checker) getContextuallyTypedParameterType(parameter *ast.Node) *Type {
 	fn := parameter.Parent
+	if isLuaMemberFunctionDeclaration(fn) {
+		// The declaration's parameters take their types lazily here; a function
+		// expression's are assigned when it is contextually checked.
+		contextualSignature := c.getContextualSignature(fn)
+		if contextualSignature == nil {
+			return nil
+		}
+		index := slices.Index(fn.Parameters(), parameter)
+		if hasDotDotDotToken(parameter) && core.LastOrNil(fn.Parameters()) == parameter {
+			return c.getRestTypeAtPosition(contextualSignature, index, false /*readonly*/)
+		}
+		return c.tryGetTypeAtPosition(contextualSignature, index)
+	}
 	if !c.isContextSensitiveFunctionOrObjectLiteralMethod(fn) {
 		return nil
 	}
@@ -25242,7 +25338,9 @@ func (c *Checker) getContextualReturnType(functionDecl *ast.Node, contextFlags C
 
 func (c *Checker) getContextualSignatureForFunctionLikeDeclaration(node *ast.Node) *Signature {
 	// Only function expressions, arrow functions, and object literal methods are contextually typed.
-	if ast.IsFunctionExpressionOrArrowFunction(node) {
+	// A dotted or colon function declaration is `T.m = function ... end`, so it
+	// is contextually typed like the function expression it stands for.
+	if ast.IsFunctionExpressionOrArrowFunction(node) || isLuaMemberFunctionDeclaration(node) {
 		return c.getContextualSignature(node)
 	}
 	return nil
@@ -25383,11 +25481,11 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 						return c.getTypeOfExpression(left)
 					}
 				}
-				return nil
+				return c.getContextualTypeForLuaMemberDeclaration(left)
 			}
 		case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 			if isAssignmentDeclaration {
-				return nil
+				return c.getContextualTypeForLuaMemberDeclaration(left)
 			}
 		case ast.KindThisKeyword:
 			var symbol *ast.Symbol

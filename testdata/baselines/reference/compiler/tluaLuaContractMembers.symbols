@@ -1,0 +1,238 @@
+//// [tests/cases/compiler/tluaLuaContractMembers.tlua] ////
+
+=== tluaLuaContractMembers.tlua ===
+// `function T:m ... end` is `T.m = function(self, ...) ... end`: on a table
+// whose constructor states a contract, both spellings take their contextual
+// type from the contract member and are checked against it.
+
+interface Greeter {
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+
+    greet(self: Greeter, name: string): string;
+>greet : Symbol(Greeter.greet, Decl(tluaLuaContractMembers.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 5, 10))
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 5, 24))
+
+    config: { debug: boolean };
+>config : Symbol(Greeter.config, Decl(tluaLuaContractMembers.tlua, 5, 47))
+>debug : Symbol(debug, Decl(tluaLuaContractMembers.tlua, 6, 13))
+
+    Think: (self: Greeter) => nil;
+>Think : Symbol(Greeter.Think, Decl(tluaLuaContractMembers.tlua, 6, 31))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 7, 12))
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+
+    Gen<T>(self: Greeter, x: T): T;
+>Gen : Symbol(Greeter.Gen, Decl(tluaLuaContractMembers.tlua, 7, 34))
+>T : Symbol(T, Decl(tluaLuaContractMembers.tlua, 8, 8))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 8, 11))
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+>x : Symbol(x, Decl(tluaLuaContractMembers.tlua, 8, 25))
+>T : Symbol(T, Decl(tluaLuaContractMembers.tlua, 8, 8))
+>T : Symbol(T, Decl(tluaLuaContractMembers.tlua, 8, 8))
+
+    Stop(self: Greeter): nil;
+>Stop : Symbol(Greeter.Stop, Decl(tluaLuaContractMembers.tlua, 8, 35))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 9, 9))
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+}
+
+local g = {} as unknown as Greeter
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+
+g.Count = 1
+>g.Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 12, 34))
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 12, 34))
+
+-- A body that breaks the contract is an error in either spelling.
+function g.greet(self: Greeter, name: string): number
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>greet : Symbol(greet, Decl(tluaLuaContractMembers.tlua, 13, 11), Decl(tluaLuaContractMembers.tlua, 21, 3), Decl(tluaLuaContractMembers.tlua, 18, 3), Decl(tluaLuaContractMembers.tlua, 27, 3))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 16, 17))
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 16, 31))
+
+    return 42
+end
+g.greet = function(self: Greeter, name: string): number
+>g.greet : Symbol(Greeter.greet, Decl(tluaLuaContractMembers.tlua, 4, 19))
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>greet : Symbol(Greeter.greet, Decl(tluaLuaContractMembers.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 19, 19))
+>Greeter : Symbol(Greeter, Decl(tluaLuaContractMembers.tlua, 0, 0))
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 19, 33))
+
+    return 42
+end
+
+-- Unannotated parameters take the contract's types in either spelling.
+function g:greet(name)
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>greet : Symbol(greet, Decl(tluaLuaContractMembers.tlua, 13, 11), Decl(tluaLuaContractMembers.tlua, 21, 3), Decl(tluaLuaContractMembers.tlua, 18, 3), Decl(tluaLuaContractMembers.tlua, 27, 3))
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 24, 17))
+
+    local n: number = name
+>n : Symbol(n, Decl(tluaLuaContractMembers.tlua, 25, 9))
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 24, 17))
+
+    return name
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 24, 17))
+
+end
+g.greet = function(self, name)
+>g.greet : Symbol(Greeter.greet, Decl(tluaLuaContractMembers.tlua, 4, 19))
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>greet : Symbol(Greeter.greet, Decl(tluaLuaContractMembers.tlua, 4, 19))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 28, 19))
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 28, 24))
+
+    local n: number = name
+>n : Symbol(n, Decl(tluaLuaContractMembers.tlua, 29, 9))
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 28, 24))
+
+    return name
+>name : Symbol(name, Decl(tluaLuaContractMembers.tlua, 28, 24))
+
+end
+
+-- A colon body's implicit self carries the table's other members; it is
+-- checked with the contract's receiver, even for a member declared as a
+-- function-typed property.
+function g:Think()
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Think : Symbol(Think, Decl(tluaLuaContractMembers.tlua, 31, 3))
+
+    local count: number = self.Count
+>count : Symbol(count, Decl(tluaLuaContractMembers.tlua, 37, 9))
+>self.Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 12, 34))
+>self : Symbol(:, Decl(tluaLuaContractMembers.tlua, 36, 10))
+>Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 12, 34))
+
+end
+
+-- A generic contract member binds its type parameters in the body.
+function g:Gen(x)
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Gen : Symbol(Gen, Decl(tluaLuaContractMembers.tlua, 38, 3))
+>x : Symbol(x, Decl(tluaLuaContractMembers.tlua, 41, 15))
+
+    local s: string = x
+>s : Symbol(s, Decl(tluaLuaContractMembers.tlua, 42, 9))
+>x : Symbol(x, Decl(tluaLuaContractMembers.tlua, 41, 15))
+
+    return x
+>x : Symbol(x, Decl(tluaLuaContractMembers.tlua, 41, 15))
+
+end
+local generic: string = g:Gen("a")
+>generic : Symbol(generic, Decl(tluaLuaContractMembers.tlua, 45, 5))
+>g:Gen : Symbol(Greeter.Gen, Decl(tluaLuaContractMembers.tlua, 7, 34))
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Gen : Symbol(Greeter.Gen, Decl(tluaLuaContractMembers.tlua, 7, 34))
+
+-- Several bodies for a contract member are stores into a declared slot.
+function g:Stop() end
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Stop : Symbol(Stop, Decl(tluaLuaContractMembers.tlua, 45, 34), Decl(tluaLuaContractMembers.tlua, 48, 21))
+
+function g:Stop() end
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Stop : Symbol(Stop, Decl(tluaLuaContractMembers.tlua, 45, 34), Decl(tluaLuaContractMembers.tlua, 48, 21))
+
+-- Members below a contract member keep the contract's type.
+g.config = { debug = 1 }
+>g.config : Symbol(Greeter.config, Decl(tluaLuaContractMembers.tlua, 5, 47), Decl(tluaLuaContractMembers.tlua, 5, 47))
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>config : Symbol(Greeter.config, Decl(tluaLuaContractMembers.tlua, 5, 47), Decl(tluaLuaContractMembers.tlua, 5, 47))
+>debug : Symbol(debug, Decl(tluaLuaContractMembers.tlua, 52, 12))
+
+g.config.verbose = true
+>g.config.verbose : Symbol(verbose, Decl(tluaLuaContractMembers.tlua, 52, 24))
+>g.config : Symbol(Greeter.config, Decl(tluaLuaContractMembers.tlua, 5, 47), Decl(tluaLuaContractMembers.tlua, 5, 47))
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>config : Symbol(Greeter.config, Decl(tluaLuaContractMembers.tlua, 5, 47), Decl(tluaLuaContractMembers.tlua, 5, 47))
+>verbose : Symbol(verbose, Decl(tluaLuaContractMembers.tlua, 52, 24))
+
+local verbose: string = g.config.verbose
+>verbose : Symbol(verbose, Decl(tluaLuaContractMembers.tlua, 54, 5))
+>g.config.verbose : Symbol(verbose, Decl(tluaLuaContractMembers.tlua, 52, 24))
+>g.config : Symbol(Greeter.config, Decl(tluaLuaContractMembers.tlua, 5, 47), Decl(tluaLuaContractMembers.tlua, 5, 47))
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>config : Symbol(Greeter.config, Decl(tluaLuaContractMembers.tlua, 5, 47), Decl(tluaLuaContractMembers.tlua, 5, 47))
+>verbose : Symbol(verbose, Decl(tluaLuaContractMembers.tlua, 52, 24))
+
+-- A member initialized from a sibling member is not circular.
+local counters = {} as { Name: string }
+>counters : Symbol(counters, Decl(tluaLuaContractMembers.tlua, 57, 5))
+>Name : Symbol(Name, Decl(tluaLuaContractMembers.tlua, 57, 24))
+
+counters.Name = "c"
+>counters.Name : Symbol(Name, Decl(tluaLuaContractMembers.tlua, 57, 24))
+>counters : Symbol(counters, Decl(tluaLuaContractMembers.tlua, 57, 5))
+>Name : Symbol(Name, Decl(tluaLuaContractMembers.tlua, 57, 24))
+
+counters.Count = 1
+>counters.Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 58, 19))
+>counters : Symbol(counters, Decl(tluaLuaContractMembers.tlua, 57, 5))
+>Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 58, 19))
+
+counters.Double = counters.Count * 2
+>counters.Double : Symbol(Double, Decl(tluaLuaContractMembers.tlua, 59, 18))
+>counters : Symbol(counters, Decl(tluaLuaContractMembers.tlua, 57, 5))
+>Double : Symbol(Double, Decl(tluaLuaContractMembers.tlua, 59, 18))
+>counters.Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 58, 19))
+>counters : Symbol(counters, Decl(tluaLuaContractMembers.tlua, 57, 5))
+>Count : Symbol(Count, Decl(tluaLuaContractMembers.tlua, 58, 19))
+
+local double: string = counters.Double
+>double : Symbol(double, Decl(tluaLuaContractMembers.tlua, 61, 5))
+>counters.Double : Symbol(Double, Decl(tluaLuaContractMembers.tlua, 59, 18))
+>counters : Symbol(counters, Decl(tluaLuaContractMembers.tlua, 57, 5))
+>Double : Symbol(Double, Decl(tluaLuaContractMembers.tlua, 59, 18))
+
+-- A table asserted before its methods are attached converts as built: the
+-- attached members complete it, and stand as the contract's own members.
+interface Tx {
+>Tx : Symbol(Tx, Decl(tluaLuaContractMembers.tlua, 61, 38))
+
+    undo: (() => nil)[];
+>undo : Symbol(Tx.undo, Decl(tluaLuaContractMembers.tlua, 65, 14))
+
+    open: boolean;
+>open : Symbol(Tx.open, Decl(tluaLuaContractMembers.tlua, 66, 24))
+
+    commit: (self: Tx) => nil;
+>commit : Symbol(Tx.commit, Decl(tluaLuaContractMembers.tlua, 67, 18))
+>self : Symbol(self, Decl(tluaLuaContractMembers.tlua, 68, 13))
+>Tx : Symbol(Tx, Decl(tluaLuaContractMembers.tlua, 61, 38))
+}
+local tx = { undo = {}, open = true } as Tx
+>tx : Symbol(tx, Decl(tluaLuaContractMembers.tlua, 70, 5))
+>undo : Symbol(undo, Decl(tluaLuaContractMembers.tlua, 70, 12))
+>open : Symbol(open, Decl(tluaLuaContractMembers.tlua, 70, 23))
+>Tx : Symbol(Tx, Decl(tluaLuaContractMembers.tlua, 61, 38))
+
+function tx:commit()
+>tx : Symbol(tx, Decl(tluaLuaContractMembers.tlua, 70, 5))
+>commit : Symbol(commit, Decl(tluaLuaContractMembers.tlua, 70, 43))
+
+    self.open = false
+>self.open : Symbol(Tx.open, Decl(tluaLuaContractMembers.tlua, 66, 24))
+>self : Symbol(:, Decl(tluaLuaContractMembers.tlua, 71, 11))
+>open : Symbol(Tx.open, Decl(tluaLuaContractMembers.tlua, 66, 24))
+
+end
+
+-- A member the contract does not declare is the table's own, so two bodies
+-- for it are duplicates.
+function g:Extra() end
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Extra : Symbol(Extra, Decl(tluaLuaContractMembers.tlua, 73, 3), Decl(tluaLuaContractMembers.tlua, 77, 22))
+
+function g:Extra() end
+>g : Symbol(g, Decl(tluaLuaContractMembers.tlua, 12, 5))
+>Extra : Symbol(Extra, Decl(tluaLuaContractMembers.tlua, 73, 3), Decl(tluaLuaContractMembers.tlua, 77, 22))
+

@@ -1,0 +1,30 @@
+//// [tests/cases/compiler/tluaLuaEnvironmentsConfig.tlua] ////
+
+=== host.d.tlua ===
+interface Seed {
+    Name: string;
+>Name : string
+}
+=== ok/one/a.tlua ===
+OK.Name = "one"
+>OK.Name = "one" : "one"
+>OK.Name : string
+>OK : Seed & { Extra: number; }
+>Name : string
+>"one" : "one"
+
+OK.Extra = 1
+>OK.Extra = 1 : 1
+>OK.Extra : number
+>OK : Seed & { Extra: number; }
+>Extra : number
+>1 : 1
+
+=== missing/one/a.tlua ===
+M.Name = "m"
+>M.Name = "m" : "m"
+>M.Name : any
+>M : any
+>Name : any
+>"m" : "m"
+

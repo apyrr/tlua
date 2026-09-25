@@ -902,6 +902,18 @@ var optionsForCompiler = []*CommandLineOption{
 		DefaultValueDescription: true,
 	},
 	{
+		// Globals a Lua host installs per group of chunks. Deliberately not a
+		// file path: roots match relative to the Lua search root, so a preset
+		// reached through `extends` describes the consuming project's layout.
+		Name:                       "luaEnvironments",
+		Kind:                       CommandLineOptionTypeList,
+		IsTSConfigOnly:             true,
+		AffectsSemanticDiagnostics: true,
+		AffectsBuildInfo:           true,
+		Category:                   diagnostics.Language_and_Environment,
+		Description:                diagnostics.Specify_globals_a_Lua_host_installs_before_running_each_group_of_files,
+	},
+	{
 		// A list of plugins to load in the language service
 		Name:           "plugins",
 		Kind:           CommandLineOptionTypeList,

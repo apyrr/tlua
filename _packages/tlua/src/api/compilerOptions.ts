@@ -38,6 +38,7 @@ export interface CompilerOptions {
     lib?: string[];
     libReplacement?: boolean;
     locale?: string;
+    luaEnvironments?: LuaEnvironment[];
     mapRoot?: string;
     module?: ModuleKind;
     newLine?: NewLineKind;
@@ -80,4 +81,11 @@ export interface CompilerOptions {
     tsBuildInfoFile?: string;
     typeRoots?: string[];
     types?: string[];
+}
+
+/** Globals a Lua host installs before running each group of files. */
+export interface LuaEnvironment {
+    root: string;
+    globals: Record<string, string>;
+    registry?: string;
 }

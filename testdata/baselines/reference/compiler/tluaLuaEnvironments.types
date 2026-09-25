@@ -1,0 +1,301 @@
+//// [tests/cases/compiler/tluaLuaEnvironments.tlua] ////
+
+=== host.d.tlua ===
+interface Plugin {
+    Name: string;
+>Name : string
+
+    Start(self: Plugin, reason: string): nil;
+>Start : (self: Plugin, reason: string) => nil
+>self : Plugin
+>reason : string
+
+    Think: (self: Plugin) => nil;
+>Think : (self: Plugin) => nil
+>self : Plugin
+
+    Primary: { Ammo: string };
+>Primary : { Ammo: string; }
+>Ammo : string
+
+    AmmoName: string;
+>AmmoName : string
+}
+interface Tool {
+    Mode: number;
+>Mode : number
+}
+declare SERVER: boolean
+>SERVER : boolean
+
+// Every file under one matched folder shares that folder's table.
+=== plugins/door/shared.tlua ===
+PLUGIN.Name = "Door"
+>PLUGIN.Name = "Door" : "Door"
+>PLUGIN.Name : string
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Name : string
+>"Door" : "Door"
+
+PLUGIN.Locked = false
+>PLUGIN.Locked = false : false
+>PLUGIN.Locked : boolean
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Locked : boolean
+>false : false
+
+function PLUGIN:Open(): number
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Open : (self: { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: any; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }) => number
+
+    return 1
+>1 : 1
+
+end
+
+=== plugins/door/server.tlua ===
+function PLUGIN:Close()
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Close : (self: { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: any; Knock(self: { Knock(self: any): number; }): number; }) => void
+
+    local opened: number = self:Open()
+>opened : number
+>self:Open() : number
+>self:Open : (self: { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: any; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }) => number
+>self : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Open : (self: { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: any; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }) => number
+
+    local locked: boolean = self.Locked
+>locked : boolean
+>self.Locked : boolean
+>self : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Locked : boolean
+
+end
+
+// Per-realm bodies implement the seed's member, so they are not duplicates.
+// Parameters take the seed's types, and bodies are checked against it.
+if SERVER then
+>SERVER : boolean
+
+    function PLUGIN:Start(reason)
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Start : any
+>reason : string
+
+        local r: string = reason
+>r : string
+>reason : string
+
+    end
+else
+    function PLUGIN.Start(self, reason)
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Start : any
+>self : Plugin
+>reason : string
+
+        local wrong: number = reason
+>wrong : number
+>reason : string
+
+    end
+end
+
+// A hook declared as a function-typed property takes a colon body whose self
+// carries the folder's other members.
+function PLUGIN:Think()
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Think : any
+
+    local locked: boolean = self.Locked
+>locked : boolean
+>self.Locked : boolean
+>self : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Locked : boolean
+
+end
+
+=== plugins/door/client.tlua ===
+// Another file of the folder implements the same seed member; that is not a
+// duplicate either.
+function PLUGIN:Think() end
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Think : any
+
+PLUGIN.Start = function(self, reason)
+>PLUGIN.Start = function(self, reason)    local r: string = reasonend : (self: Plugin, reason: string) => nil
+>PLUGIN.Start : (self: Plugin, reason: string) => nil
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Start : (self: Plugin, reason: string) => nil
+>function(self, reason)    local r: string = reasonend : (self: Plugin, reason: string) => nil
+>self : Plugin
+>reason : string
+
+    local r: string = reason
+>r : string
+>reason : string
+
+end
+
+// A seed member initialized from a sibling member is not circular.
+PLUGIN.AmmoName = "pistol"
+>PLUGIN.AmmoName = "pistol" : "pistol"
+>PLUGIN.AmmoName : string
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>AmmoName : string
+>"pistol" : "pistol"
+
+PLUGIN.Primary = { Ammo = PLUGIN.AmmoName }
+>PLUGIN.Primary = { Ammo = PLUGIN.AmmoName } : { Ammo: string; }
+>PLUGIN.Primary : { Ammo: string; }
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Primary : { Ammo: string; }
+>{ Ammo = PLUGIN.AmmoName } : { Ammo: string; }
+>Ammo : string
+>PLUGIN.AmmoName : string
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>AmmoName : string
+
+// setmetatable pairs with the folder's table.
+local Base = {}
+>Base : { Knock(self: any): number; }
+>{} : { Knock(self: { Knock(self: any): number; }): number; }
+
+function Base:Knock(): number
+>Base : { Knock(self: any): number; }
+>Knock : (self: { Knock(self: any): number; }) => number
+
+    return 1
+>1 : 1
+
+end
+setmetatable(PLUGIN, { __index = Base })
+>setmetatable(PLUGIN, { __index = Base }) : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: any; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }) => number; Close: (self: { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: any; Knock(self: { Knock(self: any): number; }): number; }) => void; Knock(self: { Knock(self: any): number; }): number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>{ __index = Base } : { __index: { Knock(self: any): number; }; }
+>__index : { Knock(self: any): number; }
+>Base : { Knock(self: any): number; }
+
+local knock: string = PLUGIN:Knock()
+>knock : string
+>PLUGIN:Knock() : number
+>PLUGIN:Knock : (self: { Knock(self: any): number; }) => number
+>PLUGIN : { Name: string; Start(self: Plugin, reason: string): nil; Think: (self: Plugin) => nil; Primary: { Ammo: string; }; AmmoName: string; Locked: boolean; Open: (self: any) => number; Close: (self: any) => void; Knock(self: { Knock(self: any): number; }): number; }
+>Knock : (self: { Knock(self: any): number; }) => number
+
+// A single file is a group of its own. Seed members keep the seed's type, and
+// members of another group are not visible.
+=== plugins/lamp.tlua ===
+PLUGIN.Name = 42
+>PLUGIN.Name = 42 : 42
+>PLUGIN.Name : string
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Name : string
+>42 : 42
+
+PLUGIN.Count = 1
+>PLUGIN.Count = 1 : 1
+>PLUGIN.Count : number
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Count : number
+>1 : 1
+
+PLUGIN.Double = PLUGIN.Count * 2
+>PLUGIN.Double = PLUGIN.Count * 2 : number
+>PLUGIN.Double : number
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Double : number
+>PLUGIN.Count * 2 : number
+>PLUGIN.Count : number
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Count : number
+>2 : 2
+
+local double: string = PLUGIN.Double
+>double : string
+>PLUGIN.Double : number
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Double : number
+
+function PLUGIN:Toggle()
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Toggle : (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void
+
+    local count: string = self.Count
+>count : string
+>self.Count : number
+>self : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Count : number
+
+    local again: number = self.Toggle
+>again : number
+>self.Toggle : (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void
+>self : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Toggle : (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void
+
+    self:Missing()
+>self:Missing() : any
+>self:Missing : any
+>self : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Missing : any
+
+end
+PLUGIN:Open()
+>PLUGIN:Open() : any
+>PLUGIN:Open : any
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Open : any
+
+function PLUGIN:Start(reason: number) end
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Start : (self: Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }, reason: number) => nil
+>reason : number
+
+// Two bodies for a member the seed does not declare are duplicates.
+function PLUGIN:Extra() end
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Extra : any
+
+function PLUGIN:Extra() end
+>PLUGIN : Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }
+>Extra : any
+
+// The deepest matching root wins: this folder is a tool, not a plugin.
+=== plugins/tools/paint.tlua ===
+TOOL.Mode = 1
+>TOOL.Mode = 1 : 1
+>TOOL.Mode : number
+>TOOL : Tool & { Color: string; }
+>Mode : number
+>1 : 1
+
+TOOL.Color = "red"
+>TOOL.Color = "red" : "red"
+>TOOL.Color : string
+>TOOL : Tool & { Color: string; }
+>Color : string
+>"red" : "red"
+
+local p = PLUGIN
+>p : any
+>PLUGIN : any
+
+// Outside every group the names are only the seed types.
+=== main.tlua ===
+local tool = TOOL
+>tool : any
+>TOOL : any
+
+local function describe(plugin: Plugin): string
+>describe : (plugin: Plugin) => string
+>plugin : Plugin
+
+    return plugin.Name
+>plugin.Name : string
+>plugin : Plugin
+>Name : string
+
+end
+

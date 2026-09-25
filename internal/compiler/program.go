@@ -114,6 +114,38 @@ type Program struct {
 	// Cached map of package names to whether they bundle types
 	packagesMapOnce sync.Once
 	packagesMap     map[string]bool
+
+	// luaEnvironments groups, computed once for every checker in the pool
+	luaEnvironmentGroupsOnce sync.Once
+	luaEnvironmentGroups     map[tspath.Path]core.LuaEnvironmentGroup
+}
+
+// GetLuaEnvironmentGroups implements checker.Program. It maps each Lua source
+// file under a luaEnvironments root to its group. Grouping is a function of the
+// options and file paths alone, so it is computed once per program.
+func (p *Program) GetLuaEnvironmentGroups() map[tspath.Path]core.LuaEnvironmentGroup {
+	p.luaEnvironmentGroupsOnce.Do(func() {
+		environments := p.Options().LuaEnvironments
+		if len(environments) == 0 {
+			return
+		}
+		root := p.Options().GetLuaSearchRoot(p.GetCurrentDirectory())
+		useCaseSensitiveFileNames := p.UseCaseSensitiveFileNames()
+		groups := make(map[tspath.Path]core.LuaEnvironmentGroup)
+		for _, file := range p.SourceFiles() {
+			if file.IsDeclarationFile || ast.IsJsonSourceFile(file) ||
+				!tspath.FileExtensionIsOneOf(file.FileName(), []string{tspath.ExtensionTs, tspath.ExtensionJs}) ||
+				!tspath.ContainsPath(root, file.FileName(), p.comparePathsOptions) {
+				continue
+			}
+			relative := tspath.GetRelativePathFromDirectory(root, file.FileName(), p.comparePathsOptions)
+			if group, ok := core.MatchLuaEnvironmentGroup(environments, relative, useCaseSensitiveFileNames); ok {
+				groups[file.Path()] = group
+			}
+		}
+		p.luaEnvironmentGroups = groups
+	})
+	return p.luaEnvironmentGroups
 }
 
 // FileExists implements checker.Program.

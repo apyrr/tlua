@@ -1,0 +1,270 @@
+//// [tests/cases/compiler/tluaLuaEnvironments.tlua] ////
+
+=== host.d.tlua ===
+interface Plugin {
+>Plugin : Symbol(Plugin, Decl(host.d.tlua, 0, 0))
+
+    Name: string;
+>Name : Symbol(Plugin.Name, Decl(host.d.tlua, 0, 18))
+
+    Start(self: Plugin, reason: string): nil;
+>Start : Symbol(Plugin.Start, Decl(host.d.tlua, 1, 17))
+>self : Symbol(self, Decl(host.d.tlua, 2, 10))
+>Plugin : Symbol(Plugin, Decl(host.d.tlua, 0, 0))
+>reason : Symbol(reason, Decl(host.d.tlua, 2, 23))
+
+    Think: (self: Plugin) => nil;
+>Think : Symbol(Plugin.Think, Decl(host.d.tlua, 2, 45))
+>self : Symbol(self, Decl(host.d.tlua, 3, 12))
+>Plugin : Symbol(Plugin, Decl(host.d.tlua, 0, 0))
+
+    Primary: { Ammo: string };
+>Primary : Symbol(Plugin.Primary, Decl(host.d.tlua, 3, 33))
+>Ammo : Symbol(Ammo, Decl(host.d.tlua, 4, 14))
+
+    AmmoName: string;
+>AmmoName : Symbol(Plugin.AmmoName, Decl(host.d.tlua, 4, 30))
+}
+interface Tool {
+>Tool : Symbol(Tool, Decl(host.d.tlua, 6, 1))
+
+    Mode: number;
+>Mode : Symbol(Tool.Mode, Decl(host.d.tlua, 7, 16))
+}
+declare SERVER: boolean
+>SERVER : Symbol(SERVER, Decl(host.d.tlua, 10, 7))
+
+// Every file under one matched folder shares that folder's table.
+=== plugins/door/shared.tlua ===
+PLUGIN.Name = "Door"
+>PLUGIN.Name : Symbol(Plugin.Name, Decl(host.d.tlua, 0, 18))
+>PLUGIN : Symbol(PLUGIN)
+>Name : Symbol(Plugin.Name, Decl(host.d.tlua, 0, 18))
+
+PLUGIN.Locked = false
+>PLUGIN.Locked : Symbol(Locked, Decl(shared.tlua, 0, 20))
+>PLUGIN : Symbol(PLUGIN)
+>Locked : Symbol(Locked, Decl(shared.tlua, 0, 20))
+
+function PLUGIN:Open(): number
+>PLUGIN : Symbol(PLUGIN)
+>Open : Symbol(Open, Decl(shared.tlua, 1, 21))
+
+    return 1
+end
+
+=== plugins/door/server.tlua ===
+function PLUGIN:Close()
+>PLUGIN : Symbol(PLUGIN)
+>Close : Symbol(Close, Decl(server.tlua, 0, 0))
+
+    local opened: number = self:Open()
+>opened : Symbol(opened, Decl(server.tlua, 1, 9))
+>self:Open : Symbol(Open, Decl(shared.tlua, 1, 21))
+>self : Symbol(:, Decl(server.tlua, 0, 15))
+>Open : Symbol(Open, Decl(shared.tlua, 1, 21))
+
+    local locked: boolean = self.Locked
+>locked : Symbol(locked, Decl(server.tlua, 2, 9))
+>self.Locked : Symbol(Locked, Decl(shared.tlua, 0, 20))
+>self : Symbol(:, Decl(server.tlua, 0, 15))
+>Locked : Symbol(Locked, Decl(shared.tlua, 0, 20))
+
+end
+
+// Per-realm bodies implement the seed's member, so they are not duplicates.
+// Parameters take the seed's types, and bodies are checked against it.
+if SERVER then
+>SERVER : Symbol(SERVER, Decl(host.d.tlua, 10, 7))
+
+    function PLUGIN:Start(reason)
+>PLUGIN : Symbol(PLUGIN)
+>Start : Symbol(Start, Decl(server.tlua, 7, 14), Decl(server.tlua, 11, 4), Decl(client.tlua, 2, 27))
+>reason : Symbol(reason, Decl(server.tlua, 8, 26))
+
+        local r: string = reason
+>r : Symbol(r, Decl(server.tlua, 9, 13))
+>reason : Symbol(reason, Decl(server.tlua, 8, 26))
+
+    end
+else
+    function PLUGIN.Start(self, reason)
+>PLUGIN : Symbol(PLUGIN)
+>Start : Symbol(Start, Decl(server.tlua, 7, 14), Decl(server.tlua, 11, 4), Decl(client.tlua, 2, 27))
+>self : Symbol(self, Decl(server.tlua, 12, 26))
+>reason : Symbol(reason, Decl(server.tlua, 12, 31))
+
+        local wrong: number = reason
+>wrong : Symbol(wrong, Decl(server.tlua, 13, 13))
+>reason : Symbol(reason, Decl(server.tlua, 12, 31))
+
+    end
+end
+
+// A hook declared as a function-typed property takes a colon body whose self
+// carries the folder's other members.
+function PLUGIN:Think()
+>PLUGIN : Symbol(PLUGIN)
+>Think : Symbol(Think, Decl(server.tlua, 15, 3), Decl(client.tlua, 0, 0))
+
+    local locked: boolean = self.Locked
+>locked : Symbol(locked, Decl(server.tlua, 20, 9))
+>self.Locked : Symbol(Locked, Decl(shared.tlua, 0, 20))
+>self : Symbol(:, Decl(server.tlua, 19, 15))
+>Locked : Symbol(Locked, Decl(shared.tlua, 0, 20))
+
+end
+
+=== plugins/door/client.tlua ===
+// Another file of the folder implements the same seed member; that is not a
+// duplicate either.
+function PLUGIN:Think() end
+>PLUGIN : Symbol(PLUGIN)
+>Think : Symbol(Think, Decl(server.tlua, 15, 3), Decl(client.tlua, 0, 0))
+
+PLUGIN.Start = function(self, reason)
+>PLUGIN.Start : Symbol(Plugin.Start, Decl(host.d.tlua, 1, 17))
+>PLUGIN : Symbol(PLUGIN)
+>Start : Symbol(Plugin.Start, Decl(host.d.tlua, 1, 17))
+>self : Symbol(self, Decl(client.tlua, 3, 24))
+>reason : Symbol(reason, Decl(client.tlua, 3, 29))
+
+    local r: string = reason
+>r : Symbol(r, Decl(client.tlua, 4, 9))
+>reason : Symbol(reason, Decl(client.tlua, 3, 29))
+
+end
+
+// A seed member initialized from a sibling member is not circular.
+PLUGIN.AmmoName = "pistol"
+>PLUGIN.AmmoName : Symbol(Plugin.AmmoName, Decl(host.d.tlua, 4, 30))
+>PLUGIN : Symbol(PLUGIN)
+>AmmoName : Symbol(Plugin.AmmoName, Decl(host.d.tlua, 4, 30))
+
+PLUGIN.Primary = { Ammo = PLUGIN.AmmoName }
+>PLUGIN.Primary : Symbol(Plugin.Primary, Decl(host.d.tlua, 3, 33), Decl(host.d.tlua, 3, 33))
+>PLUGIN : Symbol(PLUGIN)
+>Primary : Symbol(Plugin.Primary, Decl(host.d.tlua, 3, 33), Decl(host.d.tlua, 3, 33))
+>Ammo : Symbol(Ammo, Decl(client.tlua, 9, 18))
+>PLUGIN.AmmoName : Symbol(Plugin.AmmoName, Decl(host.d.tlua, 4, 30))
+>PLUGIN : Symbol(PLUGIN)
+>AmmoName : Symbol(Plugin.AmmoName, Decl(host.d.tlua, 4, 30))
+
+// setmetatable pairs with the folder's table.
+local Base = {}
+>Base : Symbol(Base, Decl(client.tlua, 12, 5))
+
+function Base:Knock(): number
+>Base : Symbol(Base, Decl(client.tlua, 12, 5))
+>Knock : Symbol(Knock, Decl(client.tlua, 12, 15))
+
+    return 1
+end
+setmetatable(PLUGIN, { __index = Base })
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>PLUGIN : Symbol(PLUGIN)
+>__index : Symbol(__index, Decl(client.tlua, 16, 22))
+>Base : Symbol(Base, Decl(client.tlua, 12, 5))
+
+local knock: string = PLUGIN:Knock()
+>knock : Symbol(knock, Decl(client.tlua, 17, 5))
+>PLUGIN:Knock : Symbol(Knock, Decl(client.tlua, 12, 15))
+>PLUGIN : Symbol(PLUGIN)
+>Knock : Symbol(Knock, Decl(client.tlua, 12, 15))
+
+// A single file is a group of its own. Seed members keep the seed's type, and
+// members of another group are not visible.
+=== plugins/lamp.tlua ===
+PLUGIN.Name = 42
+>PLUGIN.Name : Symbol(Plugin.Name, Decl(host.d.tlua, 0, 18))
+>PLUGIN : Symbol(PLUGIN)
+>Name : Symbol(Plugin.Name, Decl(host.d.tlua, 0, 18))
+
+PLUGIN.Count = 1
+>PLUGIN.Count : Symbol(Count, Decl(lamp.tlua, 0, 16))
+>PLUGIN : Symbol(PLUGIN)
+>Count : Symbol(Count, Decl(lamp.tlua, 0, 16))
+
+PLUGIN.Double = PLUGIN.Count * 2
+>PLUGIN.Double : Symbol(Double, Decl(lamp.tlua, 1, 16))
+>PLUGIN : Symbol(PLUGIN)
+>Double : Symbol(Double, Decl(lamp.tlua, 1, 16))
+>PLUGIN.Count : Symbol(Count, Decl(lamp.tlua, 0, 16))
+>PLUGIN : Symbol(PLUGIN)
+>Count : Symbol(Count, Decl(lamp.tlua, 0, 16))
+
+local double: string = PLUGIN.Double
+>double : Symbol(double, Decl(lamp.tlua, 3, 5))
+>PLUGIN.Double : Symbol(Double, Decl(lamp.tlua, 1, 16))
+>PLUGIN : Symbol(PLUGIN)
+>Double : Symbol(Double, Decl(lamp.tlua, 1, 16))
+
+function PLUGIN:Toggle()
+>PLUGIN : Symbol(PLUGIN)
+>Toggle : Symbol(Toggle, Decl(lamp.tlua, 3, 36))
+
+    local count: string = self.Count
+>count : Symbol(count, Decl(lamp.tlua, 5, 9))
+>self.Count : Symbol(Count, Decl(lamp.tlua, 0, 16))
+>self : Symbol(:, Decl(lamp.tlua, 4, 15))
+>Count : Symbol(Count, Decl(lamp.tlua, 0, 16))
+
+    local again: number = self.Toggle
+>again : Symbol(again, Decl(lamp.tlua, 6, 9))
+>self.Toggle : Symbol(Toggle, Decl(lamp.tlua, 3, 36))
+>self : Symbol(:, Decl(lamp.tlua, 4, 15))
+>Toggle : Symbol(Toggle, Decl(lamp.tlua, 3, 36))
+
+    self:Missing()
+>self : Symbol(:, Decl(lamp.tlua, 4, 15))
+
+end
+PLUGIN:Open()
+>PLUGIN : Symbol(PLUGIN)
+
+function PLUGIN:Start(reason: number) end
+>PLUGIN : Symbol(PLUGIN)
+>Start : Symbol(Start, Decl(lamp.tlua, 9, 13))
+>reason : Symbol(reason, Decl(lamp.tlua, 10, 22))
+
+// Two bodies for a member the seed does not declare are duplicates.
+function PLUGIN:Extra() end
+>PLUGIN : Symbol(PLUGIN)
+>Extra : Symbol(Extra, Decl(lamp.tlua, 10, 41), Decl(lamp.tlua, 13, 27))
+
+function PLUGIN:Extra() end
+>PLUGIN : Symbol(PLUGIN)
+>Extra : Symbol(Extra, Decl(lamp.tlua, 10, 41), Decl(lamp.tlua, 13, 27))
+
+// The deepest matching root wins: this folder is a tool, not a plugin.
+=== plugins/tools/paint.tlua ===
+TOOL.Mode = 1
+>TOOL.Mode : Symbol(Tool.Mode, Decl(host.d.tlua, 7, 16))
+>TOOL : Symbol(TOOL)
+>Mode : Symbol(Tool.Mode, Decl(host.d.tlua, 7, 16))
+
+TOOL.Color = "red"
+>TOOL.Color : Symbol(Color, Decl(paint.tlua, 0, 13))
+>TOOL : Symbol(TOOL)
+>Color : Symbol(Color, Decl(paint.tlua, 0, 13))
+
+local p = PLUGIN
+>p : Symbol(p, Decl(paint.tlua, 2, 5))
+
+// Outside every group the names are only the seed types.
+=== main.tlua ===
+local tool = TOOL
+>tool : Symbol(tool, Decl(main.tlua, 0, 5))
+
+local function describe(plugin: Plugin): string
+>describe : Symbol(describe, Decl(main.tlua, 0, 17))
+>plugin : Symbol(plugin, Decl(main.tlua, 1, 24))
+>Plugin : Symbol(Plugin, Decl(host.d.tlua, 0, 0))
+
+    return plugin.Name
+>plugin.Name : Symbol(Plugin.Name, Decl(host.d.tlua, 0, 18))
+>plugin : Symbol(plugin, Decl(main.tlua, 1, 24))
+>Name : Symbol(Plugin.Name, Decl(host.d.tlua, 0, 18))
+
+end
+

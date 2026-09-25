@@ -1,0 +1,89 @@
+addons/a/lua/effects/spark.tlua(1,1): error TLUA2693: 'EFFECT' only refers to a type, but is being used as a value here.
+main.tlua(6,29): error TLUA2339: Property 'Brightness' does not exist on type '(ENT & { Brightness: number; }) | (ENT & { Color: string; })'.
+  Property 'Brightness' does not exist on type 'ENT & { Color: string; }'.
+main.tlua(9,10): error TLUA2339: Property 'Open' does not exist on type 'ENT'.
+main.tlua(13,10): error TLUA2339: Property 'Open' does not exist on type 'Entity'.
+tluaconfig.json(6,94): error TLUA100065: The 'luaEnvironments' entry for '**/lua/effects/*' has a 'registry', so it must declare exactly one global.
+
+
+==== tluaconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "luaEnvironments": [
+                { "root": "**/lua/entities/*", "globals": { "ENT": "ENT" }, "registry": "ScriptedEntities" },
+                { "root": "**/lua/effects/*", "globals": { "EFFECT": "EFFECT", "FX": "EFFECT" }, "registry": "Effects" }
+                                                                                                 ~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100065: The 'luaEnvironments' entry for '**/lua/effects/*' has a 'registry', so it must declare exactly one global.
+            ]
+        }
+    }
+==== host.d.tlua (0 errors) ====
+    interface Entity {
+        GetPos(self: Entity): number;
+    }
+    interface ENT extends Entity {
+        PrintName: string;
+    }
+    interface EFFECT {}
+    interface Effects {}
+    interface ScriptedEntities {
+        // An explicit declaration keeps its own type.
+        base_anim: ENT;
+    }
+    // One signature, so the lookup does not depend on overload order across
+    // merged declarations.
+    interface EntsLib {
+        FindByClass<K extends string>(name: K): (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[];
+    }
+    declare ents: EntsLib
+    
+    // A folder and a single file each register their name.
+==== addons/a/lua/entities/door/shared.tlua (0 errors) ====
+    ENT.PrintName = "Door"
+    function ENT:Open(): number
+        return 1
+    end
+    
+==== addons/a/lua/entities/lamp.tlua (0 errors) ====
+    ENT.Brightness = 5
+    
+    // Two addons shipping one class name register the union of both tables.
+==== addons/b/lua/entities/lamp.tlua (0 errors) ====
+    ENT.Color = "red"
+    
+==== addons/a/lua/effects/spark.tlua (1 errors) ====
+    EFFECT.Size = 1
+    ~~~~~~
+!!! error TLUA2693: 'EFFECT' only refers to a type, but is being used as a value here.
+    
+==== main.tlua (3 errors) ====
+    for _, door in ipairs(ents.FindByClass("door")) do
+        local opened: number = door:Open()
+        local name: string = door.PrintName
+    end
+    for _, lamp in ipairs(ents.FindByClass("lamp")) do
+        local brightness = lamp.Brightness
+                                ~~~~~~~~~~
+!!! error TLUA2339: Property 'Brightness' does not exist on type '(ENT & { Brightness: number; }) | (ENT & { Color: string; })'.
+!!! error TLUA2339:   Property 'Brightness' does not exist on type 'ENT & { Color: string; }'.
+    end
+    for _, base in ipairs(ents.FindByClass("base_anim")) do
+        base:Open()
+             ~~~~
+!!! error TLUA2339: Property 'Open' does not exist on type 'ENT'.
+    end
+    for _, prop in ipairs(ents.FindByClass("prop_*")) do
+        local pos: number = prop:GetPos()
+        prop:Open()
+             ~~~~
+!!! error TLUA2339: Property 'Open' does not exist on type 'Entity'.
+    end
+    local className: string = "door"
+    local anyEntity = ents.FindByClass(className)
+    local DOOR_CLASS = "door" as const
+    for _, door in ipairs(ents.FindByClass(DOOR_CLASS)) do
+        door:Open()
+    end
+    local known: ScriptedEntities["door"] = ents.FindByClass("door")[1] as ScriptedEntities["door"]
+    

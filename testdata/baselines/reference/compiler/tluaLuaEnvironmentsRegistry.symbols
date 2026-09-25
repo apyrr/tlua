@@ -1,0 +1,185 @@
+//// [tests/cases/compiler/tluaLuaEnvironmentsRegistry.tlua] ////
+
+=== host.d.tlua ===
+interface Entity {
+>Entity : Symbol(Entity, Decl(host.d.tlua, 0, 0))
+
+    GetPos(self: Entity): number;
+>GetPos : Symbol(Entity.GetPos, Decl(host.d.tlua, 0, 18))
+>self : Symbol(self, Decl(host.d.tlua, 1, 11))
+>Entity : Symbol(Entity, Decl(host.d.tlua, 0, 0))
+}
+interface ENT extends Entity {
+>ENT : Symbol(ENT, Decl(host.d.tlua, 2, 1))
+>Entity : Symbol(Entity, Decl(host.d.tlua, 0, 0))
+
+    PrintName: string;
+>PrintName : Symbol(ENT.PrintName, Decl(host.d.tlua, 3, 30))
+}
+interface EFFECT {}
+>EFFECT : Symbol(EFFECT, Decl(host.d.tlua, 5, 1))
+
+interface Effects {}
+>Effects : Symbol(Effects, Decl(host.d.tlua, 6, 19))
+
+interface ScriptedEntities {
+>ScriptedEntities : Symbol(ScriptedEntities, Decl(host.d.tlua, 7, 20))
+
+    // An explicit declaration keeps its own type.
+    base_anim: ENT;
+>base_anim : Symbol(ScriptedEntities.base_anim, Decl(host.d.tlua, 8, 28))
+>ENT : Symbol(ENT, Decl(host.d.tlua, 2, 1))
+}
+// One signature, so the lookup does not depend on overload order across
+// merged declarations.
+interface EntsLib {
+>EntsLib : Symbol(EntsLib, Decl(host.d.tlua, 11, 1))
+
+    FindByClass<K extends string>(name: K): (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[];
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>K : Symbol(K, Decl(host.d.tlua, 15, 16))
+>name : Symbol(name, Decl(host.d.tlua, 15, 34))
+>K : Symbol(K, Decl(host.d.tlua, 15, 16))
+>K : Symbol(K, Decl(host.d.tlua, 15, 16))
+>ScriptedEntities : Symbol(ScriptedEntities, Decl(host.d.tlua, 7, 20))
+>ScriptedEntities : Symbol(ScriptedEntities, Decl(host.d.tlua, 7, 20))
+>K : Symbol(K, Decl(host.d.tlua, 15, 16))
+>Entity : Symbol(Entity, Decl(host.d.tlua, 0, 0))
+}
+declare ents: EntsLib
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>EntsLib : Symbol(EntsLib, Decl(host.d.tlua, 11, 1))
+
+// A folder and a single file each register their name.
+=== addons/a/lua/entities/door/shared.tlua ===
+ENT.PrintName = "Door"
+>ENT.PrintName : Symbol(ENT.PrintName, Decl(host.d.tlua, 3, 30))
+>ENT : Symbol(ENT)
+>PrintName : Symbol(ENT.PrintName, Decl(host.d.tlua, 3, 30))
+
+function ENT:Open(): number
+>ENT : Symbol(ENT)
+>Open : Symbol(Open, Decl(shared.tlua, 0, 22))
+
+    return 1
+end
+
+=== addons/a/lua/entities/lamp.tlua ===
+ENT.Brightness = 5
+>ENT.Brightness : Symbol(Brightness, Decl(lamp.tlua, 0, 0))
+>ENT : Symbol(ENT)
+>Brightness : Symbol(Brightness, Decl(lamp.tlua, 0, 0))
+
+// Two addons shipping one class name register the union of both tables.
+=== addons/b/lua/entities/lamp.tlua ===
+ENT.Color = "red"
+>ENT.Color : Symbol(Color, Decl(lamp.tlua, 0, 0))
+>ENT : Symbol(ENT)
+>Color : Symbol(Color, Decl(lamp.tlua, 0, 0))
+
+=== addons/a/lua/effects/spark.tlua ===
+
+EFFECT.Size = 1
+
+=== main.tlua ===
+for _, door in ipairs(ents.FindByClass("door")) do
+>_ : Symbol(_, Decl(main.tlua, 0, 3))
+>door : Symbol(door, Decl(main.tlua, 0, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>ents.FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+
+    local opened: number = door:Open()
+>opened : Symbol(opened, Decl(main.tlua, 1, 9))
+>door:Open : Symbol(Open, Decl(shared.tlua, 0, 22))
+>door : Symbol(door, Decl(main.tlua, 0, 6))
+>Open : Symbol(Open, Decl(shared.tlua, 0, 22))
+
+    local name: string = door.PrintName
+>name : Symbol(name, Decl(main.tlua, 2, 9))
+>door.PrintName : Symbol(ENT.PrintName, Decl(host.d.tlua, 3, 30))
+>door : Symbol(door, Decl(main.tlua, 0, 6))
+>PrintName : Symbol(ENT.PrintName, Decl(host.d.tlua, 3, 30))
+
+end
+for _, lamp in ipairs(ents.FindByClass("lamp")) do
+>_ : Symbol(_, Decl(main.tlua, 4, 3))
+>lamp : Symbol(lamp, Decl(main.tlua, 4, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>ents.FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+
+    local brightness = lamp.Brightness
+>brightness : Symbol(brightness, Decl(main.tlua, 5, 9))
+>lamp : Symbol(lamp, Decl(main.tlua, 4, 6))
+
+end
+for _, base in ipairs(ents.FindByClass("base_anim")) do
+>_ : Symbol(_, Decl(main.tlua, 7, 3))
+>base : Symbol(base, Decl(main.tlua, 7, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>ents.FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+
+    base:Open()
+>base : Symbol(base, Decl(main.tlua, 7, 6))
+
+end
+for _, prop in ipairs(ents.FindByClass("prop_*")) do
+>_ : Symbol(_, Decl(main.tlua, 10, 3))
+>prop : Symbol(prop, Decl(main.tlua, 10, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>ents.FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+
+    local pos: number = prop:GetPos()
+>pos : Symbol(pos, Decl(main.tlua, 11, 9))
+>prop:GetPos : Symbol(Entity.GetPos, Decl(host.d.tlua, 0, 18))
+>prop : Symbol(prop, Decl(main.tlua, 10, 6))
+>GetPos : Symbol(Entity.GetPos, Decl(host.d.tlua, 0, 18))
+
+    prop:Open()
+>prop : Symbol(prop, Decl(main.tlua, 10, 6))
+
+end
+local className: string = "door"
+>className : Symbol(className, Decl(main.tlua, 14, 5))
+
+local anyEntity = ents.FindByClass(className)
+>anyEntity : Symbol(anyEntity, Decl(main.tlua, 15, 5))
+>ents.FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>className : Symbol(className, Decl(main.tlua, 14, 5))
+
+local DOOR_CLASS = "door" as const
+>DOOR_CLASS : Symbol(DOOR_CLASS, Decl(main.tlua, 16, 5))
+>const : Symbol(const)
+
+for _, door in ipairs(ents.FindByClass(DOOR_CLASS)) do
+>_ : Symbol(_, Decl(main.tlua, 17, 3))
+>door : Symbol(door, Decl(main.tlua, 17, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>ents.FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>DOOR_CLASS : Symbol(DOOR_CLASS, Decl(main.tlua, 16, 5))
+
+    door:Open()
+>door:Open : Symbol(Open, Decl(shared.tlua, 0, 22))
+>door : Symbol(door, Decl(main.tlua, 17, 6))
+>Open : Symbol(Open, Decl(shared.tlua, 0, 22))
+
+end
+local known: ScriptedEntities["door"] = ents.FindByClass("door")[1] as ScriptedEntities["door"]
+>known : Symbol(known, Decl(main.tlua, 20, 5))
+>ScriptedEntities : Symbol(ScriptedEntities, Decl(host.d.tlua, 7, 20))
+>ents.FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ents : Symbol(ents, Decl(host.d.tlua, 17, 7))
+>FindByClass : Symbol(EntsLib.FindByClass, Decl(host.d.tlua, 14, 19))
+>ScriptedEntities : Symbol(ScriptedEntities, Decl(host.d.tlua, 7, 20))
+

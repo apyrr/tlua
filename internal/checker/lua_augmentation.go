@@ -432,7 +432,12 @@ func (c *Checker) attachLuaAugmentationComponent(group []luaAugmentation, arms [
 		}
 		group = dedupeLuaAugmentations(append(combined, group...))
 	}
-	member, collision := c.newLuaAugmentationSymbol(group, name, ast.SymbolFlagsProperty, ast.SymbolFlagsMethod)
+	// A seeded or asserted table carries a contract that attachment cannot read
+	// yet. Several bodies for a member the contract declares are implementations
+	// of it (per-realm bodies, say), not duplicate members, so the collision is
+	// decided when the declaring file is checked.
+	deferCollision := core.Some(arms, c.isLuaContractArm)
+	member, collision := c.newLuaAugmentationSymbolEx(group, name, ast.SymbolFlagsProperty, ast.SymbolFlagsMethod, deferCollision)
 	c.finishLuaAugmentationSymbol(member, group, collision)
 	for _, existing := range synthesized {
 		c.recordMergedSymbol(member, existing)
@@ -467,6 +472,10 @@ func dedupeLuaAugmentations(items []luaAugmentation) []luaAugmentation {
 }
 
 func (c *Checker) newLuaAugmentationSymbol(group []luaAugmentation, name string, valueFlags ast.SymbolFlags, methodFlags ast.SymbolFlags) (*ast.Symbol, bool) {
+	return c.newLuaAugmentationSymbolEx(group, name, valueFlags, methodFlags, false /*deferCollision*/)
+}
+
+func (c *Checker) newLuaAugmentationSymbolEx(group []luaAugmentation, name string, valueFlags ast.SymbolFlags, methodFlags ast.SymbolFlags, deferCollision bool) (*ast.Symbol, bool) {
 	methodCount := 0
 	for _, item := range group {
 		if ast.IsFunctionDeclaration(item.Source) {
@@ -477,7 +486,7 @@ func (c *Checker) newLuaAugmentationSymbol(group []luaAugmentation, name string,
 	// A dotted function is Lua assignment sugar, so ordinary writes are checked
 	// against its method type. Only two declaration-shaped bodies are duplicates.
 	collision := methodCount > 1
-	if collision {
+	if collision && !deferCollision {
 		c.reportLuaAugmentationCollision(group, name)
 	}
 	flags := valueFlags | ast.SymbolFlagsAssignment
@@ -485,6 +494,9 @@ func (c *Checker) newLuaAugmentationSymbol(group []luaAugmentation, name string,
 		flags = methodFlags | ast.SymbolFlagsAssignment
 	}
 	symbol := c.newSymbol(flags, name)
+	if collision && deferCollision {
+		c.luaDeferredMethodCollisions.Add(symbol)
+	}
 	for _, item := range group {
 		symbol.Declarations = append(symbol.Declarations, item.declaration())
 		if symbol.ValueDeclaration == nil && item.Symbol.ValueDeclaration != nil {

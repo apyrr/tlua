@@ -4258,6 +4258,20 @@ var X_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_
 
 var Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255 = &Message{code: 100063, category: CategoryError, key: "Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255_100063", text: "Decimal escape sequence '{0}' is too large; a Lua string byte is at most 255."}
 
+var Specify_globals_a_Lua_host_installs_before_running_each_group_of_files = &Message{code: 100064, category: CategoryMessage, key: "Specify_globals_a_Lua_host_installs_before_running_each_group_of_files_100064", text: "Specify globals a Lua host installs before running each group of files."}
+
+var The_luaEnvironments_entry_for_0_has_a_registry_so_it_must_declare_exactly_one_global = &Message{code: 100065, category: CategoryError, key: "The_luaEnvironments_entry_for_0_has_a_registry_so_it_must_declare_exactly_one_global_100065", text: "The 'luaEnvironments' entry for '{0}' has a 'registry', so it must declare exactly one global."}
+
+var X_root_must_be_a_glob_relative_to_the_Lua_search_root = &Message{code: 100066, category: CategoryError, key: "root_must_be_a_glob_relative_to_the_Lua_search_root_100066", text: "'root' must be a glob relative to the Lua search root."}
+
+var X_globals_must_map_at_least_one_global_name_to_the_name_of_a_global_type = &Message{code: 100067, category: CategoryError, key: "globals_must_map_at_least_one_global_name_to_the_name_of_a_global_type_100067", text: "'globals' must map at least one global name to the name of a global type."}
+
+var X_registry_must_be_the_name_of_a_global_interface = &Message{code: 100068, category: CategoryError, key: "registry_must_be_the_name_of_a_global_interface_100068", text: "'registry' must be the name of a global interface."}
+
+var Unknown_key_0_in_a_luaEnvironments_entry_Expected_root_globals_or_registry = &Message{code: 100069, category: CategoryError, key: "Unknown_key_0_in_a_luaEnvironments_entry_Expected_root_globals_or_registry_100069", text: "Unknown key '{0}' in a 'luaEnvironments' entry. Expected 'root', 'globals' or 'registry'."}
+
+var The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type = &Message{code: 100070, category: CategoryError, key: "The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type_100070", text: "The 'luaEnvironments' entry for '{0}' names '{1}', which is not a global type."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8516,6 +8530,20 @@ func keyToMessage(key Key) *Message {
 		return X_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_instead
 	case "Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255_100063":
 		return Decimal_escape_sequence_0_is_too_large_a_Lua_string_byte_is_at_most_255
+	case "Specify_globals_a_Lua_host_installs_before_running_each_group_of_files_100064":
+		return Specify_globals_a_Lua_host_installs_before_running_each_group_of_files
+	case "The_luaEnvironments_entry_for_0_has_a_registry_so_it_must_declare_exactly_one_global_100065":
+		return The_luaEnvironments_entry_for_0_has_a_registry_so_it_must_declare_exactly_one_global
+	case "root_must_be_a_glob_relative_to_the_Lua_search_root_100066":
+		return X_root_must_be_a_glob_relative_to_the_Lua_search_root
+	case "globals_must_map_at_least_one_global_name_to_the_name_of_a_global_type_100067":
+		return X_globals_must_map_at_least_one_global_name_to_the_name_of_a_global_type
+	case "registry_must_be_the_name_of_a_global_interface_100068":
+		return X_registry_must_be_the_name_of_a_global_interface
+	case "Unknown_key_0_in_a_luaEnvironments_entry_Expected_root_globals_or_registry_100069":
+		return Unknown_key_0_in_a_luaEnvironments_entry_Expected_root_globals_or_registry
+	case "The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type_100070":
+		return The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type
 	default:
 		return nil
 	}

@@ -93,6 +93,9 @@ type CompilerOptions struct {
 	TypeRoots                                 []string     `json:"typeRoots,omitzero"`
 	Types                                     []string     `json:"types,omitzero"`
 
+	// Globals a Lua host installs per group of files (see LuaEnvironment).
+	LuaEnvironments []*LuaEnvironment `json:"luaEnvironments,omitzero"`
+
 	// Deprecated: Do not use outside of options parsing and validation.
 	AlwaysStrict Tristate `json:"alwaysStrict,omitzero"`
 	// Deprecated: Do not use outside of options parsing and validation.

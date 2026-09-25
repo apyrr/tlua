@@ -1,0 +1,30 @@
+addons/a/lua/entities/crate.tlua(4,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+
+
+==== tluaconfig.json (0 errors) ====
+    {
+        "extends": "host-preset/tluaconfig.json",
+        "compilerOptions": {
+            "strict": true
+        }
+    }
+==== host.d.tlua (0 errors) ====
+    interface Entity {
+        GetPos(self: Entity): number;
+    }
+==== addons/a/lua/entities/crate.tlua (1 errors) ====
+    function ENT:Weight(): number
+        return self:GetPos()
+    end
+    local w: string = ENT:Weight()
+          ~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    
+==== node_modules/host-preset/tluaconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "luaEnvironments": [
+                { "root": "**/lua/entities/*", "globals": { "ENT": "Entity" } }
+            ]
+        }
+    }

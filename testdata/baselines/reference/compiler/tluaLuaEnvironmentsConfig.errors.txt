@@ -1,0 +1,61 @@
+error TLUA100070: The 'luaEnvironments' entry for 'missing/*' names 'NoSuchRegistry', which is not a global type.
+error TLUA100070: The 'luaEnvironments' entry for 'missing/*' names 'NoSuchSeed', which is not a global type.
+tluaconfig.json(5,15): error TLUA100066: 'root' must be a glob relative to the Lua search root.
+tluaconfig.json(6,15): error TLUA100066: 'root' must be a glob relative to the Lua search root.
+tluaconfig.json(7,15): error TLUA100066: 'root' must be a glob relative to the Lua search root.
+tluaconfig.json(8,13): error TLUA100066: 'root' must be a glob relative to the Lua search root.
+tluaconfig.json(8,15): error TLUA100069: Unknown key 'rot' in a 'luaEnvironments' entry. Expected 'root', 'globals' or 'registry'.
+tluaconfig.json(9,30): error TLUA100067: 'globals' must map at least one global name to the name of a global type.
+tluaconfig.json(10,30): error TLUA100067: 'globals' must map at least one global name to the name of a global type.
+tluaconfig.json(11,71): error TLUA100065: The 'luaEnvironments' entry for 'g/*' has a 'registry', so it must declare exactly one global.
+tluaconfig.json(12,58): error TLUA100068: 'registry' must be the name of a global interface.
+
+
+!!! error TLUA100070: The 'luaEnvironments' entry for 'missing/*' names 'NoSuchRegistry', which is not a global type.
+!!! error TLUA100070: The 'luaEnvironments' entry for 'missing/*' names 'NoSuchSeed', which is not a global type.
+==== tluaconfig.json (9 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "luaEnvironments": [
+                { "root": "/abs/*", "globals": { "A": "Seed" } },
+                  ~~~~~~~~~~~~~~~~
+!!! error TLUA100066: 'root' must be a glob relative to the Lua search root.
+                { "root": "a/../b", "globals": { "B": "Seed" } },
+                  ~~~~~~~~~~~~~~~~
+!!! error TLUA100066: 'root' must be a glob relative to the Lua search root.
+                { "root": "c/[", "globals": { "C": "Seed" } },
+                  ~~~~~~~~~~~~~
+!!! error TLUA100066: 'root' must be a glob relative to the Lua search root.
+                { "rot": "d/*", "globals": { "D": "Seed" } },
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100066: 'root' must be a glob relative to the Lua search root.
+                  ~~~~~~~~~~~~
+!!! error TLUA100069: Unknown key 'rot' in a 'luaEnvironments' entry. Expected 'root', 'globals' or 'registry'.
+                { "root": "e/*", "globals": {} },
+                                 ~~~~~~~~~~~~~
+!!! error TLUA100067: 'globals' must map at least one global name to the name of a global type.
+                { "root": "f/*", "globals": { "F": 5 } },
+                                 ~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100067: 'globals' must map at least one global name to the name of a global type.
+                { "root": "g/*", "globals": { "G": "Seed", "H": "Seed" }, "registry": "Registry" },
+                                                                          ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA100065: The 'luaEnvironments' entry for 'g/*' has a 'registry', so it must declare exactly one global.
+                { "root": "h/*", "globals": { "I": "Seed" }, "registry": 7 },
+                                                             ~~~~~~~~~~~~~
+!!! error TLUA100068: 'registry' must be the name of a global interface.
+                { "root": "./ok/*", "globals": { "OK": "Seed" } },
+                { "root": "missing/*", "globals": { "M": "NoSuchSeed" }, "registry": "NoSuchRegistry" }
+            ]
+        }
+    }
+==== host.d.tlua (0 errors) ====
+    interface Seed {
+        Name: string;
+    }
+==== ok/one/a.tlua (0 errors) ====
+    OK.Name = "one"
+    OK.Extra = 1
+==== missing/one/a.tlua (0 errors) ====
+    M.Name = "m"
+    

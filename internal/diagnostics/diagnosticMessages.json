@@ -8525,5 +8525,33 @@
     "Decimal escape sequence '{0}' is too large; a Lua string byte is at most 255.": {
         "category": "Error",
         "code": 100063
+    },
+    "Specify globals a Lua host installs before running each group of files.": {
+        "category": "Message",
+        "code": 100064
+    },
+    "The 'luaEnvironments' entry for '{0}' has a 'registry', so it must declare exactly one global.": {
+        "category": "Error",
+        "code": 100065
+    },
+    "'root' must be a glob relative to the Lua search root.": {
+        "category": "Error",
+        "code": 100066
+    },
+    "'globals' must map at least one global name to the name of a global type.": {
+        "category": "Error",
+        "code": 100067
+    },
+    "'registry' must be the name of a global interface.": {
+        "category": "Error",
+        "code": 100068
+    },
+    "Unknown key '{0}' in a 'luaEnvironments' entry. Expected 'root', 'globals' or 'registry'.": {
+        "category": "Error",
+        "code": 100069
+    },
+    "The 'luaEnvironments' entry for '{0}' names '{1}', which is not a global type.": {
+        "category": "Error",
+        "code": 100070
     }
 }

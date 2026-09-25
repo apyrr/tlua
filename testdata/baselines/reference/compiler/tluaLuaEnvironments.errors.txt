@@ -1,0 +1,154 @@
+main.tlua(1,14): error TLUA2304: Cannot find name 'TOOL'.
+plugins/door/client.tlua(18,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+plugins/door/server.tlua(14,15): error TLUA2322: Type 'string' is not assignable to type 'number'.
+plugins/lamp.tlua(1,1): error TLUA2322: Type 'number' is not assignable to type 'string'.
+plugins/lamp.tlua(4,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+plugins/lamp.tlua(6,11): error TLUA2322: Type 'number' is not assignable to type 'string'.
+plugins/lamp.tlua(7,11): error TLUA2322: Type '(self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void' is not assignable to type 'number'.
+plugins/lamp.tlua(8,10): error TLUA2339: Property 'Missing' does not exist on type 'Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }'.
+plugins/lamp.tlua(10,8): error TLUA2339: Property 'Open' does not exist on type 'Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }'.
+plugins/lamp.tlua(11,17): error TLUA2322: Type '(self: Plugin, reason: number) => nil' is not assignable to type '(self: Plugin, reason: string) => nil'.
+  Types of parameters 'reason' and 'reason' are incompatible.
+    Type 'string' is not assignable to type 'number'.
+plugins/lamp.tlua(14,17): error TLUA2300: Duplicate identifier 'Extra'.
+plugins/lamp.tlua(15,17): error TLUA2300: Duplicate identifier 'Extra'.
+plugins/tools/paint.tlua(3,11): error TLUA2304: Cannot find name 'PLUGIN'.
+
+
+==== tluaconfig.json (0 errors) ====
+    {
+        "compilerOptions": {
+            "strict": true,
+            "luaEnvironments": [
+                { "root": "**/plugins/*", "globals": { "PLUGIN": "Plugin" } },
+                { "root": "**/plugins/tools/*", "globals": { "TOOL": "Tool" } }
+            ]
+        }
+    }
+==== host.d.tlua (0 errors) ====
+    interface Plugin {
+        Name: string;
+        Start(self: Plugin, reason: string): nil;
+        Think: (self: Plugin) => nil;
+        Primary: { Ammo: string };
+        AmmoName: string;
+    }
+    interface Tool {
+        Mode: number;
+    }
+    declare SERVER: boolean
+    
+    // Every file under one matched folder shares that folder's table.
+==== plugins/door/shared.tlua (0 errors) ====
+    PLUGIN.Name = "Door"
+    PLUGIN.Locked = false
+    function PLUGIN:Open(): number
+        return 1
+    end
+    
+==== plugins/door/server.tlua (1 errors) ====
+    function PLUGIN:Close()
+        local opened: number = self:Open()
+        local locked: boolean = self.Locked
+    end
+    
+    // Per-realm bodies implement the seed's member, so they are not duplicates.
+    // Parameters take the seed's types, and bodies are checked against it.
+    if SERVER then
+        function PLUGIN:Start(reason)
+            local r: string = reason
+        end
+    else
+        function PLUGIN.Start(self, reason)
+            local wrong: number = reason
+                  ~~~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+        end
+    end
+    
+    // A hook declared as a function-typed property takes a colon body whose self
+    // carries the folder's other members.
+    function PLUGIN:Think()
+        local locked: boolean = self.Locked
+    end
+    
+==== plugins/door/client.tlua (1 errors) ====
+    // Another file of the folder implements the same seed member; that is not a
+    // duplicate either.
+    function PLUGIN:Think() end
+    PLUGIN.Start = function(self, reason)
+        local r: string = reason
+    end
+    
+    // A seed member initialized from a sibling member is not circular.
+    PLUGIN.AmmoName = "pistol"
+    PLUGIN.Primary = { Ammo = PLUGIN.AmmoName }
+    
+    // setmetatable pairs with the folder's table.
+    local Base = {}
+    function Base:Knock(): number
+        return 1
+    end
+    setmetatable(PLUGIN, { __index = Base })
+    local knock: string = PLUGIN:Knock()
+          ~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    
+    // A single file is a group of its own. Seed members keep the seed's type, and
+    // members of another group are not visible.
+==== plugins/lamp.tlua (9 errors) ====
+    PLUGIN.Name = 42
+    ~~~~~~~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    PLUGIN.Count = 1
+    PLUGIN.Double = PLUGIN.Count * 2
+    local double: string = PLUGIN.Double
+          ~~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    function PLUGIN:Toggle()
+        local count: string = self.Count
+              ~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+        local again: number = self.Toggle
+              ~~~~~
+!!! error TLUA2322: Type '(self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void' is not assignable to type 'number'.
+        self:Missing()
+             ~~~~~~~
+!!! error TLUA2339: Property 'Missing' does not exist on type 'Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }'.
+    end
+    PLUGIN:Open()
+           ~~~~
+!!! error TLUA2339: Property 'Open' does not exist on type 'Plugin & { Count: number; Double: number; Toggle: (self: Plugin & { Count: number; Double: number; Toggle: any; Extra: any; }) => void; Extra: any; }'.
+    function PLUGIN:Start(reason: number) end
+                    ~~~~~
+!!! error TLUA2322: Type '(self: Plugin, reason: number) => nil' is not assignable to type '(self: Plugin, reason: string) => nil'.
+!!! error TLUA2322:   Types of parameters 'reason' and 'reason' are incompatible.
+!!! error TLUA2322:     Type 'string' is not assignable to type 'number'.
+    
+    // Two bodies for a member the seed does not declare are duplicates.
+    function PLUGIN:Extra() end
+                    ~~~~~
+!!! error TLUA2300: Duplicate identifier 'Extra'.
+!!! related TLUA6203 plugins/lamp.tlua:15:17: 'Extra' was also declared here.
+    function PLUGIN:Extra() end
+                    ~~~~~
+!!! error TLUA2300: Duplicate identifier 'Extra'.
+!!! related TLUA6203 plugins/lamp.tlua:14:17: 'Extra' was also declared here.
+    
+    // The deepest matching root wins: this folder is a tool, not a plugin.
+==== plugins/tools/paint.tlua (1 errors) ====
+    TOOL.Mode = 1
+    TOOL.Color = "red"
+    local p = PLUGIN
+              ~~~~~~
+!!! error TLUA2304: Cannot find name 'PLUGIN'.
+    
+    // Outside every group the names are only the seed types.
+==== main.tlua (1 errors) ====
+    local tool = TOOL
+                 ~~~~
+!!! error TLUA2304: Cannot find name 'TOOL'.
+    local function describe(plugin: Plugin): string
+        return plugin.Name
+    end
+    

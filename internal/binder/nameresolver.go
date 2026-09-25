@@ -7,10 +7,13 @@ import (
 )
 
 type NameResolver struct {
-	CompilerOptions              *core.CompilerOptions
-	GetSymbolOfDeclaration       func(node *ast.Node) *ast.Symbol
-	Error                        func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic
-	Globals                      ast.SymbolTable
+	CompilerOptions        *core.CompilerOptions
+	GetSymbolOfDeclaration func(node *ast.Node) *ast.Symbol
+	Error                  func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic
+	Globals                ast.SymbolTable
+	// FileGlobals returns the globals a host environment installs for one
+	// file's chunk. They shadow program globals in that file only.
+	FileGlobals                  func(file *ast.SourceFile) ast.SymbolTable
 	ArgumentsSymbol              *ast.Symbol
 	RequireSymbol                *ast.Symbol
 	Lookup                       func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
@@ -236,6 +239,11 @@ loop:
 	if isUse && result != nil && (lastSelfReferenceLocation == nil || result != lastSelfReferenceLocation.Symbol()) {
 		if r.SymbolReferenced != nil {
 			r.SymbolReferenced(result, meaning)
+		}
+	}
+	if result == nil && !excludeGlobals && r.FileGlobals != nil && lastLocation != nil && ast.IsSourceFile(lastLocation) {
+		if fileGlobals := r.FileGlobals(lastLocation.AsSourceFile()); fileGlobals != nil {
+			result = r.lookup(fileGlobals, name, meaning|ast.SymbolFlagsGlobalLookup)
 		}
 	}
 	if result == nil && !excludeGlobals {

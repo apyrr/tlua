@@ -1,0 +1,121 @@
+tluaLuaContractMembers.tlua(17,12): error TLUA2322: Type '(self: Greeter, name: string) => number' is not assignable to type '(self: Greeter, name: string) => string'.
+  Type 'number' is not assignable to type 'string'.
+tluaLuaContractMembers.tlua(20,1): error TLUA2322: Type '(self: Greeter, name: string) => number' is not assignable to type '(self: Greeter, name: string) => string'.
+  Type 'number' is not assignable to type 'string'.
+tluaLuaContractMembers.tlua(26,11): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaLuaContractMembers.tlua(30,11): error TLUA2322: Type 'string' is not assignable to type 'number'.
+tluaLuaContractMembers.tlua(43,11): error TLUA2322: Type 'T' is not assignable to type 'string'.
+tluaLuaContractMembers.tlua(53,14): error TLUA2322: Type 'number' is not assignable to type 'boolean'.
+tluaLuaContractMembers.tlua(55,7): error TLUA2322: Type 'boolean' is not assignable to type 'string'.
+tluaLuaContractMembers.tlua(62,7): error TLUA2322: Type 'number' is not assignable to type 'string'.
+tluaLuaContractMembers.tlua(78,12): error TLUA2300: Duplicate identifier 'Extra'.
+tluaLuaContractMembers.tlua(79,12): error TLUA2300: Duplicate identifier 'Extra'.
+
+
+==== tluaLuaContractMembers.tlua (10 errors) ====
+    // `function T:m ... end` is `T.m = function(self, ...) ... end`: on a table
+    // whose constructor states a contract, both spellings take their contextual
+    // type from the contract member and are checked against it.
+    
+    interface Greeter {
+        greet(self: Greeter, name: string): string;
+        config: { debug: boolean };
+        Think: (self: Greeter) => nil;
+        Gen<T>(self: Greeter, x: T): T;
+        Stop(self: Greeter): nil;
+    }
+    
+    local g = {} as unknown as Greeter
+    g.Count = 1
+    
+    -- A body that breaks the contract is an error in either spelling.
+    function g.greet(self: Greeter, name: string): number
+               ~~~~~
+!!! error TLUA2322: Type '(self: Greeter, name: string) => number' is not assignable to type '(self: Greeter, name: string) => string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
+        return 42
+    end
+    g.greet = function(self: Greeter, name: string): number
+    ~~~~~~~
+!!! error TLUA2322: Type '(self: Greeter, name: string) => number' is not assignable to type '(self: Greeter, name: string) => string'.
+!!! error TLUA2322:   Type 'number' is not assignable to type 'string'.
+        return 42
+    end
+    
+    -- Unannotated parameters take the contract's types in either spelling.
+    function g:greet(name)
+        local n: number = name
+              ~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+        return name
+    end
+    g.greet = function(self, name)
+        local n: number = name
+              ~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+        return name
+    end
+    
+    -- A colon body's implicit self carries the table's other members; it is
+    -- checked with the contract's receiver, even for a member declared as a
+    -- function-typed property.
+    function g:Think()
+        local count: number = self.Count
+    end
+    
+    -- A generic contract member binds its type parameters in the body.
+    function g:Gen(x)
+        local s: string = x
+              ~
+!!! error TLUA2322: Type 'T' is not assignable to type 'string'.
+!!! related TLUA2208 tluaLuaContractMembers.tlua:9:9: This type parameter might need an `extends string` constraint.
+        return x
+    end
+    local generic: string = g:Gen("a")
+    
+    -- Several bodies for a contract member are stores into a declared slot.
+    function g:Stop() end
+    function g:Stop() end
+    
+    -- Members below a contract member keep the contract's type.
+    g.config = { debug = 1 }
+                 ~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'boolean'.
+!!! related TLUA6500 tluaLuaContractMembers.tlua:7:15: The expected type comes from property 'debug' which is declared here on type '{ debug: boolean; } & { verbose: boolean; }'
+    g.config.verbose = true
+    local verbose: string = g.config.verbose
+          ~~~~~~~
+!!! error TLUA2322: Type 'boolean' is not assignable to type 'string'.
+    
+    -- A member initialized from a sibling member is not circular.
+    local counters = {} as { Name: string }
+    counters.Name = "c"
+    counters.Count = 1
+    counters.Double = counters.Count * 2
+    local double: string = counters.Double
+          ~~~~~~
+!!! error TLUA2322: Type 'number' is not assignable to type 'string'.
+    
+    -- A table asserted before its methods are attached converts as built: the
+    -- attached members complete it, and stand as the contract's own members.
+    interface Tx {
+        undo: (() => nil)[];
+        open: boolean;
+        commit: (self: Tx) => nil;
+    }
+    local tx = { undo = {}, open = true } as Tx
+    function tx:commit()
+        self.open = false
+    end
+    
+    -- A member the contract does not declare is the table's own, so two bodies
+    -- for it are duplicates.
+    function g:Extra() end
+               ~~~~~
+!!! error TLUA2300: Duplicate identifier 'Extra'.
+!!! related TLUA6203 tluaLuaContractMembers.tlua:79:12: 'Extra' was also declared here.
+    function g:Extra() end
+               ~~~~~
+!!! error TLUA2300: Duplicate identifier 'Extra'.
+!!! related TLUA6203 tluaLuaContractMembers.tlua:78:12: 'Extra' was also declared here.
+    

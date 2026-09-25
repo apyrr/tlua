@@ -423,6 +423,10 @@ Enable lib replacement.
 type: boolean
 default: false
 
+[94m--luaEnvironments[39m
+Specify globals a Lua host installs before running each group of files.
+one or more: 
+
 [94m--noLib[39m
 Disable including any library files, including the default lib.d.ts.
 type: boolean

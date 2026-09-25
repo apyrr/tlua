@@ -25,6 +25,10 @@ func (c *Checker) GetSymbolsInScopeAtPosition(location *ast.Node, pos int, meani
 
 func (c *Checker) getSymbolsInScope(location *ast.Node, refPos int, refEnd int, meaning ast.SymbolFlags) []*ast.Symbol {
 	symbols := make(ast.SymbolTable)
+	var file *ast.SourceFile
+	if location != nil {
+		file = ast.GetSourceFileOfNode(location)
+	}
 
 	// Copy the given symbol into symbol tables if the symbol has the given meaning
 	// and it doesn't already exists in the symbol table.
@@ -100,6 +104,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, refPos int, refEnd int, 
 			location = location.Parent
 		}
 
+		copySymbols(c.luaFileEnvironments[file], meaning)
 		copySymbols(c.globals, meaning)
 	}
 

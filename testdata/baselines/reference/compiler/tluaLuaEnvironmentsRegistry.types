@@ -1,0 +1,205 @@
+//// [tests/cases/compiler/tluaLuaEnvironmentsRegistry.tlua] ////
+
+=== host.d.tlua ===
+interface Entity {
+    GetPos(self: Entity): number;
+>GetPos : (self: Entity) => number
+>self : Entity
+}
+interface ENT extends Entity {
+    PrintName: string;
+>PrintName : string
+}
+interface EFFECT {}
+interface Effects {}
+interface ScriptedEntities {
+    // An explicit declaration keeps its own type.
+    base_anim: ENT;
+>base_anim : ENT
+}
+// One signature, so the lookup does not depend on overload order across
+// merged declarations.
+interface EntsLib {
+    FindByClass<K extends string>(name: K): (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[];
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>name : K
+}
+declare ents: EntsLib
+>ents : EntsLib
+
+// A folder and a single file each register their name.
+=== addons/a/lua/entities/door/shared.tlua ===
+ENT.PrintName = "Door"
+>ENT.PrintName = "Door" : "Door"
+>ENT.PrintName : string
+>ENT : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>PrintName : string
+>"Door" : "Door"
+
+function ENT:Open(): number
+>ENT : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>Open : (self: ENT & { Open: any; }) => number
+
+    return 1
+>1 : 1
+
+end
+
+=== addons/a/lua/entities/lamp.tlua ===
+ENT.Brightness = 5
+>ENT.Brightness = 5 : 5
+>ENT.Brightness : number
+>ENT : ENT & { Brightness: number; }
+>Brightness : number
+>5 : 5
+
+// Two addons shipping one class name register the union of both tables.
+=== addons/b/lua/entities/lamp.tlua ===
+ENT.Color = "red"
+>ENT.Color = "red" : "red"
+>ENT.Color : string
+>ENT : ENT & { Color: string; }
+>Color : string
+>"red" : "red"
+
+=== addons/a/lua/effects/spark.tlua ===
+EFFECT.Size = 1
+>EFFECT.Size = 1 : 1
+>EFFECT.Size : any
+>EFFECT : any
+>Size : any
+>1 : 1
+
+=== main.tlua ===
+for _, door in ipairs(ents.FindByClass("door")) do
+>_ : number
+>door : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>ipairs(ents.FindByClass("door")) : LuaIPairsIterator<ENT & { Open: (self: ENT & { Open: any; }) => number; }>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>ents.FindByClass("door") : (ENT & { Open: (self: ENT & { Open: any; }) => number; })[]
+>ents.FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>ents : EntsLib
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>"door" : "door"
+
+    local opened: number = door:Open()
+>opened : number
+>door:Open() : number
+>door:Open : (self: ENT & { Open: any; }) => number
+>door : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>Open : (self: ENT & { Open: any; }) => number
+
+    local name: string = door.PrintName
+>name : string
+>door.PrintName : string
+>door : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>PrintName : string
+
+end
+for _, lamp in ipairs(ents.FindByClass("lamp")) do
+>_ : number
+>lamp : (ENT & { Brightness: number; }) | (ENT & { Color: string; })
+>ipairs(ents.FindByClass("lamp")) : LuaIPairsIterator<(ENT & { Brightness: number; }) | (ENT & { Color: string; })>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>ents.FindByClass("lamp") : ((ENT & { Brightness: number; }) | (ENT & { Color: string; }))[]
+>ents.FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>ents : EntsLib
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>"lamp" : "lamp"
+
+    local brightness = lamp.Brightness
+>brightness : any
+>lamp.Brightness : any
+>lamp : (ENT & { Brightness: number; }) | (ENT & { Color: string; })
+>Brightness : any
+
+end
+for _, base in ipairs(ents.FindByClass("base_anim")) do
+>_ : number
+>base : ENT
+>ipairs(ents.FindByClass("base_anim")) : LuaIPairsIterator<ENT>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>ents.FindByClass("base_anim") : ENT[]
+>ents.FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>ents : EntsLib
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>"base_anim" : "base_anim"
+
+    base:Open()
+>base:Open() : any
+>base:Open : any
+>base : ENT
+>Open : any
+
+end
+for _, prop in ipairs(ents.FindByClass("prop_*")) do
+>_ : number
+>prop : Entity
+>ipairs(ents.FindByClass("prop_*")) : LuaIPairsIterator<Entity>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>ents.FindByClass("prop_*") : Entity[]
+>ents.FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>ents : EntsLib
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>"prop_*" : "prop_*"
+
+    local pos: number = prop:GetPos()
+>pos : number
+>prop:GetPos() : number
+>prop:GetPos : (self: Entity) => number
+>prop : Entity
+>GetPos : (self: Entity) => number
+
+    prop:Open()
+>prop:Open() : any
+>prop:Open : any
+>prop : Entity
+>Open : any
+
+end
+local className: string = "door"
+>className : string
+>"door" : "door"
+
+local anyEntity = ents.FindByClass(className)
+>anyEntity : Entity[]
+>ents.FindByClass(className) : Entity[]
+>ents.FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>ents : EntsLib
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>className : string
+
+local DOOR_CLASS = "door" as const
+>DOOR_CLASS : "door"
+>"door" as const : "door"
+>"door" : "door"
+
+for _, door in ipairs(ents.FindByClass(DOOR_CLASS)) do
+>_ : number
+>door : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>ipairs(ents.FindByClass(DOOR_CLASS)) : LuaIPairsIterator<ENT & { Open: (self: ENT & { Open: any; }) => number; }>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>ents.FindByClass(DOOR_CLASS) : (ENT & { Open: (self: ENT & { Open: any; }) => number; })[]
+>ents.FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>ents : EntsLib
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>DOOR_CLASS : "door"
+
+    door:Open()
+>door:Open() : number
+>door:Open : (self: ENT & { Open: any; }) => number
+>door : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>Open : (self: ENT & { Open: any; }) => number
+
+end
+local known: ScriptedEntities["door"] = ents.FindByClass("door")[1] as ScriptedEntities["door"]
+>known : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>ents.FindByClass("door")[1] as ScriptedEntities["door"] : ENT & { Open: (self: ENT & { Open: any; }) => number; }
+>ents.FindByClass("door")[1] : (ENT & { Open: (self: ENT & { Open: any; }) => number; }) | nil
+>ents.FindByClass("door") : (ENT & { Open: (self: ENT & { Open: any; }) => number; })[]
+>ents.FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>ents : EntsLib
+>FindByClass : <K extends string>(name: K) => (K extends keyof ScriptedEntities ? ScriptedEntities[K] : Entity)[]
+>"door" : "door"
+>1 : 1
+

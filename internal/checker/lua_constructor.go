@@ -153,6 +153,10 @@ func (r *luaConstructorResolver) armsAt(symbol *ast.Symbol) ([]*ast.Symbol, bool
 
 func (r *luaConstructorResolver) computeArms(symbol *ast.Symbol) ([]*ast.Symbol, bool) {
 	c := r.checker
+	if environmentGlobal := c.luaEnvironmentGlobals[symbol]; environmentGlobal != nil {
+		// The host installs one table per group before any of its chunks run.
+		return []*ast.Symbol{environmentGlobal.arm}, true
+	}
 	assignments := c.luaAssignmentAugmentations[symbol]
 	if len(assignments) != 0 && hasOnlyLuaConstructorAssignmentDeclarations(symbol, assignments) {
 		return r.applyConstructorAssignments(nil, true, assignments)

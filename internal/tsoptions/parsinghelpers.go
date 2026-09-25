@@ -294,6 +294,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		}
 	case "libReplacement":
 		allOptions.LibReplacement = ParseTristate(value)
+	case "luaEnvironments":
+		allOptions.LuaEnvironments = parseLuaEnvironments(value)
 	case "listEmittedFiles":
 		allOptions.ListEmittedFiles = ParseTristate(value)
 	case "listFiles":
