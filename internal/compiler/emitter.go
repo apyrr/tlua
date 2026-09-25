@@ -142,7 +142,6 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	printerOptions := printer.PrinterOptions{
 		RemoveComments:  options.RemoveComments.IsTrue(),
 		NewLine:         options.NewLine,
-		NoEmitHelpers:   options.NoEmitHelpers.IsTrue(),
 		SourceMap:       options.SourceMap.IsTrue(),
 		InlineSourceMap: options.InlineSourceMap.IsTrue(),
 		InlineSources:   options.InlineSources.IsTrue(),
@@ -194,7 +193,6 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	printerOptions := printer.PrinterOptions{
 		RemoveComments: options.RemoveComments.IsTrue(),
 		NewLine:        options.NewLine,
-		NoEmitHelpers:  true,
 		// Module: 			   options.Module, // NYI
 		// ModuleResolution:   options.ModuleResolution, // NYI
 		Target:          options.GetEmitScriptTarget(),

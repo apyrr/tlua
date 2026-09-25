@@ -24,7 +24,6 @@ type EmitContext struct {
 	classThis     map[*ast.Node]*ast.IdentifierNode
 	varScopeStack core.Stack[*varScope]
 	letScopeStack core.Stack[*varScope]
-	emitHelpers   collections.OrderedSet[*EmitHelper]
 }
 
 type environmentFlags int
@@ -527,7 +526,6 @@ type emitNode struct {
 	commentRange              core.TextRange
 	sourceMapRange            core.TextRange
 	tokenSourceMapRanges      map[ast.Kind]core.TextRange
-	helpers                   []*EmitHelper
 	externalHelpersModuleName *ast.IdentifierNode
 	leadingComments           []SynthesizedComment
 	trailingComments          []SynthesizedComment
@@ -541,7 +539,6 @@ func (e *emitNode) copyFrom(source *emitNode) {
 	e.commentRange = source.commentRange
 	e.sourceMapRange = source.sourceMapRange
 	e.tokenSourceMapRanges = maps.Clone(source.tokenSourceMapRanges)
-	e.helpers = slices.Clone(source.helpers)
 	e.externalHelpersModuleName = source.externalHelpersModuleName
 }
 
@@ -653,52 +650,6 @@ func (c *EmitContext) SetClassThis(node *ast.Node, classThis *ast.IdentifierNode
 		c.classThis = make(map[*ast.Node]*ast.Expression)
 	}
 	c.classThis[node] = classThis
-}
-
-func (c *EmitContext) RequestEmitHelper(helper *EmitHelper) {
-	if helper.Scoped {
-		panic("Cannot request a scoped emit helper")
-	}
-	for _, h := range helper.Dependencies {
-		c.RequestEmitHelper(h)
-	}
-	c.emitHelpers.Add(helper)
-}
-
-func (c *EmitContext) MoveEmitHelpers(source *ast.Node, target *ast.Node, predicate func(helper *EmitHelper) bool) {
-	sourceEmitNode := c.emitNodes.TryGet(source)
-	if sourceEmitNode == nil {
-		return
-	}
-	sourceEmitHelpers := sourceEmitNode.helpers
-	if len(sourceEmitHelpers) == 0 {
-		return
-	}
-
-	targetEmitNode := c.emitNodes.Get(target)
-	helpersRemoved := 0
-	for i := range sourceEmitHelpers {
-		helper := sourceEmitHelpers[i]
-		if predicate(helper) {
-			helpersRemoved++
-			targetEmitNode.helpers = core.AppendIfUnique(targetEmitNode.helpers, helper)
-		} else if helpersRemoved > 0 {
-			sourceEmitHelpers[i-helpersRemoved] = helper
-		}
-	}
-
-	if helpersRemoved > 0 {
-		sourceEmitHelpers = sourceEmitHelpers[:len(sourceEmitHelpers)-helpersRemoved]
-		sourceEmitNode.helpers = sourceEmitHelpers
-	}
-}
-
-func (c *EmitContext) GetEmitHelpers(node *ast.Node) []*EmitHelper {
-	emitNode := c.emitNodes.TryGet(node)
-	if emitNode != nil {
-		return emitNode.helpers
-	}
-	return nil
 }
 
 func (c *EmitContext) GetExternalHelpersModuleName(node *ast.SourceFile) *ast.IdentifierNode {

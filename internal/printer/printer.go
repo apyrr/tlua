@@ -36,7 +36,6 @@ type PrinterOptions struct {
 	RemoveComments bool
 	NewLine        core.NewLineKind
 	// OmitTrailingSemicolon         bool
-	NoEmitHelpers bool
 	// Module                        core.ModuleKind
 	// ModuleResolution              core.ModuleResolutionKind
 	Target                      core.ScriptTarget
@@ -119,34 +118,33 @@ type PrintHandlers struct {
 
 type Printer struct {
 	PrintHandlers
-	Options                           PrinterOptions
-	emitContext                       *EmitContext
-	currentSourceFile                 *ast.SourceFile
-	uniqueHelperNames                 map[string]*ast.IdentifierNode
-	externalHelpersModuleName         *ast.IdentifierNode
-	nextListElementPos                int
-	writer                            EmitTextWriter
-	ownWriter                         EmitTextWriter
-	writeKind                         WriteKind
-	sourceMapsDisabled                bool
-	sourceMapGenerator                *sourcemap.Generator
-	sourceMapSource                   sourcemap.Source
-	sourceMapSourceIndex              sourcemap.SourceIndex
-	sourceMapSourceIsJson             bool
-	sourceMapLineCharCache            *lineCharacterCache
-	mostRecentSourceMapSource         sourcemap.Source
-	mostRecentSourceMapSourceIndex    sourcemap.SourceIndex
-	containerPos                      int
-	containerEnd                      int
-	declarationListContainerEnd       int
-	detachedCommentsInfo              core.Stack[detachedCommentsInfo]
-	commentsDisabled                  bool
-	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalTypeNode or InferTypeNode
-	nameGenerator                     NameGenerator
-	makeFileLevelOptimisticUniqueName func(string) string
-	commentStateArena                 core.Arena[commentState]
-	sourceMapStateArena               core.Arena[sourceMapState]
-	IdToSymbol                        map[*ast.IdentifierNode]*ast.Symbol
+	Options                        PrinterOptions
+	emitContext                    *EmitContext
+	currentSourceFile              *ast.SourceFile
+	uniqueHelperNames              map[string]*ast.IdentifierNode
+	externalHelpersModuleName      *ast.IdentifierNode
+	nextListElementPos             int
+	writer                         EmitTextWriter
+	ownWriter                      EmitTextWriter
+	writeKind                      WriteKind
+	sourceMapsDisabled             bool
+	sourceMapGenerator             *sourcemap.Generator
+	sourceMapSource                sourcemap.Source
+	sourceMapSourceIndex           sourcemap.SourceIndex
+	sourceMapSourceIsJson          bool
+	sourceMapLineCharCache         *lineCharacterCache
+	mostRecentSourceMapSource      sourcemap.Source
+	mostRecentSourceMapSourceIndex sourcemap.SourceIndex
+	containerPos                   int
+	containerEnd                   int
+	declarationListContainerEnd    int
+	detachedCommentsInfo           core.Stack[detachedCommentsInfo]
+	commentsDisabled               bool
+	inExtends                      bool // whether we are emitting the `extends` clause of a ConditionalTypeNode or InferTypeNode
+	nameGenerator                  NameGenerator
+	commentStateArena              core.Arena[commentState]
+	sourceMapStateArena            core.Arena[sourceMapState]
+	IdToSymbol                     map[*ast.IdentifierNode]*ast.Symbol
 }
 
 type detachedCommentsInfo struct {
@@ -186,9 +184,6 @@ func NewPrinter(options PrinterOptions, handlers PrintHandlers, emitContext *Emi
 	printer.nameGenerator.Context = printer.emitContext
 	printer.nameGenerator.GetTextOfNode = func(node *ast.Node) string { return printer.getTextOfNode(node, false) }
 	printer.nameGenerator.IsFileLevelUniqueNameInCurrentFile = printer.isFileLevelUniqueNameInCurrentFile
-	printer.makeFileLevelOptimisticUniqueName = func(name string) string {
-		return printer.nameGenerator.MakeFileLevelOptimisticUniqueName(name)
-	}
 	printer.containerPos = -1
 	printer.containerEnd = -1
 	printer.declarationListContainerEnd = -1
@@ -1526,7 +1521,6 @@ func (p *Printer) emitFunctionBody(body *ast.Block) {
 	detachedState := p.emitDetachedCommentsBeforeStatementList(body.AsNode(), body.Statements.Loc)
 	statementOffset := p.emitPrologueDirectives(body.Statements)
 	pos := p.writer.GetTextPos()
-	p.emitHelpers(body.AsNode())
 
 	if p.shouldEmitBlockFunctionBodyOnSingleLine(body) && statementOffset == 0 && pos == p.writer.GetTextPos() {
 		p.decreaseIndent()
@@ -1565,7 +1559,6 @@ func (p *Printer) emitLuaBlockStatements(body *ast.Block) {
 	p.increaseIndent()
 	detachedState := p.emitDetachedCommentsBeforeStatementList(body.AsNode(), body.Statements.Loc)
 	statementOffset := p.emitPrologueDirectives(body.Statements)
-	p.emitHelpers(body.AsNode())
 	p.emitListRange((*Printer).emitStatement, body.AsNode(), body.Statements, LFMultiLineFunctionBodyStatements, statementOffset, -1)
 	p.emitDetachedCommentsAfterStatementList(body.AsNode(), body.Statements.Loc, detachedState)
 	p.decreaseIndent()
@@ -4004,34 +3997,6 @@ func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {
 	return len(statements.Nodes)
 }
 
-func (p *Printer) emitHelpers(node *ast.Node) bool {
-	helpersEmitted := false
-	sourceFile := p.currentSourceFile
-	shouldSkip := p.Options.NoEmitHelpers || (sourceFile != nil && p.emitContext.HasRecordedExternalHelpers(sourceFile))
-	helpers := slices.Clone(p.emitContext.GetEmitHelpers(node))
-	if len(helpers) > 0 {
-		slices.SortStableFunc(helpers, compareEmitHelpers)
-		for _, helper := range helpers {
-			if !helper.Scoped {
-				// Skip the helper if it can be skipped and the noEmitHelpers compiler
-				// option is set, or if it can be imported and the importHelpers compiler
-				// option is set.
-				if shouldSkip {
-					continue
-				}
-			}
-			if helper.TextCallback != nil {
-				p.writeLines(helper.TextCallback(p.makeFileLevelOptimisticUniqueName))
-			} else {
-				p.writeLines(helper.Text)
-			}
-			helpersEmitted = true
-		}
-	}
-
-	return helpersEmitted
-}
-
 func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	savedCurrentSourceFile := p.currentSourceFile
 	savedCommentsDisabled := p.commentsDisabled
@@ -4051,7 +4016,6 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 			p.writeLine()
 		}
 		state = p.emitDetachedCommentsBeforeStatementList(node.AsNode(), node.Statements.Loc)
-		p.emitHelpers(node.AsNode())
 		if node.IsDeclarationFile {
 			p.emitTripleSlashDirectives(node)
 		}
