@@ -521,7 +521,6 @@ func luaPathNodeModulesOnSearchChain(fileName string, compilerOptions *core.Comp
 func processEnding(
 	fileName string,
 	allowedEndings []ModuleSpecifierEnding,
-	options *core.CompilerOptions,
 	host ModuleSpecifierGenerationHost,
 ) string {
 	if tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionJson}) {
@@ -635,7 +634,7 @@ func tryGetModuleNameAsNodeModule(
 			// try with next level of directory
 			packageRootIndex = core.IndexAfter(pathObj.FileName, "/", packageRootIndex+1)
 			if packageRootIndex == -1 {
-				moduleSpecifier = processEnding(moduleFileName, allowedEndings, options, host)
+				moduleSpecifier = processEnding(moduleFileName, allowedEndings, host)
 				break
 			}
 		}
@@ -905,7 +904,6 @@ func tryGetModuleNameFromPaths(
 				result := processEnding(
 					relativeToBaseUrl,
 					[]ModuleSpecifierEnding{ending},
-					compilerOptions,
 					host,
 				)
 				candidates = append(candidates, specPair{
@@ -952,7 +950,7 @@ func validateEnding(c specPair, relativeToBaseUrl string, compilerOptions *core.
 	// `ModuleSpecifierEnding.Index` result, which should already be in the list of candidates if `Minimal` was. (Note: the assumption here is
 	// that every module resolution mode that supports dropping extensions also supports dropping `/index`. Like literally
 	// everything else in this file, this logic needs to be updated if that's not true in some future module resolution mode.)
-	return c.ending != ModuleSpecifierEndingMinimal || c.value == processEnding(relativeToBaseUrl, []ModuleSpecifierEnding{c.ending}, compilerOptions, host)
+	return c.ending != ModuleSpecifierEndingMinimal || c.value == processEnding(relativeToBaseUrl, []ModuleSpecifierEnding{c.ending}, host)
 }
 
 func tryGetModuleNameFromExportsOrImports(

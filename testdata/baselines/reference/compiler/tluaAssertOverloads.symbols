@@ -1,0 +1,141 @@
+//// [tests/cases/compiler/tluaAssertOverloads.tlua] ////
+
+=== tluaAssertOverloads.tlua ===
+// Typed assertion overloads narrow by the overload the call picks.
+declare function chk(v: unknown, tag: string): asserts v is string
+>chk : Symbol(chk, Decl(tluaAssertOverloads.tlua, 0, 0), Decl(tluaAssertOverloads.tlua, 1, 66))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 1, 21))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 1, 32))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 1, 21))
+
+declare function chk(v: unknown, tag: number): asserts v is number
+>chk : Symbol(chk, Decl(tluaAssertOverloads.tlua, 0, 0), Decl(tluaAssertOverloads.tlua, 1, 66))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 2, 21))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 2, 32))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 2, 21))
+
+declare x: unknown
+>x : Symbol(x, Decl(tluaAssertOverloads.tlua, 3, 7))
+
+chk(x, 1)
+>chk : Symbol(chk, Decl(tluaAssertOverloads.tlua, 0, 0), Decl(tluaAssertOverloads.tlua, 1, 66))
+>x : Symbol(x, Decl(tluaAssertOverloads.tlua, 3, 7))
+
+local n: number = x
+>n : Symbol(n, Decl(tluaAssertOverloads.tlua, 5, 5))
+>x : Symbol(x, Decl(tluaAssertOverloads.tlua, 3, 7))
+
+declare y: unknown
+>y : Symbol(y, Decl(tluaAssertOverloads.tlua, 6, 7))
+
+chk(y, "s")
+>chk : Symbol(chk, Decl(tluaAssertOverloads.tlua, 0, 0), Decl(tluaAssertOverloads.tlua, 1, 66))
+>y : Symbol(y, Decl(tluaAssertOverloads.tlua, 6, 7))
+
+local s: string = y
+>s : Symbol(s, Decl(tluaAssertOverloads.tlua, 8, 5))
+>y : Symbol(y, Decl(tluaAssertOverloads.tlua, 6, 7))
+
+// An overload that asserts nothing narrows nothing.
+declare function maybe(v: unknown, tag: string): asserts v
+>maybe : Symbol(maybe, Decl(tluaAssertOverloads.tlua, 8, 19), Decl(tluaAssertOverloads.tlua, 11, 58))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 11, 23))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 11, 34))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 11, 23))
+
+declare function maybe(v: unknown, tag: number): void
+>maybe : Symbol(maybe, Decl(tluaAssertOverloads.tlua, 8, 19), Decl(tluaAssertOverloads.tlua, 11, 58))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 12, 23))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 12, 34))
+
+declare z: string | nil
+>z : Symbol(z, Decl(tluaAssertOverloads.tlua, 13, 7))
+
+maybe(z, 1)
+>maybe : Symbol(maybe, Decl(tluaAssertOverloads.tlua, 8, 19), Decl(tluaAssertOverloads.tlua, 11, 58))
+>z : Symbol(z, Decl(tluaAssertOverloads.tlua, 13, 7))
+
+local z1: string = z
+>z1 : Symbol(z1, Decl(tluaAssertOverloads.tlua, 15, 5))
+>z : Symbol(z, Decl(tluaAssertOverloads.tlua, 13, 7))
+
+maybe(z, "a")
+>maybe : Symbol(maybe, Decl(tluaAssertOverloads.tlua, 8, 19), Decl(tluaAssertOverloads.tlua, 11, 58))
+>z : Symbol(z, Decl(tluaAssertOverloads.tlua, 13, 7))
+
+local z2: string = z
+>z2 : Symbol(z2, Decl(tluaAssertOverloads.tlua, 17, 5))
+>z : Symbol(z, Decl(tluaAssertOverloads.tlua, 13, 7))
+
+// Overloads that all assert the same argument untyped narrow alike.
+declare function both(v: unknown, tag: string): asserts v
+>both : Symbol(both, Decl(tluaAssertOverloads.tlua, 17, 20), Decl(tluaAssertOverloads.tlua, 20, 57))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 20, 22))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 20, 33))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 20, 22))
+
+declare function both(v: unknown, tag: number): asserts v
+>both : Symbol(both, Decl(tluaAssertOverloads.tlua, 17, 20), Decl(tluaAssertOverloads.tlua, 20, 57))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 21, 22))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 21, 33))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 21, 22))
+
+declare w: string | nil
+>w : Symbol(w, Decl(tluaAssertOverloads.tlua, 22, 7))
+
+both(w, 1)
+>both : Symbol(both, Decl(tluaAssertOverloads.tlua, 17, 20), Decl(tluaAssertOverloads.tlua, 20, 57))
+>w : Symbol(w, Decl(tluaAssertOverloads.tlua, 22, 7))
+
+local w1: string = w
+>w1 : Symbol(w1, Decl(tluaAssertOverloads.tlua, 24, 5))
+>w : Symbol(w, Decl(tluaAssertOverloads.tlua, 22, 7))
+
+// Reachability: an untyped assertion of false ends the flow only when it is the pick.
+local function dead1(): number
+>dead1 : Symbol(dead1, Decl(tluaAssertOverloads.tlua, 24, 20))
+
+  both(false, 1)
+>both : Symbol(both, Decl(tluaAssertOverloads.tlua, 17, 20), Decl(tluaAssertOverloads.tlua, 20, 57))
+
+end
+local function live1(): number
+>live1 : Symbol(live1, Decl(tluaAssertOverloads.tlua, 29, 3))
+
+  maybe(false, 1)
+>maybe : Symbol(maybe, Decl(tluaAssertOverloads.tlua, 8, 19), Decl(tluaAssertOverloads.tlua, 11, 58))
+
+end
+local function dead2(): number
+>dead2 : Symbol(dead2, Decl(tluaAssertOverloads.tlua, 32, 3))
+
+  maybe(false, "x")
+>maybe : Symbol(maybe, Decl(tluaAssertOverloads.tlua, 8, 19), Decl(tluaAssertOverloads.tlua, 11, 58))
+
+end
+declare function fail(v: unknown, tag: string): asserts v
+>fail : Symbol(fail, Decl(tluaAssertOverloads.tlua, 35, 3), Decl(tluaAssertOverloads.tlua, 36, 57))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 36, 22))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 36, 33))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 36, 22))
+
+declare function fail(v: unknown, tag: number): never
+>fail : Symbol(fail, Decl(tluaAssertOverloads.tlua, 35, 3), Decl(tluaAssertOverloads.tlua, 36, 57))
+>v : Symbol(v, Decl(tluaAssertOverloads.tlua, 37, 22))
+>tag : Symbol(tag, Decl(tluaAssertOverloads.tlua, 37, 33))
+
+local function dead3(): number
+>dead3 : Symbol(dead3, Decl(tluaAssertOverloads.tlua, 37, 53))
+
+  fail(1, 1)
+>fail : Symbol(fail, Decl(tluaAssertOverloads.tlua, 35, 3), Decl(tluaAssertOverloads.tlua, 36, 57))
+
+end
+local function live3(): number
+>live3 : Symbol(live3, Decl(tluaAssertOverloads.tlua, 40, 3))
+
+  fail(1, "x")
+>fail : Symbol(fail, Decl(tluaAssertOverloads.tlua, 35, 3), Decl(tluaAssertOverloads.tlua, 36, 57))
+
+end
+

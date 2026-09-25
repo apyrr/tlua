@@ -1555,6 +1555,16 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 		// here and just use the `any` type directly
 		targetReturnType := c.getNonCircularReturnTypeOfSignature(target)
 		if targetReturnType == c.voidType || targetReturnType == c.anyType {
+			// Values a void or any target ignores need not relate, but an assertion's
+			// predicate is its contract whatever it returns: calls through the target
+			// narrow by it.
+			targetTypePredicate := c.getTypePredicateOfSignature(target)
+			if targetTypePredicate == nil || targetTypePredicate.kind != TypePredicateKindAssertsIdentifier {
+				return result
+			}
+			if sourceTypePredicate := c.getTypePredicateOfSignature(source); sourceTypePredicate != nil {
+				result &= c.compareTypePredicateRelatedTo(sourceTypePredicate, targetTypePredicate, reportErrors, errorReporter, compareTypes)
+			}
 			return result
 		}
 		sourceReturnType := c.getNonCircularReturnTypeOfSignature(source)
@@ -1631,7 +1641,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *TypePredicate, reportErrors bool, errorReporter ErrorReporter, compareTypes TypeComparer) Ternary {
 	if source.kind != target.kind {
 		if reportErrors {
-			errorReporter(diagnostics.A_this_based_type_guard_is_not_compatible_with_a_parameter_based_type_guard)
+			errorReporter(diagnostics.An_assertion_and_a_type_guard_are_not_compatible)
 			errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.typePredicateToString(source), c.typePredicateToString(target))
 		}
 		return TernaryFalse
@@ -2937,10 +2947,12 @@ func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, repor
 	}
 	// The `table` partition is not upward-closed under intersection: one plain-table
 	// constituent must not vouch for a partner that carries a call signature or a brand
-	// member, so the whole intersection decides -- the same verdict `type(x) == "table"`
-	// narrowing reaches -- instead of the any-constituent rule below.
-	if target.flags&TypeFlagsNonPrimitive != 0 && r.relation != r.c.identityRelation {
-		return core.IfElse(r.c.isLuaTableType(source), TernaryTrue, TernaryFalse)
+	// member, so the whole intersection can veto -- the same verdict `type(x) == "table"`
+	// narrowing reaches. Passing the veto is not enough on its own: some constituent must
+	// still be a table (the any-constituent rule below), so `V & {}` with an unconstrained
+	// V -- NonNullable<V>, which admits strings -- is not a table.
+	if target.flags&TypeFlagsNonPrimitive != 0 && r.relation != r.c.identityRelation && !r.c.isLuaTableType(source) {
+		return TernaryFalse
 	}
 	// Check to see if any constituents of the intersection are immediately related to the target.
 	// Don't report errors though. Elaborating on whether a source constituent is related to the target is

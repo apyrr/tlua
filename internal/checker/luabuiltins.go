@@ -135,9 +135,16 @@ func (c *Checker) createLuaValuePack(types []*Type, openTail bool) *Type {
 	return c.createPackTypeEx(types, infos, false /*collapse*/)
 }
 
-// createLuaIteratorType wraps a result pack as the zero-parameter closure the
-// generic for consumes (gmatch, io.lines).
-func (c *Checker) createLuaIteratorType(returnPack *Type) *Type {
-	signature := c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, returnPack, nil, 0)
+// createLuaIteratorType wraps result values as the zero-parameter closure the
+// generic for consumes (gmatch, io.lines). The return is canonical, as a declared
+// or inferred one is: a single value is its bare type, not a one-value pack.
+func (c *Checker) createLuaIteratorType(types []*Type, openTail bool) *Type {
+	var returnType *Type
+	if len(types) == 1 && !openTail {
+		returnType = types[0]
+	} else {
+		returnType = c.createLuaValuePack(types, openTail)
+	}
+	signature := c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, returnType, nil, 0)
 	return c.newAnonymousType(nil, nil, []*Signature{signature}, nil, nil)
 }

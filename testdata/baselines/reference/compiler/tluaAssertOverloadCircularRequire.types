@@ -1,0 +1,139 @@
+//// [tests/cases/compiler/tluaAssertOverloadCircularRequire.tlua] ////
+
+=== main.tlua ===
+local m = require("m")
+>m : { y: string; }
+>require("m") : { y: string; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+local a = require("a")
+>a : { x: number; }
+>require("a") : { x: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"a" : "a"
+
+local _ = m.y .. a.x
+>_ : string
+>m.y .. a.x : string
+>m.y : string
+>m : { y: string; }
+>y : string
+>a.x : number
+>a : { x: number; }
+>x : number
+
+=== m.tlua ===
+// tluaAssertCircularRequire with overloaded assertions: a set whose every overload
+// returns decides no reachability, so flow analysis never resolves these calls up
+// front. Untyped overloads narrow alike; the others are resolved only for a
+// reference the asserted argument can narrow (v, not a.x's module).
+declare function check(v: unknown, tag: string): asserts v is string
+>check : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): void; }
+>v : unknown
+>tag : string
+
+declare function check(v: unknown, tag: number): void
+>check : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): void; }
+>v : unknown
+>tag : number
+
+declare function both(v: unknown, tag: string): asserts v
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>v : unknown
+>tag : string
+
+declare function both(v: unknown, tag: number): asserts v
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>v : unknown
+>tag : number
+
+local a = require("a")
+>a : { x: number; }
+>require("a") : { x: number; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"a" : "a"
+
+check(a.x, 1)
+>check(a.x, 1) : void
+>check : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): void; }
+>a.x : number
+>a : { x: number; }
+>x : number
+>1 : 1
+
+both(a.x, 1)
+>both(a.x, 1) : void
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>a.x : number
+>a : { x: number; }
+>x : number
+>1 : 1
+
+declare function pick(): number | string | nil
+>pick : () => number | string | nil
+
+local v = pick()
+>v : string | number | nil
+>pick() : string | number | nil
+>pick : () => number | string | nil
+
+check(v, "s")
+>check(v, "s") : void
+>check : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): void; }
+>v : string | number | nil
+>"s" : "s"
+
+return { y = v }
+>{ y = v } : { y: string; }
+>y : string
+>v : string
+
+=== a.tlua ===
+declare function check(v: unknown, tag: string): asserts v is string
+>check : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): void; }
+>v : unknown
+>tag : string
+
+declare function check(v: unknown, tag: number): void
+>check : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): void; }
+>v : unknown
+>tag : number
+
+declare function both(v: unknown, tag: string): asserts v
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>v : unknown
+>tag : string
+
+declare function both(v: unknown, tag: number): asserts v
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>v : unknown
+>tag : number
+
+local m = require("m")
+>m : { y: string; }
+>require("m") : { y: string; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+check(m.y, 1)
+>check(m.y, 1) : void
+>check : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): void; }
+>m.y : string
+>m : { y: string; }
+>y : string
+>1 : 1
+
+both(m.y, "s")
+>both(m.y, "s") : void
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>m.y : string
+>m : { y: string; }
+>y : string
+>"s" : "s"
+
+return { x = 1 }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+

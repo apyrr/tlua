@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/tluaAliasUnresolvedInitializer.tlua] ////
+
+=== tluaAliasUnresolvedInitializer.tlua ===
+function unresolvedBehindAs(): void
+>unresolvedBehindAs : () => void
+
+  local b = notDeclaredAnywhere as { x: string | nil }
+>b : { x: string | nil; }
+>notDeclaredAnywhere as { x: string | nil } : { x: string | nil; }
+>notDeclaredAnywhere : any
+>x : string | nil
+
+  local c = b
+>c : { x: string | nil; }
+>b : { x: string | nil; }
+
+  assert(c.x)
+>assert(c.x) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>c.x : string | nil
+>c : { x: string | nil; }
+>x : string | nil
+
+  local _: string = b.x
+>_ : string
+>b.x : string
+>b : { x: string | nil; }
+>x : string
+
+end
+
+function unresolvedBehindAnnotation(): void
+>unresolvedBehindAnnotation : () => void
+
+  local b: { x: string | nil } = alsoNotDeclared
+>b : { x: string | nil; }
+>x : string | nil
+>alsoNotDeclared : any
+
+  local c = b
+>c : { x: string | nil; }
+>b : { x: string | nil; }
+
+  assert(c.x)
+>assert(c.x) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>c.x : string | nil
+>c : { x: string | nil; }
+>x : string | nil
+
+  local _: string = b.x
+>_ : string
+>b.x : string
+>b : { x: string | nil; }
+>x : string
+
+end
+

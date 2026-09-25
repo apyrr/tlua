@@ -31,57 +31,64 @@ local f = "x"?:upper()
 >"x"?:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 >upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 
+local l = "x"(1)
+>l : Symbol(l, Decl(tluaPrefixExpressionParentheses.tlua, 11, 5))
+
+local m = {}(2)
+>m : Symbol(m, Decl(tluaPrefixExpressionParentheses.tlua, 12, 5))
+
 // Parentheses make any expression a prefixexp; wrappers that erase at emit are
 // looked through.
 local g = ("x"):upper()
->g : Symbol(g, Decl(tluaPrefixExpressionParentheses.tlua, 14, 5))
+>g : Symbol(g, Decl(tluaPrefixExpressionParentheses.tlua, 16, 5))
 >("x"):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 >upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 
 local h = ({ x = 1 }).x
->h : Symbol(h, Decl(tluaPrefixExpressionParentheses.tlua, 15, 5))
->({ x = 1 }).x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 15, 12))
->x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 15, 12))
->x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 15, 12))
+>h : Symbol(h, Decl(tluaPrefixExpressionParentheses.tlua, 17, 5))
+>({ x = 1 }).x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 17, 12))
+>x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 17, 12))
+>x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 17, 12))
 
 local i = (function() return 1 end)()
->i : Symbol(i, Decl(tluaPrefixExpressionParentheses.tlua, 16, 5))
+>i : Symbol(i, Decl(tluaPrefixExpressionParentheses.tlua, 18, 5))
 
 local j = ("x" as string):upper()
->j : Symbol(j, Decl(tluaPrefixExpressionParentheses.tlua, 17, 5))
+>j : Symbol(j, Decl(tluaPrefixExpressionParentheses.tlua, 19, 5))
 >("x" as string):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 >upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
 
 declare t: { f: () => number } | nil;
->t : Symbol(t, Decl(tluaPrefixExpressionParentheses.tlua, 18, 7))
->f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 18, 12))
+>t : Symbol(t, Decl(tluaPrefixExpressionParentheses.tlua, 20, 7))
+>f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 20, 12))
 
 local k = t!.f()
->k : Symbol(k, Decl(tluaPrefixExpressionParentheses.tlua, 19, 5))
->t!.f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 18, 12))
->t : Symbol(t, Decl(tluaPrefixExpressionParentheses.tlua, 18, 7))
->f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 18, 12))
+>k : Symbol(k, Decl(tluaPrefixExpressionParentheses.tlua, 21, 5))
+>t!.f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 20, 12))
+>t : Symbol(t, Decl(tluaPrefixExpressionParentheses.tlua, 20, 7))
+>f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 20, 12))
 
-// After anything but a prefixexp, `(` does not continue the expression: Lua ends
-// it there and the `(` starts the next statement.
+// After anything but a prefixexp, a `(` on the next line does not continue the
+// expression: Lua ends it there and the `(` starts the next statement. (On the
+// same line it is the call above: statements there need a `;` between them.)
 declare function report(s: string): nil;
->report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 19, 16))
->s : Symbol(s, Decl(tluaPrefixExpressionParentheses.tlua, 23, 24))
+>report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 21, 16))
+>s : Symbol(s, Decl(tluaPrefixExpressionParentheses.tlua, 26, 24))
 
 local afterString = "abc"
->afterString : Symbol(afterString, Decl(tluaPrefixExpressionParentheses.tlua, 24, 5))
+>afterString : Symbol(afterString, Decl(tluaPrefixExpressionParentheses.tlua, 27, 5))
 
 (report)("x")
->report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 19, 16))
+>report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 21, 16))
 
 local afterTable = {}
->afterTable : Symbol(afterTable, Decl(tluaPrefixExpressionParentheses.tlua, 26, 5))
+>afterTable : Symbol(afterTable, Decl(tluaPrefixExpressionParentheses.tlua, 29, 5))
 
 (report)("y")
->report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 19, 16))
+>report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 21, 16))
 
 // The error is a grammar check, not a syntax error, so type errors elsewhere in
 // the file are still reported.
 local wrong: number = "not a number"
->wrong : Symbol(wrong, Decl(tluaPrefixExpressionParentheses.tlua, 31, 5))
+>wrong : Symbol(wrong, Decl(tluaPrefixExpressionParentheses.tlua, 34, 5))
 

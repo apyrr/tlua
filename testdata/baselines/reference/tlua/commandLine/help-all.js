@@ -77,7 +77,6 @@ Conditions to set in addition to the resolver-specific defaults when resolving i
 [94m--module, -m[39m
 Specify what module code is generated.
 one of: commonjs, es6/es2015, es2020, es2022, esnext, node16, node18, node20, nodenext, preserve
-default: undefined
 
 [94m--noResolve[39m
 Disallow 'import's, 'require's or '<reference>'s from expanding the number of files tlua should add to a project.
@@ -115,12 +114,10 @@ Specify type package names to be included without being referenced in a source f
 [94m--allowUnreachableCode[39m
 Disable error reporting for unreachable code.
 type: boolean
-default: undefined
 
 [94m--allowUnusedLabels[39m
 Disable error reporting for unused labels.
 type: boolean
-default: undefined
 
 [94m--alwaysStrict[39m
 Ensure 'use strict' is always emitted.
@@ -387,7 +384,6 @@ default: false
 [94m--plugins[39m
 Specify a list of language service plugins to include.
 one or more: 
-default: undefined
 
 ### Interop Constraints
 
@@ -421,7 +417,6 @@ default: false
 [94m--lib[39m
 Specify a set of bundled library declaration files that describe the target runtime environment.
 one or more: luajit
-default: undefined
 
 [94m--libReplacement[39m
 Enable lib replacement.
@@ -476,7 +471,6 @@ Including --watch, -w will start watching the current project for the file chang
 [94m--watchInterval[39m
 
 type: number
-default: undefined
 
 [94m--watchFile[39m
 Specify how the tlua watch mode works.

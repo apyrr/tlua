@@ -1,0 +1,166 @@
+//// [tests/cases/compiler/tluaAliasWalkWrappers.tlua] ////
+
+=== tluaAliasWalkWrappers.tlua ===
+declare v: string | number | nil
+>v : string | number | nil
+
+declare function box(): { x: string | nil }
+>box : () => { x: string | nil; }
+>x : string | nil
+
+// Builtin-identity walk (resolveLuaLocalAlias): `as` is NOT skipped.
+function builtinThroughAs(): void
+>builtinThroughAs : () => void
+
+  local t = type as (value: any) => string
+>t : (value: any) => string
+>type as (value: any) => string : (value: any) => string
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : any
+
+  if t(v) == "string" then
+>t(v) == "string" : boolean
+>t(v) : string
+>t : (value: any) => string
+>v : string | number | nil
+>"string" : "string"
+
+    local s: string = v
+>s : string
+>v : string | number | nil
+
+  end
+end
+
+// Builtin-identity walk: an annotation stops it.
+function builtinThroughAnnotation(): void
+>builtinThroughAnnotation : () => void
+
+  local t: (value: any) => string = type
+>t : (value: any) => string
+>value : any
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+
+  if t(v) == "string" then
+>t(v) == "string" : boolean
+>t(v) : string
+>t : (value: any) => string
+>v : string | number | nil
+>"string" : "string"
+
+    local s: string = v
+>s : string
+>v : string | number | nil
+
+  end
+end
+
+// Storage-identity walk (canonicalLuaAliasSymbol): `as` IS skipped.
+function storageThroughAs(): string
+>storageThroughAs : () => string
+
+  local a = box()
+>a : { x: string | nil; }
+>box() : { x: string | nil; }
+>box : () => { x: string | nil; }
+
+  local b = a as { x: string | nil }
+>b : { x: string | nil; }
+>a as { x: string | nil } : { x: string | nil; }
+>a : { x: string | nil; }
+>x : string | nil
+
+  assert(b.x)
+>assert(b.x) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>b.x : string | nil
+>b : { x: string | nil; }
+>x : string | nil
+
+  return a.x
+>a.x : string
+>a : { x: string | nil; }
+>x : string
+
+end
+
+// Storage-identity walk: an annotation does not stop it.
+function storageThroughAnnotation(): string
+>storageThroughAnnotation : () => string
+
+  local a = box()
+>a : { x: string | nil; }
+>box() : { x: string | nil; }
+>box : () => { x: string | nil; }
+
+  local b: { x: string | nil } = a
+>b : { x: string | nil; }
+>x : string | nil
+>a : { x: string | nil; }
+
+  assert(b.x)
+>assert(b.x) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>b.x : string | nil
+>b : { x: string | nil; }
+>x : string | nil
+
+  return a.x
+>a.x : string
+>a : { x: string | nil; }
+>x : string
+
+end
+
+// Storage walk hops only between locals; a global root is never reached.
+G = { x = nil as string | nil }
+>G = { x = nil as string | nil } : { x: string | nil; }
+>G : { x: string | nil; }
+>{ x = nil as string | nil } : { x: string | nil; }
+>x : string | nil
+>nil as string | nil : string | nil
+
+function storageThroughGlobal(): string
+>storageThroughGlobal : () => string
+
+  local b = G
+>b : { x: string | nil; }
+>G : { x: string | nil; }
+
+  assert(b.x)
+>assert(b.x) : string
+>assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>b.x : string | nil
+>b : { x: string | nil; }
+>x : string | nil
+
+  return G.x
+>G.x : string | nil
+>G : { x: string | nil; }
+>x : string | nil
+
+end
+
+// Augmentation through `as` and an annotation.
+local root1 = {}
+>root1 : { member: number; }
+>{} : { member: number; }
+
+local alias1 = root1 as {}
+>alias1 : {}
+>root1 as {} : {}
+>root1 : { member: number; }
+
+alias1.member = 1
+>alias1.member = 1 : 1
+>alias1.member : any
+>alias1 : {}
+>member : any
+>1 : 1
+
+local use1: number = root1.member
+>use1 : number
+>root1.member : number
+>root1 : { member: number; }
+>member : number
+

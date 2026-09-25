@@ -1,0 +1,131 @@
+//// [tests/cases/compiler/tluaGenericInferMultiReturn.tlua] ////
+
+=== tluaGenericInferMultiReturn.tlua ===
+// A single-value `() => T` infers T from the first value a multi-return callee
+// supplies -- the truncation assignability applies -- never from the whole pack.
+declare function two(): (string, number)
+>two : () => (string, number)
+
+declare function twoOrNil(): (string, number) | nil
+>twoOrNil : () => (string, number) | nil
+
+local function box<T>(g: () => T): { v: T } return nil as any end
+>box : <T>(g: () => T) => { v: T; }
+>g : () => T
+>v : T
+>nil as any : any
+
+local function wrap<...R>(g: () => (...R)): () => (...R) return g end
+>wrap : <...R>(g: () => (...R)) => () => (...R)
+>g : () => (...R)
+>g : () => (...R)
+
+local a = box(two).v
+>a : string
+>box(two).v : string
+>box(two) : { v: string; }
+>box : <T>(g: () => T) => { v: T; }
+>two : () => (string, number)
+>v : string
+
+local b = box(function() return 1, "x" end).v
+>b : number
+>box(function() return 1, "x" end).v : number
+>box(function() return 1, "x" end) : { v: number; }
+>box : <T>(g: () => T) => { v: T; }
+>function() return 1, "x" end : () => (number, string)
+>1, "x" : number, string
+>1 : 1
+>"x" : "x"
+>v : number
+
+local c = box(wrap(two)).v
+>c : string
+>box(wrap(two)).v : string
+>box(wrap(two)) : { v: string; }
+>box : <T>(g: () => T) => { v: T; }
+>wrap(two) : () => (string, number)
+>wrap : <...R>(g: () => (...R)) => () => (...R)
+>two : () => (string, number)
+>v : string
+
+local d = box(twoOrNil).v
+>d : string | nil
+>box(twoOrNil).v : string | nil
+>box(twoOrNil) : { v: string | nil; }
+>box : <T>(g: () => T) => { v: T; }
+>twoOrNil : () => (string, number) | nil
+>v : string | nil
+
+local function box3<T>(g: () => T): () => T return g end
+>box3 : <T>(g: () => T) => () => T
+>g : () => T
+>g : () => T
+
+local e = box3(two)
+>e : () => string
+>box3(two) : () => string
+>box3 : <T>(g: () => T) => () => T
+>two : () => (string, number)
+
+// Builtin iterators: a one-value closure returns its bare value type.
+local s = "a1"
+>s : string
+>"a1" : "a1"
+
+local f = box(io.lines()).v
+>f : string | nil
+>box(io.lines()).v : string | nil
+>box(io.lines()) : { v: string | nil; }
+>box : <T>(g: () => T) => { v: T; }
+>io.lines() : () => string | nil
+>io.lines : (filename?: string, ...: LuaReadFormat) => function
+>io : IOLib
+>lines : (filename?: string, ...: LuaReadFormat) => function
+>v : string | nil
+
+local g = box(io.lines("f", "*l", "*n")).v
+>g : string | nil
+>box(io.lines("f", "*l", "*n")).v : string | nil
+>box(io.lines("f", "*l", "*n")) : { v: string | nil; }
+>box : <T>(g: () => T) => { v: T; }
+>io.lines("f", "*l", "*n") : () => (string | nil, number | nil)
+>io.lines : (filename?: string, ...: LuaReadFormat) => function
+>io : IOLib
+>lines : (filename?: string, ...: LuaReadFormat) => function
+>"f" : "f"
+>"*l" : "*l"
+>"*n" : "*n"
+>v : string | nil
+
+local h = box(s:gmatch("(%d)")).v
+>h : string | nil
+>box(s:gmatch("(%d)")).v : string | nil
+>box(s:gmatch("(%d)")) : { v: string | nil; }
+>box : <T>(g: () => T) => { v: T; }
+>s:gmatch("(%d)") : () => string | nil
+>s:gmatch : (self: string, pattern: string) => () => string
+>s : string
+>gmatch : (self: string, pattern: string) => () => string
+>"(%d)" : "(%d)"
+>v : string | nil
+
+local i = box(s:gmatch("(%d)(%a)")).v
+>i : string | nil
+>box(s:gmatch("(%d)(%a)")).v : string | nil
+>box(s:gmatch("(%d)(%a)")) : { v: string | nil; }
+>box : <T>(g: () => T) => { v: T; }
+>s:gmatch("(%d)(%a)") : () => (string | nil, string | nil)
+>s:gmatch : (self: string, pattern: string) => () => string
+>s : string
+>gmatch : (self: string, pattern: string) => () => string
+>"(%d)(%a)" : "(%d)(%a)"
+>v : string | nil
+
+local it = io.lines()
+>it : () => string | nil
+>io.lines() : () => string | nil
+>io.lines : (filename?: string, ...: LuaReadFormat) => function
+>io : IOLib
+>lines : (filename?: string, ...: LuaReadFormat) => function
+

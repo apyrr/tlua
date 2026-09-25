@@ -6,6 +6,7 @@ import (
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/collections"
 	"github.com/apyrr/tlua/internal/core"
+	"github.com/apyrr/tlua/internal/debug"
 )
 
 // skipLuaTypeOnlyWrappers removes assertions erased by emission without
@@ -236,47 +237,50 @@ func (c *Checker) getLuaAdjustedValueTypeAt(scalar *Type, pack *Type, index int)
 // binding that names one constructor. A binding assigned anywhere is not a
 // stable alias, so the walk stops there rather than reasoning about where in
 // the program the writes occur.
+//
+// It is resolveLuaLocalAlias's walk asked about storage rather than value: every
+// erased wrapper is transparent and an annotation does not stop it (neither
+// changes which table the local holds), and it never leaves the locals, since a
+// global can be rebound from anywhere. Like that walk, each hop names a lexically
+// earlier declaration, so the chain cannot cycle.
 func (c *Checker) canonicalLuaAliasSymbol(symbol *ast.Symbol) *ast.Symbol {
-	original := c.getMergedSymbol(symbol)
-	symbol = original
+	symbol = c.getMergedSymbol(symbol)
 	var seen collections.Set[*ast.Symbol]
-	for symbol != nil {
-		if !seen.AddIfAbsent(symbol) {
-			return original
-		}
-		if len(symbol.Declarations) != 1 || !c.isLuaStableIdentityBinding(symbol) {
+	for hops := 0; ; hops++ {
+		next := c.getLuaStableAliasTarget(symbol)
+		if next == nil {
 			return symbol
 		}
-		declaration := symbol.Declarations[0]
-		if !ast.IsVariableDeclaration(declaration) || !ast.IsLuaLocal(declaration) {
-			return symbol
-		}
-		initializer := ast.LuaExplicitVariableInitializer(declaration)
-		if initializer == nil {
-			return symbol
-		}
-		if initializer = skipLuaRuntimeTransparentWrappers(initializer); !ast.IsIdentifier(initializer) {
-			return symbol
-		}
-		// Augmentation discovery may still create an implicit global with this
-		// name, so do not cache an unresolved expression symbol here.
-		next := c.getMergedSymbol(c.resolveName(
-			initializer,
-			initializer.Text(),
-			ast.SymbolFlagsValue,
-			nil,
-			false, /*isUse*/
-			false, /*excludeGlobals*/
-		))
-		if !c.isParameterOrMutableLocalVariable(next) {
-			return symbol
-		}
-		if c.isSymbolAssigned(next) {
-			return symbol
+		if hops >= 64 {
+			debug.Assert(!seen.Has(next), "cyclic Lua local alias chain")
+			seen.Add(next)
 		}
 		symbol = next
 	}
-	return original
+}
+
+// getLuaStableAliasTarget returns the stable binding a stable local's initializer
+// names through erased wrappers, or nil when symbol is not such an alias.
+func (c *Checker) getLuaStableAliasTarget(symbol *ast.Symbol) *ast.Symbol {
+	if symbol == nil || len(symbol.Declarations) != 1 || !c.isLuaStableIdentityBinding(symbol) {
+		return nil
+	}
+	declaration := symbol.Declarations[0]
+	if !ast.IsVariableDeclaration(declaration) || !ast.IsLuaLocal(declaration) {
+		return nil
+	}
+	initializer := ast.LuaExplicitVariableInitializer(declaration)
+	if initializer == nil {
+		return nil
+	}
+	if initializer = skipLuaRuntimeTransparentWrappers(initializer); !ast.IsIdentifier(initializer) {
+		return nil
+	}
+	next := c.resolveLuaAliasInitializerName(initializer)
+	if next == nil || !c.isLuaStableIdentityBinding(next) {
+		return nil
+	}
+	return next
 }
 
 func (c *Checker) isLuaStableIdentityBinding(symbol *ast.Symbol) bool {

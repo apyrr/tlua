@@ -1,0 +1,114 @@
+//// [tests/cases/compiler/tluaGenericInferMultiReturn.tlua] ////
+
+=== tluaGenericInferMultiReturn.tlua ===
+// A single-value `() => T` infers T from the first value a multi-return callee
+// supplies -- the truncation assignability applies -- never from the whole pack.
+declare function two(): (string, number)
+>two : Symbol(two, Decl(tluaGenericInferMultiReturn.tlua, 0, 0))
+
+declare function twoOrNil(): (string, number) | nil
+>twoOrNil : Symbol(twoOrNil, Decl(tluaGenericInferMultiReturn.tlua, 2, 40))
+
+local function box<T>(g: () => T): { v: T } return nil as any end
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>T : Symbol(T, Decl(tluaGenericInferMultiReturn.tlua, 4, 19))
+>g : Symbol(g, Decl(tluaGenericInferMultiReturn.tlua, 4, 22))
+>T : Symbol(T, Decl(tluaGenericInferMultiReturn.tlua, 4, 19))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>T : Symbol(T, Decl(tluaGenericInferMultiReturn.tlua, 4, 19))
+
+local function wrap<...R>(g: () => (...R)): () => (...R) return g end
+>wrap : Symbol(wrap, Decl(tluaGenericInferMultiReturn.tlua, 4, 65))
+>R : Symbol(R, Decl(tluaGenericInferMultiReturn.tlua, 5, 20))
+>g : Symbol(g, Decl(tluaGenericInferMultiReturn.tlua, 5, 26))
+>R : Symbol(R, Decl(tluaGenericInferMultiReturn.tlua, 5, 20))
+>R : Symbol(R, Decl(tluaGenericInferMultiReturn.tlua, 5, 20))
+>g : Symbol(g, Decl(tluaGenericInferMultiReturn.tlua, 5, 26))
+
+local a = box(two).v
+>a : Symbol(a, Decl(tluaGenericInferMultiReturn.tlua, 6, 5))
+>box(two).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>two : Symbol(two, Decl(tluaGenericInferMultiReturn.tlua, 0, 0))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local b = box(function() return 1, "x" end).v
+>b : Symbol(b, Decl(tluaGenericInferMultiReturn.tlua, 7, 5))
+>box(function() return 1, "x" end).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local c = box(wrap(two)).v
+>c : Symbol(c, Decl(tluaGenericInferMultiReturn.tlua, 8, 5))
+>box(wrap(two)).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>wrap : Symbol(wrap, Decl(tluaGenericInferMultiReturn.tlua, 4, 65))
+>two : Symbol(two, Decl(tluaGenericInferMultiReturn.tlua, 0, 0))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local d = box(twoOrNil).v
+>d : Symbol(d, Decl(tluaGenericInferMultiReturn.tlua, 9, 5))
+>box(twoOrNil).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>twoOrNil : Symbol(twoOrNil, Decl(tluaGenericInferMultiReturn.tlua, 2, 40))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local function box3<T>(g: () => T): () => T return g end
+>box3 : Symbol(box3, Decl(tluaGenericInferMultiReturn.tlua, 9, 25))
+>T : Symbol(T, Decl(tluaGenericInferMultiReturn.tlua, 10, 20))
+>g : Symbol(g, Decl(tluaGenericInferMultiReturn.tlua, 10, 23))
+>T : Symbol(T, Decl(tluaGenericInferMultiReturn.tlua, 10, 20))
+>T : Symbol(T, Decl(tluaGenericInferMultiReturn.tlua, 10, 20))
+>g : Symbol(g, Decl(tluaGenericInferMultiReturn.tlua, 10, 23))
+
+local e = box3(two)
+>e : Symbol(e, Decl(tluaGenericInferMultiReturn.tlua, 11, 5))
+>box3 : Symbol(box3, Decl(tluaGenericInferMultiReturn.tlua, 9, 25))
+>two : Symbol(two, Decl(tluaGenericInferMultiReturn.tlua, 0, 0))
+
+// Builtin iterators: a one-value closure returns its bare value type.
+local s = "a1"
+>s : Symbol(s, Decl(tluaGenericInferMultiReturn.tlua, 14, 5))
+
+local f = box(io.lines()).v
+>f : Symbol(f, Decl(tluaGenericInferMultiReturn.tlua, 15, 5))
+>box(io.lines()).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local g = box(io.lines("f", "*l", "*n")).v
+>g : Symbol(g, Decl(tluaGenericInferMultiReturn.tlua, 16, 5))
+>box(io.lines("f", "*l", "*n")).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local h = box(s:gmatch("(%d)")).v
+>h : Symbol(h, Decl(tluaGenericInferMultiReturn.tlua, 17, 5))
+>box(s:gmatch("(%d)")).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>s:gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>s : Symbol(s, Decl(tluaGenericInferMultiReturn.tlua, 14, 5))
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local i = box(s:gmatch("(%d)(%a)")).v
+>i : Symbol(i, Decl(tluaGenericInferMultiReturn.tlua, 18, 5))
+>box(s:gmatch("(%d)(%a)")).v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+>box : Symbol(box, Decl(tluaGenericInferMultiReturn.tlua, 3, 51))
+>s:gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>s : Symbol(s, Decl(tluaGenericInferMultiReturn.tlua, 14, 5))
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>v : Symbol(v, Decl(tluaGenericInferMultiReturn.tlua, 4, 36))
+
+local it = io.lines()
+>it : Symbol(it, Decl(tluaGenericInferMultiReturn.tlua, 19, 5))
+>io.lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>lines : Symbol(IOLib.lines, Decl(lib.luajit.d.tlua, --, --))
+

@@ -1350,7 +1350,7 @@ var All_declarations_of_an_abstract_method_must_be_consecutive = &Message{code: 
 
 var Cannot_assign_an_abstract_constructor_type_to_a_non_abstract_constructor_type = &Message{code: 2517, category: CategoryError, key: "Cannot_assign_an_abstract_constructor_type_to_a_non_abstract_constructor_type_2517", text: "Cannot assign an abstract constructor type to a non-abstract constructor type."}
 
-var A_this_based_type_guard_is_not_compatible_with_a_parameter_based_type_guard = &Message{code: 2518, category: CategoryError, key: "A_this_based_type_guard_is_not_compatible_with_a_parameter_based_type_guard_2518", text: "A 'this'-based type guard is not compatible with a parameter-based type guard."}
+var An_assertion_and_a_type_guard_are_not_compatible = &Message{code: 2518, category: CategoryError, key: "An_assertion_and_a_type_guard_are_not_compatible_2518", text: "An assertion and a type guard are not compatible."}
 
 var An_async_iterator_must_have_a_next_method = &Message{code: 2519, category: CategoryError, key: "An_async_iterator_must_have_a_next_method_2519", text: "An async iterator must have a 'next()' method."}
 
@@ -5602,8 +5602,8 @@ func keyToMessage(key Key) *Message {
 		return All_declarations_of_an_abstract_method_must_be_consecutive
 	case "Cannot_assign_an_abstract_constructor_type_to_a_non_abstract_constructor_type_2517":
 		return Cannot_assign_an_abstract_constructor_type_to_a_non_abstract_constructor_type
-	case "A_this_based_type_guard_is_not_compatible_with_a_parameter_based_type_guard_2518":
-		return A_this_based_type_guard_is_not_compatible_with_a_parameter_based_type_guard
+	case "An_assertion_and_a_type_guard_are_not_compatible_2518":
+		return An_assertion_and_a_type_guard_are_not_compatible
 	case "An_async_iterator_must_have_a_next_method_2519":
 		return An_async_iterator_must_have_a_next_method
 	case "Duplicate_identifier_0_Compiler_uses_declaration_1_to_support_async_functions_2520":

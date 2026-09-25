@@ -377,6 +377,7 @@ type SignatureLinks struct {
 	effectsSignature  *Signature     // Signature with possible control flow effects
 	flowCallEffect    flowCallEffect // Effect of a call statement on flow analysis (getFlowCallEffect)
 	flowCallSignature *Signature     // The signature a flowCallAssertion narrows by, declared or resolved
+	flowCallResolves  bool           // flowCallSignature stands for overloads; the call's pick is resolved lazily
 }
 
 type TypeFlags uint32

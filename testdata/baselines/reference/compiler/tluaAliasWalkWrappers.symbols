@@ -1,0 +1,144 @@
+//// [tests/cases/compiler/tluaAliasWalkWrappers.tlua] ////
+
+=== tluaAliasWalkWrappers.tlua ===
+declare v: string | number | nil
+>v : Symbol(v, Decl(tluaAliasWalkWrappers.tlua, 0, 7))
+
+declare function box(): { x: string | nil }
+>box : Symbol(box, Decl(tluaAliasWalkWrappers.tlua, 0, 32))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 1, 25))
+
+// Builtin-identity walk (resolveLuaLocalAlias): `as` is NOT skipped.
+function builtinThroughAs(): void
+>builtinThroughAs : Symbol(builtinThroughAs, Decl(tluaAliasWalkWrappers.tlua, 1, 43))
+
+  local t = type as (value: any) => string
+>t : Symbol(t, Decl(tluaAliasWalkWrappers.tlua, 5, 7))
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaAliasWalkWrappers.tlua, 5, 21))
+
+  if t(v) == "string" then
+>t : Symbol(t, Decl(tluaAliasWalkWrappers.tlua, 5, 7))
+>v : Symbol(v, Decl(tluaAliasWalkWrappers.tlua, 0, 7))
+
+    local s: string = v
+>s : Symbol(s, Decl(tluaAliasWalkWrappers.tlua, 7, 9))
+>v : Symbol(v, Decl(tluaAliasWalkWrappers.tlua, 0, 7))
+
+  end
+end
+
+// Builtin-identity walk: an annotation stops it.
+function builtinThroughAnnotation(): void
+>builtinThroughAnnotation : Symbol(builtinThroughAnnotation, Decl(tluaAliasWalkWrappers.tlua, 9, 3))
+
+  local t: (value: any) => string = type
+>t : Symbol(t, Decl(tluaAliasWalkWrappers.tlua, 13, 7))
+>value : Symbol(value, Decl(tluaAliasWalkWrappers.tlua, 13, 12))
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+
+  if t(v) == "string" then
+>t : Symbol(t, Decl(tluaAliasWalkWrappers.tlua, 13, 7))
+>v : Symbol(v, Decl(tluaAliasWalkWrappers.tlua, 0, 7))
+
+    local s: string = v
+>s : Symbol(s, Decl(tluaAliasWalkWrappers.tlua, 15, 9))
+>v : Symbol(v, Decl(tluaAliasWalkWrappers.tlua, 0, 7))
+
+  end
+end
+
+// Storage-identity walk (canonicalLuaAliasSymbol): `as` IS skipped.
+function storageThroughAs(): string
+>storageThroughAs : Symbol(storageThroughAs, Decl(tluaAliasWalkWrappers.tlua, 17, 3))
+
+  local a = box()
+>a : Symbol(a, Decl(tluaAliasWalkWrappers.tlua, 21, 7))
+>box : Symbol(box, Decl(tluaAliasWalkWrappers.tlua, 0, 32))
+
+  local b = a as { x: string | nil }
+>b : Symbol(b, Decl(tluaAliasWalkWrappers.tlua, 22, 7))
+>a : Symbol(a, Decl(tluaAliasWalkWrappers.tlua, 21, 7))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 22, 18))
+
+  assert(b.x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>b.x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 22, 18))
+>b : Symbol(b, Decl(tluaAliasWalkWrappers.tlua, 22, 7))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 22, 18))
+
+  return a.x
+>a.x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 1, 25))
+>a : Symbol(a, Decl(tluaAliasWalkWrappers.tlua, 21, 7))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 1, 25))
+
+end
+
+// Storage-identity walk: an annotation does not stop it.
+function storageThroughAnnotation(): string
+>storageThroughAnnotation : Symbol(storageThroughAnnotation, Decl(tluaAliasWalkWrappers.tlua, 25, 3))
+
+  local a = box()
+>a : Symbol(a, Decl(tluaAliasWalkWrappers.tlua, 29, 7))
+>box : Symbol(box, Decl(tluaAliasWalkWrappers.tlua, 0, 32))
+
+  local b: { x: string | nil } = a
+>b : Symbol(b, Decl(tluaAliasWalkWrappers.tlua, 30, 7))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 30, 12))
+>a : Symbol(a, Decl(tluaAliasWalkWrappers.tlua, 29, 7))
+
+  assert(b.x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>b.x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 30, 12))
+>b : Symbol(b, Decl(tluaAliasWalkWrappers.tlua, 30, 7))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 30, 12))
+
+  return a.x
+>a.x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 1, 25))
+>a : Symbol(a, Decl(tluaAliasWalkWrappers.tlua, 29, 7))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 1, 25))
+
+end
+
+// Storage walk hops only between locals; a global root is never reached.
+G = { x = nil as string | nil }
+>G : Symbol(G, Decl(tluaAliasWalkWrappers.tlua, 33, 3))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 36, 5))
+
+function storageThroughGlobal(): string
+>storageThroughGlobal : Symbol(storageThroughGlobal, Decl(tluaAliasWalkWrappers.tlua, 36, 31))
+
+  local b = G
+>b : Symbol(b, Decl(tluaAliasWalkWrappers.tlua, 38, 7))
+>G : Symbol(G, Decl(tluaAliasWalkWrappers.tlua, 33, 3))
+
+  assert(b.x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>b.x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 36, 5))
+>b : Symbol(b, Decl(tluaAliasWalkWrappers.tlua, 38, 7))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 36, 5))
+
+  return G.x
+>G.x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 36, 5))
+>G : Symbol(G, Decl(tluaAliasWalkWrappers.tlua, 33, 3))
+>x : Symbol(x, Decl(tluaAliasWalkWrappers.tlua, 36, 5))
+
+end
+
+// Augmentation through `as` and an annotation.
+local root1 = {}
+>root1 : Symbol(root1, Decl(tluaAliasWalkWrappers.tlua, 44, 5))
+
+local alias1 = root1 as {}
+>alias1 : Symbol(alias1, Decl(tluaAliasWalkWrappers.tlua, 45, 5))
+>root1 : Symbol(root1, Decl(tluaAliasWalkWrappers.tlua, 44, 5))
+
+alias1.member = 1
+>alias1 : Symbol(alias1, Decl(tluaAliasWalkWrappers.tlua, 45, 5))
+
+local use1: number = root1.member
+>use1 : Symbol(use1, Decl(tluaAliasWalkWrappers.tlua, 47, 5))
+>root1.member : Symbol(member, Decl(tluaAliasWalkWrappers.tlua, 45, 26))
+>root1 : Symbol(root1, Decl(tluaAliasWalkWrappers.tlua, 44, 5))
+>member : Symbol(member, Decl(tluaAliasWalkWrappers.tlua, 45, 26))
+

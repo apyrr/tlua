@@ -363,7 +363,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			dpw.Write(c.TypeToStringEx(t, enclosing, flags, vc))
 			return
 		}
-		p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
+		p := newDisplayPrinter(emitContext)
 		p.IdToSymbol = idToSymbol
 		tempDpw := newDisplayPartsWriter(true)
 		p.Write(typeNode, sourceFile, tempDpw, nil)
@@ -392,7 +392,7 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol
 			dpw.Write(c.SignatureToStringEx(sig, enclosing, flags, vc))
 			return
 		}
-		p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
+		p := newDisplayPrinter(emitContext)
 		p.IdToSymbol = idToSymbol
 		tempDpw := newDisplayPartsWriter(true)
 		p.Write(sigNode, sourceFile, tempDpw, nil)

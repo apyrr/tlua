@@ -1424,9 +1424,68 @@ func TestTscIncremental(t *testing.T) {
 			},
 		},
 	}
+	testCases = append(testCases, getTscIncrementalRewordedEmitDiagnosticTestCases()...)
 
 	for _, test := range testCases {
 		test.run(t, "incremental")
+	}
+}
+
+// A build info written by an earlier development build (same version string)
+// can hold an emit diagnostic whose message key this compiler no longer has.
+// The cached diagnostic cannot be replayed, so the file's declaration
+// diagnostics must be computed again -- also when the build info records the
+// file as still pending some other emit (the --noEmit --declaration case), and
+// without rewriting outputs that are already up to date (the emit case).
+func getTscIncrementalRewordedEmitDiagnosticTestCases() []*tluaInput {
+	rewordMessageKey := func(sys *TestSys) {
+		// The clean comparison build runs this edit on a fresh file system with no build info.
+		buildInfoPath := "/home/src/workspaces/project/tluaconfig.tluabuildinfo"
+		if !sys.fsFromFileMap().FileExists(buildInfoPath) {
+			return
+		}
+		sys.replaceFileTextAll(
+			buildInfoPath,
+			`"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"`,
+			`"messageKey":"A_message_that_was_reworded_100054"`,
+		)
+	}
+	getFiles := func() FileMap {
+		return FileMap{
+			"/home/src/workspaces/project/tluaconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"incremental": true,
+					},
+				}`),
+			"/home/src/workspaces/project/a.tlua": "local a = 10\nreturn { a = a }",
+		}
+	}
+	return []*tluaInput{
+		{
+			subScenario:     "reworded cached emit diagnostic with noEmit declaration",
+			files:           getFiles(),
+			commandLineArgs: []string{"--noEmit", "--declaration"},
+			edits: []*tluaEdit{
+				{
+					caption: "reword message key of cached declaration emit error",
+					edit:    rewordMessageKey,
+				},
+				noChange,
+			},
+		},
+		{
+			subScenario:     "reworded cached emit diagnostic with declaration",
+			files:           getFiles(),
+			commandLineArgs: []string{"--declaration"},
+			edits: []*tluaEdit{
+				{
+					caption: "reword message key of cached declaration emit error",
+					edit:    rewordMessageKey,
+				},
+				noChange,
+			},
+		},
 	}
 }
 

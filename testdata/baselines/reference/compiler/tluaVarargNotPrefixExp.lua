@@ -2,13 +2,15 @@
 
 //// [tluaVarargNotPrefixExp.tlua]
 // In Lua `...` is not a prefixexp: it cannot be called, indexed, or
-// member-accessed. Each of these must be a parse error rather than quietly
-// reading as a call/index/property access on the pack -- the TS spread forms
-// `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+// member-accessed. Each of these is the prefixexp grammar error (TLUA100060)
+// rather than quietly reading as a call/index/property access on the pack -- the
+// TS spread forms `...(expr)` and `...expr` are gone, and must not sneak back in
+// as suffixes. The emit parenthesizes the receiver, as Lua requires.
 function f(...: number): void
   local called = ...(1);
   local indexed = ...[1];
   local accessed = ....x;
+  local method = ...:upper();
 end
 
 // The same holds in a table constructor, where TS table spread used to live.
@@ -26,21 +28,19 @@ end
 
 //// [tluaVarargNotPrefixExp.lua]
 -- In Lua `...` is not a prefixexp: it cannot be called, indexed, or
--- member-accessed. Each of these must be a parse error rather than quietly
--- reading as a call/index/property access on the pack -- the TS spread forms
--- `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+-- member-accessed. Each of these is the prefixexp grammar error (TLUA100060)
+-- rather than quietly reading as a call/index/property access on the pack -- the
+-- TS spread forms `...(expr)` and `...expr` are gone, and must not sneak back in
+-- as suffixes. The emit parenthesizes the receiver, as Lua requires.
 function f(...)
-  local called = ...;
-  (1);
-  local indexed = ...;
-  1;
-  ;
-  local accessed = ...;
-  x;
+  local called = (...)(1);
+  local indexed = (...)[1];
+  local accessed = (...).x;
+  local method = (...):upper();
 end
 -- The same holds in a table constructor, where TS table spread used to live.
 function g(...)
-  local t = { ..., {} };
+  local t = { (...)({}) };
 end
 -- A bare `...` in each of those positions is still fine.
 function h(...)

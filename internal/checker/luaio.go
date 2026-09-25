@@ -75,9 +75,8 @@ func (c *Checker) checkLuaIOCall(node *ast.Node, checkMode CheckMode) *Type {
 	if len(types) == 0 {
 		types = append(types, c.stringOrNilType) // no formats read one line
 	}
-	resultPack := c.createLuaValuePack(types, openTail)
 	if call.name == "read" {
-		return resultPack
+		return c.createLuaValuePack(types, openTail)
 	}
-	return c.createLuaIteratorType(resultPack)
+	return c.createLuaIteratorType(types, openTail)
 }

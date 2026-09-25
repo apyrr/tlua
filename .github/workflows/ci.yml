@@ -100,9 +100,6 @@ jobs:
             # There aren't enough macOS runners; skip in PRs and rely on main branch runs.
             skip: ${{ github.event_name == 'merge_group' || github.event_name == 'pull_request' }}
           - os: ubuntu-latest
-            name: 'no submodules'
-            no-submodules: true
-          - os: ubuntu-latest
             name: 'noembed'
             noembed: true
           # Guards the parallel checker pool: the ordinary suite cannot see a data
@@ -136,8 +133,6 @@ jobs:
         if: ${{ matrix.config.os == 'windows-latest' }}
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          submodules: ${{ !matrix.config.no-submodules }}
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 'lts/*'

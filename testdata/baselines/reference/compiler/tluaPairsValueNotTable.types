@@ -1,0 +1,109 @@
+//// [tests/cases/compiler/tluaPairsValueNotTable.tlua] ////
+
+=== tluaPairsValueNotTable.tlua ===
+// pairs values are non-nil (`V & {}`), which says nothing about being a table:
+// `{}` in tlua is "any non-nil value", so neither it nor an unconstrained V & {}
+// may pass where a `table` is required.
+local function takesTable(t: table) end
+>takesTable : (t: table) => void
+>t : table
+
+local function unconstrained<V>(t: Table<string, V>)
+>unconstrained : <V>(t: Table<string, V>) => void
+>t : Table<string, V>
+
+    for _, v in pairs(t) do
+>_ : string
+>v : V & {}
+>pairs(t) : LuaPairsIterator<string, V>
+>pairs : <K, V_1>(value: Table<K, V_1>) => (LuaPairsIterator<K, V_1>, Table<K, V_1>, nil)
+>t : Table<string, V>
+
+        local x: table = v
+>x : table
+>v : V & {}
+
+    end
+end
+local function constrainedToTable<V extends table>(t: Table<string, V>)
+>constrainedToTable : <V extends table>(t: Table<string, V>) => void
+>t : Table<string, V>
+
+    for _, v in pairs(t) do
+>_ : string
+>v : V
+>pairs(t) : LuaPairsIterator<string, V>
+>pairs : <K, V_1>(value: Table<K, V_1>) => (LuaPairsIterator<K, V_1>, Table<K, V_1>, nil)
+>t : Table<string, V>
+
+        local x: table = v
+>x : table
+>v : V
+
+    end
+end
+local function mixedConstraint<V extends string | table>(t: Table<string, V>)
+>mixedConstraint : <V extends string | table>(t: Table<string, V>) => void
+>t : Table<string, V>
+
+    for _, v in pairs(t) do
+>_ : string
+>v : V
+>pairs(t) : LuaPairsIterator<string, V>
+>pairs : <K, V_1>(value: Table<K, V_1>) => (LuaPairsIterator<K, V_1>, Table<K, V_1>, nil)
+>t : Table<string, V>
+
+        local x: table = v
+>x : table
+>v : string | table
+
+    end
+end
+
+local strs: Table<string, unknown> = { a = "x" }
+>strs : Table<string, unknown>
+>{ a = "x" } : { a: string; }
+>a : string
+>"x" : "x"
+
+for _, v in pairs(strs) do
+>_ : string
+>v : {}
+>pairs(strs) : LuaPairsIterator<string, unknown>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>strs : Table<string, unknown>
+
+    takesTable(v)
+>takesTable(v) : void
+>takesTable : (t: table) => void
+>v : {}
+
+end
+
+local nonNil: {} = "x"
+>nonNil : {}
+>"x" : "x"
+
+takesTable(nonNil)
+>takesTable(nonNil) : void
+>takesTable : (t: table) => void
+>nonNil : {}
+
+// Table constructors still are tables.
+local lt = {}
+>lt : {}
+>{} : {}
+
+takesTable(lt)
+>takesTable(lt) : void
+>takesTable : (t: table) => void
+>lt : {}
+
+takesTable(setmetatable({}, {}))
+>takesTable(setmetatable({}, {})) : void
+>takesTable : (t: table) => void
+>setmetatable({}, {}) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{} : {}
+

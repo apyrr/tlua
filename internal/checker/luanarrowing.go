@@ -149,8 +149,14 @@ func (c *Checker) getLuaLocalAliasTarget(symbol *ast.Symbol) *ast.Symbol {
 	if initializer == nil || c.isSymbolAssigned(symbol) {
 		return nil
 	}
-	// Uncached, as in canonicalLuaAliasSymbol: this also runs while augmentation
-	// discovery may still create an implicit global with this name.
+	return c.resolveLuaAliasInitializerName(initializer)
+}
+
+// resolveLuaAliasInitializerName resolves the bare name an alias local is
+// initialized from, or nil when it names nothing (reported where the name is
+// checked). Uncached: both alias walks also run while augmentation discovery may
+// still create an implicit global with this name.
+func (c *Checker) resolveLuaAliasInitializerName(initializer *ast.Node) *ast.Symbol {
 	next := c.resolveName(initializer, initializer.Text(), ast.SymbolFlagsValue, nil, false /*isUse*/, false /*excludeGlobals*/)
 	if next == nil || next == c.unknownSymbol {
 		return nil
@@ -308,6 +314,13 @@ func (c *Checker) narrowTypeByLuaFile(t *Type, assumeTrue bool) *Type {
 func (c *Checker) isLuaTableType(source *Type) bool {
 	if isMetatableType(source) {
 		return true
+	}
+	// `{}` is the non-nil top type (NonNullable<T> is `T & {}`, and `unknown` is `{} | nil`):
+	// it admits strings, numbers and functions, and `type(x) == "table"` narrowing does not
+	// believe it is a table either. A table constructor's type is a table by construction,
+	// also once widened (the widened copy keeps the constructor's symbol, not its flags).
+	if !(source.symbol != nil && source.symbol.Flags&ast.SymbolFlagsObjectLiteral != 0) && c.IsEmptyAnonymousObjectType(source) {
+		return false
 	}
 	// A reference instantiation shares its generic target's verdict: instantiation maps
 	// members one-to-one and cannot add call/construct signatures or brand members, so one

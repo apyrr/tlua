@@ -1,0 +1,59 @@
+tluaAssertOverloads.tlua(16,7): error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+tluaAssertOverloads.tlua(31,25): error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
+tluaAssertOverloads.tlua(42,25): error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
+
+
+==== tluaAssertOverloads.tlua (3 errors) ====
+    // Typed assertion overloads narrow by the overload the call picks.
+    declare function chk(v: unknown, tag: string): asserts v is string
+    declare function chk(v: unknown, tag: number): asserts v is number
+    declare x: unknown
+    chk(x, 1)
+    local n: number = x
+    declare y: unknown
+    chk(y, "s")
+    local s: string = y
+    
+    // An overload that asserts nothing narrows nothing.
+    declare function maybe(v: unknown, tag: string): asserts v
+    declare function maybe(v: unknown, tag: number): void
+    declare z: string | nil
+    maybe(z, 1)
+    local z1: string = z
+          ~~
+!!! error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
+    maybe(z, "a")
+    local z2: string = z
+    
+    // Overloads that all assert the same argument untyped narrow alike.
+    declare function both(v: unknown, tag: string): asserts v
+    declare function both(v: unknown, tag: number): asserts v
+    declare w: string | nil
+    both(w, 1)
+    local w1: string = w
+    
+    // Reachability: an untyped assertion of false ends the flow only when it is the pick.
+    local function dead1(): number
+      both(false, 1)
+    end
+    local function live1(): number
+                            ~~~~~~
+!!! error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
+      maybe(false, 1)
+    end
+    local function dead2(): number
+      maybe(false, "x")
+    end
+    declare function fail(v: unknown, tag: string): asserts v
+    declare function fail(v: unknown, tag: number): never
+    local function dead3(): number
+      fail(1, 1)
+    end
+    local function live3(): number
+                            ~~~~~~
+!!! error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
+      fail(1, "x")
+    end
+    

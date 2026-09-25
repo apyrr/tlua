@@ -391,10 +391,10 @@ func (c *Checker) computeFlowCallEffect(flow *ast.FlowNode) flowCallEffect {
 	case luaMetatableCallDebugSet:
 		return flowCallDebugSetmetatable
 	}
-	// The effect is read from the callee's declared signatures; the call is resolved only when
-	// they disagree. Resolving checks the arguments, which at a module's top level can be
-	// another module's exports -- and a module's type depends on its reachability, so resolving
-	// here turned a require cycle into a circular type.
+	// The effect is read from the callee's declared signatures; the call is resolved here only
+	// when reachability depends on the overload it picks. Resolving checks the arguments, which
+	// at a module's top level can be another module's exports -- and a module's type depends on
+	// its reachability, so resolving here turned a require cycle into a circular type.
 	call := flow.Node
 	links := c.signatureLinks.Get(call)
 	signatures := c.getDeclaredFlowCallSignatures(call)
@@ -414,8 +414,19 @@ func (c *Checker) computeFlowCallEffect(flow *ast.FlowNode) flowCallEffect {
 	case len(signatures) == 1:
 		links.flowCallSignature = signatures[0]
 		return c.getAssertionFlowCallEffect(flow, signatures[0])
+	case never == 0:
+		// Overloads that all return: the pick decides only what the call narrows. When every
+		// overload asserts the same argument untyped (`asserts v`), the pick cannot matter;
+		// otherwise narrowTypeByAssertionCall resolves it, as it does a generic predicate's
+		// instantiation, only for a reference that argument can narrow.
+		if signature, resolves, ok := c.getAssertionOverloadsSignature(call, signatures); ok {
+			links.flowCallSignature = signature
+			links.flowCallResolves = resolves
+			return c.getAssertionFlowCallEffect(flow, signature)
+		}
 	}
-	// Overloads that disagree: the one the call picks decides.
+	// Overloads whose pick decides reachability (some never return), or that assert different
+	// arguments: the one the call picks decides.
 	signature := c.getEffectsSignature(call)
 	if signature == nil {
 		return flowCallNone
@@ -425,6 +436,40 @@ func (c *Checker) computeFlowCallEffect(flow *ast.FlowNode) flowCallEffect {
 	}
 	links.flowCallSignature = signature
 	return c.getAssertionFlowCallEffect(flow, signature)
+}
+
+// getAssertionOverloadsSignature returns the overload that stands for a returning overload set
+// in flow analysis: an asserting one, when every asserting overload asserts the same argument.
+// resolves reports that the set does not narrow alike -- a typed predicate, or an overload that
+// asserts nothing -- so the call's pick must be resolved to narrow. ok is false when the set
+// needs its pick up front: its asserted arguments differ, or an untyped assertion of a false
+// argument (unreachable) may or may not be the pick.
+func (c *Checker) getAssertionOverloadsSignature(call *ast.Node, signatures []*Signature) (signature *Signature, resolves bool, ok bool) {
+	for _, s := range signatures {
+		predicate := c.getTypePredicateOfSignature(s)
+		if predicate == nil || predicate.kind != TypePredicateKindAssertsIdentifier {
+			resolves = true
+			continue
+		}
+		if predicate.t != nil {
+			resolves = true
+		}
+		if signature == nil {
+			signature = s
+		} else if c.getTypePredicateOfSignature(signature).parameterIndex != predicate.parameterIndex {
+			return nil, false, false
+		}
+	}
+	if resolves {
+		for _, s := range signatures {
+			if predicate := c.getTypePredicateOfSignature(s); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
+				if arg := c.getTypePredicateArgument(predicate, call); arg != nil && c.isFalseExpression(arg) {
+					return nil, false, false
+				}
+			}
+		}
+	}
+	return signature, resolves, true
 }
 
 // getDeclaredFlowCallSignatures returns the signatures a call statement's callee is declared
@@ -463,24 +508,35 @@ func (c *Checker) getAssertionFlowCallEffect(flow *ast.FlowNode, signature *Sign
 }
 
 // narrowTypeByAssertionCall narrows t by a call statement getTypeAtFlowNode deferred as a
-// flowCallAssertion. The declared predicate serves unless it is typed and generic: then only
-// the call's instantiation knows the type it asserts, and the call is resolved after all.
+// flowCallAssertion. The declared predicate serves unless it is typed and generic, or stands
+// for overloads that narrow differently: then only the call's resolution knows what it
+// asserts, and the call is resolved after all.
 func (c *Checker) narrowTypeByAssertionCall(f *FlowState, t *Type, call *ast.Node) *Type {
-	signature := c.signatureLinks.Get(call).flowCallSignature
+	links := c.signatureLinks.Get(call)
+	signature := links.flowCallSignature
 	predicate := c.getTypePredicateOfSignature(signature)
-	if predicate.t != nil && len(signature.typeParameters) != 0 {
+	if links.flowCallResolves || predicate.t != nil && len(signature.typeParameters) != 0 {
 		// Resolving checks the call's arguments -- at a module's top level possibly another
 		// module's exports mid-resolution -- so only a reference the asserted argument can
-		// narrow pays for it. The argument's position does not depend on the instantiation.
-		if arg := c.getTypePredicateArgument(predicate, call); arg == nil || !c.isTypePredicateArgumentFor(f, t, arg) {
+		// narrow pays for it. The argument's position depends on neither the instantiation
+		// nor the overload (getAssertionOverloadsSignature).
+		arg := c.getTypePredicateArgument(predicate, call)
+		if arg == nil || !c.isTypePredicateArgumentFor(f, t, arg) && (!links.flowCallResolves || c.narrowTypeByAssertion(f, t, arg) == t) {
 			return t
 		}
+		// The call resolves against its callee's flow-narrowed type, not the declared one this
+		// predicate came from: the pick can be an overload that asserts nothing, and a callee
+		// narrowed to never (`if not check then check(x) end`, TLUA2349) or intersected by a
+		// type guard can resolve to no signature or a never-returning one. None of those
+		// asserts anything to narrow by.
 		resolved := c.getEffectsSignature(call)
 		if resolved == nil {
-			return t // circular or failed resolution
+			return t
 		}
 		predicate = c.getTypePredicateOfSignature(resolved)
-		debug.Assert(predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier, "resolved assertion call lost its declared asserts predicate")
+		if predicate == nil || predicate.kind != TypePredicateKindAssertsIdentifier {
+			return t
+		}
 	}
 	if predicate.t != nil {
 		return c.narrowTypeByTypePredicate(f, t, predicate, call, true /*assumeTrue*/)

@@ -45,6 +45,18 @@ local f = "x"?:upper()
 >"x" : "x"
 >upper : (self: string) => string
 
+local l = "x"(1)
+>l : any
+>"x"(1) : any
+>"x" : "x"
+>1 : 1
+
+local m = {}(2)
+>m : any
+>{}(2) : any
+>{} : {}
+>2 : 2
+
 // Parentheses make any expression a prefixexp; wrappers that erase at emit are
 // looked through.
 local g = ("x"):upper()
@@ -92,8 +104,9 @@ local k = t!.f()
 >t : { f: () => number; } | nil
 >f : () => number
 
-// After anything but a prefixexp, `(` does not continue the expression: Lua ends
-// it there and the `(` starts the next statement.
+// After anything but a prefixexp, a `(` on the next line does not continue the
+// expression: Lua ends it there and the `(` starts the next statement. (On the
+// same line it is the call above: statements there need a `;` between them.)
 declare function report(s: string): nil;
 >report : (s: string) => nil
 >s : string

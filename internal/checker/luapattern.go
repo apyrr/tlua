@@ -78,7 +78,7 @@ func (c *Checker) checkLuaPatternCall(node *ast.Node, checkMode CheckMode) *Type
 		}
 		return c.createLuaValuePack(append([]*Type{c.numberOrNilType, c.numberOrNilType}, types...), false)
 	case "gmatch":
-		return c.createLuaIteratorType(c.createLuaValuePack(types, false))
+		return c.createLuaIteratorType(types, false)
 	}
 	return nil
 }

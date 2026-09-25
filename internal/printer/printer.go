@@ -971,6 +971,19 @@ func (p *Printer) emitKeywordNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 	p.exitTokenNode(node, state)
 }
 
+// emitNilKeyword prints the nil literal. A JSON file spells it `null` (the
+// scanner reads JSON `null` as the nil keyword), so JSON emit must print it
+// back that way or the output is not JSON.
+func (p *Printer) emitNilKeyword(node *ast.TokenNode) {
+	if p.currentSourceFile == nil || p.currentSourceFile.ScriptKind != core.ScriptKindJSON {
+		p.emitTokenNode(node)
+		return
+	}
+	state := p.enterTokenNode(node, tefNone)
+	p.writeKeyword("null")
+	p.exitTokenNode(node, state)
+}
+
 func (p *Printer) emitPunctuationNode(node *ast.TokenNode) {
 	p.emitPunctuationNodeEx(node, tefNone)
 }
@@ -2941,8 +2954,10 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 
 	switch node.Kind {
 	// Keywords
-	case ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNilKeyword:
+	case ast.KindTrueKeyword, ast.KindFalseKeyword:
 		p.emitTokenNode(node)
+	case ast.KindNilKeyword:
+		p.emitNilKeyword(node)
 	case ast.KindThisKeyword, ast.KindSuperKeyword, ast.KindImportKeyword:
 		p.emitKeywordExpression(node.AsKeywordExpression())
 

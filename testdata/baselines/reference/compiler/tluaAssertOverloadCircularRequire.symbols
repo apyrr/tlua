@@ -1,0 +1,122 @@
+//// [tests/cases/compiler/tluaAssertOverloadCircularRequire.tlua] ////
+
+=== main.tlua ===
+local m = require("m")
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local a = require("a")
+>a : Symbol(a, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local _ = m.y .. a.x
+>_ : Symbol(_, Decl(main.tlua, 2, 5))
+>m.y : Symbol(y, Decl(m.tlua, 14, 8))
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>y : Symbol(y, Decl(m.tlua, 14, 8))
+>a.x : Symbol(x, Decl(a.tlua, 7, 8))
+>a : Symbol(a, Decl(main.tlua, 1, 5))
+>x : Symbol(x, Decl(a.tlua, 7, 8))
+
+=== m.tlua ===
+// tluaAssertCircularRequire with overloaded assertions: a set whose every overload
+// returns decides no reachability, so flow analysis never resolves these calls up
+// front. Untyped overloads narrow alike; the others are resolved only for a
+// reference the asserted argument can narrow (v, not a.x's module).
+declare function check(v: unknown, tag: string): asserts v is string
+>check : Symbol(check, Decl(m.tlua, 0, 0), Decl(m.tlua, 4, 68))
+>v : Symbol(v, Decl(m.tlua, 4, 23))
+>tag : Symbol(tag, Decl(m.tlua, 4, 34))
+>v : Symbol(v, Decl(m.tlua, 4, 23))
+
+declare function check(v: unknown, tag: number): void
+>check : Symbol(check, Decl(m.tlua, 0, 0), Decl(m.tlua, 4, 68))
+>v : Symbol(v, Decl(m.tlua, 5, 23))
+>tag : Symbol(tag, Decl(m.tlua, 5, 34))
+
+declare function both(v: unknown, tag: string): asserts v
+>both : Symbol(both, Decl(m.tlua, 5, 53), Decl(m.tlua, 6, 57))
+>v : Symbol(v, Decl(m.tlua, 6, 22))
+>tag : Symbol(tag, Decl(m.tlua, 6, 33))
+>v : Symbol(v, Decl(m.tlua, 6, 22))
+
+declare function both(v: unknown, tag: number): asserts v
+>both : Symbol(both, Decl(m.tlua, 5, 53), Decl(m.tlua, 6, 57))
+>v : Symbol(v, Decl(m.tlua, 7, 22))
+>tag : Symbol(tag, Decl(m.tlua, 7, 33))
+>v : Symbol(v, Decl(m.tlua, 7, 22))
+
+local a = require("a")
+>a : Symbol(a, Decl(m.tlua, 8, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+check(a.x, 1)
+>check : Symbol(check, Decl(m.tlua, 0, 0), Decl(m.tlua, 4, 68))
+>a.x : Symbol(x, Decl(a.tlua, 7, 8))
+>a : Symbol(a, Decl(m.tlua, 8, 5))
+>x : Symbol(x, Decl(a.tlua, 7, 8))
+
+both(a.x, 1)
+>both : Symbol(both, Decl(m.tlua, 5, 53), Decl(m.tlua, 6, 57))
+>a.x : Symbol(x, Decl(a.tlua, 7, 8))
+>a : Symbol(a, Decl(m.tlua, 8, 5))
+>x : Symbol(x, Decl(a.tlua, 7, 8))
+
+declare function pick(): number | string | nil
+>pick : Symbol(pick, Decl(m.tlua, 10, 12))
+
+local v = pick()
+>v : Symbol(v, Decl(m.tlua, 12, 5))
+>pick : Symbol(pick, Decl(m.tlua, 10, 12))
+
+check(v, "s")
+>check : Symbol(check, Decl(m.tlua, 0, 0), Decl(m.tlua, 4, 68))
+>v : Symbol(v, Decl(m.tlua, 12, 5))
+
+return { y = v }
+>y : Symbol(y, Decl(m.tlua, 14, 8))
+>v : Symbol(v, Decl(m.tlua, 12, 5))
+
+=== a.tlua ===
+declare function check(v: unknown, tag: string): asserts v is string
+>check : Symbol(check, Decl(a.tlua, 0, 0), Decl(a.tlua, 0, 68))
+>v : Symbol(v, Decl(a.tlua, 0, 23))
+>tag : Symbol(tag, Decl(a.tlua, 0, 34))
+>v : Symbol(v, Decl(a.tlua, 0, 23))
+
+declare function check(v: unknown, tag: number): void
+>check : Symbol(check, Decl(a.tlua, 0, 0), Decl(a.tlua, 0, 68))
+>v : Symbol(v, Decl(a.tlua, 1, 23))
+>tag : Symbol(tag, Decl(a.tlua, 1, 34))
+
+declare function both(v: unknown, tag: string): asserts v
+>both : Symbol(both, Decl(a.tlua, 1, 53), Decl(a.tlua, 2, 57))
+>v : Symbol(v, Decl(a.tlua, 2, 22))
+>tag : Symbol(tag, Decl(a.tlua, 2, 33))
+>v : Symbol(v, Decl(a.tlua, 2, 22))
+
+declare function both(v: unknown, tag: number): asserts v
+>both : Symbol(both, Decl(a.tlua, 1, 53), Decl(a.tlua, 2, 57))
+>v : Symbol(v, Decl(a.tlua, 3, 22))
+>tag : Symbol(tag, Decl(a.tlua, 3, 33))
+>v : Symbol(v, Decl(a.tlua, 3, 22))
+
+local m = require("m")
+>m : Symbol(m, Decl(a.tlua, 4, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+check(m.y, 1)
+>check : Symbol(check, Decl(a.tlua, 0, 0), Decl(a.tlua, 0, 68))
+>m.y : Symbol(y, Decl(m.tlua, 14, 8))
+>m : Symbol(m, Decl(a.tlua, 4, 5))
+>y : Symbol(y, Decl(m.tlua, 14, 8))
+
+both(m.y, "s")
+>both : Symbol(both, Decl(a.tlua, 1, 53), Decl(a.tlua, 2, 57))
+>m.y : Symbol(y, Decl(m.tlua, 14, 8))
+>m : Symbol(m, Decl(a.tlua, 4, 5))
+>y : Symbol(y, Decl(m.tlua, 14, 8))
+
+return { x = 1 }
+>x : Symbol(x, Decl(a.tlua, 7, 8))
+

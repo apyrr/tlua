@@ -1,0 +1,104 @@
+//// [tests/cases/compiler/tluaPairsValueNotTable.tlua] ////
+
+=== tluaPairsValueNotTable.tlua ===
+// pairs values are non-nil (`V & {}`), which says nothing about being a table:
+// `{}` in tlua is "any non-nil value", so neither it nor an unconstrained V & {}
+// may pass where a `table` is required.
+local function takesTable(t: table) end
+>takesTable : Symbol(takesTable, Decl(tluaPairsValueNotTable.tlua, 0, 0))
+>t : Symbol(t, Decl(tluaPairsValueNotTable.tlua, 3, 26))
+
+local function unconstrained<V>(t: Table<string, V>)
+>unconstrained : Symbol(unconstrained, Decl(tluaPairsValueNotTable.tlua, 3, 39))
+>V : Symbol(V, Decl(tluaPairsValueNotTable.tlua, 5, 29))
+>t : Symbol(t, Decl(tluaPairsValueNotTable.tlua, 5, 32))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>V : Symbol(V, Decl(tluaPairsValueNotTable.tlua, 5, 29))
+
+    for _, v in pairs(t) do
+>_ : Symbol(_, Decl(tluaPairsValueNotTable.tlua, 6, 7))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 6, 10))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaPairsValueNotTable.tlua, 5, 32))
+
+        local x: table = v
+>x : Symbol(x, Decl(tluaPairsValueNotTable.tlua, 7, 13))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 6, 10))
+
+    end
+end
+local function constrainedToTable<V extends table>(t: Table<string, V>)
+>constrainedToTable : Symbol(constrainedToTable, Decl(tluaPairsValueNotTable.tlua, 9, 3))
+>V : Symbol(V, Decl(tluaPairsValueNotTable.tlua, 10, 34))
+>t : Symbol(t, Decl(tluaPairsValueNotTable.tlua, 10, 51))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>V : Symbol(V, Decl(tluaPairsValueNotTable.tlua, 10, 34))
+
+    for _, v in pairs(t) do
+>_ : Symbol(_, Decl(tluaPairsValueNotTable.tlua, 11, 7))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 11, 10))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaPairsValueNotTable.tlua, 10, 51))
+
+        local x: table = v
+>x : Symbol(x, Decl(tluaPairsValueNotTable.tlua, 12, 13))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 11, 10))
+
+    end
+end
+local function mixedConstraint<V extends string | table>(t: Table<string, V>)
+>mixedConstraint : Symbol(mixedConstraint, Decl(tluaPairsValueNotTable.tlua, 14, 3))
+>V : Symbol(V, Decl(tluaPairsValueNotTable.tlua, 15, 31))
+>t : Symbol(t, Decl(tluaPairsValueNotTable.tlua, 15, 57))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>V : Symbol(V, Decl(tluaPairsValueNotTable.tlua, 15, 31))
+
+    for _, v in pairs(t) do
+>_ : Symbol(_, Decl(tluaPairsValueNotTable.tlua, 16, 7))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 16, 10))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaPairsValueNotTable.tlua, 15, 57))
+
+        local x: table = v
+>x : Symbol(x, Decl(tluaPairsValueNotTable.tlua, 17, 13))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 16, 10))
+
+    end
+end
+
+local strs: Table<string, unknown> = { a = "x" }
+>strs : Symbol(strs, Decl(tluaPairsValueNotTable.tlua, 21, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>a : Symbol(a, Decl(tluaPairsValueNotTable.tlua, 21, 38))
+
+for _, v in pairs(strs) do
+>_ : Symbol(_, Decl(tluaPairsValueNotTable.tlua, 22, 3))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 22, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>strs : Symbol(strs, Decl(tluaPairsValueNotTable.tlua, 21, 5))
+
+    takesTable(v)
+>takesTable : Symbol(takesTable, Decl(tluaPairsValueNotTable.tlua, 0, 0))
+>v : Symbol(v, Decl(tluaPairsValueNotTable.tlua, 22, 6))
+
+end
+
+local nonNil: {} = "x"
+>nonNil : Symbol(nonNil, Decl(tluaPairsValueNotTable.tlua, 26, 5))
+
+takesTable(nonNil)
+>takesTable : Symbol(takesTable, Decl(tluaPairsValueNotTable.tlua, 0, 0))
+>nonNil : Symbol(nonNil, Decl(tluaPairsValueNotTable.tlua, 26, 5))
+
+// Table constructors still are tables.
+local lt = {}
+>lt : Symbol(lt, Decl(tluaPairsValueNotTable.tlua, 30, 5))
+
+takesTable(lt)
+>takesTable : Symbol(takesTable, Decl(tluaPairsValueNotTable.tlua, 0, 0))
+>lt : Symbol(lt, Decl(tluaPairsValueNotTable.tlua, 30, 5))
+
+takesTable(setmetatable({}, {}))
+>takesTable : Symbol(takesTable, Decl(tluaPairsValueNotTable.tlua, 0, 0))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+

@@ -517,10 +517,6 @@ func IsExpression(node *Node) bool {
 	return isExpressionKind(SkipPartiallyEmittedExpressions(node).Kind)
 }
 
-func IsCommaExpression(node *Node) bool {
-	return node.Kind == KindBinaryExpression && node.AsBinaryExpression().OperatorToken.Kind == KindCommaToken
-}
-
 // Upstream took a lookInLabeledStatements flag so that `outer: for (...)` counted
 // as the iteration statement a labeled `continue` targeted. tlua has no labeled
 // statement, so an iteration statement is always the loop node itself.
@@ -4047,10 +4043,6 @@ func HasContextSensitiveParameters(node *Node) bool {
 		}
 	}
 	return false
-}
-
-func IsInfinityOrNaNString(name string) bool {
-	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }
 
 // Returns true for nodes that are considered executable for the purposes of unreachable code detection.

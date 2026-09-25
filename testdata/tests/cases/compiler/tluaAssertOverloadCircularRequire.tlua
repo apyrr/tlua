@@ -1,0 +1,33 @@
+// @strict: true
+// @noEmit: true
+// @filename: m.tlua
+// tluaAssertCircularRequire with overloaded assertions: a set whose every overload
+// returns decides no reachability, so flow analysis never resolves these calls up
+// front. Untyped overloads narrow alike; the others are resolved only for a
+// reference the asserted argument can narrow (v, not a.x's module).
+declare function check(v: unknown, tag: string): asserts v is string
+declare function check(v: unknown, tag: number): void
+declare function both(v: unknown, tag: string): asserts v
+declare function both(v: unknown, tag: number): asserts v
+local a = require("a")
+check(a.x, 1)
+both(a.x, 1)
+declare function pick(): number | string | nil
+local v = pick()
+check(v, "s")
+return { y = v }
+
+// @filename: a.tlua
+declare function check(v: unknown, tag: string): asserts v is string
+declare function check(v: unknown, tag: number): void
+declare function both(v: unknown, tag: string): asserts v
+declare function both(v: unknown, tag: number): asserts v
+local m = require("m")
+check(m.y, 1)
+both(m.y, "s")
+return { x = 1 }
+
+// @filename: main.tlua
+local m = require("m")
+local a = require("a")
+local _ = m.y .. a.x

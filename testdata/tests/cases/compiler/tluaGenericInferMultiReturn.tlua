@@ -1,0 +1,22 @@
+// @strict: true
+// @noEmit: true
+// A single-value `() => T` infers T from the first value a multi-return callee
+// supplies -- the truncation assignability applies -- never from the whole pack.
+declare function two(): (string, number)
+declare function twoOrNil(): (string, number) | nil
+local function box<T>(g: () => T): { v: T } return nil as any end
+local function wrap<...R>(g: () => (...R)): () => (...R) return g end
+local a = box(two).v
+local b = box(function() return 1, "x" end).v
+local c = box(wrap(two)).v
+local d = box(twoOrNil).v
+local function box3<T>(g: () => T): () => T return g end
+local e = box3(two)
+
+// Builtin iterators: a one-value closure returns its bare value type.
+local s = "a1"
+local f = box(io.lines()).v
+local g = box(io.lines("f", "*l", "*n")).v
+local h = box(s:gmatch("(%d)")).v
+local i = box(s:gmatch("(%d)(%a)")).v
+local it = io.lines()

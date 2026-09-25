@@ -203,17 +203,6 @@ const customStructures: Structure[] = [
         documentation: "ExperimentalClientCapabilities contains experimental capabilities under development.",
     },
     {
-        name: "VSOnAutoInsertOptions",
-        properties: [
-            {
-                name: "_vs_triggerCharacters",
-                type: { kind: "array", element: { kind: "base", name: "string" } },
-                documentation: "List of trigger characters that trigger auto-insert.",
-            },
-        ],
-        documentation: "Options for the textDocument/_vs_onAutoInsert provider capability.",
-    },
-    {
         name: "VSReferenceItem",
         properties: [
             {
@@ -258,43 +247,6 @@ const customStructures: Structure[] = [
             },
         ],
         documentation: "A VS-specific reference item with grouping support for Find All References.",
-    },
-    {
-        name: "VSOnAutoInsertParams",
-        properties: [
-            {
-                name: "_vs_textDocument",
-                type: { kind: "reference", name: "TextDocumentIdentifier" },
-                documentation: "The text document.",
-            },
-            {
-                name: "_vs_position",
-                type: { kind: "reference", name: "Position" },
-                documentation: "The position inside the text document.",
-            },
-            {
-                name: "_vs_ch",
-                type: { kind: "base", name: "string" },
-                documentation: "The character that triggered the auto-insert.",
-            },
-        ],
-        documentation: "Parameters for the textDocument/_vs_onAutoInsert request.",
-    },
-    {
-        name: "VSOnAutoInsertResponseItem",
-        properties: [
-            {
-                name: "_vs_textEditFormat",
-                type: { kind: "reference", name: "InsertTextFormat" },
-                documentation: "The format of the text edit (plaintext or snippet).",
-            },
-            {
-                name: "_vs_textEdit",
-                type: { kind: "reference", name: "TextEdit" },
-                documentation: "The text edit to apply for the auto-insertion.",
-            },
-        ],
-        documentation: "Response item for the textDocument/_vs_onAutoInsert request.",
     },
     {
         name: "RequestFailureTelemetryEvent",
@@ -405,7 +357,7 @@ const customStructures: Structure[] = [
             {
                 name: "configFilePath",
                 type: { kind: "base", name: "string" },
-                documentation: "The absolute path to the config file (e.g. /path/to/tsconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.",
+                documentation: "The absolute path to the config file (e.g. /path/to/tluaconfig.json) for the project that contains this file, or an empty string if the file is in an inferred project.",
             },
         ],
         documentation: "Result for the custom/projectInfo request.",
@@ -847,7 +799,7 @@ const customRequests: Request[] = [
         params: { kind: "reference", name: "ProjectInfoParams" },
         result: { kind: "reference", name: "ProjectInfoResult" },
         messageDirection: "clientToServer",
-        documentation: "Returns project information (e.g. the tsconfig.json path) for a given text document.",
+        documentation: "Returns project information (e.g. the tluaconfig.json path) for a given text document.",
     },
     {
         method: "custom/textDocument/sourceDefinition",
@@ -870,20 +822,6 @@ const customRequests: Request[] = [
         },
         messageDirection: "clientToServer",
         documentation: "Request to get document highlights across multiple files.",
-    },
-    {
-        method: "textDocument/_vs_onAutoInsert",
-        typeName: "VSOnAutoInsertRequest",
-        params: { kind: "reference", name: "VSOnAutoInsertParams" },
-        result: {
-            kind: "or",
-            items: [
-                { kind: "reference", name: "VSOnAutoInsertResponseItem" },
-                { kind: "base", name: "null" },
-            ],
-        },
-        messageDirection: "clientToServer",
-        documentation: "Request for auto-insert when a trigger character is typed (VS-specific).",
     },
     {
         method: "textDocument/_vs_references",
@@ -1007,12 +945,6 @@ function patchAndPreprocessModel() {
     for (const structure of model.structures) {
         // Patch ServerCapabilities to add custom tlua capability flags
         if (structure.name === "ServerCapabilities") {
-            structure.properties.push({
-                name: "_vs_onAutoInsertProvider",
-                type: { kind: "reference", name: "VSOnAutoInsertOptions" },
-                optional: true,
-                documentation: "Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.",
-            });
             structure.properties.push({
                 name: "_vs_referencesProvider",
                 type: { kind: "base", name: "boolean" },

@@ -1,0 +1,55 @@
+//// [tests/cases/compiler/tluaAssertNarrowedCallee.tlua] ////
+
+=== tluaAssertNarrowedCallee.tlua ===
+// A generic assertion resolves against its callee's flow-narrowed type, which need
+// not keep the declared assertion: narrowed to never, the call is an error; narrowed
+// by a guard to a never-returning overload, it asserts nothing.
+declare x: string | nil
+>x : string | nil
+
+declare check: <T>(v: T) => asserts v is T & {}
+>check : <T>(v: T) => asserts v is T & {}
+>v : T
+
+if not check then
+>not check : false
+>check : <T>(v: T) => asserts v is T & {}
+
+  check(x)
+>check(x) : any
+>check : never
+>x : string | nil
+
+  local y: string = x
+>y : string
+>x : string | nil
+
+end
+
+declare n: number | nil
+>n : number | nil
+
+declare check2: <T>(v: T, tag: string) => asserts v is T & {}
+>check2 : <T>(v: T, tag: string) => asserts v is T & {}
+>v : T
+>tag : string
+
+declare function isFail(f: unknown): f is (v: unknown, tag: number) => never
+>isFail : (f: unknown) => f is (v: unknown, tag: number) => never
+>f : unknown
+>v : unknown
+>tag : number
+
+if isFail(check2) then
+>isFail(check2) : boolean
+>isFail : (f: unknown) => f is (v: unknown, tag: number) => never
+>check2 : <T>(v: T, tag: string) => asserts v is T & {}
+
+  check2(n, 1)
+>check2(n, 1) : never
+>check2 : (<T>(v: T, tag: string) => asserts v is T & {}) & ((v: unknown, tag: number) => never)
+>n : number | nil
+>1 : 1
+
+end
+

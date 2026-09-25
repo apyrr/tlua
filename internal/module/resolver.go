@@ -1386,7 +1386,7 @@ func (r *resolutionState) tryAddingExtensions(extensionless string, extensions e
 	switch originalExtension {
 	case tspath.ExtensionJson:
 		if extensions&extensionsDeclaration != 0 {
-			if resolved := r.tryExtension(".d.json.ts", extensionless, false); !resolved.shouldContinueSearching() {
+			if resolved := r.tryExtension(".d"+tspath.ExtensionJson+tspath.ExtensionTs, extensionless, false); !resolved.shouldContinueSearching() {
 				return resolved
 			}
 		}

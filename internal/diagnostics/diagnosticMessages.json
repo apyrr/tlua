@@ -2699,7 +2699,7 @@
         "category": "Error",
         "code": 2517
     },
-    "A 'this'-based type guard is not compatible with a parameter-based type guard.": {
+    "An assertion and a type guard are not compatible.": {
         "category": "Error",
         "code": 2518
     },

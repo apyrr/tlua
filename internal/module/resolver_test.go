@@ -47,6 +47,26 @@ func TestResolveModuleNamePackageMain(t *testing.T) {
 	}
 }
 
+// A package.json entry naming a .json file resolves to its declaration file,
+// spelled `.d.json.tlua` like every other arbitrary-extension declaration
+// (`.d.<ext>.tlua`, the name declaration emit gives a .json source).
+func TestResolveModuleNameJsonDeclaration(t *testing.T) {
+	t.Parallel()
+
+	fs := vfstest.FromMap(map[string]string{
+		"/repo/node_modules/pkg/package.json":     `{"name":"pkg","types":"data.json"}`,
+		"/repo/node_modules/pkg/data.d.json.tlua": "",
+		"/repo/src/file.tlua":                     "",
+	}, true)
+	host := &resolutionHostStub{fs: fs, cwd: "/repo"}
+	resolver := module.NewResolver(host, &core.CompilerOptions{}, "", "")
+
+	r, _ := resolver.ResolveModuleName("pkg", "/repo/src/file.tlua", core.ModuleKindESNext, nil)
+	if r.ResolvedFileName != "/repo/node_modules/pkg/data.d.json.tlua" {
+		t.Errorf(`"pkg" resolved to %q, want its .d.json.tlua declaration`, r.ResolvedFileName)
+	}
+}
+
 // blockingFS wraps a vfs.FS and forces FileExists calls for `targetPath` to
 // block on `gate` until released. Each caller sends on `arrived` when it
 // reaches the gate. This is used to deterministically reproduce the

@@ -70,7 +70,7 @@ Directory watches::
 Diff:: incremental reports config read error while clean build without tsconfig prints usage help
 --- nonIncremental.output.txt
 +++ incremental.output.txt
-@@ -1,124 +1,1 @@
+@@ -1,122 +1,1 @@
 -Version FakeTSVersion
 -tlua: The Lua Compiler - Version FakeTSVersion
 -
@@ -167,12 +167,10 @@ Diff:: incremental reports config read error while clean build without tsconfig 
 -[94m--module, -m[39m
 -Specify what module code is generated.
 -one of: commonjs, es6/es2015, es2020, es2022, esnext, node16, node18, node20, nodenext, preserve
--default: undefined
 -
 -[94m--lib[39m
 -Specify a set of bundled library declaration files that describe the target runtime environment.
 -one or more: luajit
--default: undefined
 -
 -[94m--outFile[39m
 -Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output.

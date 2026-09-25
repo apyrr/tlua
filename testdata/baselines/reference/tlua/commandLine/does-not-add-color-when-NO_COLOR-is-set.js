@@ -101,12 +101,10 @@ default: es2025
 --module, -m
 Specify what module code is generated.
 one of: commonjs, es6/es2015, es2020, es2022, esnext, node16, node18, node20, nodenext, preserve
-default: undefined
 
 --lib
 Specify a set of bundled library declaration files that describe the target runtime environment.
 one or more: luajit
-default: undefined
 
 --outFile
 Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output.

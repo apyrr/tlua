@@ -1,0 +1,50 @@
+// @strict: true
+// @noEmit: true
+declare v: string | number | nil
+declare function box(): { x: string | nil }
+
+// Builtin-identity walk (resolveLuaLocalAlias): `as` is NOT skipped.
+function builtinThroughAs(): void
+  local t = type as (value: any) => string
+  if t(v) == "string" then
+    local s: string = v
+  end
+end
+
+// Builtin-identity walk: an annotation stops it.
+function builtinThroughAnnotation(): void
+  local t: (value: any) => string = type
+  if t(v) == "string" then
+    local s: string = v
+  end
+end
+
+// Storage-identity walk (canonicalLuaAliasSymbol): `as` IS skipped.
+function storageThroughAs(): string
+  local a = box()
+  local b = a as { x: string | nil }
+  assert(b.x)
+  return a.x
+end
+
+// Storage-identity walk: an annotation does not stop it.
+function storageThroughAnnotation(): string
+  local a = box()
+  local b: { x: string | nil } = a
+  assert(b.x)
+  return a.x
+end
+
+// Storage walk hops only between locals; a global root is never reached.
+G = { x = nil as string | nil }
+function storageThroughGlobal(): string
+  local b = G
+  assert(b.x)
+  return G.x
+end
+
+// Augmentation through `as` and an annotation.
+local root1 = {}
+local alias1 = root1 as {}
+alias1.member = 1
+local use1: number = root1.member

@@ -423,14 +423,15 @@ func (b *NodeBuilderImpl) pseudoTypeEquivalentToType(t *pseudochecker.PseudoType
 			return false
 		}
 		targetPredicate := b.ch.getTypePredicateOfSignature(targetSig)
-		if targetPredicate != nil {
-			if !b.pseudoReturnTypeMatchesPredicate(pt.ReturnType, targetPredicate) {
-				if reportErrors {
-					b.ctx.tracker.ReportInferenceFallback(pt.Signature)
-				}
-				return false
+		if targetPredicate != nil && !b.pseudoReturnTypeMatchesPredicate(pt.ReturnType, targetPredicate) {
+			if reportErrors {
+				b.ctx.tracker.ReportInferenceFallback(pt.Signature)
 			}
-		} else if !b.pseudoTypeEquivalentToType(pt.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, reportErrors) {
+			return false
+		}
+		// The returned values too: a predicate node's type is its return type (`R asserts x`),
+		// as serializeReturnTypeForSignature compares it.
+		if !b.pseudoTypeEquivalentToType(pt.ReturnType, b.ch.getReturnTypeOfSignature(targetSig), false, reportErrors) {
 			// error reported within the return type
 			return false
 		}

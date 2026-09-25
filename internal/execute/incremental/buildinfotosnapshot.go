@@ -34,8 +34,8 @@ func buildInfoToSnapshot(buildInfo *BuildInfo, config *tsoptions.ParsedCommandLi
 	to.setReferencedMap()
 	to.setChangeFileSet()
 	to.setSemanticDiagnostics()
-	to.setEmitDiagnostics()
 	to.setAffectedFilesPendingEmit()
+	to.setEmitDiagnostics()
 	if buildInfo.LatestChangedDtsFile != "" {
 		to.snapshot.latestChangedDtsFile = to.toAbsolutePath(buildInfo.LatestChangedDtsFile)
 	}
@@ -176,8 +176,17 @@ func (t *toSnapshot) setEmitDiagnostics() {
 	for _, diagnostic := range t.buildInfo.EmitDiagnosticsPerFile {
 		filePath := t.toFilePath(diagnostic.FileId)
 		if !hasOnlyKnownMessages(diagnostic.Diagnostics) {
-			// Diagnostics from a build whose messages differ: emit the file again.
-			t.snapshot.affectedFilesPendingEmit.Store(filePath, GetFileEmitKind(t.snapshot.options))
+			// Diagnostics from a build whose messages differ: compute them again. A
+			// file without cached emit diagnostics is taken to have none unless its
+			// declaration errors are pending, so add that bit to whatever emit the
+			// build info already records as pending (this runs after
+			// setAffectedFilesPendingEmit, which would otherwise overwrite it).
+			// Declaration diagnostics recompute without rewriting outputs that are
+			// up to date; only when declarations are off can the cached diagnostics
+			// have come from the JS emit, so that emit is redone.
+			kind := core.IfElse(t.snapshot.options.GetEmitDeclarations(), FileEmitKindDtsErrors, GetFileEmitKind(t.snapshot.options))
+			existing, _ := t.snapshot.affectedFilesPendingEmit.Load(filePath)
+			t.snapshot.affectedFilesPendingEmit.Store(filePath, existing|kind)
 			continue
 		}
 		t.snapshot.emitDiagnosticsPerFile.Store(filePath, t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic))

@@ -1,8 +1,0 @@
-// === goToDefinition ===
-// === /goToDefinitionOverriddenMember9.tlua ===
-// --- (line: 4) skipped ---
-//     m() {};
-// }
-// class B extends A implements I {
-//    /*GOTO DEF*/override m() {}
-// }

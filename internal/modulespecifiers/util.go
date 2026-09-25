@@ -125,13 +125,13 @@ func GetJSExtensionForDeclarationFileExtension(ext string) string {
 	case tspath.ExtensionDts:
 		return tspath.ExtensionJs
 	default:
-		// .d.json.ts and the like
+		// .d.json.tlua and the like
 		return ext[len(".d") : len(ext)-len(tspath.ExtensionTs)]
 	}
 }
 
-// TryGetRealFileNameForNonJSDeclarationFileName remaps files like `foo.d.json.ts` or
-// `foo.module.d.css.ts` back to their real non-JS names.
+// TryGetRealFileNameForNonJSDeclarationFileName remaps files like `foo.d.json.tlua` or
+// `foo.module.d.css.tlua` back to their real non-JS names.
 func TryGetRealFileNameForNonJSDeclarationFileName(fileName string) string {
 	baseName := tspath.GetBaseFileName(fileName)
 	// Ends with .ts, contains ".d.", and is NOT a standard .d.ts file

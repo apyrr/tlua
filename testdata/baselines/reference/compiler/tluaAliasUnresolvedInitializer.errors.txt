@@ -1,0 +1,23 @@
+tluaAliasUnresolvedInitializer.tlua(2,13): error TLUA2304: Cannot find name 'notDeclaredAnywhere'.
+tluaAliasUnresolvedInitializer.tlua(9,34): error TLUA2304: Cannot find name 'alsoNotDeclared'.
+
+
+==== tluaAliasUnresolvedInitializer.tlua (2 errors) ====
+    function unresolvedBehindAs(): void
+      local b = notDeclaredAnywhere as { x: string | nil }
+                ~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2304: Cannot find name 'notDeclaredAnywhere'.
+      local c = b
+      assert(c.x)
+      local _: string = b.x
+    end
+    
+    function unresolvedBehindAnnotation(): void
+      local b: { x: string | nil } = alsoNotDeclared
+                                     ~~~~~~~~~~~~~~~
+!!! error TLUA2304: Cannot find name 'alsoNotDeclared'.
+      local c = b
+      assert(c.x)
+      local _: string = b.x
+    end
+    

@@ -856,8 +856,14 @@ func (c *Checker) applyToReturnTypes(source *Signature, target *Signature, callb
 		// from an ordinary callee, not only from an explicitly packed one. Gated to a
 		// target that actually spreads a generic pack parameter, so ordinary
 		// multi-return inference is unchanged.
-		if c.packTargetSpreadsPackParameter(targetReturnType) && !c.maybePackType(sourceReturnType) {
+		switch {
+		case c.packTargetSpreadsPackParameter(targetReturnType) && !c.maybePackType(sourceReturnType):
 			sourceReturnType = c.nonPackReturnAsPack(sourceReturnType)
+		case c.maybePackType(sourceReturnType) && !c.maybePackType(targetReturnType):
+			// A caller through a single-value target reads only the first value, the
+			// truncation compareSignaturesRelated applies: a multi-return callee infers
+			// `() => T`'s T from that value, never from the pack.
+			sourceReturnType = c.adjustMultiReturn(sourceReturnType)
 		}
 		callback(sourceReturnType, targetReturnType)
 	}

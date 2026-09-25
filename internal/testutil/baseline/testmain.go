@@ -18,12 +18,18 @@ var (
 
 	// trackingInitialized is set to true when Track() is called.
 	trackingInitialized bool
-
-	// trackingDir is the directory where tracking files should be written.
-	// If non-empty, baseline tracking is enabled.
-	// Set by Herebyfile.mjs when running full test suites with tracking enabled.
-	trackingDir = os.Getenv("TLUA_BASELINE_TRACKING_DIR")
 )
+
+// trackingDirEnv names the directory where tracking files should be written; baseline
+// tracking is enabled when it is set. Herebyfile.mjs sets it, to a fresh temporary
+// directory, for full test runs.
+//
+// It must be read while tests run, never at package init or in TestMain before m.Run:
+// the go test cache keys a package's result on the environment variables its tests
+// read, and only reads made during the run are recorded. A read outside the run would
+// let a package that writes baselines replay a cached result that records nothing,
+// and every baseline it owns would then be reported unused.
+const trackingDirEnv = "TLUA_BASELINE_TRACKING_DIR"
 
 // Track sets up baseline tracking and returns a cleanup function that writes the tracking file.
 // It should be called from TestMain using defer:
@@ -34,10 +40,6 @@ var (
 //	}
 func Track() func() {
 	trackingInitialized = true
-
-	if trackingDir == "" {
-		return func() {}
-	}
 
 	// Hash the entire call stack to create a unique filename per calling package.
 	// This must be done in Track(), not in the deferred cleanup, because
@@ -53,18 +55,21 @@ func Track() func() {
 			break
 		}
 	}
-	trackingPath := filepath.Join(trackingDir, fmt.Sprintf("%016x.txt", h.Sum64()))
+	trackingFile := fmt.Sprintf("%016x.txt", h.Sum64())
 
 	return func() {
-		// After tests complete, write the recorded baselines
-		writeRecordedBaselines(trackingPath)
+		// After tests complete, write the recorded baselines. Nothing is recorded unless
+		// recordBaseline saw the tracking directory set during the run.
+		if trackingDir := os.Getenv(trackingDirEnv); trackingDir != "" {
+			writeRecordedBaselines(filepath.Join(trackingDir, trackingFile))
+		}
 	}
 }
 
 // recordBaseline adds a baseline file path to the recorded set.
 // The path should be relative to the baselines/reference directory.
 func recordBaseline(t testing.TB, relativePath string) {
-	if trackingDir != "" {
+	if os.Getenv(trackingDirEnv) != "" {
 		if !trackingInitialized {
 			t.Error("baseline: package uses baselines but TestMain did not call baseline.Track(). " +
 				"Please add a TestMain function with: defer baseline.Track()()")

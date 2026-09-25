@@ -2,28 +2,38 @@
 
 === tluaVarargNotPrefixExp.tlua ===
 // In Lua `...` is not a prefixexp: it cannot be called, indexed, or
-// member-accessed. Each of these must be a parse error rather than quietly
-// reading as a call/index/property access on the pack -- the TS spread forms
-// `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+// member-accessed. Each of these is the prefixexp grammar error (TLUA100060)
+// rather than quietly reading as a call/index/property access on the pack -- the
+// TS spread forms `...(expr)` and `...expr` are gone, and must not sneak back in
+// as suffixes. The emit parenthesizes the receiver, as Lua requires.
 function f(...: number): void
 >f : (...: number) => void
 > : number[]
 
   local called = ...(1);
->called : number | nil
+>called : any
+>...(1) : any
 >... : number | nil
->(1) : 1
 >1 : 1
 
   local indexed = ...[1];
->indexed : number | nil
+>indexed : any
+>...[1] : any
 >... : number | nil
 >1 : 1
 
   local accessed = ....x;
->accessed : number | nil
+>accessed : any
+>....x : any
 >... : number | nil
 >x : any
+
+  local method = ...:upper();
+>method : any
+>...:upper() : any
+>...:upper : any
+>... : number | nil
+>upper : any
 
 end
 
@@ -33,10 +43,10 @@ function g(...: number): void
 > : number[]
 
   local t = { ...({} as number) };
->t : { 1: number | nil; 2: number; }
->{ ...({} as number) } : { 1: number | nil; 2: number; }
+>t : { 1: any; }
+>{ ...({} as number) } : { 1: any; }
+>...({} as number) : any
 >... : number | nil
->({} as number) : number
 >{} as number : number
 >{} : {}
 

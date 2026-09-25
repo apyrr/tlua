@@ -1,0 +1,18 @@
+// @strict: true
+// @noEmit: true
+// A generic assertion resolves against its callee's flow-narrowed type, which need
+// not keep the declared assertion: narrowed to never, the call is an error; narrowed
+// by a guard to a never-returning overload, it asserts nothing.
+declare x: string | nil
+declare check: <T>(v: T) => asserts v is T & {}
+if not check then
+  check(x)
+  local y: string = x
+end
+
+declare n: number | nil
+declare check2: <T>(v: T, tag: string) => asserts v is T & {}
+declare function isFail(f: unknown): f is (v: unknown, tag: number) => never
+if isFail(check2) then
+  check2(n, 1)
+end

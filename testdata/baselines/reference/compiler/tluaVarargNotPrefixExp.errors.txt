@@ -1,37 +1,75 @@
-tluaVarargNotPrefixExp.tlua(6,21): error TLUA1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(7,22): error TLUA1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(7,24): error TLUA1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(8,23): error TLUA1005: ';' expected.
-tluaVarargNotPrefixExp.tlua(8,24): error TLUA2304: Cannot find name 'x'.
-tluaVarargNotPrefixExp.tlua(13,18): error TLUA1005: ',' expected.
+tluaVarargNotPrefixExp.tlua(7,18): error TLUA2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+tluaVarargNotPrefixExp.tlua(7,18): error TLUA2532: Object is possibly 'nil'.
+tluaVarargNotPrefixExp.tlua(7,18): error TLUA2722: Cannot invoke an object which is possibly 'nil'.
+tluaVarargNotPrefixExp.tlua(7,18): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaVarargNotPrefixExp.tlua(8,19): error TLUA2532: Object is possibly 'nil'.
+tluaVarargNotPrefixExp.tlua(8,19): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaVarargNotPrefixExp.tlua(8,19): error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'Number'.
+  Property '1' does not exist on type 'Number'.
+tluaVarargNotPrefixExp.tlua(9,20): error TLUA2532: Object is possibly 'nil'.
+tluaVarargNotPrefixExp.tlua(9,20): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaVarargNotPrefixExp.tlua(9,24): error TLUA2339: Property 'x' does not exist on type 'number'.
+tluaVarargNotPrefixExp.tlua(10,18): error TLUA2532: Object is possibly 'nil'.
+tluaVarargNotPrefixExp.tlua(10,18): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaVarargNotPrefixExp.tlua(10,22): error TLUA2339: Property 'upper' does not exist on type 'number'.
+tluaVarargNotPrefixExp.tlua(15,15): error TLUA2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+tluaVarargNotPrefixExp.tlua(15,15): error TLUA2722: Cannot invoke an object which is possibly 'nil'.
+tluaVarargNotPrefixExp.tlua(15,15): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
 
 
-==== tluaVarargNotPrefixExp.tlua (6 errors) ====
+==== tluaVarargNotPrefixExp.tlua (16 errors) ====
     // In Lua `...` is not a prefixexp: it cannot be called, indexed, or
-    // member-accessed. Each of these must be a parse error rather than quietly
-    // reading as a call/index/property access on the pack -- the TS spread forms
-    // `...(expr)` and `...expr` are gone, and must not sneak back in as suffixes.
+    // member-accessed. Each of these is the prefixexp grammar error (TLUA100060)
+    // rather than quietly reading as a call/index/property access on the pack -- the
+    // TS spread forms `...(expr)` and `...expr` are gone, and must not sneak back in
+    // as suffixes. The emit parenthesizes the receiver, as Lua requires.
     function f(...: number): void
       local called = ...(1);
-                        ~
-!!! error TLUA1005: ';' expected.
+                     ~~~
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type 'Number' has no call signatures.
+                     ~~~
+!!! error TLUA2532: Object is possibly 'nil'.
+                     ~~~
+!!! error TLUA2722: Cannot invoke an object which is possibly 'nil'.
+                     ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
       local indexed = ...[1];
-                         ~
-!!! error TLUA1005: ';' expected.
-                           ~
-!!! error TLUA1005: ';' expected.
+                      ~~~
+!!! error TLUA2532: Object is possibly 'nil'.
+                      ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+                      ~~~~~~
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'Number'.
+!!! error TLUA7053:   Property '1' does not exist on type 'Number'.
       local accessed = ....x;
-                          ~
-!!! error TLUA1005: ';' expected.
+                       ~~~
+!!! error TLUA2532: Object is possibly 'nil'.
+                       ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
                            ~
-!!! error TLUA2304: Cannot find name 'x'.
+!!! error TLUA2339: Property 'x' does not exist on type 'number'.
+      local method = ...:upper();
+                     ~~~
+!!! error TLUA2532: Object is possibly 'nil'.
+                     ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+                         ~~~~~
+!!! error TLUA2339: Property 'upper' does not exist on type 'number'.
     end
     
     // The same holds in a table constructor, where TS table spread used to live.
     function g(...: number): void
       local t = { ...({} as number) };
-                     ~
-!!! error TLUA1005: ',' expected.
+                  ~~~
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type 'Number' has no call signatures.
+                  ~~~
+!!! error TLUA2722: Cannot invoke an object which is possibly 'nil'.
+                  ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
     end
     
     // A bare `...` in each of those positions is still fine.

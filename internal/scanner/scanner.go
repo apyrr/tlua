@@ -192,7 +192,8 @@ type Scanner struct {
 	onError      ErrorCallback
 	skipTrivia   bool
 	// json makes `null` scan as the nil keyword: a JSON literal, where in tlua
-	// source it is an ordinary name.
+	// source it is an ordinary name. It also makes `nil` an ordinary name, so
+	// JSON validation rejects it like any other bare word.
 	json bool
 	ScannerState
 
@@ -390,7 +391,8 @@ func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 	s.onError = errorCallback
 }
 
-// SetJSON scans the text as JSON, whose `null` literal is the nil keyword.
+// SetJSON scans the text as JSON, whose `null` literal is the nil keyword and
+// whose `nil` is not.
 func (s *Scanner) SetJSON(json bool) {
 	s.json = json
 }
@@ -1910,8 +1912,13 @@ func isWordOperatorKind(kind ast.Kind) bool {
 // punctuation twin, so the spelling is recorded in the token flags here, where
 // it is known — the kind alone cannot recover it.
 func (s *Scanner) identifierToken() ast.Kind {
-	if s.json && s.tokenValue == "null" {
-		return ast.KindNilKeyword
+	if s.json {
+		switch s.tokenValue {
+		case "null":
+			return ast.KindNilKeyword
+		case "nil":
+			return ast.KindIdentifier
+		}
 	}
 	kind := GetIdentifierToken(s.tokenValue)
 	if isWordOperatorKind(kind) {

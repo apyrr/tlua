@@ -294,7 +294,9 @@ func generateOptionOutput(
 
 func formatDefaultValue(defaultValue any, option *tsoptions.CommandLineOption) string {
 	if defaultValue == nil || defaultValue == core.TSUnknown {
-		return "undefined"
+		// No documented default: omit the "default:" line rather than print
+		// a JS-ism ("undefined") or a Lua value ("nil") the option never takes.
+		return ""
 	}
 
 	if option.Kind == tsoptions.CommandLineOptionTypeEnum {

@@ -158,7 +158,9 @@ declare function module(name: string, ...: function): void;
 declare function newproxy(prototype?: boolean | userdata): userdata;
 // next is the pairs iteration protocol, so its results are typed as
 // LuaPairsIterator's are, for the same reasons: the value is never nil, and a
-// direct call's key is the result to test.
+// direct call's key is the result to test. This is an approximation: at the end
+// of iteration (or on an empty table) both results are nil, and unlike Luau, a
+// nil-able V loses its nil here too, so `for k, v in next, t` agrees with pairs.
 declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V & {});
 declare function pairs<K, V>(value: Table<K, V>): (LuaPairsIterator<K, V>, Table<K, V>, nil);
 // `pcall` correlates the callee's arguments and results: A is inferred from the

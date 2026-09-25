@@ -129,20 +129,6 @@ function memoize(fn) {
     };
 }
 
-const typeScriptSubmodulePath = path.join(__dirname, "_submodules", "TypeScript");
-
-const isTypeScriptSubmoduleCloned = memoize(() => {
-    try {
-        const stat = fs.statSync(path.join(typeScriptSubmodulePath, "package.json"));
-        if (stat.isFile()) {
-            return true;
-        }
-    }
-    catch {}
-
-    return false;
-});
-
 const tools = new Map([
     ["gotest.tools/gotestsum", "latest"],
 ]);
@@ -602,7 +588,10 @@ const goTestEnv = {
     ...(process.platform === "win32" ? { GOFLAGS: "-count=1" } : {}),
 };
 
-const baselineTrackingEnabled = isTypeScriptSubmoduleCloned() && ![
+// Records every baseline a test touches and fails the run on reference baselines
+// nothing produced. Only meaningful for a complete run: a -run filter, a noembed
+// build (skips bundled-lib tests) or --dirty would report false orphans.
+const baselineTrackingEnabled = ![
     options.tests,
     options.noembed,
     options.concurrentTestPrograms,

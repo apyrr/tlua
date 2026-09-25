@@ -1,0 +1,53 @@
+//// [tests/cases/compiler/tluaAliasUnresolvedInitializer.tlua] ////
+
+=== tluaAliasUnresolvedInitializer.tlua ===
+function unresolvedBehindAs(): void
+>unresolvedBehindAs : Symbol(unresolvedBehindAs, Decl(tluaAliasUnresolvedInitializer.tlua, 0, 0))
+
+  local b = notDeclaredAnywhere as { x: string | nil }
+>b : Symbol(b, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 7))
+>x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 36))
+
+  local c = b
+>c : Symbol(c, Decl(tluaAliasUnresolvedInitializer.tlua, 2, 7))
+>b : Symbol(b, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 7))
+
+  assert(c.x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>c.x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 36))
+>c : Symbol(c, Decl(tluaAliasUnresolvedInitializer.tlua, 2, 7))
+>x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 36))
+
+  local _: string = b.x
+>_ : Symbol(_, Decl(tluaAliasUnresolvedInitializer.tlua, 4, 7))
+>b.x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 36))
+>b : Symbol(b, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 7))
+>x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 1, 36))
+
+end
+
+function unresolvedBehindAnnotation(): void
+>unresolvedBehindAnnotation : Symbol(unresolvedBehindAnnotation, Decl(tluaAliasUnresolvedInitializer.tlua, 5, 3))
+
+  local b: { x: string | nil } = alsoNotDeclared
+>b : Symbol(b, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 7))
+>x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 12))
+
+  local c = b
+>c : Symbol(c, Decl(tluaAliasUnresolvedInitializer.tlua, 9, 7))
+>b : Symbol(b, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 7))
+
+  assert(c.x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>c.x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 12))
+>c : Symbol(c, Decl(tluaAliasUnresolvedInitializer.tlua, 9, 7))
+>x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 12))
+
+  local _: string = b.x
+>_ : Symbol(_, Decl(tluaAliasUnresolvedInitializer.tlua, 11, 7))
+>b.x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 12))
+>b : Symbol(b, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 7))
+>x : Symbol(x, Decl(tluaAliasUnresolvedInitializer.tlua, 8, 12))
+
+end
+

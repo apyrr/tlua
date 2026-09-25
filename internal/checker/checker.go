@@ -6127,7 +6127,7 @@ func (c *Checker) getCallExpressionType(node *ast.Node, signature *Signature, ch
 	// A void assertion exists only to narrow, so one whose target flow analysis cannot see is
 	// an error. One that also returns values (`(T, ...M) asserts x`, Lua's assert) is still an
 	// ordinary call there -- `M.assert(x)`, `fns[1](x)` -- that just does not narrow.
-	if ast.IsCallExpression(node) && node.QuestionDotToken() == nil && ast.IsExpressionStatement(node.Parent) && returnType.flags&TypeFlagsVoid != 0 && c.getTypePredicateOfSignature(signature) != nil {
+	if ast.IsCallExpression(node) && node.QuestionDotToken() == nil && ast.IsExpressionStatement(node.Parent) && c.getTypePredicateOfSignature(signature) != nil && c.isVoidAssertionSignature(signature) {
 		if !ast.IsDottedName(node.Expression()) {
 			c.error(node.Expression(), diagnostics.Assertions_require_the_call_target_to_be_an_identifier_or_qualified_name)
 		} else if c.getEffectsSignature(node) == nil {
@@ -6136,6 +6136,16 @@ func (c *Checker) getCallExpressionType(node *ast.Node, signature *Signature, ch
 		}
 	}
 	return returnType, false, true
+}
+
+// isVoidAssertionSignature reports whether signature is declared to return nothing: its
+// declared shape decides, not a call's instantiation of it. `R asserts x` stays a
+// value-returning assertion when a call instantiates R with void.
+func (c *Checker) isVoidAssertionSignature(signature *Signature) bool {
+	for signature.target != nil {
+		signature = signature.target
+	}
+	return c.getReturnTypeOfSignature(signature).flags&TypeFlagsVoid != 0
 }
 
 func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
@@ -11154,7 +11164,7 @@ func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast
 			if resolvedModule != nil {
 				targetFile = ast.GetSourceFileOfModule(resolvedModule)
 			}
-			return targetFile != nil && (ast.IsJsonSourceFile(targetFile) || tspath.GetDeclarationFileExtension(targetFile.FileName()) == ".d.json.ts")
+			return targetFile != nil && (ast.IsJsonSourceFile(targetFile) || tspath.GetDeclarationFileExtension(targetFile.FileName()) == ".d"+tspath.ExtensionJson+tspath.ExtensionTs)
 		}
 	}
 	return false
@@ -19722,14 +19732,6 @@ func (c *Checker) evaluateEntity(expr *ast.Node, location *ast.Node) any {
 		if symbol == nil {
 			return nil
 		}
-		if expr.Kind == ast.KindIdentifier {
-			if ast.IsInfinityOrNaNString(expr.Text()) && (symbol == c.getGlobalSymbol(expr.Text(), ast.SymbolFlagsValue, nil /*diagnostic*/)) {
-				// Technically we resolved a global lib file here, but the decision to treat this as numeric
-				// is more predicated on the fact that the single-file resolution *didn't* resolve to a
-				// different meaning of `Infinity` or `NaN`. Transpilers handle this no problem.
-				return jsnum.FromString(expr.Text())
-			}
-		}
 		if c.isConstantVariable(symbol) {
 			declaration := symbol.ValueDeclaration
 			if declaration != nil && ast.IsVariableDeclaration(declaration) && declaration.Type() == nil && declaration.Initializer() != nil &&
@@ -24189,11 +24191,10 @@ func (c *Checker) getNormalizedUnionOrIntersectionType(t *Type, writing bool) *T
 	}
 	if t.flags&TypeFlagsIntersection != 0 && c.shouldNormalizeIntersection(t) {
 		// Normalization handles cases like
-		// Partial<T>[K] & ({} | null) ==>
-		// Partial<T>[K] & {} | Partial<T>[K} & null ==>
-		// (T[K] | undefined) & {} | (T[K] | undefined) & null ==>
-		// T[K] & {} | undefined & {} | T[K] & null | undefined & null ==>
-		// T[K] & {} | T[K] & null
+		// Partial<T>[K] & {} ==>
+		// (T[K] | nil) & {} ==>
+		// T[K] & {} | nil & {} ==>
+		// T[K] & {}
 		types := t.Types()
 		normalizedTypes := core.SameMap(types, func(u *Type) *Type { return c.getNormalizedType(u, writing) })
 		if !core.Same(normalizedTypes, types) {
@@ -26184,8 +26185,8 @@ func (c *Checker) getTypeWithFacts(t *Type, include TypeFacts) *Type {
 }
 
 // This function is similar to getTypeWithFacts, except that it replaces type
-// unknown with the union {} | null | undefined (and reduces that accordingly), and it intersects remaining
-// instantiable types with {}, {} | null, or {} | undefined in order to remove null and/or undefined.
+// unknown with the union {} | nil (and reduces that accordingly), and it intersects remaining
+// instantiable types with {} (NonNullable) in order to remove nil.
 func (c *Checker) getAdjustedTypeWithFacts(t *Type, facts TypeFacts) *Type {
 	reduced := c.recombineUnknownType(c.getTypeWithFacts(core.IfElse(t.flags&TypeFlagsUnknown != 0, c.unknownUnionType, t), facts))
 	switch facts {

@@ -163,6 +163,19 @@ func (w *displayPartsWriter) WriteTrailingSemicolon(text string) {
 	w.addRun(lsproto.ClassificationTypeNamePunctuation, text)
 }
 
+// newDisplayPrinter returns the printer every language-service display (hover, signature
+// help, inlay hints) prints node-builder output with. Pass it the emit context the node
+// builder ran in: the builder records emit flags there (a type literal prints on one line),
+// and a printer reading a different context never sees them.
+//
+// Comments are always removed. The node builder reuses annotation nodes with their source
+// positions, so a printer that is given the real source file reads that file's comments
+// back out of the reused ranges and copies them into the display text -- the way
+// checker.TypeToString avoids by the same option.
+func newDisplayPrinter(emitContext *printer.EmitContext) *printer.Printer {
+	return printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF, RemoveComments: true}, printer.PrintHandlers{}, emitContext)
+}
+
 // classificationForSymbol determines the Roslyn classification type name based on a symbol's flags.
 // Matches the Strada translation chain: displayPartKind() → GetClassificationName().
 func classificationForSymbol(symbol *ast.Symbol) lsproto.ClassificationTypeName {

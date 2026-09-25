@@ -3689,10 +3689,9 @@ func (p *Parser) isUpdateExpression() bool {
 	case ast.KindDotDotDotToken:
 		// The Lua vararg is not a prefixexp: it cannot be called, indexed, or
 		// member-accessed. Declining it here routes it through
-		// parseSimpleUnaryExpression instead of parseLeftHandSideExpressionOrHigher, which is
-		// what denies it left-hand-side suffixes -- and it reaches that route
-		// both bare (`local a = ...`) and as the operand of a prefix unary
-		// operator (`not ...`, `-...`), which Lua allows.
+		// parseSimpleUnaryExpression, both bare (`local a = ...`) and as the
+		// operand of a prefix unary operator (`not ...`, `-...`), which Lua
+		// allows. Suffixes still parse there, for the checker to report.
 		return false
 	}
 	return true
@@ -3701,9 +3700,12 @@ func (p *Parser) isUpdateExpression() bool {
 func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 	switch p.token {
 	case ast.KindDotDotDotToken:
-		// See isUpdateExpression: the vararg lands here, below the left-hand-side
-		// suffix machinery, whether it is bare or the operand of a prefix unary.
-		return p.parseVarargExpression()
+		// See isUpdateExpression: the vararg lands here, whether it is bare or the
+		// operand of a prefix unary. It still takes the suffixes a prefixexp would,
+		// so `...:upper()` and `....x` parse whole and the checker reports the
+		// receiver (TLUA100060) instead of the statement ending mid-expression.
+		pos := p.nodePos()
+		return p.parseCallExpressionRest(pos, p.parseVarargExpression())
 	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken:
 		return p.parsePrefixUnaryExpression()
 	case ast.KindLessThanToken:
@@ -4084,13 +4086,16 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 		if questionDotToken != nil {
 			typeArguments = p.tryParseTypeArgumentsInExpression()
 		}
-		// An argument list continues the expression only after a prefixexp. After
-		// anything else Lua ends the expression, and the `(` starts the next
-		// statement:
+		// An argument list after a prefixexp always continues the expression. After
+		// anything else Lua ends the expression, and a `(` on the next line starts
+		// the next statement:
 		//     local s = "abc"
 		//     (g)("x")
-		// is two statements, not a call of the string.
-		if typeArguments != nil || p.token == ast.KindOpenParenToken && (questionDotToken != nil || ast.IsLuaPrefixExpression(expression)) {
+		// is two statements, not a call of the string. On the same line there is
+		// no statement boundary to take (tlua separates statements with a line
+		// break or `;`), so `"abc"(t)` parses as the call it spells and the checker
+		// reports the unparenthesized callee (TLUA100060), as for `.`, `[` and `:`.
+		if typeArguments != nil || p.token == ast.KindOpenParenToken && (questionDotToken != nil || ast.IsLuaPrefixExpression(expression) || !p.hasPrecedingLineBreak()) {
 			// Absorb type arguments into CallExpression when preceding expression is ExpressionWithTypeArguments
 			if questionDotToken == nil && expression.Kind == ast.KindExpressionWithTypeArguments {
 				typeArguments = expression.TypeArgumentList()

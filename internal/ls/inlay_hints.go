@@ -298,7 +298,7 @@ func (s *inlayHintState) printInlayHintParts(build func(nb *checker.NodeBuilder,
 	// !!! Avoid type node reuse so we collect identifier symbols.
 	node := build(checker.NewNodeBuilderEx(s.checker, emitContext, idToSymbol), flags)
 	debug.Assert(node != nil, "should always get a type node")
-	p := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, emitContext)
+	p := newDisplayPrinter(emitContext)
 	p.IdToSymbol = idToSymbol
 	writer := &inlayHintPartsWriter{state: s}
 	p.Write(node, nil /*sourceFile*/, writer, nil /*sourceMapGenerator*/)

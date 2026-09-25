@@ -665,19 +665,6 @@ func (c *EmitContext) RequestEmitHelper(helper *EmitHelper) {
 	c.emitHelpers.Add(helper)
 }
 
-func (c *EmitContext) ReadEmitHelpers() []*EmitHelper {
-	helpers := slices.Collect(c.emitHelpers.Values())
-	c.emitHelpers.Clear()
-	return helpers
-}
-
-func (c *EmitContext) AddEmitHelper(node *ast.Node, helper ...*EmitHelper) {
-	emitNode := c.emitNodes.Get(node)
-	for _, h := range helper {
-		emitNode.helpers = core.AppendIfUnique(emitNode.helpers, h)
-	}
-}
-
 func (c *EmitContext) MoveEmitHelpers(source *ast.Node, target *ast.Node, predicate func(helper *EmitHelper) bool) {
 	sourceEmitNode := c.emitNodes.TryGet(source)
 	if sourceEmitNode == nil {

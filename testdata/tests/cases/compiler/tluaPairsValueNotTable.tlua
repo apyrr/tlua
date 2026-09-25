@@ -1,0 +1,36 @@
+// @strict: true
+// @noEmit: true
+
+// pairs values are non-nil (`V & {}`), which says nothing about being a table:
+// `{}` in tlua is "any non-nil value", so neither it nor an unconstrained V & {}
+// may pass where a `table` is required.
+local function takesTable(t: table) end
+
+local function unconstrained<V>(t: Table<string, V>)
+    for _, v in pairs(t) do
+        local x: table = v
+    end
+end
+local function constrainedToTable<V extends table>(t: Table<string, V>)
+    for _, v in pairs(t) do
+        local x: table = v
+    end
+end
+local function mixedConstraint<V extends string | table>(t: Table<string, V>)
+    for _, v in pairs(t) do
+        local x: table = v
+    end
+end
+
+local strs: Table<string, unknown> = { a = "x" }
+for _, v in pairs(strs) do
+    takesTable(v)
+end
+
+local nonNil: {} = "x"
+takesTable(nonNil)
+
+// Table constructors still are tables.
+local lt = {}
+takesTable(lt)
+takesTable(setmetatable({}, {}))

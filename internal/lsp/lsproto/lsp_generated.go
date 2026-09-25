@@ -5386,9 +5386,6 @@ type ServerCapabilities struct {
 	// Experimental server capabilities.
 	Experimental *ExperimentalServerCapabilities `json:"experimental,omitzero"`
 
-	// Provider options for the VS auto-insert feature via textDocument/_vs_onAutoInsert.
-	VSOnAutoInsertProvider *VSOnAutoInsertOptions `json:"_vs_onAutoInsertProvider,omitzero"`
-
 	// The server provides VS-specific grouped references via textDocument/_vs_references.
 	VSReferencesProvider *bool `json:"_vs_referencesProvider,omitzero"`
 }
@@ -8892,18 +8889,6 @@ func (s *ExperimentalClientCapabilities) UnmarshalJSONFrom(dec *json.Decoder) er
 	return unmarshalStruct(s, dec)
 }
 
-// Options for the textDocument/_vs_onAutoInsert provider capability.
-type VSOnAutoInsertOptions struct {
-	// List of trigger characters that trigger auto-insert.
-	VSTriggerCharacters []string `json:"_vs_triggerCharacters" lsp:"required"`
-}
-
-var _ json.UnmarshalerFrom = (*VSOnAutoInsertOptions)(nil)
-
-func (s *VSOnAutoInsertOptions) UnmarshalJSONFrom(dec *json.Decoder) error {
-	return unmarshalStruct(s, dec)
-}
-
 // A VS-specific reference item with grouping support for Find All References.
 type VSReferenceItem struct {
 	// Unique identifier for this reference item.
@@ -8931,47 +8916,6 @@ type VSReferenceItem struct {
 var _ json.UnmarshalerFrom = (*VSReferenceItem)(nil)
 
 func (s *VSReferenceItem) UnmarshalJSONFrom(dec *json.Decoder) error {
-	return unmarshalStruct(s, dec)
-}
-
-// Parameters for the textDocument/_vs_onAutoInsert request.
-type VSOnAutoInsertParams struct {
-	// The text document.
-	VSTextDocument TextDocumentIdentifier `json:"_vs_textDocument" lsp:"required"`
-
-	// The position inside the text document.
-	VSPosition Position `json:"_vs_position" lsp:"required"`
-
-	// The character that triggered the auto-insert.
-	VSCh string `json:"_vs_ch" lsp:"required"`
-}
-
-func (s *VSOnAutoInsertParams) TextDocumentURI() DocumentUri {
-	return s.VSTextDocument.Uri
-}
-
-func (s *VSOnAutoInsertParams) TextDocumentPosition() Position {
-	return s.VSPosition
-}
-
-var _ json.UnmarshalerFrom = (*VSOnAutoInsertParams)(nil)
-
-func (s *VSOnAutoInsertParams) UnmarshalJSONFrom(dec *json.Decoder) error {
-	return unmarshalStruct(s, dec)
-}
-
-// Response item for the textDocument/_vs_onAutoInsert request.
-type VSOnAutoInsertResponseItem struct {
-	// The format of the text edit (plaintext or snippet).
-	VSTextEditFormat InsertTextFormat `json:"_vs_textEditFormat" lsp:"required"`
-
-	// The text edit to apply for the auto-insertion.
-	VSTextEdit *TextEdit `json:"_vs_textEdit" lsp:"required"`
-}
-
-var _ json.UnmarshalerFrom = (*VSOnAutoInsertResponseItem)(nil)
-
-func (s *VSOnAutoInsertResponseItem) UnmarshalJSONFrom(dec *json.Decoder) error {
 	return unmarshalStruct(s, dec)
 }
 
@@ -10987,8 +10931,6 @@ const (
 	MethodCustomTextDocumentSourceDefinition Method = "custom/textDocument/sourceDefinition"
 	// Request to get document highlights across multiple files.
 	MethodCustomTextDocumentMultiDocumentHighlight Method = "custom/textDocument/multiDocumentHighlight"
-	// Request for auto-insert when a trigger character is typed (VS-specific).
-	MethodTextDocumentVSOnAutoInsert Method = "textDocument/_vs_onAutoInsert"
 	// VS-specific request for Find All References with grouped reference items.
 	MethodTextDocumentVSReferences Method = "textDocument/_vs_references"
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
@@ -11543,12 +11485,6 @@ type CustomMultiDocumentHighlightResponse = MultiDocumentHighlightsOrNull
 
 // Type mapping info for `custom/textDocument/multiDocumentHighlight`
 var CustomTextDocumentMultiDocumentHighlightInfo = RequestInfo[*MultiDocumentHighlightParams, CustomMultiDocumentHighlightResponse]{Method: MethodCustomTextDocumentMultiDocumentHighlight}
-
-// Response type for `textDocument/_vs_onAutoInsert`
-type VSOnAutoInsertResponse = VSOnAutoInsertResponseItemOrNull
-
-// Type mapping info for `textDocument/_vs_onAutoInsert`
-var TextDocumentVSOnAutoInsertInfo = RequestInfo[*VSOnAutoInsertParams, VSOnAutoInsertResponse]{Method: MethodTextDocumentVSOnAutoInsert}
 
 // Response type for `textDocument/_vs_references`
 type VSReferencesResponse = VSReferenceItemsOrNull
@@ -14493,33 +14429,6 @@ func (o *MultiDocumentHighlightsOrNull) UnmarshalJSONFrom(dec *json.Decoder) err
 		return json.UnmarshalDecode(dec, o.MultiDocumentHighlights)
 	default:
 		return errInvalidKind("MultiDocumentHighlightsOrNull", dec.PeekKind())
-	}
-}
-
-type VSOnAutoInsertResponseItemOrNull struct {
-	VSOnAutoInsertResponseItem *VSOnAutoInsertResponseItem
-}
-
-var _ json.MarshalerTo = (*VSOnAutoInsertResponseItemOrNull)(nil)
-
-func (o *VSOnAutoInsertResponseItemOrNull) MarshalJSONTo(enc *json.Encoder) error {
-	return marshalUnion(o, enc, "VSOnAutoInsertResponseItemOrNull", true)
-}
-
-var _ json.UnmarshalerFrom = (*VSOnAutoInsertResponseItemOrNull)(nil)
-
-func (o *VSOnAutoInsertResponseItemOrNull) UnmarshalJSONFrom(dec *json.Decoder) error {
-	*o = VSOnAutoInsertResponseItemOrNull{}
-
-	switch dec.PeekKind() {
-	case 'n':
-		_, err := dec.ReadToken()
-		return err
-	case '{':
-		o.VSOnAutoInsertResponseItem = new(VSOnAutoInsertResponseItem)
-		return json.UnmarshalDecode(dec, o.VSOnAutoInsertResponseItem)
-	default:
-		return errInvalidKind("VSOnAutoInsertResponseItemOrNull", dec.PeekKind())
 	}
 }
 

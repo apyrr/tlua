@@ -1,0 +1,160 @@
+//// [tests/cases/compiler/tluaAssertOverloads.tlua] ////
+
+=== tluaAssertOverloads.tlua ===
+// Typed assertion overloads narrow by the overload the call picks.
+declare function chk(v: unknown, tag: string): asserts v is string
+>chk : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): asserts v is number; }
+>v : unknown
+>tag : string
+
+declare function chk(v: unknown, tag: number): asserts v is number
+>chk : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): asserts v is number; }
+>v : unknown
+>tag : number
+
+declare x: unknown
+>x : unknown
+
+chk(x, 1)
+>chk(x, 1) : void
+>chk : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): asserts v is number; }
+>x : unknown
+>1 : 1
+
+local n: number = x
+>n : number
+>x : number
+
+declare y: unknown
+>y : unknown
+
+chk(y, "s")
+>chk(y, "s") : void
+>chk : { (v: unknown, tag: string): asserts v is string; (v: unknown, tag: number): asserts v is number; }
+>y : unknown
+>"s" : "s"
+
+local s: string = y
+>s : string
+>y : string
+
+// An overload that asserts nothing narrows nothing.
+declare function maybe(v: unknown, tag: string): asserts v
+>maybe : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): void; }
+>v : unknown
+>tag : string
+
+declare function maybe(v: unknown, tag: number): void
+>maybe : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): void; }
+>v : unknown
+>tag : number
+
+declare z: string | nil
+>z : string | nil
+
+maybe(z, 1)
+>maybe(z, 1) : void
+>maybe : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): void; }
+>z : string | nil
+>1 : 1
+
+local z1: string = z
+>z1 : string
+>z : string | nil
+
+maybe(z, "a")
+>maybe(z, "a") : void
+>maybe : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): void; }
+>z : string | nil
+>"a" : "a"
+
+local z2: string = z
+>z2 : string
+>z : string
+
+// Overloads that all assert the same argument untyped narrow alike.
+declare function both(v: unknown, tag: string): asserts v
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>v : unknown
+>tag : string
+
+declare function both(v: unknown, tag: number): asserts v
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>v : unknown
+>tag : number
+
+declare w: string | nil
+>w : string | nil
+
+both(w, 1)
+>both(w, 1) : void
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>w : string | nil
+>1 : 1
+
+local w1: string = w
+>w1 : string
+>w : string
+
+// Reachability: an untyped assertion of false ends the flow only when it is the pick.
+local function dead1(): number
+>dead1 : () => number
+
+  both(false, 1)
+>both(false, 1) : void
+>both : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): asserts v; }
+>false : false
+>1 : 1
+
+end
+local function live1(): number
+>live1 : () => number
+
+  maybe(false, 1)
+>maybe(false, 1) : void
+>maybe : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): void; }
+>false : false
+>1 : 1
+
+end
+local function dead2(): number
+>dead2 : () => number
+
+  maybe(false, "x")
+>maybe(false, "x") : void
+>maybe : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): void; }
+>false : false
+>"x" : "x"
+
+end
+declare function fail(v: unknown, tag: string): asserts v
+>fail : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): never; }
+>v : unknown
+>tag : string
+
+declare function fail(v: unknown, tag: number): never
+>fail : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): never; }
+>v : unknown
+>tag : number
+
+local function dead3(): number
+>dead3 : () => number
+
+  fail(1, 1)
+>fail(1, 1) : never
+>fail : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): never; }
+>1 : 1
+>1 : 1
+
+end
+local function live3(): number
+>live3 : () => number
+
+  fail(1, "x")
+>fail(1, "x") : void
+>fail : { (v: unknown, tag: string): asserts v; (v: unknown, tag: number): never; }
+>1 : 1
+>"x" : "x"
+
+end
+

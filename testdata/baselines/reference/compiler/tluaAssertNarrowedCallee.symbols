@@ -1,0 +1,59 @@
+//// [tests/cases/compiler/tluaAssertNarrowedCallee.tlua] ////
+
+=== tluaAssertNarrowedCallee.tlua ===
+// A generic assertion resolves against its callee's flow-narrowed type, which need
+// not keep the declared assertion: narrowed to never, the call is an error; narrowed
+// by a guard to a never-returning overload, it asserts nothing.
+declare x: string | nil
+>x : Symbol(x, Decl(tluaAssertNarrowedCallee.tlua, 3, 7))
+
+declare check: <T>(v: T) => asserts v is T & {}
+>check : Symbol(check, Decl(tluaAssertNarrowedCallee.tlua, 4, 7))
+>T : Symbol(T, Decl(tluaAssertNarrowedCallee.tlua, 4, 16))
+>v : Symbol(v, Decl(tluaAssertNarrowedCallee.tlua, 4, 19))
+>T : Symbol(T, Decl(tluaAssertNarrowedCallee.tlua, 4, 16))
+>v : Symbol(v, Decl(tluaAssertNarrowedCallee.tlua, 4, 19))
+>T : Symbol(T, Decl(tluaAssertNarrowedCallee.tlua, 4, 16))
+
+if not check then
+>check : Symbol(check, Decl(tluaAssertNarrowedCallee.tlua, 4, 7))
+
+  check(x)
+>check : Symbol(check, Decl(tluaAssertNarrowedCallee.tlua, 4, 7))
+>x : Symbol(x, Decl(tluaAssertNarrowedCallee.tlua, 3, 7))
+
+  local y: string = x
+>y : Symbol(y, Decl(tluaAssertNarrowedCallee.tlua, 7, 7))
+>x : Symbol(x, Decl(tluaAssertNarrowedCallee.tlua, 3, 7))
+
+end
+
+declare n: number | nil
+>n : Symbol(n, Decl(tluaAssertNarrowedCallee.tlua, 10, 7))
+
+declare check2: <T>(v: T, tag: string) => asserts v is T & {}
+>check2 : Symbol(check2, Decl(tluaAssertNarrowedCallee.tlua, 11, 7))
+>T : Symbol(T, Decl(tluaAssertNarrowedCallee.tlua, 11, 17))
+>v : Symbol(v, Decl(tluaAssertNarrowedCallee.tlua, 11, 20))
+>T : Symbol(T, Decl(tluaAssertNarrowedCallee.tlua, 11, 17))
+>tag : Symbol(tag, Decl(tluaAssertNarrowedCallee.tlua, 11, 25))
+>v : Symbol(v, Decl(tluaAssertNarrowedCallee.tlua, 11, 20))
+>T : Symbol(T, Decl(tluaAssertNarrowedCallee.tlua, 11, 17))
+
+declare function isFail(f: unknown): f is (v: unknown, tag: number) => never
+>isFail : Symbol(isFail, Decl(tluaAssertNarrowedCallee.tlua, 11, 61))
+>f : Symbol(f, Decl(tluaAssertNarrowedCallee.tlua, 12, 24))
+>f : Symbol(f, Decl(tluaAssertNarrowedCallee.tlua, 12, 24))
+>v : Symbol(v, Decl(tluaAssertNarrowedCallee.tlua, 12, 43))
+>tag : Symbol(tag, Decl(tluaAssertNarrowedCallee.tlua, 12, 54))
+
+if isFail(check2) then
+>isFail : Symbol(isFail, Decl(tluaAssertNarrowedCallee.tlua, 11, 61))
+>check2 : Symbol(check2, Decl(tluaAssertNarrowedCallee.tlua, 11, 7))
+
+  check2(n, 1)
+>check2 : Symbol(check2, Decl(tluaAssertNarrowedCallee.tlua, 11, 7))
+>n : Symbol(n, Decl(tluaAssertNarrowedCallee.tlua, 10, 7))
+
+end
+
