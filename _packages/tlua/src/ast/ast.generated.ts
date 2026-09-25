@@ -666,7 +666,7 @@ export interface VarargExpression extends PrimaryExpressionBase {
 export interface PropertyAccessExpression extends MemberExpressionBase {
     readonly kind: SyntaxKind.PropertyAccessExpression;
     readonly expression: Expression;
-    readonly questionDotToken?: QuestionDotToken;
+    readonly questionDotToken?: QuestionDotToken | QuestionToken;
     readonly colonToken?: ColonToken;
     readonly name: MemberName;
 }

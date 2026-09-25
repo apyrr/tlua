@@ -42,8 +42,7 @@ local ;
 2;
 function ()
   repeat
-    ();
-    ;
+    ():void();
   until ;
 end
 -- Missing `then`.

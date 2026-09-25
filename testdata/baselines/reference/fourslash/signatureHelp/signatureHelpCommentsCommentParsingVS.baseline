@@ -232,7 +232,7 @@
 // @param { { { () => string; } } f this is optional param f
 // */
 // function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string) end
-// subtract(10,  20,  null,  null,  null, null);
+// subtract(10,  20,  nil,  nil,  nil, nil);
 //          ^
 // | ----------------------------------------------------------------------
 // | subtract(**a: number**, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string): void
@@ -250,19 +250,19 @@
 // | - `c?: () => string`: this is optional param c
 // | This is subtract function
 // | ----------------------------------------------------------------------
-//                          ^
+//                         ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, **d?: () => string**, e?: () => string, f?: () => string): void
 // | - `d?: () => string`: this is optional param d
 // | This is subtract function
 // | ----------------------------------------------------------------------
-//                                 ^
+//                               ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, d?: () => string, **e?: () => string**, f?: () => string): void
 // | - `e?: () => string`: this is optional param e
 // | This is subtract function
 // | ----------------------------------------------------------------------
-//                                        ^
+//                                     ^
 // | ----------------------------------------------------------------------
 // | subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, **f?: () => string**): void
 // | This is subtract function
@@ -3827,10 +3827,10 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 2839,
+      "Position": 2838,
       "LSPosition": {
         "line": 115,
-        "character": 25
+        "character": 24
       },
       "Name": "31",
       "Data": {}
@@ -4182,10 +4182,10 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 2846,
+      "Position": 2844,
       "LSPosition": {
         "line": 115,
-        "character": 32
+        "character": 30
       },
       "Name": "32",
       "Data": {}
@@ -4537,10 +4537,10 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 2853,
+      "Position": 2850,
       "LSPosition": {
         "line": 115,
-        "character": 39
+        "character": 36
       },
       "Name": "33",
       "Data": {}
@@ -4892,7 +4892,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3085,
+      "Position": 3081,
       "LSPosition": {
         "line": 124,
         "character": 7
@@ -4975,7 +4975,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3276,
+      "Position": 3272,
       "LSPosition": {
         "line": 131,
         "character": 7
@@ -5090,7 +5090,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3280,
+      "Position": 3276,
       "LSPosition": {
         "line": 131,
         "character": 11
@@ -5205,7 +5205,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3491,
+      "Position": 3487,
       "LSPosition": {
         "line": 140,
         "character": 7
@@ -5320,7 +5320,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3497,
+      "Position": 3493,
       "LSPosition": {
         "line": 140,
         "character": 13
@@ -5435,7 +5435,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3876,
+      "Position": 3872,
       "LSPosition": {
         "line": 152,
         "character": 11
@@ -5447,7 +5447,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3910,
+      "Position": 3906,
       "LSPosition": {
         "line": 154,
         "character": 15
@@ -5622,7 +5622,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3914,
+      "Position": 3910,
       "LSPosition": {
         "line": 154,
         "character": 19
@@ -5797,7 +5797,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3918,
+      "Position": 3914,
       "LSPosition": {
         "line": 154,
         "character": 23
@@ -5972,7 +5972,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 3922,
+      "Position": 3918,
       "LSPosition": {
         "line": 154,
         "character": 27
@@ -6147,7 +6147,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 4063,
+      "Position": 4059,
       "LSPosition": {
         "line": 159,
         "character": 27
@@ -6201,7 +6201,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 4214,
+      "Position": 4210,
       "LSPosition": {
         "line": 164,
         "character": 27
@@ -6255,7 +6255,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 4830,
+      "Position": 4826,
       "LSPosition": {
         "line": 177,
         "character": 27
@@ -6402,7 +6402,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 4838,
+      "Position": 4834,
       "LSPosition": {
         "line": 177,
         "character": 35
@@ -6549,7 +6549,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 4841,
+      "Position": 4837,
       "LSPosition": {
         "line": 177,
         "character": 38
@@ -6696,7 +6696,7 @@ not aligned text about parameter will eat only one space
   },
   {
     "marker": {
-      "Position": 4845,
+      "Position": 4841,
       "LSPosition": {
         "line": 178,
         "character": 0

@@ -87,7 +87,10 @@ func operativeChain(stmt *ast.Node) *ast.Node {
 
 // visitHoistableStatement opens a per-statement preceding-temp buffer and marks
 // the operative chain (if any) hoistable, then splices any hoisted `local`s in
-// front of the statement via a SyntaxList (flattened by VisitSlice).
+// front of the statement via a SyntaxList (flattened by VisitSlice). Unlike a
+// discarded chain's, these temps are not scoped in a `do ... end`: the statement's
+// own local has to stay visible after it, so each hoisted temp counts toward
+// Lua's 200-local limit for the enclosing function.
 func (tx *luaOptionalChainTransformer) visitHoistableStatement(node *ast.Node) *ast.Node {
 	savedPre, savedTgt := tx.preceding, tx.hoistTarget
 	buf := []*ast.Statement{}
@@ -96,6 +99,12 @@ func (tx *luaOptionalChainTransformer) visitHoistableStatement(node *ast.Node) *
 	visited := tx.Visitor().VisitEachChild(node)
 	tx.preceding, tx.hoistTarget = savedPre, savedTgt
 	if len(buf) > 0 {
+		// The statement's leading comment describes the statement, so it moves up
+		// to the first hoisted `local` instead of separating the two.
+		// Only the leading comment moves: the trailing one stays on the statement.
+		tx.EmitContext().SetCommentRange(buf[0], node.Loc)
+		tx.EmitContext().AddEmitFlags(buf[0], printer.EFNoTrailingComments)
+		tx.EmitContext().AddEmitFlags(visited, printer.EFNoLeadingComments)
 		return tx.Factory().NewSyntaxList(append(buf, visited))
 	}
 	return visited
@@ -103,6 +112,9 @@ func (tx *luaOptionalChainTransformer) visitHoistableStatement(node *ast.Node) *
 
 // visitExpressionStatement rewrites a discarded chain `a?.b()` to
 // `if a then a.b() end` (a bare `base and access` is not a legal Lua statement).
+// Captured receivers go with the `if` into a `do ... end`, so their locals end
+// with the statement: a function of many `self.x?:m()` statements must not pile
+// up toward Lua's 200-local limit.
 func (tx *luaOptionalChainTransformer) visitExpressionStatement(node *ast.ExpressionStatement) *ast.Node {
 	inner := ast.SkipParentheses(node.Expression)
 	if !isOptionalChainExpr(inner) {
@@ -124,12 +136,19 @@ func (tx *luaOptionalChainTransformer) visitExpressionStatement(node *ast.Expres
 	valueStmt := tx.Factory().NewExpressionStatement(value)
 	thenBlock := tx.Factory().NewBlock(tx.Factory().NewNodeList([]*ast.Node{valueStmt}), true /*multiLine*/)
 	ifStmt := tx.Factory().NewIfStatement(guard, thenBlock, nil)
-	ifStmt.Loc = node.Loc
-	tx.EmitContext().SetOriginal(ifStmt, node.AsNode())
-	if len(temps) == 0 {
-		return ifStmt
+	result := ifStmt
+	if len(temps) > 0 {
+		result = tx.Factory().NewBlock(tx.Factory().NewNodeList(append(temps, ifStmt)), true /*multiLine*/)
+		result.Flags |= ast.NodeFlagsLuaBlock
+		// The `if` still stands for the original statement in source maps; the
+		// block around it owns the statement's comments, so they print once.
+		tx.EmitContext().SetOriginal(ifStmt, node.AsNode())
+		tx.EmitContext().SetSourceMapRange(ifStmt, node.Loc)
+		tx.EmitContext().AddEmitFlags(ifStmt, printer.EFNoComments)
 	}
-	return tx.Factory().NewSyntaxList(append(temps, ifStmt))
+	result.Loc = node.Loc
+	tx.EmitContext().SetOriginal(result, node.AsNode())
+	return result
 }
 
 // placeChain lowers an outermost optional chain and places the result according

@@ -17,7 +17,7 @@ func TestSignatureHelpNestedCallTrailingComma(t *testing.T) {
 	const content = `declare function outer<T>(range: T): T;
 declare function inner(a: any): any;
 
-outer(inner/*1*/(undefined,),);`
+outer(inner/*1*/(nil,),);`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	defer done()
 	f.GoToMarker(t, "1")

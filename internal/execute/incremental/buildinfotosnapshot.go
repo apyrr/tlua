@@ -162,6 +162,11 @@ func (t *toSnapshot) setSemanticDiagnostics() {
 			t.snapshot.semanticDiagnosticsPerFile.Delete(filePath) // does not have cached diagnostics
 		} else {
 			filePath := t.toFilePath(diagnostic.Diagnostics.FileId)
+			if !hasOnlyKnownMessages(diagnostic.Diagnostics.Diagnostics) {
+				// Diagnostics from a build whose messages differ: check the file again.
+				t.snapshot.semanticDiagnosticsPerFile.Delete(filePath)
+				continue
+			}
 			t.snapshot.semanticDiagnosticsPerFile.Store(filePath, t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic.Diagnostics))
 		}
 	}
@@ -170,6 +175,11 @@ func (t *toSnapshot) setSemanticDiagnostics() {
 func (t *toSnapshot) setEmitDiagnostics() {
 	for _, diagnostic := range t.buildInfo.EmitDiagnosticsPerFile {
 		filePath := t.toFilePath(diagnostic.FileId)
+		if !hasOnlyKnownMessages(diagnostic.Diagnostics) {
+			// Diagnostics from a build whose messages differ: emit the file again.
+			t.snapshot.affectedFilesPendingEmit.Store(filePath, GetFileEmitKind(t.snapshot.options))
+			continue
+		}
 		t.snapshot.emitDiagnosticsPerFile.Store(filePath, t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic))
 	}
 }

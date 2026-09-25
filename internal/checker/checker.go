@@ -573,8 +573,8 @@ type Checker struct {
 	reverseHomomorphicMappedCache          map[ReverseMappedTypeKey]*Type
 	iterationTypesCache                    map[IterationTypesKey]IterationTypes
 	markerTypes                            collections.Set[*Type]
-	nilSymbol                              *ast.Symbol
 	argumentsSymbol                        *ast.Symbol
+	nilSymbol                              *ast.Symbol
 	requireSymbol                          *ast.Symbol
 	unknownSymbol                          *ast.Symbol
 	unresolvedSymbols                      map[string]*ast.Symbol
@@ -886,8 +886,8 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.reverseMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.reverseHomomorphicMappedCache = make(map[ReverseMappedTypeKey]*Type)
 	c.iterationTypesCache = make(map[IterationTypesKey]IterationTypes)
-	c.nilSymbol = c.newSymbol(ast.SymbolFlagsProperty, "undefined")
 	c.argumentsSymbol = c.newSymbol(ast.SymbolFlagsProperty, "arguments")
+	c.nilSymbol = c.newSymbol(ast.SymbolFlagsProperty, "nil")
 	c.requireSymbol = c.newSymbol(ast.SymbolFlagsProperty, "require")
 	c.unknownSymbol = c.newSymbol(ast.SymbolFlagsProperty, "unknown")
 	c.unresolvedSymbols = make(map[string]*ast.Symbol)
@@ -937,11 +937,8 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.missingType = c.newIntrinsicType(TypeFlagsNil, "nil")
 	c.nilOrMissingType = core.IfElse(c.exactOptionalPropertyTypes, c.missingType, c.nilType)
 	c.optionalType = c.newIntrinsicType(TypeFlagsNil, "nil")
-	// tlua has a single absence type. `null` folds into nil (the undefined type):
-	// there is no distinct null intrinsic or `TypeFlagsNull`. `null`, `undefined`,
-	// and `nil` all resolve to `nilType`, so `T | null` == `T | undefined` ==
-	// `T | nil`. (The `null`/`undefined` keywords still scan — required for lenient
-	// parsing and JS emit — but produce the nil type.)
+	// tlua has a single absence type, spelled `nil`: there is no distinct null or
+	// undefined intrinsic, and no `TypeFlagsNull`.
 	c.stringType = c.newIntrinsicType(TypeFlagsString, "string")
 	c.numberType = c.newIntrinsicType(TypeFlagsNumber, "number")
 	c.regularFalseType = c.newLiteralType(TypeFlagsBooleanLiteral, false, nil)
@@ -1351,7 +1348,10 @@ func (c *Checker) initializeChecker() {
 	// table), so this must run after every global-scope contribution above and,
 	// like those, before global types are created.
 	c.initializeLuaAugmentations()
-	c.addUndefinedToGlobalsOrErrorOnRedeclaration()
+	// `nil` is a keyword, so no declaration can take its name, but an entity name
+	// can spell it: `typeof nil` resolves it as a global, as TS resolves `typeof
+	// undefined` through its undefined symbol.
+	c.globals["nil"] = c.nilSymbol
 	c.valueSymbolLinks.Get(c.nilSymbol).resolvedType = c.nilWideningType
 	c.valueSymbolLinks.Get(c.argumentsSymbol).resolvedType = c.getGlobalType("IArguments", 0 /*arity*/, true /*reportErrors*/)
 	c.valueSymbolLinks.Get(c.unknownSymbol).resolvedType = c.errorType
@@ -1411,23 +1411,6 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 	for _, symbol := range moduleAugmentation.Symbol.Exports {
 		c.mergeGlobalSymbol(symbol)
 	}
-}
-
-func (c *Checker) addUndefinedToGlobalsOrErrorOnRedeclaration() {
-	name := c.nilSymbol.Name
-	targetSymbol := c.globals[name]
-	if targetSymbol != nil {
-		for _, declaration := range targetSymbol.Declarations {
-			if !ast.IsTypeDeclaration(declaration) {
-				c.addDiagnostic(createDiagnosticForNode(declaration, diagnostics.Declaration_name_conflicts_with_built_in_global_identifier_0, name))
-			}
-		}
-	} else {
-		c.globals[name] = c.nilSymbol
-	}
-	// `nil` is the canonical spelling of the absence value and resolves to the
-	// same global symbol as the `undefined` alias.
-	c.globals["nil"] = c.nilSymbol
 }
 
 func (c *Checker) createNameResolver() *binder.NameResolver {
@@ -3192,9 +3175,9 @@ func (c *Checker) checkAllCodePathsInNonVoidFunctionReturnOrThrow(fn *ast.Node, 
 	case t != nil && !hasExplicitReturn:
 		// minimal check: function has syntactic return type annotation and no explicit return statements in the body
 		// this function does not conform to the specification.
-		c.error(errorNode, diagnostics.A_function_whose_declared_type_is_neither_undefined_void_nor_any_must_return_a_value)
+		c.error(errorNode, diagnostics.A_function_whose_declared_type_is_neither_nil_void_nor_any_must_return_a_value)
 	case t != nil && !c.isTypeAssignableTo(c.nilType, t):
-		c.error(errorNode, diagnostics.Function_lacks_ending_return_statement_and_return_type_does_not_include_undefined)
+		c.error(errorNode, diagnostics.Function_lacks_ending_return_statement_and_return_type_does_not_include_nil)
 	case c.compilerOptions.NoImplicitReturns == core.TSTrue:
 		if t == nil {
 			// If return type annotation is omitted check if function has any explicit return statements.
@@ -5034,7 +5017,7 @@ func (c *Checker) checkTypeNameIsReserved(name *ast.Node, message *diagnostics.M
 	// TS 1.0 spec (April 2014): 3.6.1
 	// The predefined type keywords are reserved and cannot be used as names of user defined types.
 	switch name.Text() {
-	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "table", "thread", "userdata", "cdata", "undefined", "self":
+	case "any", "unknown", "never", "number", "boolean", "string", "symbol", "void", "table", "thread", "userdata", "cdata", "self":
 		c.error(name, message, name.Text())
 	}
 }
@@ -5978,6 +5961,7 @@ func (c *Checker) checkQualifiedName(node *ast.Node, checkMode CheckMode) *Type 
 }
 
 func (c *Checker) checkIndexedAccess(node *ast.Node, checkMode CheckMode) *Type {
+	c.checkGrammarLuaPrefixExpression(node.Expression())
 	if node.Flags&ast.NodeFlagsOptionalChain != 0 {
 		return c.checkElementAccessChain(node, checkMode)
 	}
@@ -6082,6 +6066,7 @@ func (c *Checker) getConstituentProperty(objectType *Type, propertyName string) 
  */
 func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type {
 	c.checkGrammarTypeArguments(node, node.TypeArgumentList())
+	c.checkGrammarLuaPrefixExpression(node.Expression())
 	signature := c.getResolvedSignature(node, nil /*candidatesOutArray*/, checkMode)
 	if signature == c.resolvingSignature {
 		// CheckMode.SkipGenericFunctions is enabled and this is a call to a generic function that
@@ -6092,31 +6077,52 @@ func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type
 	if node.Expression().Kind == ast.KindSuperKeyword {
 		return c.voidType
 	}
+	t, refined, multiValue := c.getCallExpressionType(node, signature, checkMode)
+	if refined {
+		// A refinement replaces the declared return type, to which
+		// getReturnTypeOfSignature gave the optional-call nil (`a?.f()`, `a?:f()`
+		// yield nil when a is nil); the refinement takes it here, whichever one
+		// produced the type.
+		t = c.getCallChainReturnType(signature, t)
+	}
+	if multiValue {
+		// Lua single-value adjustment: a multi-return pack truncates to its first
+		// value at the call boundary. Pack-aware consumers (return forwarding,
+		// value lists) re-derive the full pack from the resolved signature.
+		t = c.adjustMultiReturn(t)
+	}
+	return t
+}
+
+// getCallExpressionType computes a call's type before the optional-call nil and
+// the single-value adjustment, which checkCallExpression applies in one place.
+// refined reports a type that replaces the signature's declared return type;
+// multiValue reports a pack the adjustment still has to truncate.
+func (c *Checker) getCallExpressionType(node *ast.Node, signature *Signature, checkMode CheckMode) (t *Type, refined bool, multiValue bool) {
 	// `require("./m")` yields the module's chunk value, which no declared
 	// overload can spell.
 	if t := c.checkLuaRequireCall(node); t != nil {
-		return t
+		return t, true, false
 	}
 	returnType := c.getReturnTypeOfSignature(signature)
 	c.checkLuaFormatCall(node, checkMode)
 	// Treat any call to the global 'Symbol' function that is part of a const variable or readonly property
 	// as a fresh unique symbol literal type.
 	if returnType.flags&TypeFlagsESSymbolLike != 0 && c.isSymbolOrSymbolForCall(node) {
-		return c.getESSymbolLikeTypeForNode(ast.WalkUpParenthesizedExpressions(node.Parent))
+		return c.getESSymbolLikeTypeForNode(ast.WalkUpParenthesizedExpressions(node.Parent)), true, false
 	}
 	// The typed metatable protocol: setmetatable pairs its table with its metatable, and
-	// getmetatable reads that pairing back. Both return a single value, so neither needs
-	// the multi-return adjustment below.
+	// getmetatable reads that pairing back. Both return a single value.
 	if t := c.checkLuaMetatableCall(node, returnType); t != nil {
-		return t
+		return t, true, false
 	}
-	// select(n, ...) is refined to the slice of its vararg the literal index selects.
-	// It returns a pack, so it goes through the single-value adjustment below.
+	// select(n, ...) is refined to the slice of its vararg the literal index selects,
+	// which is a pack.
 	if t := c.checkLuaSelectCall(node, checkMode); t != nil {
-		return c.adjustMultiReturn(t)
+		return t, true, true
 	}
 	if t := c.getLuaRefinedCallType(node, checkMode); t != nil {
-		return c.adjustMultiReturn(t)
+		return t, true, true
 	}
 	// A void assertion exists only to narrow, so one whose target flow analysis cannot see is
 	// an error. One that also returns values (`(T, ...M) asserts x`, Lua's assert) is still an
@@ -6129,10 +6135,7 @@ func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type
 			c.getTypeOfDottedName(node.Expression(), diagnostic)
 		}
 	}
-	// Lua single-value adjustment: a multi-return pack truncates to its first
-	// value at the call boundary. Pack-aware consumers (return forwarding,
-	// value lists) re-derive the full pack from the resolved signature.
-	return c.adjustMultiReturn(returnType)
+	return returnType, false, true
 }
 
 func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
@@ -8421,6 +8424,7 @@ func (c *Checker) isInAmbientOrTypeNode(node *ast.Node) bool {
 }
 
 func (c *Checker) checkPropertyAccessExpression(node *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
+	c.checkGrammarLuaPrefixExpression(node.Expression())
 	if node.Flags&ast.NodeFlagsOptionalChain != 0 {
 		return c.checkPropertyAccessChain(node, checkMode)
 	}
@@ -9132,7 +9136,7 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, rig
 			if c.exactOptionalPropertyTypes && ast.IsPropertyAccessExpression(left) && c.maybeTypeOfKind(rightType, TypeFlagsNil) {
 				target := c.getTypeOfPropertyOfType(c.getTypeOfExpression(left.Expression()), left.Name().Text())
 				if c.isExactOptionalPropertyMismatch(rightType, target) {
-					headMessage = diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target
+					headMessage = diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_type_of_the_target
 				}
 			}
 			// to avoid cascading errors check assignability only if 'isReference' check succeeded and no errors were reported
@@ -9238,21 +9242,20 @@ const (
 
 func (c *Checker) getSyntacticTruthySemantics(node *ast.Node) PredicateSemantics {
 	node = ast.SkipOuterExpressions(node, ast.OEKAll)
-	switch node.Kind {
-	case ast.KindArrayLiteralExpression, ast.KindArrowFunction, ast.KindFunctionExpression,
-		ast.KindObjectLiteralExpression, ast.KindRegularExpressionLiteral,
-		// Under Lua truthiness `""` and `0` are truthy, so every string and
-		// numeric literal is. That retires the JS-era `while(0)`/`while(1)`
-		// exemption: `0` no longer means "loop never", so a numeric condition
-		// is reported like any other always-truthy expression.
-		ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral, ast.KindNumericLiteral:
+	if node.Kind == ast.KindTrueKeyword || node.Kind == ast.KindFalseKeyword {
+		// `while true do` and `if false then` are deliberate constants, so they
+		// are not reported, as TS does not report `true` and `false`.
+		return PredicateSemanticsSometimes
+	}
+	// Under Lua truthiness `""` and `0` are truthy, so every string and numeric
+	// literal is. That retires the JS-era `while(0)`/`while(1)` exemption: `0` no
+	// longer means "loop never", so a numeric condition is reported like any other
+	// always-truthy expression.
+	switch ast.GetLuaSyntacticTruthiness(node) {
+	case ast.LuaTruthinessAlwaysTruthy:
 		return PredicateSemanticsAlways
-	case ast.KindNilKeyword:
+	case ast.LuaTruthinessAlwaysFalsy:
 		return PredicateSemanticsNever
-	case ast.KindIdentifier:
-		if c.getResolvedSymbol(node) == c.nilSymbol {
-			return PredicateSemanticsNever
-		}
 	}
 	return PredicateSemanticsSometimes
 }
@@ -13865,14 +13868,7 @@ func isUnconstrainedTypeParameter(tp *Type) bool {
 }
 
 func (c *Checker) isNullOrUndefined(node *ast.Node) bool {
-	expr := ast.SkipParentheses(node)
-	switch expr.Kind {
-	case ast.KindNilKeyword:
-		return true
-	case ast.KindIdentifier:
-		return c.getResolvedSymbol(expr) == c.nilSymbol
-	}
-	return false
+	return ast.SkipParentheses(node).Kind == ast.KindNilKeyword
 }
 
 // Return the inferred type for a binding element
@@ -15946,6 +15942,21 @@ func isLateBindableAST(node *ast.Node) bool {
 	return expr != nil && ast.IsEntityNameExpression(expr)
 }
 
+// getCallChainReturnType gives t the nil an optional call adds to what its
+// signature returns: `a?.f()` and `a?:f()` produce nil when a is nil. The
+// signature's call-chain flags say whether this call is such a link, so every
+// return type computed for the call -- the declared one, or a Lua builtin's
+// refinement that replaces it -- goes through here.
+func (c *Checker) getCallChainReturnType(sig *Signature, t *Type) *Type {
+	switch {
+	case sig.flags&SignatureFlagsIsInnerCallChain != 0:
+		return c.addOptionalTypeMarker(t)
+	case sig.flags&SignatureFlagsIsOuterCallChain != 0:
+		return c.getOptionalType(t, false /*isProperty*/)
+	}
+	return t
+}
+
 func (c *Checker) getReturnTypeOfSignature(sig *Signature) *Type {
 	if sig.resolvedReturnType != nil {
 		return sig.resolvedReturnType
@@ -15969,11 +15980,7 @@ func (c *Checker) getReturnTypeOfSignature(sig *Signature) *Type {
 			}
 		}
 	}
-	if sig.flags&SignatureFlagsIsInnerCallChain != 0 {
-		t = c.addOptionalTypeMarker(t)
-	} else if sig.flags&SignatureFlagsIsOuterCallChain != 0 {
-		t = c.getOptionalType(t, false /*isProperty*/)
-	}
+	t = c.getCallChainReturnType(sig, t)
 	if !c.popTypeResolution() {
 		if sig.declaration != nil {
 			typeNode := sig.declaration.Type()
@@ -25551,6 +25558,9 @@ func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 		// (Flow narrowing keeps the RAW receiver instead -- see
 		// getTypePredicateArgument -- because reference matching cannot
 		// see through this synthetic.)
+		// getOptionalExpressionType also strips nil from the receiver of an
+		// optional colon call (`obj?:f()`), an optional-chain root, exactly as
+		// TS's getThisArgumentType does for `obj?.f()`.
 		receiver := ast.LuaColonCallReceiver(node)
 		receiverType := c.getOptionalExpressionType(c.checkExpressionCached(receiver), receiver)
 		receiverArg := c.createSyntheticExpression(receiver, receiverType, false /*isSpread*/, nil)

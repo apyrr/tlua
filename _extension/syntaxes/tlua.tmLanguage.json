@@ -2897,12 +2897,6 @@
                     "include": "#self-literal"
                 },
                 {
-                    "include": "#undefined-literal"
-                },
-                {
-                    "include": "#numericConstant-literal"
-                },
-                {
                     "include": "#array-literal"
                 },
                 {
@@ -3034,22 +3028,6 @@
         "super-literal": {
             "name": "variable.language.super.tlua",
             "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))super\\b(?!\\$)"
-        },
-        "undefined-literal": {
-            "name": "constant.language.undefined.tlua",
-            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))undefined(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-        },
-        "numericConstant-literal": {
-            "patterns": [
-                {
-                    "name": "constant.language.nan.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))NaN(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                },
-                {
-                    "name": "constant.language.infinity.tlua",
-                    "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))Infinity(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-                }
-            ]
         },
         "support-objects": {
             "patterns": [
@@ -3501,7 +3479,7 @@
         },
         "type-builtin-literals": {
             "name": "support.type.builtin.tlua",
-            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(self|true|false|undefined|nil|null)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+            "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(self|true|false|nil)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
         },
         "type-tuple": {
             "name": "meta.type.tuple.tlua",

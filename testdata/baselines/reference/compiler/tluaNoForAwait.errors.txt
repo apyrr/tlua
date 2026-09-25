@@ -1,4 +1,4 @@
-tluaNoForAwait.tlua(2,35): error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+tluaNoForAwait.tlua(2,35): error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
 tluaNoForAwait.tlua(4,13): error TLUA1005: 'in' expected.
 tluaNoForAwait.tlua(4,14): error TLUA1109: Expression expected.
 tluaNoForAwait.tlua(4,22): error TLUA1005: ';' expected.
@@ -14,7 +14,7 @@ tluaNoForAwait.tlua(18,1): error TLUA1005: 'end' expected.
     // `for await` is no longer supported syntax.
     suspend function f(xs: number[]): number
                                       ~~~~~~
-!!! error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+!!! error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
       local total = 0;
       for await (local x of xs) {
                 ~

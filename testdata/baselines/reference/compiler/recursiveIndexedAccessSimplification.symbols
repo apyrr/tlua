@@ -40,7 +40,7 @@ function a<T>(l: Recur<T>[]): void
 >Recur : Symbol(Recur, Decl(recursiveIndexedAccessSimplification.tlua, 0, 0))
 >T : Symbol(T, Decl(recursiveIndexedAccessSimplification.tlua, 10, 11))
 
-    local x: Recur<T> | undefined = join(l);
+    local x: Recur<T> | nil = join(l);
 >x : Symbol(x, Decl(recursiveIndexedAccessSimplification.tlua, 11, 9))
 >Recur : Symbol(Recur, Decl(recursiveIndexedAccessSimplification.tlua, 0, 0))
 >T : Symbol(T, Decl(recursiveIndexedAccessSimplification.tlua, 10, 11))

@@ -27,7 +27,7 @@ freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expect
         return f2()
     end
     
-    declare f2: () => { valid: boolean, msg?: undefined }
+    declare f2: () => { valid: boolean, msg?: nil }
     
     local _ = f1().msg
     
@@ -45,7 +45,7 @@ freshObjectLiteralSubtype.tlua(51,1): error TLUA1135: Argument expression expect
     
     declare function utilValidate(): {
         valid: boolean;
-        msg?: undefined;
+        msg?: nil;
     } | {
         valid: boolean;
         msg: string;

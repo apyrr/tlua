@@ -511,7 +511,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsBuildInfo:           true,
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
-		Description:                diagnostics.When_type_checking_take_into_account_null_and_undefined,
+		Description:                diagnostics.When_type_checking_take_into_account_nil,
 		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
@@ -541,7 +541,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsBuildInfo:           true,
 		strictFlag:                 true,
 		Category:                   diagnostics.Type_Checking,
-		Description:                diagnostics.Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any,
+		Description:                diagnostics.Built_in_iterators_are_instantiated_with_a_TReturn_type_of_nil_instead_of_any,
 		DefaultValueDescription:    diagnostics.X_true_unless_strict_is_false,
 	},
 	{
@@ -599,7 +599,7 @@ var optionsForCompiler = []*CommandLineOption{
 		AffectsSemanticDiagnostics: true,
 		AffectsBuildInfo:           true,
 		Category:                   diagnostics.Type_Checking,
-		Description:                diagnostics.Interpret_optional_property_types_as_written_rather_than_adding_undefined,
+		Description:                diagnostics.Interpret_optional_property_types_as_written_rather_than_adding_nil,
 		DefaultValueDescription:    false,
 	},
 	{

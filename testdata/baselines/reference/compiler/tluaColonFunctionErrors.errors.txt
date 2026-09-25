@@ -2,22 +2,19 @@ tluaColonFunctionErrors.tlua(11,11): error TLUA2300: Duplicate identifier ':'.
 tluaColonFunctionErrors.tlua(11,18): error TLUA2300: Duplicate identifier 'self'.
 tluaColonFunctionErrors.tlua(15,16): error TLUA1005: '(' expected.
 tluaColonFunctionErrors.tlua(15,17): error TLUA2304: Cannot find name 'f'.
-tluaColonFunctionErrors.tlua(15,20): error TLUA1005: ';' expected.
-tluaColonFunctionErrors.tlua(15,22): error TLUA1109: Expression expected.
+tluaColonFunctionErrors.tlua(15,26): error TLUA1005: '(' expected.
 tluaColonFunctionErrors.tlua(18,13): error TLUA1005: '(' expected.
 tluaColonFunctionErrors.tlua(18,14): error TLUA2304: Cannot find name 'b'.
 tluaColonFunctionErrors.tlua(18,16): error TLUA1109: Expression expected.
-tluaColonFunctionErrors.tlua(18,17): error TLUA1005: ';' expected.
-tluaColonFunctionErrors.tlua(18,19): error TLUA1109: Expression expected.
+tluaColonFunctionErrors.tlua(18,23): error TLUA1005: '(' expected.
 tluaColonFunctionErrors.tlua(22,19): error TLUA1005: '(' expected.
 tluaColonFunctionErrors.tlua(22,20): error TLUA2304: Cannot find name 'f'.
 tluaColonFunctionErrors.tlua(22,22): error TLUA1109: Expression expected.
-tluaColonFunctionErrors.tlua(22,23): error TLUA1005: ';' expected.
-tluaColonFunctionErrors.tlua(22,25): error TLUA1109: Expression expected.
+tluaColonFunctionErrors.tlua(22,29): error TLUA1005: '(' expected.
 tluaColonFunctionErrors.tlua(26,10): error TLUA2304: Cannot find name 'Unknown'.
 
 
-==== tluaColonFunctionErrors.tlua (17 errors) ====
+==== tluaColonFunctionErrors.tlua (14 errors) ====
     local M = {};
     
     function M:bar(v: number): number
@@ -41,10 +38,8 @@ tluaColonFunctionErrors.tlua(26,10): error TLUA2304: Cannot find name 'Unknown'.
 !!! error TLUA1005: '(' expected.
                     ~
 !!! error TLUA2304: Cannot find name 'f'.
-                       ~
-!!! error TLUA1005: ';' expected.
-                         ~~~~
-!!! error TLUA1109: Expression expected.
+                             
+!!! error TLUA1005: '(' expected.
     end
     
     function M:a:b(): void
@@ -54,10 +49,8 @@ tluaColonFunctionErrors.tlua(26,10): error TLUA2304: Cannot find name 'Unknown'.
 !!! error TLUA2304: Cannot find name 'b'.
                    ~
 !!! error TLUA1109: Expression expected.
-                    ~
-!!! error TLUA1005: ';' expected.
-                      ~~~~
-!!! error TLUA1109: Expression expected.
+                          
+!!! error TLUA1005: '(' expected.
     end
     
     // `local function` takes a plain name.
@@ -68,10 +61,8 @@ tluaColonFunctionErrors.tlua(26,10): error TLUA2304: Cannot find name 'Unknown'.
 !!! error TLUA2304: Cannot find name 'f'.
                          ~
 !!! error TLUA1109: Expression expected.
-                          ~
-!!! error TLUA1005: ';' expected.
-                            ~~~~
-!!! error TLUA1109: Expression expected.
+                                
+!!! error TLUA1005: '(' expected.
     end
     
     // Unknown base.

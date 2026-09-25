@@ -1,0 +1,180 @@
+//// [tests/cases/compiler/tluaPairsValueNonNil.tlua] ////
+
+=== tluaPairsValueNonNil.tlua ===
+// pairs, ipairs and next never yield a nil value, even from a table whose value
+// type admits nil (a map entries are deleted from).
+
+interface Box {
+>Box : Symbol(Box, Decl(tluaPairsValueNonNil.tlua, 0, 0))
+
+    value: number;
+>value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+}
+
+local map: Table<string, Box | nil> = {}
+>map : Symbol(map, Decl(tluaPairsValueNonNil.tlua, 7, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>Box : Symbol(Box, Decl(tluaPairsValueNonNil.tlua, 0, 0))
+
+for _, box in pairs(map) do
+>_ : Symbol(_, Decl(tluaPairsValueNonNil.tlua, 8, 3))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 8, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>map : Symbol(map, Decl(tluaPairsValueNonNil.tlua, 7, 5))
+
+    local n: number = box.value
+>n : Symbol(n, Decl(tluaPairsValueNonNil.tlua, 9, 9))
+>box.value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 8, 6))
+>value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+
+end
+for _, box in next, map do
+>_ : Symbol(_, Decl(tluaPairsValueNonNil.tlua, 11, 3))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 11, 6))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>map : Symbol(map, Decl(tluaPairsValueNonNil.tlua, 7, 5))
+
+    local n: number = box.value
+>n : Symbol(n, Decl(tluaPairsValueNonNil.tlua, 12, 9))
+>box.value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 11, 6))
+>value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+
+end
+
+local list: Table<number, Box | nil> = {}
+>list : Symbol(list, Decl(tluaPairsValueNonNil.tlua, 15, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>Box : Symbol(Box, Decl(tluaPairsValueNonNil.tlua, 0, 0))
+
+for _, box in ipairs(list) do
+>_ : Symbol(_, Decl(tluaPairsValueNonNil.tlua, 16, 3))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 16, 6))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>list : Symbol(list, Decl(tluaPairsValueNonNil.tlua, 15, 5))
+
+    local n: number = box.value
+>n : Symbol(n, Decl(tluaPairsValueNonNil.tlua, 17, 9))
+>box.value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 16, 6))
+>value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+
+end
+
+// A direct call types its value the same way. On an empty table it returns
+// `nil, nil`, so the key is the result to test; the value is not correlated with
+// it, which is what keeps a hand-written loop that reassigns both working.
+local k, v = next(map)
+>k : Symbol(k, Decl(tluaPairsValueNonNil.tlua, 23, 5))
+>v : Symbol(v, Decl(tluaPairsValueNonNil.tlua, 23, 8))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>map : Symbol(map, Decl(tluaPairsValueNonNil.tlua, 7, 5))
+
+while k ~= nil do
+>k : Symbol(k, Decl(tluaPairsValueNonNil.tlua, 23, 5))
+
+    local n: number = v.value
+>n : Symbol(n, Decl(tluaPairsValueNonNil.tlua, 25, 9))
+>v.value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+>v : Symbol(v, Decl(tluaPairsValueNonNil.tlua, 23, 8))
+>value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+
+    k, v = next(map, k)
+>k : Symbol(k, Decl(tluaPairsValueNonNil.tlua, 23, 5))
+>v : Symbol(v, Decl(tluaPairsValueNonNil.tlua, 23, 8))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>map : Symbol(map, Decl(tluaPairsValueNonNil.tlua, 7, 5))
+>k : Symbol(k, Decl(tluaPairsValueNonNil.tlua, 23, 5))
+
+end
+
+// An iterator that forwards next's results through locals is a LuaPairsIterator,
+// and a loop over it yields non-nil values too.
+local forward: LuaPairsIterator<string, Box | nil> = function(t, key)
+>forward : Symbol(forward, Decl(tluaPairsValueNonNil.tlua, 31, 5))
+>LuaPairsIterator : Symbol(LuaPairsIterator, Decl(lib.luajit.d.tlua, --, --))
+>Box : Symbol(Box, Decl(tluaPairsValueNonNil.tlua, 0, 0))
+>t : Symbol(t, Decl(tluaPairsValueNonNil.tlua, 31, 62))
+>key : Symbol(key, Decl(tluaPairsValueNonNil.tlua, 31, 64))
+
+    local nk, nv = next(t, key)
+>nk : Symbol(nk, Decl(tluaPairsValueNonNil.tlua, 32, 9))
+>nv : Symbol(nv, Decl(tluaPairsValueNonNil.tlua, 32, 13))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaPairsValueNonNil.tlua, 31, 62))
+>key : Symbol(key, Decl(tluaPairsValueNonNil.tlua, 31, 64))
+
+    return nk, nv
+>nk : Symbol(nk, Decl(tluaPairsValueNonNil.tlua, 32, 9))
+>nv : Symbol(nv, Decl(tluaPairsValueNonNil.tlua, 32, 13))
+
+end
+for _, box in forward, map do
+>_ : Symbol(_, Decl(tluaPairsValueNonNil.tlua, 35, 3))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 35, 6))
+>forward : Symbol(forward, Decl(tluaPairsValueNonNil.tlua, 31, 5))
+>map : Symbol(map, Decl(tluaPairsValueNonNil.tlua, 7, 5))
+
+    local n: number = box.value
+>n : Symbol(n, Decl(tluaPairsValueNonNil.tlua, 36, 9))
+>box.value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+>box : Symbol(box, Decl(tluaPairsValueNonNil.tlua, 35, 6))
+>value : Symbol(Box.value, Decl(tluaPairsValueNonNil.tlua, 3, 15))
+
+end
+
+// A value type that admits false keeps false: only nil is removed.
+local flags: Table<string, boolean | nil> = {}
+>flags : Symbol(flags, Decl(tluaPairsValueNonNil.tlua, 40, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+for _, flag in pairs(flags) do
+>_ : Symbol(_, Decl(tluaPairsValueNonNil.tlua, 41, 3))
+>flag : Symbol(flag, Decl(tluaPairsValueNonNil.tlua, 41, 6))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>flags : Symbol(flags, Decl(tluaPairsValueNonNil.tlua, 40, 5))
+
+    local f: true = flag
+>f : Symbol(f, Decl(tluaPairsValueNonNil.tlua, 42, 9))
+>flag : Symbol(flag, Decl(tluaPairsValueNonNil.tlua, 41, 6))
+
+end
+
+// A generic value type stays NonNullable<V> until it is instantiated.
+local function values<V>(t: Table<string, V>): NonNullable<V>[]
+>values : Symbol(values, Decl(tluaPairsValueNonNil.tlua, 43, 3))
+>V : Symbol(V, Decl(tluaPairsValueNonNil.tlua, 46, 22))
+>t : Symbol(t, Decl(tluaPairsValueNonNil.tlua, 46, 25))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>V : Symbol(V, Decl(tluaPairsValueNonNil.tlua, 46, 22))
+>NonNullable : Symbol(NonNullable, Decl(lib.luajit.d.tlua, --, --))
+>V : Symbol(V, Decl(tluaPairsValueNonNil.tlua, 46, 22))
+
+    local out: NonNullable<V>[] = {}
+>out : Symbol(out, Decl(tluaPairsValueNonNil.tlua, 47, 9))
+>NonNullable : Symbol(NonNullable, Decl(lib.luajit.d.tlua, --, --))
+>V : Symbol(V, Decl(tluaPairsValueNonNil.tlua, 46, 22))
+
+    for _, value in pairs(t) do
+>_ : Symbol(_, Decl(tluaPairsValueNonNil.tlua, 48, 7))
+>value : Symbol(value, Decl(tluaPairsValueNonNil.tlua, 48, 10))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaPairsValueNonNil.tlua, 46, 25))
+
+        out[#out + 1] = value
+>out : Symbol(out, Decl(tluaPairsValueNonNil.tlua, 47, 9))
+>out : Symbol(out, Decl(tluaPairsValueNonNil.tlua, 47, 9))
+>value : Symbol(value, Decl(tluaPairsValueNonNil.tlua, 48, 10))
+
+    end
+    return out
+>out : Symbol(out, Decl(tluaPairsValueNonNil.tlua, 47, 9))
+
+end
+local boxes: Box[] = values(map)
+>boxes : Symbol(boxes, Decl(tluaPairsValueNonNil.tlua, 53, 5))
+>Box : Symbol(Box, Decl(tluaPairsValueNonNil.tlua, 0, 0))
+>values : Symbol(values, Decl(tluaPairsValueNonNil.tlua, 43, 3))
+>map : Symbol(map, Decl(tluaPairsValueNonNil.tlua, 7, 5))
+

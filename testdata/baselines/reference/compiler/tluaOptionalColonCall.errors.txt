@@ -1,0 +1,88 @@
+tluaOptionalColonCall.tlua(16,7): error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
+  Type 'nil' is not assignable to type 'number'.
+tluaOptionalColonCall.tlua(18,8): error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+tluaOptionalColonCall.tlua(65,7): error TLUA2322: Type '(() => string | nil) | nil' is not assignable to type '() => string | nil'.
+  Type 'nil' is not assignable to type '() => string | nil'.
+tluaOptionalColonCall.tlua(66,7): error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+
+
+==== tluaOptionalColonCall.tlua (4 errors) ====
+    // `obj?:m(args)` is the optional colon call: `obj and obj:m(args)`. The receiver
+    // is passed non-nil, since the call only happens when it is not nil, and the
+    // result gains `nil` like any other optional chain.
+    
+    interface Box {
+        value: number;
+        inner: Box | nil;
+        read(self: Box): number;
+        set(self: Box, v: number): nil;
+    }
+    
+    declare function maybeBox(): Box | nil;
+    
+    local b = maybeBox()
+    local r1 = b?:read()
+    local r2: number = b?:read()
+          ~~
+!!! error TLUA2322: Type 'number | nil' is not assignable to type 'number'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'number'.
+    b?:set(1)
+    b?:set("x")
+           ~~~
+!!! error TLUA2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+    
+    // A receiver that is not a plain name is evaluated once.
+    local t: { box?: Box } = {}
+    t.box?:set(2)
+    maybeBox()?:set(3)
+    
+    // Links chain in both directions.
+    local r3 = b?.inner?:read()
+    local r4 = b?:read() == 1
+    
+    // `?` and `:` are one operator; outer spaces are trivia.
+    local r5 = b ?: read()
+    
+    // A discarded call keeps its captured receiver in a `do ... end`, so its local
+    // ends with the statement; a leading comment stays with the statement.
+    local function useMany(self: { box?: Box })
+        -- first
+        self.box?:set(1)
+        self.box?:set(2)
+    end
+    
+    // A chain in a non-order-safe slot runs in a function; a `...` argument is passed
+    // through to it.
+    declare function consume(a: nil, b: number): nil;
+    local function forward(...: number)
+        consume(maybeBox()?:set(select("#", ...)), 1)
+    end
+    
+    -- A hoisted local keeps its statement's comment above it.
+    local r6 = t.box?.inner?:read()
+    
+    // A trailing comment stays on its statement, after the hoisted locals.
+    local r7 = t.box?.inner?:read() -- trailing
+    
+    // `a and a:m()` keeps one value: Lua's `and` yields a single result, so an
+    // optional colon call of a multi-value method yields its first value (or nil).
+    interface Pair {
+        pair(self: Pair): (number, string);
+    }
+    declare maybePair: Pair | nil;
+    local first, second = maybePair?:pair()
+    local onlyNil: nil = second
+    
+    // A builtin whose result the checker refines still gains the optional nil.
+    declare maybeText: string | nil;
+    declare maybeFile: LuaFile | nil;
+    local words: () => string | nil = maybeText?:gmatch("%a+")
+          ~~~~~
+!!! error TLUA2322: Type '(() => string | nil) | nil' is not assignable to type '() => string | nil'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type '() => string | nil'.
+    local contents: string = maybeFile?:read("*a")
+          ~~~~~~~~
+!!! error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
+    

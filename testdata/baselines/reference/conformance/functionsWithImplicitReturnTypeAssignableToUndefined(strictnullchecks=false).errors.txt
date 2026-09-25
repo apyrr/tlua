@@ -1,5 +1,5 @@
-functionsWithImplicitReturnTypeAssignableToUndefined.tlua(25,34): error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
-functionsWithImplicitReturnTypeAssignableToUndefined.tlua(31,34): error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+functionsWithImplicitReturnTypeAssignableToUndefined.tlua(25,34): error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
+functionsWithImplicitReturnTypeAssignableToUndefined.tlua(31,34): error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
 
 
 ==== functionsWithImplicitReturnTypeAssignableToUndefined.tlua (2 errors) ====
@@ -29,7 +29,7 @@ functionsWithImplicitReturnTypeAssignableToUndefined.tlua(31,34): error TLUA2366
     
     function f5(condition: boolean): {}
                                      ~~
-!!! error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+!!! error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
         if condition then
             return {}
         end
@@ -37,7 +37,7 @@ functionsWithImplicitReturnTypeAssignableToUndefined.tlua(31,34): error TLUA2366
     
     function f6(condition: boolean): Record<string, any>
                                      ~~~~~~~~~~~~~~~~~~~
-!!! error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+!!! error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
         if condition then
             return { foo = true }
         end

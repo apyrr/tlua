@@ -523,6 +523,11 @@ func (l *LanguageService) getCompletionData(
 	var propertyAccessToConvert *ast.PropertyAccessExpressionNode
 	isRightOfDot := false
 	isRightOfQuestionDot := false
+	// isRightOfColon marks a Lua colon call, `obj:m()` or `obj?:m()`: it names a
+	// member of obj like a dot does, but cannot be rewritten into `obj["m"]` or
+	// `obj?.m`, so no access is converted, no `?.` is offered, and only members it
+	// can call are.
+	isRightOfColon := false
 	var importStatementCompletion *importStatementCompletionInfo
 	location := astnav.GetTouchingPropertyName(file, position)
 	keywordFilters := KeywordCompletionFiltersNone
@@ -591,6 +596,12 @@ func (l *LanguageService) getCompletionData(
 				// or leading into a '...' token. Just bail out instead.
 				return nil, nil
 			}
+		} else if contextToken.Kind == ast.KindColonToken && parent != nil && ast.IsPropertyAccessExpression(parent) && parent.AsPropertyAccessExpression().ColonToken == contextToken {
+			isRightOfDot = true
+			isRightOfColon = true
+			// `obj?:m()` calls only when obj is not nil, as `obj?.m()` does.
+			isRightOfQuestionDot = parent.AsPropertyAccessExpression().QuestionDotToken != nil
+			node = parent.Expression()
 		} else if parent != nil && parent.Kind == ast.KindPropertyAccessExpression { // !!! else if (!importStatementCompletion)
 			// If the context token is the name of a property access expression, walk up to the
 			// property access expression. The context token then differs from previousToken, so
@@ -623,7 +634,25 @@ func (l *LanguageService) getCompletionData(
 		}
 	}
 
+	// isColonCallCandidate reports whether a colon call can name symbol. It calls the
+	// member it names, so only a callable member spelled as a Lua name can follow `:`
+	// -- there is no `obj:["a b"]` to convert to. A declared method or function is
+	// callable by its declaration; only other members need their type resolved, which
+	// keeps completion cheap on interfaces with hundreds of methods.
+	isColonCallCandidate := func(symbol *ast.Symbol) bool {
+		if !scanner.IsLuaMethodName(symbol.Name) {
+			return false
+		}
+		if symbol.Flags&(ast.SymbolFlagsMethod|ast.SymbolFlagsFunction) != 0 {
+			return true
+		}
+		return len(typeChecker.GetCallSignatures(typeChecker.GetNonNullableType(typeChecker.GetTypeOfSymbolAtLocation(symbol, node)))) != 0
+	}
+
 	addPropertySymbol := func(symbol *ast.Symbol, insertQuestionDot bool) {
+		if isRightOfColon && !isColonCallCandidate(symbol) {
+			return
+		}
 		// For a computed property with an accessible name like `Symbol.iterator`,
 		// we'll add a completion for the *name* `Symbol` instead of for the property.
 		// If this is e.g. [Symbol.iterator], add a completion for `Symbol`.
@@ -676,7 +705,8 @@ func (l *LanguageService) getCompletionData(
 			isNewIdentifierLocation = true
 			defaultCommitCharacters = []string{}
 		}
-		if isRightOfQuestionDot && len(typeChecker.GetCallSignatures(t)) != 0 {
+		// `obj?.(` calls obj itself; a colon call always names a member, so `?:` does not.
+		if isRightOfQuestionDot && !isRightOfColon && len(typeChecker.GetCallSignatures(t)) != 0 {
 			isNewIdentifierLocation = true
 			if defaultCommitCharacters == nil {
 				defaultCommitCharacters = slices.Clone(allCommitCharacters) // Only invalid commit character here would be `(`.
@@ -694,6 +724,9 @@ func (l *LanguageService) getCompletionData(
 			// anyways. So we might as well elevate the members that were at least part
 			// of the individual types to a higher status since we know what they are.
 			for _, symbol := range getPropertiesForCompletion(t, typeChecker) {
+				if isRightOfColon && !isColonCallCandidate(symbol) {
+					continue
+				}
 				symbols = append(symbols, symbol)
 			}
 		}
@@ -752,7 +785,7 @@ func (l *LanguageService) getCompletionData(
 						} else {
 							isValidAccess = isValidValueAccess(exportedSymbol)
 						}
-						if isValidAccess {
+						if isValidAccess && (!isRightOfColon || isColonCallCandidate(exportedSymbol)) {
 							symbols = append(symbols, exportedSymbol)
 						}
 					}
@@ -768,9 +801,9 @@ func (l *LanguageService) getCompletionData(
 						t := typeChecker.GetNonOptionalType(typeChecker.GetTypeOfSymbolAtLocation(symbol, node))
 						insertQuestionDot := false
 						if typeChecker.IsNullableType(t) {
-							canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot &&
+							canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot && !isRightOfColon &&
 								!preferences.IncludeAutomaticOptionalChainCompletions.IsFalse()
-							if canCorrectToQuestionDot || isRightOfQuestionDot {
+							if canCorrectToQuestionDot || isRightOfQuestionDot || isRightOfColon {
 								t = typeChecker.GetNonNullableType(t)
 								if canCorrectToQuestionDot {
 									insertQuestionDot = true
@@ -795,10 +828,12 @@ func (l *LanguageService) getCompletionData(
 			if !isTypeLocation {
 				insertQuestionDot := false
 				if typeChecker.IsNullableType(t) {
-					canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot &&
+					canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot && !isRightOfColon &&
 						!preferences.IncludeAutomaticOptionalChainCompletions.IsFalse()
 
-					if canCorrectToQuestionDot || isRightOfQuestionDot {
+					// A colon cannot be corrected to `?.`, but the receiver's members are
+					// still what the call can name; the checker reports the possible nil.
+					if canCorrectToQuestionDot || isRightOfQuestionDot || isRightOfColon {
 						t = typeChecker.GetNonNullableType(t)
 						if canCorrectToQuestionDot {
 							insertQuestionDot = true

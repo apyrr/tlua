@@ -1,0 +1,63 @@
+tluaPrefixExpressionParentheses.tlua(6,11): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaPrefixExpressionParentheses.tlua(7,11): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaPrefixExpressionParentheses.tlua(7,14): error TLUA2339: Property 'x' does not exist on type '{}'.
+tluaPrefixExpressionParentheses.tlua(8,11): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaPrefixExpressionParentheses.tlua(9,11): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaPrefixExpressionParentheses.tlua(9,14): error TLUA2339: Property 'x' does not exist on type '1'.
+tluaPrefixExpressionParentheses.tlua(10,11): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaPrefixExpressionParentheses.tlua(11,11): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaPrefixExpressionParentheses.tlua(32,7): error TLUA2322: Type 'string' is not assignable to type 'number'.
+
+
+==== tluaPrefixExpressionParentheses.tlua (9 errors) ====
+    // Lua lets `.`, `[`, `:` and an argument list follow only a prefixexp: a name, an
+    // index, a call, or a parenthesized expression. Anything else must be
+    // parenthesized first. The emit parenthesizes it either way, so the output is
+    // valid Lua even while the error stands.
+    
+    local a = "x":upper()
+              ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    local b = {}.x
+              ~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+                 ~
+!!! error TLUA2339: Property 'x' does not exist on type '{}'.
+    local c = { 1 }[1]
+              ~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    local d = 1 .x
+              ~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+                 ~
+!!! error TLUA2339: Property 'x' does not exist on type '1'.
+    local e = `t`:upper()
+              ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    local f = "x"?:upper()
+              ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    
+    // Parentheses make any expression a prefixexp; wrappers that erase at emit are
+    // looked through.
+    local g = ("x"):upper()
+    local h = ({ x = 1 }).x
+    local i = (function() return 1 end)()
+    local j = ("x" as string):upper()
+    declare t: { f: () => number } | nil;
+    local k = t!.f()
+    
+    // After anything but a prefixexp, `(` does not continue the expression: Lua ends
+    // it there and the `(` starts the next statement.
+    declare function report(s: string): nil;
+    local afterString = "abc"
+    (report)("x")
+    local afterTable = {}
+    (report)("y")
+    
+    // The error is a grammar check, not a syntax error, so type errors elsewhere in
+    // the file are still reported.
+    local wrong: number = "not a number"
+          ~~~~~
+!!! error TLUA2322: Type 'string' is not assignable to type 'number'.
+    

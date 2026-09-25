@@ -126,7 +126,7 @@ f1(/*26*/"hello");
 @param { { { () => string; } } f this is optional param f
 */
 function subtract(a: number, b: number, c?: () => string, d?: () => string, e?: () => string, f?: () => string) end
-subtract(/*28*/10, /*29*/ 20, /*30*/ null, /*31*/ null, /*32*/ null, /*33*/null);
+subtract(/*28*/10, /*29*/ 20, /*30*/ nil, /*31*/ nil, /*32*/ nil, /*33*/nil);
 /** this is square function
 @paramTag { number } a this is input number of paramTag
 @param { number } a this is input number

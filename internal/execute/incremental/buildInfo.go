@@ -491,6 +491,16 @@ func (b *BuildInfo) IsValidVersion() bool {
 	return b.Version == core.Version()
 }
 
+// hasOnlyKnownMessages reports whether every stored diagnostic names a message this
+// compiler has. Development builds all share one version, so a build info written
+// by an earlier one passes IsValidVersion; a message reworded since then has a new
+// key, and replaying the old one would name a message that is gone.
+func hasOnlyKnownMessages(list []*BuildInfoDiagnostic) bool {
+	return core.Every(list, func(d *BuildInfoDiagnostic) bool {
+		return (d.MessageKey == "" || diagnostics.IsKnownKey(d.MessageKey)) && hasOnlyKnownMessages(d.MessageChain) && hasOnlyKnownMessages(d.RelatedInformation)
+	})
+}
+
 func (b *BuildInfo) IsIncremental() bool {
 	return b != nil && len(b.FileNames) != 0
 }

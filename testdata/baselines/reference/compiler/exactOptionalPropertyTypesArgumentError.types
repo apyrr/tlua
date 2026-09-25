@@ -6,9 +6,9 @@ declare function f(o: { y?: string }): void;
 >o : { y?: string; }
 >y : string | nil
 
-f({ y = undefined });
->f({ y = undefined }) : void
+f({ y = nil });
+>f({ y = nil }) : void
 >f : (o: { y?: string; }) => void
->{ y = undefined } : { y: nil; }
+>{ y = nil } : { y: nil; }
 >y : nil
 

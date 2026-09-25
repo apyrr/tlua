@@ -6,8 +6,10 @@
 
 function* gen(): unknown
 > : () => void
->* gen() : number
+>* gen(): unknown : number
 > : any
+>gen(): unknown : any
+>gen(): unknown : any
 >gen() : any
 >gen : any
 >unknown : any
@@ -25,8 +27,10 @@ end
 
 suspend function* suspendGen(): unknown
 > : () => void
->* suspendGen() : number
+>* suspendGen(): unknown : number
 > : any
+>suspendGen(): unknown : any
+>suspendGen(): unknown : any
 >suspendGen() : any
 >suspendGen : any
 >unknown : any

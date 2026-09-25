@@ -9,8 +9,8 @@ type IsAny<T> = 0 extends 1 & T ? true : false;
 type IsNever<T> = [T] extends [never] ? true : false;
 type IfAny<T, TypeIfAny = true, TypeIfNotAny = false> = IsAny<T> extends true ? TypeIfAny : TypeIfNotAny;
 type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = IsNever<T> extends true ? TypeIfNever : TypeIfNotNever;
-type RequiredKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
-type OptionalKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], undefined>;
+type RequiredKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], nil>;
+type OptionalKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], nil>;
 type OmitIndexSignature<ObjectType> = {[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown> ? never : KeyType]: ObjectType[KeyType]};
 type PickIndexSignature<ObjectType> = {[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown> ? KeyType : never]: ObjectType[KeyType]};
 type SimpleMerge<Destination, Source> = {[Key in keyof Destination as Key extends keyof Source ? never : Key]: Destination[Key]} & Source;
@@ -25,7 +25,7 @@ type ApplyDefaultOptions<
     Options extends table,
     Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
     SpecifiedOptions extends Options,
-> = IfAny<SpecifiedOptions, Defaults, IfNever<SpecifiedOptions, Defaults, Simplify<Merge<Defaults, {[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]}> & Required<Options>>>>;
+> = IfAny<SpecifiedOptions, Defaults, IfNever<SpecifiedOptions, Defaults, Simplify<Merge<Defaults, {[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options> ? nil extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]}> & Required<Options>>>>;
 
 type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
 type RemoveLastCharacter<Sentence extends string, Character extends string> = Sentence extends `${infer LeftSide}${Character}` ? SkipEmptyWord<LeftSide> : never;

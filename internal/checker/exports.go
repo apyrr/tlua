@@ -57,10 +57,6 @@ func (c *Checker) GetUnknownSymbol() *ast.Symbol {
 	return c.unknownSymbol
 }
 
-func (c *Checker) GetUndefinedSymbol() *ast.Symbol {
-	return c.nilSymbol
-}
-
 func (c *Checker) GetArgumentsSymbol() *ast.Symbol {
 	return c.argumentsSymbol
 }

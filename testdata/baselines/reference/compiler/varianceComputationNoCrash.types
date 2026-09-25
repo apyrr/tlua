@@ -34,10 +34,10 @@ type IfNever<T, TypeIfNever = true, TypeIfNotNever = false> = IsNever<T> extends
 >false : false
 >true : true
 
-type RequiredKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], undefined>;
+type RequiredKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? Key : never}[keyof BaseType], nil>;
 >RequiredKeysOf : RequiredKeysOf<BaseType>
 
-type OptionalKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], undefined>;
+type OptionalKeysOf<BaseType extends table> = Exclude<{[Key in keyof BaseType]: BaseType extends Record<Key, BaseType[Key]> ? never : Key}[keyof BaseType], nil>;
 >OptionalKeysOf : OptionalKeysOf<BaseType>
 
 type OmitIndexSignature<ObjectType> = {[KeyType in keyof ObjectType as {} extends Record<KeyType, unknown> ? never : KeyType]: ObjectType[KeyType]};
@@ -83,7 +83,7 @@ type ApplyDefaultOptions<
     Options extends table,
     Defaults extends Simplify<Omit<Required<Options>, RequiredKeysOf<Options>> & Partial<Record<RequiredKeysOf<Options>, never>>>,
     SpecifiedOptions extends Options,
-> = IfAny<SpecifiedOptions, Defaults, IfNever<SpecifiedOptions, Defaults, Simplify<Merge<Defaults, {[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options> ? undefined extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]}> & Required<Options>>>>;
+> = IfAny<SpecifiedOptions, Defaults, IfNever<SpecifiedOptions, Defaults, Simplify<Merge<Defaults, {[Key in keyof SpecifiedOptions as Key extends OptionalKeysOf<Options> ? nil extends SpecifiedOptions[Key] ? never : Key : Key]: SpecifiedOptions[Key]}> & Required<Options>>>>;
 
 type SkipEmptyWord<Word extends string> = Word extends '' ? [] : [Word];
 >SkipEmptyWord : SkipEmptyWord<Word>

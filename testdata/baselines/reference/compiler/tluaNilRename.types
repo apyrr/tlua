@@ -8,19 +8,13 @@ local a: nil = nil;
 local b = nil;
 >b : any
 
-// `undefined` is a transitional alias for the same keyword/type/value.
-local c: undefined = undefined;
+// A type query can name it too.
+type Nil = typeof nil;
+>Nil : nil
+>nil : nil
+
+local c: Nil = nil;
 >c : nil
-
-local d = undefined;
->d : any
-
-// `nil` and `undefined` are the same type, so they are interchangeable.
-local e: nil = undefined;
->e : nil
-
-local f: undefined = nil;
->f : nil
 
 // Optional properties surface as `nil`.
 interface Box {

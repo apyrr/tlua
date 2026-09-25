@@ -1,0 +1,234 @@
+//// [tests/cases/compiler/tluaOptionalColonCall.tlua] ////
+
+=== tluaOptionalColonCall.tlua ===
+// `obj?:m(args)` is the optional colon call: `obj and obj:m(args)`. The receiver
+// is passed non-nil, since the call only happens when it is not nil, and the
+// result gains `nil` like any other optional chain.
+
+interface Box {
+    value: number;
+>value : number
+
+    inner: Box | nil;
+>inner : Box | nil
+
+    read(self: Box): number;
+>read : (self: Box) => number
+>self : Box
+
+    set(self: Box, v: number): nil;
+>set : (self: Box, v: number) => nil
+>self : Box
+>v : number
+}
+
+declare function maybeBox(): Box | nil;
+>maybeBox : () => Box | nil
+
+local b = maybeBox()
+>b : Box | nil
+>maybeBox() : Box | nil
+>maybeBox : () => Box | nil
+
+local r1 = b?:read()
+>r1 : number | nil
+>b?:read() : number | nil
+>b?:read : ((self: Box) => number) | nil
+>b : Box | nil
+>read : ((self: Box) => number) | nil
+
+local r2: number = b?:read()
+>r2 : number
+>b?:read() : number | nil
+>b?:read : ((self: Box) => number) | nil
+>b : Box | nil
+>read : ((self: Box) => number) | nil
+
+b?:set(1)
+>b?:set(1) : nil
+>b?:set : ((self: Box, v: number) => nil) | nil
+>b : Box | nil
+>set : ((self: Box, v: number) => nil) | nil
+>1 : 1
+
+b?:set("x")
+>b?:set("x") : nil
+>b?:set : ((self: Box, v: number) => nil) | nil
+>b : Box | nil
+>set : ((self: Box, v: number) => nil) | nil
+>"x" : "x"
+
+// A receiver that is not a plain name is evaluated once.
+local t: { box?: Box } = {}
+>t : { box?: Box; }
+>box : Box | nil
+>{} : {}
+
+t.box?:set(2)
+>t.box?:set(2) : nil
+>t.box?:set : ((self: Box, v: number) => nil) | nil
+>t.box : Box | nil
+>t : { box?: Box; }
+>box : Box | nil
+>set : ((self: Box, v: number) => nil) | nil
+>2 : 2
+
+maybeBox()?:set(3)
+>maybeBox()?:set(3) : nil
+>maybeBox()?:set : ((self: Box, v: number) => nil) | nil
+>maybeBox() : Box | nil
+>maybeBox : () => Box | nil
+>set : ((self: Box, v: number) => nil) | nil
+>3 : 3
+
+// Links chain in both directions.
+local r3 = b?.inner?:read()
+>r3 : number | nil
+>b?.inner?:read() : number | nil
+>b?.inner?:read : ((self: Box) => number) | nil
+>b?.inner : Box | nil
+>b : Box | nil
+>inner : Box | nil
+>read : ((self: Box) => number) | nil
+
+local r4 = b?:read() == 1
+>r4 : boolean
+>b?:read() == 1 : boolean
+>b?:read() : number | nil
+>b?:read : ((self: Box) => number) | nil
+>b : Box | nil
+>read : ((self: Box) => number) | nil
+>1 : 1
+
+// `?` and `:` are one operator; outer spaces are trivia.
+local r5 = b ?: read()
+>r5 : number | nil
+>b ?: read() : number | nil
+>b ?: read : ((self: Box) => number) | nil
+>b : Box | nil
+>read : ((self: Box) => number) | nil
+
+// A discarded call keeps its captured receiver in a `do ... end`, so its local
+// ends with the statement; a leading comment stays with the statement.
+local function useMany(self: { box?: Box })
+>useMany : (self: { box?: Box; }) => void
+>self : { box?: Box; }
+>box : Box | nil
+
+    -- first
+    self.box?:set(1)
+>self.box?:set(1) : nil
+>self.box?:set : ((self: Box, v: number) => nil) | nil
+>self.box : Box | nil
+>self : { box?: Box; }
+>box : Box | nil
+>set : ((self: Box, v: number) => nil) | nil
+>1 : 1
+
+    self.box?:set(2)
+>self.box?:set(2) : nil
+>self.box?:set : ((self: Box, v: number) => nil) | nil
+>self.box : Box | nil
+>self : { box?: Box; }
+>box : Box | nil
+>set : ((self: Box, v: number) => nil) | nil
+>2 : 2
+
+end
+
+// A chain in a non-order-safe slot runs in a function; a `...` argument is passed
+// through to it.
+declare function consume(a: nil, b: number): nil;
+>consume : (a: nil, b: number) => nil
+>a : nil
+>b : number
+
+local function forward(...: number)
+>forward : (...: number) => void
+> : number[]
+
+    consume(maybeBox()?:set(select("#", ...)), 1)
+>consume(maybeBox()?:set(select("#", ...)), 1) : nil
+>consume : (a: nil, b: number) => nil
+>maybeBox()?:set(select("#", ...)) : nil
+>maybeBox()?:set : ((self: Box, v: number) => nil) | nil
+>maybeBox() : Box | nil
+>maybeBox : () => Box | nil
+>set : ((self: Box, v: number) => nil) | nil
+>select("#", ...) : number
+>select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
+>"#" : "#"
+>... : number | nil
+>1 : 1
+
+end
+
+-- A hoisted local keeps its statement's comment above it.
+local r6 = t.box?.inner?:read()
+>r6 : number | nil
+>t.box?.inner?:read() : number | nil
+>t.box?.inner?:read : ((self: Box) => number) | nil
+>t.box?.inner : Box | nil
+>t.box : Box | nil
+>t : { box?: Box; }
+>box : Box | nil
+>inner : Box | nil
+>read : ((self: Box) => number) | nil
+
+// A trailing comment stays on its statement, after the hoisted locals.
+local r7 = t.box?.inner?:read() -- trailing
+>r7 : number | nil
+>t.box?.inner?:read() : number | nil
+>t.box?.inner?:read : ((self: Box) => number) | nil
+>t.box?.inner : Box | nil
+>t.box : Box | nil
+>t : { box?: Box; }
+>box : Box | nil
+>inner : Box | nil
+>read : ((self: Box) => number) | nil
+
+// `a and a:m()` keeps one value: Lua's `and` yields a single result, so an
+// optional colon call of a multi-value method yields its first value (or nil).
+interface Pair {
+    pair(self: Pair): (number, string);
+>pair : (self: Pair) => (number, string)
+>self : Pair
+}
+declare maybePair: Pair | nil;
+>maybePair : Pair | nil
+
+local first, second = maybePair?:pair()
+>first : number | nil
+>second : nil
+>maybePair?:pair() : number | nil
+>maybePair?:pair : ((self: Pair) => (number, string)) | nil
+>maybePair : Pair | nil
+>pair : ((self: Pair) => (number, string)) | nil
+
+local onlyNil: nil = second
+>onlyNil : nil
+>second : nil
+
+// A builtin whose result the checker refines still gains the optional nil.
+declare maybeText: string | nil;
+>maybeText : string | nil
+
+declare maybeFile: LuaFile | nil;
+>maybeFile : LuaFile | nil
+
+local words: () => string | nil = maybeText?:gmatch("%a+")
+>words : () => string | nil
+>maybeText?:gmatch("%a+") : (() => string | nil) | nil
+>maybeText?:gmatch : ((self: string, pattern: string) => () => string) | nil
+>maybeText : string | nil
+>gmatch : ((self: string, pattern: string) => () => string) | nil
+>"%a+" : "%a+"
+
+local contents: string = maybeFile?:read("*a")
+>contents : string
+>maybeFile?:read("*a") : string | nil
+>maybeFile?:read : ((self: LuaFile, ...: LuaReadFormat) => (any, ...any)) | nil
+>maybeFile : LuaFile | nil
+>read : ((self: LuaFile, ...: LuaReadFormat) => (any, ...any)) | nil
+>"*a" : "*a"
+

@@ -1056,7 +1056,7 @@ var Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_typ
 
 var This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found = &Message{code: 2354, category: CategoryError, key: "This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found_2354", text: "This syntax requires an imported helper but module '{0}' cannot be found."}
 
-var A_function_whose_declared_type_is_neither_undefined_void_nor_any_must_return_a_value = &Message{code: 2355, category: CategoryError, key: "A_function_whose_declared_type_is_neither_undefined_void_nor_any_must_return_a_value_2355", text: "A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value."}
+var A_function_whose_declared_type_is_neither_nil_void_nor_any_must_return_a_value = &Message{code: 2355, category: CategoryError, key: "A_function_whose_declared_type_is_neither_nil_void_nor_any_must_return_a_value_2355", text: "A function whose declared type is neither 'nil', 'void', nor 'any' must return a value."}
 
 var An_arithmetic_operand_must_be_of_type_any_number_bigint_or_an_enum_type = &Message{code: 2356, category: CategoryError, key: "An_arithmetic_operand_must_be_of_type_any_number_bigint_or_an_enum_type_2356", text: "An arithmetic operand must be of type 'any', 'number', 'bigint' or an enum type."}
 
@@ -1074,7 +1074,7 @@ var The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_prope
 
 var Operator_0_cannot_be_applied_to_types_1_and_2 = &Message{code: 2365, category: CategoryError, key: "Operator_0_cannot_be_applied_to_types_1_and_2_2365", text: "Operator '{0}' cannot be applied to types '{1}' and '{2}'."}
 
-var Function_lacks_ending_return_statement_and_return_type_does_not_include_undefined = &Message{code: 2366, category: CategoryError, key: "Function_lacks_ending_return_statement_and_return_type_does_not_include_undefined_2366", text: "Function lacks ending return statement and return type does not include 'undefined'."}
+var Function_lacks_ending_return_statement_and_return_type_does_not_include_nil = &Message{code: 2366, category: CategoryError, key: "Function_lacks_ending_return_statement_and_return_type_does_not_include_nil_2366", text: "Function lacks ending return statement and return type does not include 'nil'."}
 
 var This_comparison_appears_to_be_unintentional_because_the_types_0_and_1_have_no_overlap = &Message{code: 2367, category: CategoryError, key: "This_comparison_appears_to_be_unintentional_because_the_types_0_and_1_have_no_overlap_2367", text: "This comparison appears to be unintentional because the types '{0}' and '{1}' have no overlap."}
 
@@ -1092,7 +1092,7 @@ var Parameter_0_cannot_reference_identifier_1_declared_after_it = &Message{code:
 
 var Duplicate_index_signature_for_type_0 = &Message{code: 2374, category: CategoryError, key: "Duplicate_index_signature_for_type_0_2374", text: "Duplicate index signature for type '{0}'."}
 
-var Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties = &Message{code: 2375, category: CategoryError, key: "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefi_2375", text: "Type '{0}' is not assignable to type '{1}' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties."}
+var Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_types_of_the_target_s_properties = &Message{code: 2375, category: CategoryError, key: "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_2375", text: "Type '{0}' is not assignable to type '{1}' with 'exactOptionalPropertyTypes: true'. Consider adding 'nil' to the types of the target's properties."}
 
 var A_super_call_must_be_the_first_statement_in_the_constructor_to_refer_to_super_or_this_when_a_derived_class_contains_initialized_properties_parameter_properties_or_private_identifiers = &Message{code: 2376, category: CategoryError, key: "A_super_call_must_be_the_first_statement_in_the_constructor_to_refer_to_super_or_this_when_a_derived_2376", text: "A 'super' call must be the first statement in the constructor to refer to 'super' or 'this' when a derived class contains initialized properties, parameter properties, or private identifiers."}
 
@@ -1100,7 +1100,7 @@ var Constructors_for_derived_classes_must_contain_a_super_call = &Message{code: 
 
 var A_get_accessor_must_return_a_value = &Message{code: 2378, category: CategoryError, key: "A_get_accessor_must_return_a_value_2378", text: "A 'get' accessor must return a value."}
 
-var Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties = &Message{code: 2379, category: CategoryError, key: "Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_tr_2379", text: "Argument of type '{0}' is not assignable to parameter of type '{1}' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties."}
+var Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_types_of_the_target_s_properties = &Message{code: 2379, category: CategoryError, key: "Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_tr_2379", text: "Argument of type '{0}' is not assignable to parameter of type '{1}' with 'exactOptionalPropertyTypes: true'. Consider adding 'nil' to the types of the target's properties."}
 
 var Overload_signatures_must_all_be_exported_or_non_exported = &Message{code: 2383, category: CategoryError, key: "Overload_signatures_must_all_be_exported_or_non_exported_2383", text: "Overload signatures must all be exported or non-exported."}
 
@@ -1160,7 +1160,7 @@ var The_with_statement_is_not_supported_All_symbols_in_a_with_block_will_have_ty
 
 var Property_0_of_type_1_is_not_assignable_to_2_index_type_3 = &Message{code: 2411, category: CategoryError, key: "Property_0_of_type_1_is_not_assignable_to_2_index_type_3_2411", text: "Property '{0}' of type '{1}' is not assignable to '{2}' index type '{3}'."}
 
-var Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target = &Message{code: 2412, category: CategoryError, key: "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefi_2412", text: "Type '{0}' is not assignable to type '{1}' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the type of the target."}
+var Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_type_of_the_target = &Message{code: 2412, category: CategoryError, key: "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_2412", text: "Type '{0}' is not assignable to type '{1}' with 'exactOptionalPropertyTypes: true'. Consider adding 'nil' to the type of the target."}
 
 var X_0_index_type_1_is_not_assignable_to_2_index_type_3 = &Message{code: 2413, category: CategoryError, key: "_0_index_type_1_is_not_assignable_to_2_index_type_3_2413", text: "'{0}' index type '{1}' is not assignable to '{2}' index type '{3}'."}
 
@@ -1372,11 +1372,7 @@ var Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_modu
 
 var Property_0_is_incompatible_with_index_signature = &Message{code: 2530, category: CategoryError, key: "Property_0_is_incompatible_with_index_signature_2530", text: "Property '{0}' is incompatible with index signature."}
 
-var Object_is_possibly_null = &Message{code: 2531, category: CategoryError, key: "Object_is_possibly_null_2531", text: "Object is possibly 'null'."}
-
 var Object_is_possibly_nil = &Message{code: 2532, category: CategoryError, key: "Object_is_possibly_nil_2532", text: "Object is possibly 'nil'."}
-
-var Object_is_possibly_null_or_undefined = &Message{code: 2533, category: CategoryError, key: "Object_is_possibly_null_or_undefined_2533", text: "Object is possibly 'null' or 'undefined'."}
 
 var A_function_returning_never_cannot_have_a_reachable_end_point = &Message{code: 2534, category: CategoryError, key: "A_function_returning_never_cannot_have_a_reachable_end_point_2534", text: "A function returning 'never' cannot have a reachable end point."}
 
@@ -1682,11 +1678,7 @@ var Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_
 
 var Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass = &Message{code: 2720, category: CategoryError, key: "Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclas_2720", text: "Class '{0}' incorrectly implements class '{1}'. Did you mean to extend '{1}' and inherit its members as a subclass?"}
 
-var Cannot_invoke_an_object_which_is_possibly_null = &Message{code: 2721, category: CategoryError, key: "Cannot_invoke_an_object_which_is_possibly_null_2721", text: "Cannot invoke an object which is possibly 'null'."}
-
 var Cannot_invoke_an_object_which_is_possibly_nil = &Message{code: 2722, category: CategoryError, key: "Cannot_invoke_an_object_which_is_possibly_nil_2722", text: "Cannot invoke an object which is possibly 'nil'."}
-
-var Cannot_invoke_an_object_which_is_possibly_null_or_undefined = &Message{code: 2723, category: CategoryError, key: "Cannot_invoke_an_object_which_is_possibly_null_or_undefined_2723", text: "Cannot invoke an object which is possibly 'null' or 'undefined'."}
 
 var X_0_has_no_exported_member_named_1_Did_you_mean_2 = &Message{code: 2724, category: CategoryError, key: "_0_has_no_exported_member_named_1_Did_you_mean_2_2724", text: "'{0}' has no exported member named '{1}'. Did you mean '{2}'?"}
 
@@ -1901,10 +1893,6 @@ var A_declaration_file_cannot_be_imported_without_import_type_Did_you_mean_to_im
 var The_right_hand_side_of_an_instanceof_expression_must_not_be_an_instantiation_expression = &Message{code: 2848, category: CategoryError, key: "The_right_hand_side_of_an_instanceof_expression_must_not_be_an_instantiation_expression_2848", text: "The right-hand side of an 'instanceof' expression must not be an instantiation expression."}
 
 var Target_signature_provides_too_few_arguments_Expected_0_or_more_but_got_1 = &Message{code: 2849, category: CategoryError, key: "Target_signature_provides_too_few_arguments_Expected_0_or_more_but_got_1_2849", text: "Target signature provides too few arguments. Expected {0} or more, but got {1}."}
-
-var The_initializer_of_a_using_declaration_must_be_either_an_object_with_a_Symbol_dispose_method_or_be_null_or_undefined = &Message{code: 2850, category: CategoryError, key: "The_initializer_of_a_using_declaration_must_be_either_an_object_with_a_Symbol_dispose_method_or_be_n_2850", text: "The initializer of a 'using' declaration must be either an object with a '[Symbol.dispose]()' method, or be 'null' or 'undefined'."}
-
-var The_initializer_of_an_await_using_declaration_must_be_either_an_object_with_a_Symbol_asyncDispose_or_Symbol_dispose_method_or_be_null_or_undefined = &Message{code: 2851, category: CategoryError, key: "The_initializer_of_an_await_using_declaration_must_be_either_an_object_with_a_Symbol_asyncDispose_or_2851", text: "The initializer of an 'await using' declaration must be either an object with a '[Symbol.asyncDispose]()' or '[Symbol.dispose]()' method, or be 'null' or 'undefined'."}
 
 var X_await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules = &Message{code: 2852, category: CategoryError, key: "await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules_2852", text: "'await using' statements are only allowed within async functions and at the top levels of modules."}
 
@@ -2508,8 +2496,6 @@ var Module_resolution_using_rootDirs_has_failed = &Message{code: 6111, category:
 
 var Do_not_emit_use_strict_directives_in_module_output = &Message{code: 6112, category: CategoryMessage, key: "Do_not_emit_use_strict_directives_in_module_output_6112", text: "Do not emit 'use strict' directives in module output."}
 
-var Enable_strict_null_checks = &Message{code: 6113, category: CategoryMessage, key: "Enable_strict_null_checks_6113", text: "Enable strict null checks."}
-
 var Unknown_option_excludes_Did_you_mean_exclude = &Message{code: 6114, category: CategoryError, key: "Unknown_option_excludes_Did_you_mean_exclude_6114", text: "Unknown option 'excludes'. Did you mean 'exclude'?"}
 
 var Raise_error_on_this_expressions_with_an_implied_any_type = &Message{code: 6115, category: CategoryMessage, key: "Raise_error_on_this_expressions_with_an_implied_any_type_6115", text: "Raise error on 'this' expressions with an implied 'any' type."}
@@ -2728,7 +2714,7 @@ var Resolution_for_type_reference_directive_0_was_found_in_cache_from_location_1
 
 var Resolving_type_reference_directive_0_containing_file_1 = &Message{code: 6242, category: CategoryMessage, key: "Resolving_type_reference_directive_0_containing_file_1_6242", text: "======== Resolving type reference directive '{0}', containing file '{1}'. ========"}
 
-var Interpret_optional_property_types_as_written_rather_than_adding_undefined = &Message{code: 6243, category: CategoryMessage, key: "Interpret_optional_property_types_as_written_rather_than_adding_undefined_6243", text: "Interpret optional property types as written, rather than adding 'undefined'."}
+var Interpret_optional_property_types_as_written_rather_than_adding_nil = &Message{code: 6243, category: CategoryMessage, key: "Interpret_optional_property_types_as_written_rather_than_adding_nil_6243", text: "Interpret optional property types as written, rather than adding 'nil'."}
 
 var Modules = &Message{code: 6244, category: CategoryMessage, key: "Modules_6244", text: "Modules"}
 
@@ -3166,7 +3152,7 @@ var Check_that_the_arguments_for_bind_call_and_apply_methods_match_the_original_
 
 var When_assigning_functions_check_to_ensure_parameters_and_the_return_values_are_subtype_compatible = &Message{code: 6698, category: CategoryMessage, key: "When_assigning_functions_check_to_ensure_parameters_and_the_return_values_are_subtype_compatible_6698", text: "When assigning functions, check to ensure parameters and the return values are subtype-compatible."}
 
-var When_type_checking_take_into_account_null_and_undefined = &Message{code: 6699, category: CategoryMessage, key: "When_type_checking_take_into_account_null_and_undefined_6699", text: "When type checking, take into account 'null' and 'undefined'."}
+var When_type_checking_take_into_account_nil = &Message{code: 6699, category: CategoryMessage, key: "When_type_checking_take_into_account_nil_6699", text: "When type checking, take into account 'nil'."}
 
 var Check_for_class_properties_that_are_declared_but_not_set_in_the_constructor = &Message{code: 6700, category: CategoryMessage, key: "Check_for_class_properties_that_are_declared_but_not_set_in_the_constructor_6700", text: "Check for class properties that are declared but not set in the constructor."}
 
@@ -3204,7 +3190,7 @@ var Specify_emit_Slashchecking_behavior_for_imports_that_are_only_used_for_types
 
 var Require_sufficient_annotation_on_exports_so_other_tools_can_trivially_generate_declaration_files = &Message{code: 6719, category: CategoryMessage, key: "Require_sufficient_annotation_on_exports_so_other_tools_can_trivially_generate_declaration_files_6719", text: "Require sufficient annotation on exports so other tools can trivially generate declaration files."}
 
-var Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any = &Message{code: 6720, category: CategoryMessage, key: "Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any_6720", text: "Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'."}
+var Built_in_iterators_are_instantiated_with_a_TReturn_type_of_nil_instead_of_any = &Message{code: 6720, category: CategoryMessage, key: "Built_in_iterators_are_instantiated_with_a_TReturn_type_of_nil_instead_of_any_6720", text: "Built-in iterators are instantiated with a 'TReturn' type of 'nil' instead of 'any'."}
 
 var Do_not_allow_runtime_constructs_that_are_not_part_of_ECMAScript = &Message{code: 6721, category: CategoryMessage, key: "Do_not_allow_runtime_constructs_that_are_not_part_of_ECMAScript_6721", text: "Do not allow runtime constructs that are not part of ECMAScript."}
 
@@ -3504,7 +3490,7 @@ var Inference_from_class_expressions_is_not_supported_with_isolatedDeclarations 
 
 var Assigning_properties_to_functions_without_declaring_them_is_not_supported_with_isolatedDeclarations_Add_an_explicit_declaration_for_the_properties_assigned_to_this_function = &Message{code: 9023, category: CategoryError, key: "Assigning_properties_to_functions_without_declaring_them_is_not_supported_with_isolatedDeclarations__9023", text: "Assigning properties to functions without declaring them is not supported with --isolatedDeclarations. Add an explicit declaration for the properties assigned to this function."}
 
-var Declaration_emit_for_this_parameter_requires_implicitly_adding_undefined_to_its_type_This_is_not_supported_with_isolatedDeclarations = &Message{code: 9025, category: CategoryError, key: "Declaration_emit_for_this_parameter_requires_implicitly_adding_undefined_to_its_type_This_is_not_sup_9025", text: "Declaration emit for this parameter requires implicitly adding undefined to its type. This is not supported with --isolatedDeclarations."}
+var Declaration_emit_for_this_parameter_requires_implicitly_adding_nil_to_its_type_This_is_not_supported_with_isolatedDeclarations = &Message{code: 9025, category: CategoryError, key: "Declaration_emit_for_this_parameter_requires_implicitly_adding_nil_to_its_type_This_is_not_supported_9025", text: "Declaration emit for this parameter requires implicitly adding nil to its type. This is not supported with --isolatedDeclarations."}
 
 var Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_supported_with_isolatedDeclarations = &Message{code: 9026, category: CategoryError, key: "Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_support_9026", text: "Declaration emit for this file requires preserving this import for augmentations. This is not supported with --isolatedDeclarations."}
 
@@ -3533,8 +3519,6 @@ var Default_exports_can_t_be_inferred_with_isolatedDeclarations = &Message{code:
 var Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations = &Message{code: 9038, category: CategoryError, key: "Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations_9038", text: "Computed property names on class or object literals cannot be inferred with --isolatedDeclarations."}
 
 var Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations = &Message{code: 9039, category: CategoryError, key: "Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations_9039", text: "Type containing private name '{0}' can't be used with --isolatedDeclarations."}
-
-var A_constructor_cannot_contain_a_super_call_when_its_class_extends_null = &Message{code: 17005, category: CategoryError, key: "A_constructor_cannot_contain_a_super_call_when_its_class_extends_null_17005", text: "A constructor cannot contain a 'super' call when its class extends 'null'."}
 
 var An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses = &Message{code: 17006, category: CategoryError, key: "An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_ex_17006", text: "An unary expression with the '{0}' operator is not allowed in the left-hand side of an exponentiation expression. Consider enclosing the expression in parentheses."}
 
@@ -3628,11 +3612,7 @@ var Properties_with_the_accessor_modifier_are_only_available_when_targeting_ECMA
 
 var X_0_is_of_type_unknown = &Message{code: 18046, category: CategoryError, key: "_0_is_of_type_unknown_18046", text: "'{0}' is of type 'unknown'."}
 
-var X_0_is_possibly_null = &Message{code: 18047, category: CategoryError, key: "_0_is_possibly_null_18047", text: "'{0}' is possibly 'null'."}
-
 var X_0_is_possibly_nil = &Message{code: 18048, category: CategoryError, key: "_0_is_possibly_nil_18048", text: "'{0}' is possibly 'nil'."}
-
-var X_0_is_possibly_null_or_undefined = &Message{code: 18049, category: CategoryError, key: "_0_is_possibly_null_or_undefined_18049", text: "'{0}' is possibly 'null' or 'undefined'."}
 
 var The_value_0_cannot_be_used_here = &Message{code: 18050, category: CategoryError, key: "The_value_0_cannot_be_used_here_18050", text: "The value '{0}' cannot be used here."}
 
@@ -3816,8 +3796,6 @@ var Use_synthetic_default_member = &Message{code: 95016, category: CategoryMessa
 
 var Convert_to_ES_module = &Message{code: 95017, category: CategoryMessage, key: "Convert_to_ES_module_95017", text: "Convert to ES module"}
 
-var Add_undefined_type_to_property_0 = &Message{code: 95018, category: CategoryMessage, key: "Add_undefined_type_to_property_0_95018", text: "Add 'undefined' type to property '{0}'"}
-
 var Add_initializer_to_property_0 = &Message{code: 95019, category: CategoryMessage, key: "Add_initializer_to_property_0_95019", text: "Add initializer to property '{0}'"}
 
 var Add_definite_assignment_assertion_to_property_0 = &Message{code: 95020, category: CategoryMessage, key: "Add_definite_assignment_assertion_to_property_0_95020", text: "Add definite assignment assertion to property '{0}'"}
@@ -3838,11 +3816,7 @@ var Add_initializers_to_all_uninitialized_properties = &Message{code: 95027, cat
 
 var Add_definite_assignment_assertions_to_all_uninitialized_properties = &Message{code: 95028, category: CategoryMessage, key: "Add_definite_assignment_assertions_to_all_uninitialized_properties_95028", text: "Add definite assignment assertions to all uninitialized properties"}
 
-var Add_undefined_type_to_all_uninitialized_properties = &Message{code: 95029, category: CategoryMessage, key: "Add_undefined_type_to_all_uninitialized_properties_95029", text: "Add undefined type to all uninitialized properties"}
-
 var Change_all_jsdoc_style_types_to_tlua = &Message{code: 95030, category: CategoryMessage, key: "Change_all_jsdoc_style_types_to_tlua_95030", text: "Change all jsdoc-style types to tlua"}
-
-var Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types = &Message{code: 95031, category: CategoryMessage, key: "Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types_95031", text: "Change all jsdoc-style types to tlua (and add '| undefined' to nullable types)"}
 
 var Implement_all_unimplemented_interfaces = &Message{code: 95032, category: CategoryMessage, key: "Implement_all_unimplemented_interfaces_95032", text: "Implement all unimplemented interfaces"}
 
@@ -4106,8 +4080,6 @@ var Add_missing_attributes = &Message{code: 95167, category: CategoryMessage, ke
 
 var Add_all_missing_attributes = &Message{code: 95168, category: CategoryMessage, key: "Add_all_missing_attributes_95168", text: "Add all missing attributes"}
 
-var Add_undefined_to_optional_property_type = &Message{code: 95169, category: CategoryMessage, key: "Add_undefined_to_optional_property_type_95169", text: "Add 'undefined' to optional property type"}
-
 var Convert_named_imports_to_default_import = &Message{code: 95170, category: CategoryMessage, key: "Convert_named_imports_to_default_import_95170", text: "Convert named imports to default import"}
 
 var Delete_unused_param_tag_0 = &Message{code: 95171, category: CategoryMessage, key: "Delete_unused_param_tag_0_95171", text: "Delete unused '@param' tag '{0}'"}
@@ -4272,11 +4244,13 @@ var Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name
 
 var A_self_type_is_available_only_in_a_member_of_an_interface = &Message{code: 100056, category: CategoryError, key: "A_self_type_is_available_only_in_a_member_of_an_interface_100056", text: "A 'self' type is available only in a member of an interface."}
 
-var Incomplete_statement_expected_assignment_or_a_function_call = &Message{code: 100057, category: CategoryError, key: "Incomplete_statement_expected_assignment_or_a_function_call_100057", text: "Incomplete statement: expected assignment or a function call."}
+var Incomplete_statement_Colon_expected_assignment_or_a_function_call = &Message{code: 100057, category: CategoryError, key: "Incomplete_statement_Colon_expected_assignment_or_a_function_call_100057", text: "Incomplete statement: expected assignment or a function call."}
 
 var Did_you_mean_to_mark_this_function_as_suspend = &Message{code: 100058, category: CategoryError, key: "Did_you_mean_to_mark_this_function_as_suspend_100058", text: "Did you mean to mark this function as 'suspend'?"}
 
 var A_const_modifier_cannot_appear_on_a_generic_pack_parameter = &Message{code: 100059, category: CategoryError, key: "A_const_modifier_cannot_appear_on_a_generic_pack_parameter_100059", text: "A 'const' modifier cannot appear on a generic pack parameter."}
+
+var This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called = &Message{code: 100060, category: CategoryError, key: "This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called_100060", text: "This expression must be parenthesized before it can be indexed or called."}
 
 func keyToMessage(key Key) *Message {
 	switch key {
@@ -5334,8 +5308,8 @@ func keyToMessage(key Key) *Message {
 		return Object_literal_may_only_specify_known_properties_and_0_does_not_exist_in_type_1
 	case "This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found_2354":
 		return This_syntax_requires_an_imported_helper_but_module_0_cannot_be_found
-	case "A_function_whose_declared_type_is_neither_undefined_void_nor_any_must_return_a_value_2355":
-		return A_function_whose_declared_type_is_neither_undefined_void_nor_any_must_return_a_value
+	case "A_function_whose_declared_type_is_neither_nil_void_nor_any_must_return_a_value_2355":
+		return A_function_whose_declared_type_is_neither_nil_void_nor_any_must_return_a_value
 	case "An_arithmetic_operand_must_be_of_type_any_number_bigint_or_an_enum_type_2356":
 		return An_arithmetic_operand_must_be_of_type_any_number_bigint_or_an_enum_type
 	case "The_operand_of_an_increment_or_decrement_operator_must_be_a_variable_or_a_property_access_2357":
@@ -5352,8 +5326,8 @@ func keyToMessage(key Key) *Message {
 		return The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access
 	case "Operator_0_cannot_be_applied_to_types_1_and_2_2365":
 		return Operator_0_cannot_be_applied_to_types_1_and_2
-	case "Function_lacks_ending_return_statement_and_return_type_does_not_include_undefined_2366":
-		return Function_lacks_ending_return_statement_and_return_type_does_not_include_undefined
+	case "Function_lacks_ending_return_statement_and_return_type_does_not_include_nil_2366":
+		return Function_lacks_ending_return_statement_and_return_type_does_not_include_nil
 	case "This_comparison_appears_to_be_unintentional_because_the_types_0_and_1_have_no_overlap_2367":
 		return This_comparison_appears_to_be_unintentional_because_the_types_0_and_1_have_no_overlap
 	case "Type_parameter_name_cannot_be_0_2368":
@@ -5370,8 +5344,8 @@ func keyToMessage(key Key) *Message {
 		return Parameter_0_cannot_reference_identifier_1_declared_after_it
 	case "Duplicate_index_signature_for_type_0_2374":
 		return Duplicate_index_signature_for_type_0
-	case "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefi_2375":
-		return Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties
+	case "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_2375":
+		return Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_types_of_the_target_s_properties
 	case "A_super_call_must_be_the_first_statement_in_the_constructor_to_refer_to_super_or_this_when_a_derived_2376":
 		return A_super_call_must_be_the_first_statement_in_the_constructor_to_refer_to_super_or_this_when_a_derived_class_contains_initialized_properties_parameter_properties_or_private_identifiers
 	case "Constructors_for_derived_classes_must_contain_a_super_call_2377":
@@ -5379,7 +5353,7 @@ func keyToMessage(key Key) *Message {
 	case "A_get_accessor_must_return_a_value_2378":
 		return A_get_accessor_must_return_a_value
 	case "Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_tr_2379":
-		return Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties
+		return Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_types_of_the_target_s_properties
 	case "Overload_signatures_must_all_be_exported_or_non_exported_2383":
 		return Overload_signatures_must_all_be_exported_or_non_exported
 	case "Overload_signatures_must_all_be_ambient_or_non_ambient_2384":
@@ -5438,8 +5412,8 @@ func keyToMessage(key Key) *Message {
 		return The_with_statement_is_not_supported_All_symbols_in_a_with_block_will_have_type_any
 	case "Property_0_of_type_1_is_not_assignable_to_2_index_type_3_2411":
 		return Property_0_of_type_1_is_not_assignable_to_2_index_type_3
-	case "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefi_2412":
-		return Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target
+	case "Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_2412":
+		return Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_type_of_the_target
 	case "_0_index_type_1_is_not_assignable_to_2_index_type_3_2413":
 		return X_0_index_type_1_is_not_assignable_to_2_index_type_3
 	case "Class_name_cannot_be_0_2414":
@@ -5650,12 +5624,8 @@ func keyToMessage(key Key) *Message {
 		return Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module_containing_async_functions
 	case "Property_0_is_incompatible_with_index_signature_2530":
 		return Property_0_is_incompatible_with_index_signature
-	case "Object_is_possibly_null_2531":
-		return Object_is_possibly_null
 	case "Object_is_possibly_nil_2532":
 		return Object_is_possibly_nil
-	case "Object_is_possibly_null_or_undefined_2533":
-		return Object_is_possibly_null_or_undefined
 	case "A_function_returning_never_cannot_have_a_reachable_end_point_2534":
 		return A_function_returning_never_cannot_have_a_reachable_end_point
 	case "Type_0_cannot_be_used_to_index_type_1_2536":
@@ -5960,12 +5930,8 @@ func keyToMessage(key Key) *Message {
 		return Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_but_they_are_unrelated
 	case "Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclas_2720":
 		return Class_0_incorrectly_implements_class_1_Did_you_mean_to_extend_1_and_inherit_its_members_as_a_subclass
-	case "Cannot_invoke_an_object_which_is_possibly_null_2721":
-		return Cannot_invoke_an_object_which_is_possibly_null
 	case "Cannot_invoke_an_object_which_is_possibly_nil_2722":
 		return Cannot_invoke_an_object_which_is_possibly_nil
-	case "Cannot_invoke_an_object_which_is_possibly_null_or_undefined_2723":
-		return Cannot_invoke_an_object_which_is_possibly_null_or_undefined
 	case "_0_has_no_exported_member_named_1_Did_you_mean_2_2724":
 		return X_0_has_no_exported_member_named_1_Did_you_mean_2
 	case "Class_name_cannot_be_Object_when_targeting_ES5_and_above_with_module_0_2725":
@@ -6180,10 +6146,6 @@ func keyToMessage(key Key) *Message {
 		return The_right_hand_side_of_an_instanceof_expression_must_not_be_an_instantiation_expression
 	case "Target_signature_provides_too_few_arguments_Expected_0_or_more_but_got_1_2849":
 		return Target_signature_provides_too_few_arguments_Expected_0_or_more_but_got_1
-	case "The_initializer_of_a_using_declaration_must_be_either_an_object_with_a_Symbol_dispose_method_or_be_n_2850":
-		return The_initializer_of_a_using_declaration_must_be_either_an_object_with_a_Symbol_dispose_method_or_be_null_or_undefined
-	case "The_initializer_of_an_await_using_declaration_must_be_either_an_object_with_a_Symbol_asyncDispose_or_2851":
-		return The_initializer_of_an_await_using_declaration_must_be_either_an_object_with_a_Symbol_asyncDispose_or_Symbol_dispose_method_or_be_null_or_undefined
 	case "await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules_2852":
 		return X_await_using_statements_are_only_allowed_within_async_functions_and_at_the_top_levels_of_modules
 	case "await_using_statements_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_th_2853":
@@ -6786,8 +6748,6 @@ func keyToMessage(key Key) *Message {
 		return Module_resolution_using_rootDirs_has_failed
 	case "Do_not_emit_use_strict_directives_in_module_output_6112":
 		return Do_not_emit_use_strict_directives_in_module_output
-	case "Enable_strict_null_checks_6113":
-		return Enable_strict_null_checks
 	case "Unknown_option_excludes_Did_you_mean_exclude_6114":
 		return Unknown_option_excludes_Did_you_mean_exclude
 	case "Raise_error_on_this_expressions_with_an_implied_any_type_6115":
@@ -7006,8 +6966,8 @@ func keyToMessage(key Key) *Message {
 		return Resolution_for_type_reference_directive_0_was_found_in_cache_from_location_1
 	case "Resolving_type_reference_directive_0_containing_file_1_6242":
 		return Resolving_type_reference_directive_0_containing_file_1
-	case "Interpret_optional_property_types_as_written_rather_than_adding_undefined_6243":
-		return Interpret_optional_property_types_as_written_rather_than_adding_undefined
+	case "Interpret_optional_property_types_as_written_rather_than_adding_nil_6243":
+		return Interpret_optional_property_types_as_written_rather_than_adding_nil
 	case "Modules_6244":
 		return Modules
 	case "File_Management_6245":
@@ -7444,8 +7404,8 @@ func keyToMessage(key Key) *Message {
 		return Check_that_the_arguments_for_bind_call_and_apply_methods_match_the_original_function
 	case "When_assigning_functions_check_to_ensure_parameters_and_the_return_values_are_subtype_compatible_6698":
 		return When_assigning_functions_check_to_ensure_parameters_and_the_return_values_are_subtype_compatible
-	case "When_type_checking_take_into_account_null_and_undefined_6699":
-		return When_type_checking_take_into_account_null_and_undefined
+	case "When_type_checking_take_into_account_nil_6699":
+		return When_type_checking_take_into_account_nil
 	case "Check_for_class_properties_that_are_declared_but_not_set_in_the_constructor_6700":
 		return Check_for_class_properties_that_are_declared_but_not_set_in_the_constructor
 	case "Disable_emitting_declarations_that_have_internal_in_their_JSDoc_comments_6701":
@@ -7482,8 +7442,8 @@ func keyToMessage(key Key) *Message {
 		return Specify_emit_Slashchecking_behavior_for_imports_that_are_only_used_for_types
 	case "Require_sufficient_annotation_on_exports_so_other_tools_can_trivially_generate_declaration_files_6719":
 		return Require_sufficient_annotation_on_exports_so_other_tools_can_trivially_generate_declaration_files
-	case "Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any_6720":
-		return Built_in_iterators_are_instantiated_with_a_TReturn_type_of_undefined_instead_of_any
+	case "Built_in_iterators_are_instantiated_with_a_TReturn_type_of_nil_instead_of_any_6720":
+		return Built_in_iterators_are_instantiated_with_a_TReturn_type_of_nil_instead_of_any
 	case "Do_not_allow_runtime_constructs_that_are_not_part_of_ECMAScript_6721":
 		return Do_not_allow_runtime_constructs_that_are_not_part_of_ECMAScript
 	case "Default_catch_clause_variables_as_unknown_instead_of_any_6803":
@@ -7782,8 +7742,8 @@ func keyToMessage(key Key) *Message {
 		return Inference_from_class_expressions_is_not_supported_with_isolatedDeclarations
 	case "Assigning_properties_to_functions_without_declaring_them_is_not_supported_with_isolatedDeclarations__9023":
 		return Assigning_properties_to_functions_without_declaring_them_is_not_supported_with_isolatedDeclarations_Add_an_explicit_declaration_for_the_properties_assigned_to_this_function
-	case "Declaration_emit_for_this_parameter_requires_implicitly_adding_undefined_to_its_type_This_is_not_sup_9025":
-		return Declaration_emit_for_this_parameter_requires_implicitly_adding_undefined_to_its_type_This_is_not_supported_with_isolatedDeclarations
+	case "Declaration_emit_for_this_parameter_requires_implicitly_adding_nil_to_its_type_This_is_not_supported_9025":
+		return Declaration_emit_for_this_parameter_requires_implicitly_adding_nil_to_its_type_This_is_not_supported_with_isolatedDeclarations
 	case "Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_support_9026":
 		return Declaration_emit_for_this_file_requires_preserving_this_import_for_augmentations_This_is_not_supported_with_isolatedDeclarations
 	case "Add_a_type_annotation_to_the_variable_0_9027":
@@ -7812,8 +7772,6 @@ func keyToMessage(key Key) *Message {
 		return Computed_property_names_on_class_or_object_literals_cannot_be_inferred_with_isolatedDeclarations
 	case "Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations_9039":
 		return Type_containing_private_name_0_can_t_be_used_with_isolatedDeclarations
-	case "A_constructor_cannot_contain_a_super_call_when_its_class_extends_null_17005":
-		return A_constructor_cannot_contain_a_super_call_when_its_class_extends_null
 	case "An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_ex_17006":
 		return An_unary_expression_with_the_0_operator_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Consider_enclosing_the_expression_in_parentheses
 	case "A_type_assertion_expression_is_not_allowed_in_the_left_hand_side_of_an_exponentiation_expression_Con_17007":
@@ -7906,12 +7864,8 @@ func keyToMessage(key Key) *Message {
 		return Properties_with_the_accessor_modifier_are_only_available_when_targeting_ECMAScript_2015_and_higher
 	case "_0_is_of_type_unknown_18046":
 		return X_0_is_of_type_unknown
-	case "_0_is_possibly_null_18047":
-		return X_0_is_possibly_null
 	case "_0_is_possibly_nil_18048":
 		return X_0_is_possibly_nil
-	case "_0_is_possibly_null_or_undefined_18049":
-		return X_0_is_possibly_null_or_undefined
 	case "The_value_0_cannot_be_used_here_18050":
 		return The_value_0_cannot_be_used_here
 	case "Compiler_option_0_cannot_be_given_an_empty_string_18051":
@@ -8094,8 +8048,6 @@ func keyToMessage(key Key) *Message {
 		return Use_synthetic_default_member
 	case "Convert_to_ES_module_95017":
 		return Convert_to_ES_module
-	case "Add_undefined_type_to_property_0_95018":
-		return Add_undefined_type_to_property_0
 	case "Add_initializer_to_property_0_95019":
 		return Add_initializer_to_property_0
 	case "Add_definite_assignment_assertion_to_property_0_95020":
@@ -8116,12 +8068,8 @@ func keyToMessage(key Key) *Message {
 		return Add_initializers_to_all_uninitialized_properties
 	case "Add_definite_assignment_assertions_to_all_uninitialized_properties_95028":
 		return Add_definite_assignment_assertions_to_all_uninitialized_properties
-	case "Add_undefined_type_to_all_uninitialized_properties_95029":
-		return Add_undefined_type_to_all_uninitialized_properties
 	case "Change_all_jsdoc_style_types_to_tlua_95030":
 		return Change_all_jsdoc_style_types_to_tlua
-	case "Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types_95031":
-		return Change_all_jsdoc_style_types_to_tlua_and_add_undefined_to_nullable_types
 	case "Implement_all_unimplemented_interfaces_95032":
 		return Implement_all_unimplemented_interfaces
 	case "Install_all_missing_types_packages_95033":
@@ -8384,8 +8332,6 @@ func keyToMessage(key Key) *Message {
 		return Add_missing_attributes
 	case "Add_all_missing_attributes_95168":
 		return Add_all_missing_attributes
-	case "Add_undefined_to_optional_property_type_95169":
-		return Add_undefined_to_optional_property_type
 	case "Convert_named_imports_to_default_import_95170":
 		return Convert_named_imports_to_default_import
 	case "Delete_unused_param_tag_0_95171":
@@ -8550,12 +8496,14 @@ func keyToMessage(key Key) *Message {
 		return Module_name_0_resolves_to_the_same_file_as_1_a_module_has_one_canonical_name
 	case "A_self_type_is_available_only_in_a_member_of_an_interface_100056":
 		return A_self_type_is_available_only_in_a_member_of_an_interface
-	case "Incomplete_statement_expected_assignment_or_a_function_call_100057":
-		return Incomplete_statement_expected_assignment_or_a_function_call
+	case "Incomplete_statement_Colon_expected_assignment_or_a_function_call_100057":
+		return Incomplete_statement_Colon_expected_assignment_or_a_function_call
 	case "Did_you_mean_to_mark_this_function_as_suspend_100058":
 		return Did_you_mean_to_mark_this_function_as_suspend
 	case "A_const_modifier_cannot_appear_on_a_generic_pack_parameter_100059":
 		return A_const_modifier_cannot_appear_on_a_generic_pack_parameter
+	case "This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called_100060":
+		return This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called
 	default:
 		return nil
 	}

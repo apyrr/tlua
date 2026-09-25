@@ -11,5 +11,5 @@ function join<T>(l: Recur<T>[]): Recur<T>
 end
 
 function a<T>(l: Recur<T>[]): void
-    local x: Recur<T> | undefined = join(l);
+    local x: Recur<T> | nil = join(l);
 end

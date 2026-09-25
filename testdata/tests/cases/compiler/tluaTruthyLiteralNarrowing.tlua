@@ -1,0 +1,39 @@
+// @strict: true
+// @noEmit: true
+
+// Lua treats only nil and false as falsy, so a string, number, table or function
+// literal is always truthy. In `c and <literal> or y` that makes `y` reachable only
+// when `c` is falsy, which is what lets Lua's ternary idiom narrow.
+
+type U = { op: "a"; name: string } | { op: "b" }
+
+declare function getU(): U;
+
+local u = getU()
+local s: string = u.op == "b" and "b" or u.name
+local n: number | string = u.op == "b" and 0 or u.name
+local e: string = u.op == "b" and "" or u.name
+local tb: table | string = u.op == "b" and {} or u.name
+local fn: function | string = u.op == "b" and function() end or u.name
+local p: string = u.op == "b" and ("b") or u.name
+local neg: number | string = u.op == "b" and -1 or u.name
+local asserted: string = u.op == "b" and ("b" as string) or u.name
+local parenthesized: boolean | string = u.op == "b" and (true) or u.name
+
+// `nil` and `false` are the falsy side: the true branch of `c and nil` is never
+// taken, so the assignment inside it never reaches the read below.
+local v: string | number = "s"
+if u.op == "b" and nil then
+    v = 1
+end
+local onlyString: string = v
+
+// A template string is always a Lua string, so it is always truthy.
+declare function label(): string;
+if `${label()}` then
+end
+
+// A middle operand that may be falsy does not narrow.
+declare function maybeName(): string | nil;
+local bad: string | nil = u.op == "b" and maybeName() or u.name
+

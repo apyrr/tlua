@@ -32,6 +32,7 @@ const (
 	SubtreeContainsIdentifier
 	SubtreeContainsPrivateIdentifierInExpression
 	SubtreeContainsInvalidTemplateEscape
+	SubtreeContainsLuaVararg // marker on a Lua `...` expression - cleared at every function boundary, since each Lua function has its own varargs
 
 	SubtreeFactsComputed              // NOTE: This should always be last
 	SubtreeFactsNone     SubtreeFacts = 0
@@ -55,8 +56,8 @@ const (
 	SubtreeExclusionsOuterExpression         = SubtreeExclusionsNode
 	SubtreeExclusionsPropertyAccess          = SubtreeExclusionsNode
 	SubtreeExclusionsElementAccess           = SubtreeExclusionsNode
-	SubtreeExclusionsArrowFunction           = SubtreeExclusionsNode | SubtreeContainsObjectRestOrSpread
-	SubtreeExclusionsFunction                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread
+	SubtreeExclusionsArrowFunction           = SubtreeExclusionsNode | SubtreeContainsObjectRestOrSpread | SubtreeContainsLuaVararg
+	SubtreeExclusionsFunction                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread | SubtreeContainsLuaVararg
 	SubtreeExclusionsConstructor             = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread
 	SubtreeExclusionsMethod                  = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread
 	SubtreeExclusionsAccessor                = SubtreeExclusionsNode | SubtreeContainsLexicalThis | SubtreeContainsLexicalSuper | SubtreeContainsObjectRestOrSpread

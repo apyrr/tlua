@@ -33,19 +33,21 @@ func TestEmit(t *testing.T) {
 
 		{title: "RegularExpressionLiteral#1", input: `local _ = /a/`, output: `local _ = /a/;`},
 		{title: "RegularExpressionLiteral#2", input: `local _ = /a/g`, output: `local _ = /a/g;`},
-		// `null` is an accepted alias that canonicalizes to `nil`.
-		{title: "NullLiteral", input: `local _ = null`, output: `local _ = nil;`},
+		{title: "NilLiteral", input: `local _ = nil`, output: `local _ = nil;`},
 		{title: "SuperExpression", input: `super()`, output: `super();`},
 		{title: "PropertyAccess#1", input: `local _ = a.b`, output: `local _ = a.b;`},
 		// `#` is the Lua length operator now, not a private-identifier sigil, so
 		// `a.#b` no longer parses; the PrivateIdentifier node survives only for emit.
 		{title: "PropertyAccess#3", input: `local _ = a?.b`, output: `local _ = a?.b;`},
 		{title: "PropertyAccess#4", input: `local _ = a?.b.c`, output: `local _ = a?.b.c;`},
-		{title: "PropertyAccess#5", input: `local _ = 1..b`, output: `local _ = 1..b;`},
-		{title: "PropertyAccess#6", input: `local _ = 1.0.b`, output: `local _ = 1.0.b;`},
-		{title: "PropertyAccess#7", input: `local _ = 0x1.b`, output: `local _ = 0x1.b;`},
-		{title: "PropertyAccess#10", input: `local _ = 10e1.b`, output: `local _ = 10e1.b;`},
-		{title: "PropertyAccess#11", input: `local _ = 10E1.b`, output: `local _ = 10E1.b;`},
+		// Lua lets `.` follow only a prefixexp, so a numeric receiver is written in
+		// parentheses (`1..b` is a concatenation), and its text prints unchanged.
+		{title: "PropertyAccess#5", input: `local _ = (1.).b`, output: `local _ = (1.).b;`},
+		{title: "PropertyAccess#6", input: `local _ = (1.0).b`, output: `local _ = (1.0).b;`},
+		{title: "PropertyAccess#7", input: `local _ = (0x1).b`, output: `local _ = (0x1).b;`},
+		{title: "PropertyAccess#10", input: `local _ = (10e1).b`, output: `local _ = (10e1).b;`},
+		{title: "PropertyAccess#11", input: `local _ = (10E1).b`, output: `local _ = (10E1).b;`},
+		{title: "PropertyAccess#15", input: `local _ = ("x"):upper()`, output: `local _ = ("x"):upper();`},
 		{title: "PropertyAccess#12", input: `local _ = a.b?.c`, output: `local _ = a.b?.c;`},
 		{title: "PropertyAccess#13", input: "local _ = a\n.b", output: "local _ = a\n    .b;"},
 		{title: "PropertyAccess#14", input: "local _ = a.\nb", output: "local _ = a.\n    b;"},
@@ -148,8 +150,6 @@ func TestEmit(t *testing.T) {
 		{title: "KeywordTypeNode#2", input: `type T = unknown`, output: `type T = unknown;`},
 		{title: "KeywordTypeNode#3", input: `type T = never`, output: `type T = never;`},
 		{title: "KeywordTypeNode#4", input: `type T = void`, output: `type T = void;`},
-		{title: "KeywordTypeNode#5", input: `type T = undefined`, output: `type T = nil;`},
-		{title: "KeywordTypeNode#6", input: `type T = null`, output: `type T = nil;`},
 		{title: "KeywordTypeNode#7", input: `type T = object`, output: `type T = object;`},
 		{title: "KeywordTypeNode#8", input: `type T = string`, output: `type T = string;`},
 		{title: "KeywordTypeNode#9", input: `type T = symbol`, output: `type T = symbol;`},
@@ -202,7 +202,7 @@ func TestEmit(t *testing.T) {
 		{title: "MappedTypeNode#7", input: `type T = { [a in b]+?: c }`, output: "type T = {\n    [a in b]+?: c;\n};"},
 		{title: "MappedTypeNode#8", input: `type T = { [a in b]-?: c }`, output: "type T = {\n    [a in b]-?: c;\n};"},
 		{title: "MappedTypeNode#9", input: `type T = { [a in b]: c; d }`, output: "type T = {\n    [a in b]: c;\n    d;\n};"},
-		{title: "LiteralTypeNode#1", input: `type T = null`, output: "type T = nil;"},
+		{title: "LiteralTypeNode#1", input: `type T = nil`, output: "type T = nil;"},
 		{title: "LiteralTypeNode#2", input: `type T = true`, output: "type T = true;"},
 		{title: "LiteralTypeNode#3", input: `type T = false`, output: "type T = false;"},
 		{title: "LiteralTypeNode#4", input: `type T = ""`, output: "type T = \"\";"},
@@ -593,7 +593,8 @@ func TestParenthesizeArrowFunction2(t *testing.T) {
 	// The parens under test are statement-position parens: the lowered arrow prints as a
 	// `function`-initial expression. Initializer position drops them, so this stays a bare
 	// expression statement, whose printed form cannot reparse clean (TLUA100057).
-	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(function() return {}.a end);")
+	// The table constructor is parenthesized too: Lua lets `.` follow only a prefixexp.
+	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "(function() return ({}).a end);")
 }
 
 func isBinaryOperator(token ast.Kind) bool {
@@ -1358,4 +1359,31 @@ func TestPartiallyEmittedExpression(t *testing.T) {
     .left
     .expression
     .expression;`)
+}
+
+// The optional-link slot holds `?.`, or a bare `?` in an optional colon call, and
+// the printer spells the link from the access's meaning rather than from which
+// token the slot holds. A `?` link without a colon -- a tree an API client can
+// build -- is an optional property access, so it prints as `?.`.
+func TestEmitOptionalLinkSpelling(t *testing.T) {
+	t.Parallel()
+
+	var factory ast.NodeFactory
+	access := func(link *ast.Node, colon *ast.Node) *ast.Node {
+		return factory.NewExpressionStatement(factory.NewCallExpression(
+			factory.NewPropertyAccessExpression(factory.NewIdentifier("b"), link, colon, factory.NewIdentifier("m"), ast.NodeFlagsOptionalChain),
+			nil, /*questionDotToken*/
+			nil, /*typeArguments*/
+			factory.NewNodeList([]*ast.Node{}),
+			ast.NodeFlagsOptionalChain,
+		))
+	}
+	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList([]*ast.Node{
+		access(factory.NewToken(ast.KindQuestionToken), factory.NewToken(ast.KindColonToken)),
+		access(factory.NewToken(ast.KindQuestionToken), nil),
+		access(factory.NewToken(ast.KindQuestionDotToken), nil),
+	}), factory.NewToken(ast.KindEndOfFile))
+
+	parsetestutil.MarkSyntheticRecursive(file)
+	emittestutil.CheckEmitJS(t, nil, file.AsSourceFile(), "b?:m();\nb?.m();\nb?.m();")
 }

@@ -4,17 +4,16 @@ tluaControlFlowSyntaxErrors.tlua(3,7): error TLUA1359: Identifier expected. 'unt
 tluaControlFlowSyntaxErrors.tlua(3,13): error TLUA1128: Declaration or statement expected.
 tluaControlFlowSyntaxErrors.tlua(4,10): error TLUA1359: Identifier expected. 'repeat' is a reserved word that cannot be used here.
 tluaControlFlowSyntaxErrors.tlua(4,17): error TLUA1109: Expression expected.
-tluaControlFlowSyntaxErrors.tlua(4,18): error TLUA1005: ';' expected.
-tluaControlFlowSyntaxErrors.tlua(4,20): error TLUA1109: Expression expected.
+tluaControlFlowSyntaxErrors.tlua(4,24): error TLUA1005: '(' expected.
 tluaControlFlowSyntaxErrors.tlua(5,1): error TLUA1128: Declaration or statement expected.
 tluaControlFlowSyntaxErrors.tlua(10,5): error TLUA1005: 'then' expected.
-tluaControlFlowSyntaxErrors.tlua(16,37): error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+tluaControlFlowSyntaxErrors.tlua(16,37): error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
 tluaControlFlowSyntaxErrors.tlua(28,3): error TLUA1128: Declaration or statement expected.
 tluaControlFlowSyntaxErrors.tlua(28,17): error TLUA1005: ';' expected.
 tluaControlFlowSyntaxErrors.tlua(32,1): error TLUA1005: 'end' expected.
 
 
-==== tluaControlFlowSyntaxErrors.tlua (14 errors) ====
+==== tluaControlFlowSyntaxErrors.tlua (13 errors) ====
     // Reserved words cannot be binding names.
     local then = 1;
           ~~~~
@@ -31,10 +30,8 @@ tluaControlFlowSyntaxErrors.tlua(32,1): error TLUA1005: 'end' expected.
 !!! error TLUA1359: Identifier expected. 'repeat' is a reserved word that cannot be used here.
                     ~
 !!! error TLUA1109: Expression expected.
-                     ~
-!!! error TLUA1005: ';' expected.
-                       ~~~~
-!!! error TLUA1109: Expression expected.
+                           
+!!! error TLUA1005: '(' expected.
     end
     ~~~
 !!! error TLUA1128: Declaration or statement expected.
@@ -52,7 +49,7 @@ tluaControlFlowSyntaxErrors.tlua(32,1): error TLUA1005: 'end' expected.
     // Missing `end`.
     function missingEnd(flag: boolean): number
                                         ~~~~~~
-!!! error TLUA2366: Function lacks ending return statement and return type does not include 'undefined'.
+!!! error TLUA2366: Function lacks ending return statement and return type does not include 'nil'.
       if flag then
         return 1;
       return 0;

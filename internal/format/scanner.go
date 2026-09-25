@@ -40,10 +40,12 @@ type formattingScanner struct {
 	wasNewLine       bool
 }
 
-func newFormattingScanner(text string, startPos int, endPos int, worker *formatSpanWorker) []core.TextChange {
+func newFormattingScanner(file *ast.SourceFile, startPos int, endPos int, worker *formatSpanWorker) []core.TextChange {
 	scan := scanner.NewScanner()
 	scan.SetSkipTrivia(false)
-	scan.SetText(text)
+	// Scan the text the way the parser did, so tokens agree with the tree.
+	scan.SetJSON(file.ScriptKind == core.ScriptKindJSON)
+	scan.SetText(file.Text())
 	scan.ResetTokenState(startPos)
 
 	fmtScn := &formattingScanner{

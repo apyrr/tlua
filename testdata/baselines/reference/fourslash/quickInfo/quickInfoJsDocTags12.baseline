@@ -7,7 +7,7 @@
 //  * @param {Function} callback the callback function
 //  * @returns {number}
 //  */
-// function f(options, callback = null) end
+// function f(options, callback = nil) end
 //          ^
 // | ----------------------------------------------------------------------
 // | ```tlua

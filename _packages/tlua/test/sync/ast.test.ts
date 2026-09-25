@@ -4,6 +4,7 @@ import type {
     Identifier,
     Node,
     NodeArray,
+    PropertyAccessExpression,
     SourceFile,
     StringLiteralLikeNode,
     VariableStatement,
@@ -634,6 +635,33 @@ describe("RemoteNode + visitEachChild", () => {
             assert.strictEqual(initializer.kind, SyntaxKind.CallExpression);
             assert.strictEqual((initializer as CallExpression).arguments[0].kind, SyntaxKind.StringLiteral);
             assert.strictEqual(((initializer as CallExpression).arguments[0] as StringLiteralLikeNode).text, "./bar");
+        }
+        finally {
+            api.close();
+        }
+    });
+    test("visits an optional colon call's `?` and `:` tokens", () => {
+        const api = spawnAPI({
+            "/tluaconfig.json": "{}",
+            "/src/index.tlua": `local b: { read: (self: any) => number } | nil = nil\nlocal r = b?:read()\n`,
+        });
+        try {
+            const sf = getRemoteSourceFile(api, "/tluaconfig.json", "/src/index.tlua");
+            const kinds: SyntaxKind[] = [];
+            // A full identity walk runs every child through its slot's type
+            // guard, which is where a `?` in the optional-link slot must pass.
+            const visit = (node: Node): Node => {
+                kinds.push(node.kind);
+                return visitEachChild(node, visit);
+            };
+            const result = visitEachChild(sf.statements[1], visit);
+            assert.strictEqual(result, sf.statements[1]);
+
+            const call = (sf.statements[1] as VariableStatement).declarationList.declarations[0].initializer as CallExpression;
+            const access = call.expression as PropertyAccessExpression;
+            assert.strictEqual(access.questionDotToken?.kind, SyntaxKind.QuestionToken);
+            assert.strictEqual(access.colonToken?.kind, SyntaxKind.ColonToken);
+            assert.ok(kinds.includes(SyntaxKind.QuestionToken));
         }
         finally {
             api.close();

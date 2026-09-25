@@ -2303,25 +2303,39 @@ func (p *Printer) emitObjectLiteralExpression(node *ast.ObjectLiteralExpression)
 	p.exitNode(node.AsNode(), state)
 }
 
-// 1..toString is a valid property access, emit a dot after the literal.
-func (p *Printer) mayNeedDotDotForPropertyAccess(expression *ast.Expression) bool {
-	expression = ast.SkipPartiallyEmittedExpressions(expression)
-	if ast.IsNumericLiteral(expression) {
-		// check if numeric literal is a decimal literal that was originally written with a dot
-		text := p.getLiteralTextOfNode(expression /*sourceFile*/, nil, getLiteralTextFlagsNeverAsciiEscape)
-		// If the number will be printed verbatim and it doesn't already contain a dot or an exponent indicator, add one
-		// if the expression doesn't have any comments that will be emitted.
-		return expression.AsNumericLiteral().TokenFlags&ast.TokenFlagsWithSpecifier == 0 &&
-			!strings.Contains(text, scanner.TokenToString(ast.KindDotToken)) &&
-			!strings.Contains(text, "E") &&
-			!strings.Contains(text, "e")
+// emitLuaPrefixExpression emits the left side of a member access or call. Lua
+// requires a prefixexp there (see ast.IsLuaPrefixExpression), so anything else
+// is parenthesized even where precedence alone would not ask for it: a literal
+// has the highest precedence, yet `"x":upper()` and `1.x` do not parse. The
+// checker reports such source (TLUA100060, a grammar check), so this is for trees
+// the compiler builds -- a receiver the optional-chain lowering copies -- and for
+// emitting source that still has that error. It also retires the JS `1..toString`
+// spelling, which in Lua is a concatenation.
+func (p *Printer) emitLuaPrefixExpression(node *ast.Expression, precedence ast.OperatorPrecedence) {
+	if !ast.IsLuaPrefixExpression(node) && ast.GetExpressionPrecedence(ast.SkipPartiallyEmittedExpressions(node)) >= precedence {
+		p.writePunctuation("(")
+		p.emitExpression(node, precedence)
+		p.writePunctuation(")")
+		return
 	}
-	return false
+	p.emitExpression(node, precedence)
+}
+
+// emitTokenAs prints token spelled as kind. A token that already has that kind is
+// emitted as a node, keeping its comments and emit settings; only a token whose kind
+// does not match what its position means (a `?` link without its colon call, which
+// an API client can build) is spelled from kind at its position.
+func (p *Printer) emitTokenAs(token *ast.TokenNode, kind ast.Kind, contextNode *ast.Node) {
+	if token.Kind == kind {
+		p.emitTokenNode(token)
+		return
+	}
+	p.emitToken(kind, token.Pos(), WriteKindPunctuation, contextNode)
 }
 
 func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpression) {
 	state := p.enterNode(node.AsNode())
-	p.emitExpression(node.Expression, core.IfElse(ast.IsOptionalChain(node.AsNode()), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
+	p.emitLuaPrefixExpression(node.Expression, core.IfElse(ast.IsOptionalChain(node.AsNode()), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
 	token := node.QuestionDotToken
 	if token == nil {
 		// A colon-call access prints its `:` where a plain access prints `.`.
@@ -2335,16 +2349,17 @@ func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpressio
 	linesBeforeDot := p.getLinesBetweenNodes(node.AsNode(), node.Expression, token)
 	p.writeLineRepeat(linesBeforeDot)
 	p.increaseIndentIf(linesBeforeDot > 0)
-	shouldEmitDotDot := token.Kind == ast.KindDotToken &&
-		p.mayNeedDotDotForPropertyAccess(node.Expression) &&
-		!p.writer.HasTrailingComment() &&
-		!p.writer.HasTrailingWhitespace()
-	if shouldEmitDotDot {
-		p.writePunctuation(".")
-	}
-	if node.QuestionDotToken != nil || node.ColonToken != nil {
-		p.emitTokenNode(token)
-	} else {
+	// The link is spelled from what it means, not from which token the slot holds:
+	// the optional-link slot takes `?.` or, in an optional colon call, a bare `?`.
+	switch {
+	case node.ColonToken != nil:
+		if node.QuestionDotToken != nil {
+			p.emitTokenAs(node.QuestionDotToken, ast.KindQuestionToken, node.AsNode())
+		}
+		p.emitTokenNode(node.ColonToken)
+	case node.QuestionDotToken != nil:
+		p.emitTokenAs(node.QuestionDotToken, ast.KindQuestionDotToken, node.AsNode())
+	default:
 		p.emitToken(ast.KindDotToken, node.Expression.End(), WriteKindPunctuation, node.AsNode())
 	}
 	linesAfterDot := p.getLinesBetweenNodes(node.AsNode(), token, node.Name())
@@ -2358,7 +2373,7 @@ func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpressio
 
 func (p *Printer) emitElementAccessExpression(node *ast.ElementAccessExpression) {
 	state := p.enterNode(node.AsNode())
-	p.emitExpression(node.Expression, core.IfElse(ast.IsOptionalChain(node.AsNode()), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
+	p.emitLuaPrefixExpression(node.Expression, core.IfElse(ast.IsOptionalChain(node.AsNode()), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
 	p.emitTokenNode(node.QuestionDotToken)
 	p.emitToken(ast.KindOpenBracketToken, greatestEnd(-1, node.Expression, node.QuestionDotToken), WriteKindPunctuation, node.AsNode())
 	p.emitExpression(node.ArgumentExpression, ast.OperatorPrecedenceComma)
@@ -2379,7 +2394,7 @@ func (p *Printer) emitCallee(callee *ast.Expression, parentNode *ast.Node) {
 		p.emitExpression(callee, ast.OperatorPrecedenceComma)
 		p.writePunctuation(")")
 	} else {
-		p.emitExpression(callee, core.IfElse(ast.IsOptionalChain(parentNode), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
+		p.emitLuaPrefixExpression(callee, core.IfElse(ast.IsOptionalChain(parentNode), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
 	}
 }
 

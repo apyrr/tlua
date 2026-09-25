@@ -16,7 +16,7 @@ interface Container<T> {
     value: T;
     map<U>(fn: (x: T) => U): Container<U>;
 }
-type Nullable<T> = T | null | undefined;
+type Nullable<T> = T | nil;
 
 tlua --generateTrace /home/src/workspaces/project/trace --singleThreaded
 ExitStatus:: DiagnosticsPresent_OutputsSkipped

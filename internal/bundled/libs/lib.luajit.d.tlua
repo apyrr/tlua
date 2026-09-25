@@ -33,14 +33,23 @@ interface LuaUserdata {
 }
 
 // The key ends the iteration, so it is the only result that can be nil. The value is
-// not optional: a Lua table never stores a nil value, so a key the iterator yields
-// always has one, and the loop body does not run on the final `nil` key.
+// never nil: a Lua table never stores a nil value, so a key the iterator yields always
+// has one, and the loop body does not run on the final `nil` key. That holds even when
+// the table's value type admits nil (`Table<K, V | nil>`, a map entries are deleted
+// from), so the value is `V & {}` (NonNullable<V> spelled out, so a union value
+// displays as the union rather than under the alias).
+//
+// The exact type is `(K, V & {}) | (nil, nil)`, but a union of packs only stays
+// correlated while its two locals are never reassigned: a hand-written
+// `while k ~= nil do ... k, v = next(t, k) end` loop, or an iterator returning
+// `next`'s results through locals, would lose the non-nil value. So a direct call
+// types the value as non-nil even on the final `nil, nil`; test the key first.
 interface LuaIPairsIterator<T> {
-    (values: Table<number, T>, index: number): (number | nil, T);
+    (values: Table<number, T>, index: number): (number | nil, T & {});
 }
 
 interface LuaPairsIterator<K, V> {
-    (values: Table<K, V>, key?: K): (K | nil, V);
+    (values: Table<K, V>, key?: K): (K | nil, V & {});
 }
 
 // The compiler intrinsic that blocks inference sites; referenced by lib and
@@ -85,7 +94,7 @@ type Extract<T, U> = T extends U ? T : never;
 /** Construct a type with the properties of T except for those in type K. */
 type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
 
-/** Exclude null and undefined from T */
+/** Exclude nil from T */
 type NonNullable<T> = T & {};
 
 /** Obtain the return type of a function type */
@@ -147,9 +156,10 @@ declare function loadfile(filename?: string): (function?, string?);
 declare function loadstring(source: string, chunkname?: string): (function?, string?);
 declare function module(name: string, ...: function): void;
 declare function newproxy(prototype?: boolean | userdata): userdata;
-// next is the pairs iteration protocol, so its value is non-optional for the same
-// reason LuaPairsIterator's is: a key it yields always has one.
-declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V);
+// next is the pairs iteration protocol, so its results are typed as
+// LuaPairsIterator's are, for the same reasons: the value is never nil, and a
+// direct call's key is the result to test.
+declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V & {});
 declare function pairs<K, V>(value: Table<K, V>): (LuaPairsIterator<K, V>, Table<K, V>, nil);
 // `pcall` correlates the callee's arguments and results: A is inferred from the
 // trailing arguments and checked against `fn`'s parameters, and the success results

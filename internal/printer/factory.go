@@ -741,21 +741,33 @@ func (f *NodeFactory) NewFunctionBindCall(target *ast.Expression, thisArg *ast.E
 }
 
 // Creates `(() => { ...statements })()` — an immediately invoked arrow function.
+//
+// `...` is only legal in a vararg function, so when the statements read the
+// enclosing function's varargs the function takes them and is passed them:
+// `(function(...) ... end)(...)`.
 func (f *NodeFactory) NewImmediatelyInvokedArrowFunction(statements []*ast.Statement) *ast.Expression {
+	// The body's facts, not each statement's own: a statement that is itself a
+	// function has its own `...`, which the block's propagation excludes.
+	body := f.NewBlock(f.NewNodeList(statements), true /*multiLine*/)
+	var parameters, arguments []*ast.Node
+	if body.SubtreeFacts()&ast.SubtreeContainsLuaVararg != 0 {
+		parameters = []*ast.Node{f.NewParameterDeclaration(nil /*modifiers*/, f.NewToken(ast.KindDotDotDotToken), f.NewIdentifier(ast.VarargParameterName), nil /*questionToken*/, nil /*typeNode*/, nil /*initializer*/)}
+		arguments = []*ast.Node{f.NewVarargExpression()}
+	}
 	arrow := f.NewArrowFunction(
-		nil,                          /*modifiers*/
-		nil,                          /*typeParameters*/
-		f.NewNodeList([]*ast.Node{}), /*parameters*/
-		nil,                          /*returnType*/
-		nil,                          /*fullSignature*/
+		nil,                       /*modifiers*/
+		nil,                       /*typeParameters*/
+		f.NewNodeList(parameters), /*parameters*/
+		nil,                       /*returnType*/
+		nil,                       /*fullSignature*/
 		f.NewToken(ast.KindEqualsGreaterThanToken), /*equalsGreaterThanToken*/
-		f.NewBlock(f.NewNodeList(statements), true),
+		body,
 	)
 	return f.NewCallExpression(
 		f.NewParenthesizedExpression(arrow),
 		nil, /*questionDotToken*/
 		nil, /*typeArguments*/
-		f.NewNodeList([]*ast.Node{}),
+		f.NewNodeList(arguments),
 		ast.NodeFlagsNone,
 	)
 }

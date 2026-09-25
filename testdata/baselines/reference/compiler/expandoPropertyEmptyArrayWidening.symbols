@@ -10,7 +10,7 @@ local example: {
   items?: string[];
 >items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
 
-} = function() return undefined end;
+} = function() return nil end;
 example.items = [];
 >example.items : Symbol(items, Decl(expandoPropertyEmptyArrayWidening.tlua, 3, 11))
 >example : Symbol(example, Decl(expandoPropertyEmptyArrayWidening.tlua, 2, 5))

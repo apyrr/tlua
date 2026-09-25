@@ -1,0 +1,99 @@
+// === QuickInfo ===
+=== /a.tlua ===
+// interface Box {
+//   value: number;
+//   read(self: Box): number;
+//   set(self: Box, v: number): nil;
+// }
+// declare function maybeBox(): Box | nil;
+// local b = maybeBox()
+// local r = b?:read()
+//              ^^^^
+// | ----------------------------------------------------------------------
+// | ```tlua
+// | (method) Box.read(self: Box): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+//              ^^^^
+// | ----------------------------------------------------------------------
+// | ```tlua
+// | (method) Box.read(self: Box): number
+// | ```
+// | 
+// | ----------------------------------------------------------------------
+// b?:set()
+//        ^
+// | ----------------------------------------------------------------------
+// | No quickinfo at /*arg*/.
+// | ----------------------------------------------------------------------
+[
+  {
+    "marker": {
+      "Position": 170,
+      "LSPosition": {
+        "line": 7,
+        "character": 13
+      },
+      "Name": "name",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tlua\n(method) Box.read(self: Box): number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 13
+        },
+        "end": {
+          "line": 7,
+          "character": 17
+        }
+      },
+      "canIncreaseVerbosity": true
+    }
+  },
+  {
+    "marker": {
+      "Position": 172,
+      "LSPosition": {
+        "line": 7,
+        "character": 15
+      },
+      "Name": "hover",
+      "Data": {}
+    },
+    "item": {
+      "contents": {
+        "kind": "markdown",
+        "value": "```tlua\n(method) Box.read(self: Box): number\n```\n"
+      },
+      "range": {
+        "start": {
+          "line": 7,
+          "character": 13
+        },
+        "end": {
+          "line": 7,
+          "character": 17
+        }
+      },
+      "canIncreaseVerbosity": true
+    }
+  },
+  {
+    "marker": {
+      "Position": 184,
+      "LSPosition": {
+        "line": 8,
+        "character": 7
+      },
+      "Name": "arg",
+      "Data": {}
+    },
+    "item": null
+  }
+]

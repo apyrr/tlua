@@ -29,6 +29,7 @@ import type {
     PartiallyEmittedExpression,
     PlusToken,
     PrefixUnaryExpression,
+    QuestionDotToken,
     QuestionToken,
     ReadonlyKeyword,
     SatisfiesExpression,
@@ -255,6 +256,12 @@ export function isConciseBody(node: Node): node is ConciseBody {
 
 export function isForInitializer(node: Node): node is ForInitializer {
     return node.kind === SyntaxKind.VariableDeclarationList || isExpression(node);
+}
+
+// A property access's optional link: `?.`, or the `?` of an optional colon call
+// `obj?:m()`, whose `:` is the access's colonToken.
+export function isQuestionDotOrQuestionToken(node: Node): node is QuestionDotToken | QuestionToken {
+    return node.kind === SyntaxKind.QuestionDotToken || node.kind === SyntaxKind.QuestionToken;
 }
 
 export function isQuestionOrExclamationToken(node: Node): node is QuestionToken | ExclamationToken {

@@ -14,7 +14,7 @@ func TestCompletionFilterText2(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
-declare foo1: { bar: string } | undefined;
+declare foo1: { bar: string } | nil;
 if true then
     foo1[|.|]/*1*/
 else

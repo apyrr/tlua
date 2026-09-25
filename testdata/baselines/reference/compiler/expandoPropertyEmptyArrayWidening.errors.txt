@@ -22,7 +22,7 @@ expandoPropertyEmptyArrayWidening.tlua(22,9): error TLUA1011: An element access 
     local example: {
       (): void;
       items?: string[];
-    } = function() return undefined end;
+    } = function() return nil end;
     example.items = [];
                     ~
 !!! error TLUA1109: Expression expected.

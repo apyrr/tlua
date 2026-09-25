@@ -295,6 +295,7 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	}
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
+	p.scanner.SetJSON(p.scriptKind == core.ScriptKindJSON)
 	p.listRecoveryResumePos = -1
 }
 
@@ -1329,7 +1330,7 @@ func (p *Parser) parseExpressionStatement() *ast.Statement {
 	if !isLuaStatementExpression(expression) &&
 		pos != p.listRecoveryResumePos &&
 		!p.hasErrorInStatement(errorMark) {
-		p.parseErrorAtRange(getErrorSpanForNode(p.sourceText, expression), diagnostics.Incomplete_statement_expected_assignment_or_a_function_call)
+		p.parseErrorAtRange(getErrorSpanForNode(p.sourceText, expression), diagnostics.Incomplete_statement_Colon_expected_assignment_or_a_function_call)
 	}
 	result := p.finishNode(p.factory.NewExpressionStatement(expression), pos)
 	if hasParen {
@@ -1525,20 +1526,51 @@ func (p *Parser) nextTokenIsIdentifier() bool {
 	return p.isIdentifier()
 }
 
-// nextTokensStartLuaColonCall scans past a `:` and reports whether a colon
-// call follows: a method name and its argument list's `(` (or the `<` of
-// explicit type arguments). Requiring the `(`/`<` keeps error recovery from
-// committing on annotation-shaped text like `id(value: T)` and swallowing
-// whatever follows into a bogus argument list.
-func (p *Parser) nextTokensStartLuaColonCall() bool {
-	if !tokenIsLuaMethodName(p.nextToken()) {
-		return false
+// luaColonCall is what a lookahead from a `:` finds after an expression.
+type luaColonCall int
+
+const (
+	luaColonCallNone luaColonCall = iota
+	// A method name and its argument list's `(` (or the `<` of explicit type
+	// arguments), possibly across lines as Lua allows.
+	luaColonCallComplete
+	// A call still being typed: the line ends at the `:` (`obj:`) or right after
+	// the method name (`obj:na`).
+	luaColonCallIncomplete
+)
+
+// nextTokensStartLuaColonCall scans past a `:` and reports whether a colon call
+// follows. A complete call needs the `(`/`<`, which keeps error recovery from
+// committing on annotation-shaped text like `id(value: T)` and swallowing whatever
+// follows into a bogus argument list. An incomplete one is recognized only where
+// the line ends and takes nothing past it, so even when broken code ends a line
+// with annotation-shaped text (`f(): T`), recovery cannot swallow what follows.
+func (p *Parser) nextTokensStartLuaColonCall() luaColonCall {
+	name := p.nextToken()
+	nameOnNextLine := name == ast.KindEndOfFile || p.hasPrecedingLineBreak()
+	if scanner.TokenIsLuaMethodName(name) {
+		switch p.nextToken() {
+		case ast.KindOpenParenToken, ast.KindLessThanToken:
+			return luaColonCallComplete
+		}
+		if !nameOnNextLine && (p.token == ast.KindEndOfFile || p.hasPrecedingLineBreak()) {
+			return luaColonCallIncomplete
+		}
 	}
-	switch p.nextToken() {
-	case ast.KindOpenParenToken, ast.KindLessThanToken:
-		return true
+	if nameOnNextLine {
+		return luaColonCallIncomplete
 	}
-	return false
+	return luaColonCallNone
+}
+
+// nextTokensStartLuaOptionalColonCall scans past a `?` and reports whether an
+// optional colon call follows: a `:` written directly after the `?`, so the pair
+// reads as one operator, then what nextTokensStartLuaColonCall finds.
+func (p *Parser) nextTokensStartLuaOptionalColonCall() luaColonCall {
+	if p.nextToken() != ast.KindColonToken || p.scanner.TokenFullStart() != p.scanner.TokenStart() {
+		return luaColonCallNone
+	}
+	return p.nextTokensStartLuaColonCall()
 }
 
 func (p *Parser) parseVariableDeclaration() *ast.Node {
@@ -3924,6 +3956,12 @@ func (p *Parser) nextTokenIsIdentifierOrKeywordOrOpenBracketOrTemplate() bool {
 func (p *Parser) parsePropertyAccessExpressionRest(pos int, expression *ast.Expression, questionDotToken *ast.Node, colonToken *ast.Node) *ast.Node {
 	// Private identifiers are member names, never Lua method names.
 	name := p.parseRightSideOfDot(true /*allowIdentifierNames*/, colonToken == nil /*allowPrivateIdentifiers*/, true /*allowUnicodeEscapeSequenceInIdentifierName*/)
+	return p.finishPropertyAccessExpression(pos, expression, questionDotToken, colonToken, name)
+}
+
+// finishPropertyAccessExpression builds the access once its name is known, whether
+// parsed or missing (an incomplete colon call being typed).
+func (p *Parser) finishPropertyAccessExpression(pos int, expression *ast.Expression, questionDotToken *ast.Node, colonToken *ast.Node, name *ast.Node) *ast.Node {
 	isOptionalChain := questionDotToken != nil || p.tryReparseOptionalChain(expression)
 	propertyAccess := p.factory.NewPropertyAccessExpression(expression, questionDotToken, colonToken, name, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone))
 	if isOptionalChain && ast.IsPrivateIdentifier(name) {
@@ -3994,11 +4032,50 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 		// under error recovery -- is left for the enclosing construct to
 		// diagnose. A label's `::` lexes as one ColonColonToken, so it never
 		// reaches here.
-		if p.token == ast.KindColonToken && p.lookAhead((*Parser).nextTokensStartLuaColonCall) {
+		//
+		// `obj?:name(args)` is the optional form, `obj and obj:name(args)`. A
+		// scanned `?:` token would break every `name?: T` annotation, so it is a
+		// `?` token then a `:` token; the `?` is unambiguous here because nothing
+		// else lets `?` follow an expression. The `?` is the access's optional link,
+		// so it fills the QuestionDotToken slot, which the schema types as
+		// `QuestionDotToken | QuestionToken` for exactly this.
+		//
+		// A call still being typed (`obj:` or `obj:na` ending its line) becomes an
+		// incomplete call with a missing name or argument list, the way `obj.`
+		// becomes an access with a missing name: the colon access keeps its one
+		// place, a callee, and the language service reads the tree like any other.
+		colonCall := luaColonCallNone
+		switch p.token {
+		case ast.KindQuestionToken:
+			p.lookAhead(func(p *Parser) bool { colonCall = p.nextTokensStartLuaOptionalColonCall(); return false })
+		case ast.KindColonToken:
+			p.lookAhead(func(p *Parser) bool { colonCall = p.nextTokensStartLuaColonCall(); return false })
+		}
+		if colonCall == luaColonCallIncomplete && !ast.IsLuaPrefixExpression(expression) {
+			colonCall = luaColonCallNone
+		}
+		if colonCall != luaColonCallNone {
+			var questionToken *ast.Node
+			if p.token == ast.KindQuestionToken {
+				questionToken = p.parseTokenNode()
+			}
 			colonToken := p.parseTokenNode()
-			expression = p.parsePropertyAccessExpressionRest(pos, expression, nil /*questionDotToken*/, colonToken)
-			typeArguments := p.tryParseTypeArgumentsInExpression()
-			argumentList := p.parseArgumentList()
+			if colonCall == luaColonCallIncomplete && (p.hasPrecedingLineBreak() || !scanner.TokenIsLuaMethodName(p.token)) {
+				// `obj:` ends its line: the method name is still to be typed.
+				p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.Identifier_expected)
+				expression = p.finishPropertyAccessExpression(pos, expression, questionToken, colonToken, p.createMissingIdentifier())
+			} else {
+				expression = p.parsePropertyAccessExpressionRest(pos, expression, questionToken, colonToken)
+			}
+			var typeArguments *ast.NodeList
+			var argumentList *ast.NodeList
+			if colonCall == luaColonCallComplete {
+				typeArguments = p.tryParseTypeArgumentsInExpression()
+				argumentList = p.parseArgumentList()
+			} else {
+				p.parseErrorAt(p.nodePos(), p.nodePos(), diagnostics.X_0_expected, "(")
+				argumentList = p.newNodeList(core.NewTextRange(p.nodePos(), p.nodePos()), nil)
+			}
 			expression = p.finishNode(p.factory.NewCallExpression(expression, nil /*questionDotToken*/, typeArguments, argumentList, expression.Flags&ast.NodeFlagsOptionalChain), pos)
 			continue
 		}
@@ -4007,7 +4084,13 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 		if questionDotToken != nil {
 			typeArguments = p.tryParseTypeArgumentsInExpression()
 		}
-		if typeArguments != nil || p.token == ast.KindOpenParenToken {
+		// An argument list continues the expression only after a prefixexp. After
+		// anything else Lua ends the expression, and the `(` starts the next
+		// statement:
+		//     local s = "abc"
+		//     (g)("x")
+		// is two statements, not a call of the string.
+		if typeArguments != nil || p.token == ast.KindOpenParenToken && (questionDotToken != nil || ast.IsLuaPrefixExpression(expression)) {
 			// Absorb type arguments into CallExpression when preceding expression is ExpressionWithTypeArguments
 			if questionDotToken == nil && expression.Kind == ast.KindExpressionWithTypeArguments {
 				typeArguments = expression.TypeArgumentList()

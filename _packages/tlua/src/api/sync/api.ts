@@ -810,7 +810,7 @@ export class Checker {
     private project: Project;
     private client: Client;
     private objectRegistry: ProjectObjectRegistry;
-    private wellKnownSymbols: { unknown: number; undefined: number; arguments: number; } | undefined;
+    private wellKnownSymbols: { unknown: number; arguments: number; } | undefined;
     private wellKnownSignatures: { unknown: number; } | undefined;
 
     constructor(
@@ -1433,8 +1433,8 @@ export class Checker {
      * of the project's checker, so identity checks against them are local after
      * the first call.
      */
-    private getWellKnownSymbols(): { unknown: number; undefined: number; arguments: number; } {
-        return this.wellKnownSymbols ??= this.client.apiRequest<{ unknown: number; undefined: number; arguments: number; }>("getWellKnownSymbols", {
+    private getWellKnownSymbols(): { unknown: number; arguments: number; } {
+        return this.wellKnownSymbols ??= this.client.apiRequest<{ unknown: number; arguments: number; }>("getWellKnownSymbols", {
             snapshot: this.snapshotId,
             project: this.project.id,
         });
@@ -1446,13 +1446,6 @@ export class Checker {
      */
     isUnknownSymbol(symbol: Symbol): boolean {
         return symbol.id === (this.getWellKnownSymbols()).unknown;
-    }
-
-    /**
-     * Returns `true` if the symbol is the checker's "undefined" symbol.
-     */
-    isUndefinedSymbol(symbol: Symbol): boolean {
-        return symbol.id === (this.getWellKnownSymbols()).undefined;
     }
 
     /**

@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaOptionalColonCallParseErrors.tlua] ////
+
+=== tluaOptionalColonCallParseErrors.tlua ===
+// A space between `?` and `:` does not spell the optional colon call.
+
+interface Box {
+    read(self: Box): number;
+>read : (self: Box) => number
+>self : Box
+}
+
+declare function maybeBox(): Box | nil;
+>maybeBox : () => Box | nil
+
+local b = maybeBox()
+>b : Box | nil
+>maybeBox() : Box | nil
+>maybeBox : () => Box | nil
+
+local r = b? :read()
+>r : Box | nil
+>b : Box | nil
+>read() : any
+>read : any
+

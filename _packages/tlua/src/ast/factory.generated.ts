@@ -1697,7 +1697,7 @@ export function createVarargExpression(): VarargExpression {
     return new NodeObject(SyntaxKind.VarargExpression, undefined) as unknown as VarargExpression;
 }
 
-export function createPropertyAccessExpression(expression: Expression, questionDotToken: QuestionDotToken | undefined, colonToken: ColonToken | undefined, name: MemberName, flags: NodeFlags): PropertyAccessExpression {
+export function createPropertyAccessExpression(expression: Expression, questionDotToken: QuestionDotToken | QuestionToken | undefined, colonToken: ColonToken | undefined, name: MemberName, flags: NodeFlags): PropertyAccessExpression {
     const node = new NodeObject(SyntaxKind.PropertyAccessExpression, {
         expression,
         questionDotToken,
@@ -2538,7 +2538,7 @@ export function updateExpressionList(node: ExpressionList, elements: readonly Ex
     return node.elements !== elements ? createExpressionList(elements) : node;
 }
 
-export function updatePropertyAccessExpression(node: PropertyAccessExpression, expression: Expression, questionDotToken: QuestionDotToken | undefined, colonToken: ColonToken | undefined, name: MemberName): PropertyAccessExpression {
+export function updatePropertyAccessExpression(node: PropertyAccessExpression, expression: Expression, questionDotToken: QuestionDotToken | QuestionToken | undefined, colonToken: ColonToken | undefined, name: MemberName): PropertyAccessExpression {
     return node.expression !== expression || node.questionDotToken !== questionDotToken || node.colonToken !== colonToken || node.name !== name ? createPropertyAccessExpression(expression, questionDotToken, colonToken, name, node.flags) : node;
 }
 

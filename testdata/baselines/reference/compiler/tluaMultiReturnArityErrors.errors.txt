@@ -8,7 +8,7 @@ tluaMultiReturnArityErrors.tlua(10,3): error TLUA2322: Type 'string, number' is 
 tluaMultiReturnArityErrors.tlua(14,3): error TLUA2322: Type 'number, string' is not assignable to type 'number'.
 tluaMultiReturnArityErrors.tlua(19,3): error TLUA2322: Type 'void' is not assignable to type 'number, string'.
   Source has 0 element(s) but target requires 2.
-tluaMultiReturnArityErrors.tlua(27,24): error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+tluaMultiReturnArityErrors.tlua(27,24): error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
 tluaMultiReturnArityErrors.tlua(31,37): error TLUA1228: A type predicate is only allowed in return type position for functions and methods.
 tluaMultiReturnArityErrors.tlua(31,37): error TLUA100021: A type predicate cannot be part of a multiple return type.
 
@@ -57,7 +57,7 @@ tluaMultiReturnArityErrors.tlua(31,37): error TLUA100021: A type predicate canno
     // A pack with required values must return.
     function mustReturn(): (number, string?)
                            ~~~~~~~~~~~~~~~~~
-!!! error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+!!! error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
     end
     
     // A type predicate cannot start a multiple return type.

@@ -1,0 +1,126 @@
+//// [tests/cases/compiler/tluaPrefixExpressionParentheses.tlua] ////
+
+=== tluaPrefixExpressionParentheses.tlua ===
+// Lua lets `.`, `[`, `:` and an argument list follow only a prefixexp: a name, an
+// index, a call, or a parenthesized expression. Anything else must be
+// parenthesized first. The emit parenthesizes it either way, so the output is
+// valid Lua even while the error stands.
+
+local a = "x":upper()
+>a : string
+>"x":upper() : string
+>"x":upper : (self: string) => string
+>"x" : "x"
+>upper : (self: string) => string
+
+local b = {}.x
+>b : any
+>{}.x : any
+>{} : {}
+>x : any
+
+local c = { 1 }[1]
+>c : number
+>{ 1 }[1] : number
+>{ 1 } : { 1: number; }
+>1 : 1
+
+local d = 1 .x
+>d : any
+>1 .x : any
+>1 : 1
+>x : any
+
+local e = `t`:upper()
+>e : string
+>`t`:upper() : string
+>`t`:upper : (self: string) => string
+>`t` : "t"
+>upper : (self: string) => string
+
+local f = "x"?:upper()
+>f : string
+>"x"?:upper() : string
+>"x"?:upper : (self: string) => string
+>"x" : "x"
+>upper : (self: string) => string
+
+// Parentheses make any expression a prefixexp; wrappers that erase at emit are
+// looked through.
+local g = ("x"):upper()
+>g : string
+>("x"):upper() : string
+>("x"):upper : (self: string) => string
+>("x") : "x"
+>"x" : "x"
+>upper : (self: string) => string
+
+local h = ({ x = 1 }).x
+>h : number
+>({ x = 1 }).x : number
+>({ x = 1 }) : { x: number; }
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+>x : number
+
+local i = (function() return 1 end)()
+>i : number
+>(function() return 1 end)() : number
+>(function() return 1 end) : () => number
+>function() return 1 end : () => number
+>1 : 1
+
+local j = ("x" as string):upper()
+>j : string
+>("x" as string):upper() : string
+>("x" as string):upper : (self: string) => string
+>("x" as string) : string
+>"x" as string : string
+>"x" : "x"
+>upper : (self: string) => string
+
+declare t: { f: () => number } | nil;
+>t : { f: () => number; } | nil
+>f : () => number
+
+local k = t!.f()
+>k : number
+>t!.f() : number
+>t!.f : () => number
+>t! : { f: () => number; }
+>t : { f: () => number; } | nil
+>f : () => number
+
+// After anything but a prefixexp, `(` does not continue the expression: Lua ends
+// it there and the `(` starts the next statement.
+declare function report(s: string): nil;
+>report : (s: string) => nil
+>s : string
+
+local afterString = "abc"
+>afterString : string
+>"abc" : "abc"
+
+(report)("x")
+>(report)("x") : nil
+>(report) : (s: string) => nil
+>report : (s: string) => nil
+>"x" : "x"
+
+local afterTable = {}
+>afterTable : {}
+>{} : {}
+
+(report)("y")
+>(report)("y") : nil
+>(report) : (s: string) => nil
+>report : (s: string) => nil
+>"y" : "y"
+
+// The error is a grammar check, not a syntax error, so type errors elsewhere in
+// the file are still reported.
+local wrong: number = "not a number"
+>wrong : number
+>"not a number" : "not a number"
+

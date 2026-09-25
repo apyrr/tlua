@@ -1,0 +1,188 @@
+//// [tests/cases/compiler/tluaPairsValueNonNil.tlua] ////
+
+=== tluaPairsValueNonNil.tlua ===
+// pairs, ipairs and next never yield a nil value, even from a table whose value
+// type admits nil (a map entries are deleted from).
+
+interface Box {
+    value: number;
+>value : number
+}
+
+local map: Table<string, Box | nil> = {}
+>map : Table<string, Box | nil>
+>{} : {}
+
+for _, box in pairs(map) do
+>_ : string
+>box : Box
+>pairs(map) : LuaPairsIterator<string, Box | nil>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>map : Table<string, Box | nil>
+
+    local n: number = box.value
+>n : number
+>box.value : number
+>box : Box
+>value : number
+
+end
+for _, box in next, map do
+>_ : string
+>box : Box
+>next, map : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Table<string, Box | nil>
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>map : Table<string, Box | nil>
+
+    local n: number = box.value
+>n : number
+>box.value : number
+>box : Box
+>value : number
+
+end
+
+local list: Table<number, Box | nil> = {}
+>list : Table<number, Box | nil>
+>{} : {}
+
+for _, box in ipairs(list) do
+>_ : number
+>box : Box
+>ipairs(list) : LuaIPairsIterator<Box | nil>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>list : Table<number, Box | nil>
+
+    local n: number = box.value
+>n : number
+>box.value : number
+>box : Box
+>value : number
+
+end
+
+// A direct call types its value the same way. On an empty table it returns
+// `nil, nil`, so the key is the result to test; the value is not correlated with
+// it, which is what keeps a hand-written loop that reassigns both working.
+local k, v = next(map)
+>k : string | nil
+>v : Box
+>next(map) : string | nil
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>map : Table<string, Box | nil>
+
+while k ~= nil do
+>k ~= nil : boolean
+>k : string | nil
+
+    local n: number = v.value
+>n : number
+>v.value : number
+>v : Box
+>value : number
+
+    k, v = next(map, k)
+>k, v = next(map, k) : string | nil
+>k, v : string | nil, Box
+>k : string | nil
+>v : Box
+>next(map, k) : string | nil
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>map : Table<string, Box | nil>
+>k : string
+
+end
+
+// An iterator that forwards next's results through locals is a LuaPairsIterator,
+// and a loop over it yields non-nil values too.
+local forward: LuaPairsIterator<string, Box | nil> = function(t, key)
+>forward : LuaPairsIterator<string, Box | nil>
+>function(t, key)    local nk, nv = next(t, key)    return nk, nvend : (t: Table<string, Box | nil>, key: string | nil) => (string | nil, Box)
+>t : Table<string, Box | nil>
+>key : string | nil
+
+    local nk, nv = next(t, key)
+>nk : string | nil
+>nv : Box
+>next(t, key) : string | nil
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>t : Table<string, Box | nil>
+>key : string | nil
+
+    return nk, nv
+>nk, nv : string | nil, Box
+>nk : string | nil
+>nv : Box
+
+end
+for _, box in forward, map do
+>_ : string
+>box : Box
+>forward, map : LuaPairsIterator<string, Box | nil>, Table<string, Box | nil>
+>forward : LuaPairsIterator<string, Box | nil>
+>map : Table<string, Box | nil>
+
+    local n: number = box.value
+>n : number
+>box.value : number
+>box : Box
+>value : number
+
+end
+
+// A value type that admits false keeps false: only nil is removed.
+local flags: Table<string, boolean | nil> = {}
+>flags : Table<string, boolean | nil>
+>{} : {}
+
+for _, flag in pairs(flags) do
+>_ : string
+>flag : boolean
+>pairs(flags) : LuaPairsIterator<string, boolean | nil>
+>pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>flags : Table<string, boolean | nil>
+
+    local f: true = flag
+>f : true
+>true : true
+>flag : boolean
+
+end
+
+// A generic value type stays NonNullable<V> until it is instantiated.
+local function values<V>(t: Table<string, V>): NonNullable<V>[]
+>values : <V>(t: Table<string, V>) => NonNullable<V>[]
+>t : Table<string, V>
+
+    local out: NonNullable<V>[] = {}
+>out : NonNullable<V>[]
+>{} : never[]
+
+    for _, value in pairs(t) do
+>_ : string
+>value : V & {}
+>pairs(t) : LuaPairsIterator<string, V>
+>pairs : <K, V_1>(value: Table<K, V_1>) => (LuaPairsIterator<K, V_1>, Table<K, V_1>, nil)
+>t : Table<string, V>
+
+        out[#out + 1] = value
+>out[#out + 1] = value : V & {}
+>out[#out + 1] : NonNullable<V> | nil
+>out : NonNullable<V>[]
+>#out + 1 : number
+>#out : number
+>out : NonNullable<V>[]
+>1 : 1
+>value : V & {}
+
+    end
+    return out
+>out : NonNullable<V>[]
+
+end
+local boxes: Box[] = values(map)
+>boxes : Box[]
+>values(map) : Box[]
+>values : <V>(t: Table<string, V>) => NonNullable<V>[]
+>map : Table<string, Box | nil>
+

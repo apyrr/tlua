@@ -20,9 +20,10 @@ declare function loadfile(filename?: string): (function?, string?);
 declare function loadstring(source: string, chunkname?: string): (function?, string?);
 declare function module(name: string, ...: function): void;
 declare function newproxy(prototype?: boolean | userdata): userdata;
-// next is the pairs iteration protocol, so its value is non-optional for the same
-// reason LuaPairsIterator's is: a key it yields always has one.
-declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V);
+// next is the pairs iteration protocol, so its results are typed as
+// LuaPairsIterator's are, for the same reasons: the value is never nil, and a
+// direct call's key is the result to test.
+declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V & {});
 declare function pairs<K, V>(value: Table<K, V>): (LuaPairsIterator<K, V>, Table<K, V>, nil);
 // `pcall` correlates the callee's arguments and results: A is inferred from the
 // trailing arguments and checked against `fn`'s parameters, and the success results

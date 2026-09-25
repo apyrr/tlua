@@ -50,7 +50,7 @@ excessivelyDeepConditionalTypes.tlua(13,6): error TLUA2321: Excessive stack dept
     				? GetByString<Data[Key], Rest>
     				: Path extends keyof Data & (string | number)
     					? Data[Path]
-    					: undefined;
+    					: nil;
     
     interface Duck {
     	taxonomy: {

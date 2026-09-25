@@ -14,7 +14,7 @@
 // | ----------------------------------------------------------------------
 // | a(**fn?: ((x: string) => string) | ((y: number) => number)**): void
 // | ----------------------------------------------------------------------
-//     return undefined;
+//     return nil;
 // });
 // 
 // b();
@@ -241,7 +241,7 @@
   },
   {
     "marker": {
-      "Position": 320,
+      "Position": 314,
       "LSPosition": {
         "line": 13,
         "character": 2
@@ -336,7 +336,7 @@
   },
   {
     "marker": {
-      "Position": 327,
+      "Position": 321,
       "LSPosition": {
         "line": 15,
         "character": 3

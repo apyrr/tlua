@@ -10,8 +10,8 @@ local example: {
   items?: string[];
 >items : string[] | nil
 
-} = function() return undefined end;
->function() return undefined end : () => nil
+} = function() return nil end;
+>function() return nil end : () => nil
 
 example.items = [];
 >example.items = [] : any

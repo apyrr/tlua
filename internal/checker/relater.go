@@ -496,7 +496,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 		specificSource = c.checkExpressionForMutableLocationWithContextualType(next, sourcePropType)
 	}
 	if c.exactOptionalPropertyTypes && c.isExactOptionalPropertyMismatch(specificSource, targetPropType) {
-		diags = append(diags, createDiagnosticForNode(prop, diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_type_of_the_target, c.TypeToString(specificSource), c.TypeToString(targetPropType)))
+		diags = append(diags, createDiagnosticForNode(prop, diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_type_of_the_target, c.TypeToString(specificSource), c.TypeToString(targetPropType)))
 	} else {
 		propName := c.getPropertyNameFromIndex(nameType, nil /*accessNode*/)
 		targetIsOptional := core.OrElse(c.getPropertyOfType(target, propName), c.unknownSymbol).Flags&ast.SymbolFlagsOptional != 0
@@ -4799,7 +4799,7 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		case sourceType == targetType:
 			message = diagnostics.Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_but_they_are_unrelated
 		case r.c.exactOptionalPropertyTypes && len(r.c.getExactOptionalUnassignableProperties(source, target)) != 0:
-			message = diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties
+			message = diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_types_of_the_target_s_properties
 		default:
 			if source.flags&TypeFlagsStringLiteral != 0 && target.flags&TypeFlagsUnion != 0 {
 				suggestedType := r.c.getSuggestedTypeForNonexistentStringLiteralType(source, target)
@@ -4811,7 +4811,7 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 			message = diagnostics.Type_0_is_not_assignable_to_type_1
 		}
 	} else if message == diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1 && r.c.exactOptionalPropertyTypes && len(r.c.getExactOptionalUnassignableProperties(source, target)) > 0 {
-		message = diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties
+		message = diagnostics.Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_types_of_the_target_s_properties
 	}
 	switch r.getChainMessage(0) {
 	// Suppress if next message is an excess property error

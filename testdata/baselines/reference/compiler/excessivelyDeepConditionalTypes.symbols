@@ -93,10 +93,10 @@ type GetByString<
 >Data : Symbol(Data, Decl(excessivelyDeepConditionalTypes.tlua, 12, 17))
 >Path : Symbol(Path, Decl(excessivelyDeepConditionalTypes.tlua, 13, 6))
 
-					: undefined;
+					: nil;
 
 interface Duck {
->Duck : Symbol(Duck, Decl(excessivelyDeepConditionalTypes.tlua, 25, 17))
+>Duck : Symbol(Duck, Decl(excessivelyDeepConditionalTypes.tlua, 25, 11))
 
 	taxonomy: {
 >taxonomy : Symbol(Duck.taxonomy, Decl(excessivelyDeepConditionalTypes.tlua, 27, 16))
@@ -113,5 +113,5 @@ interface Duck {
 type DuckSpecies = GetByString<Duck, 'taxonomy.species'>; // 'platyrhynchos'
 >DuckSpecies : Symbol(DuckSpecies, Decl(excessivelyDeepConditionalTypes.tlua, 32, 1))
 >GetByString : Symbol(GetByString, Decl(excessivelyDeepConditionalTypes.tlua, 10, 36))
->Duck : Symbol(Duck, Decl(excessivelyDeepConditionalTypes.tlua, 25, 17))
+>Duck : Symbol(Duck, Decl(excessivelyDeepConditionalTypes.tlua, 25, 11))
 

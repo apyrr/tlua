@@ -364,14 +364,10 @@ func isHintableDeclaration(node *ast.VariableOrParameterDeclaration) bool {
 func isHintableLiteral(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindPrefixUnaryExpression:
-		operand := node.AsPrefixUnaryExpression().Operand
-		return ast.IsLiteralExpression(operand) || ast.IsIdentifier(operand) && ast.IsInfinityOrNaNString(operand.Text())
+		return ast.IsLiteralExpression(node.AsPrefixUnaryExpression().Operand)
 	case ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindNilKeyword,
 		ast.KindNoSubstitutionTemplateLiteral, ast.KindTemplateExpression:
 		return true
-	case ast.KindIdentifier:
-		name := node.Text()
-		return name == "undefined" || ast.IsInfinityOrNaNString(name)
 	}
 	return ast.IsLiteralExpression(node)
 }

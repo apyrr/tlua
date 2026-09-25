@@ -6,7 +6,7 @@ declare function f(o: { y?: string }): void;
 >o : Symbol(o, Decl(exactOptionalPropertyTypesArgumentError.tlua, 0, 19))
 >y : Symbol(y, Decl(exactOptionalPropertyTypesArgumentError.tlua, 0, 23))
 
-f({ y = undefined });
+f({ y = nil });
 >f : Symbol(f, Decl(exactOptionalPropertyTypesArgumentError.tlua, 0, 0))
 >y : Symbol(y, Decl(exactOptionalPropertyTypesArgumentError.tlua, 1, 3))
 

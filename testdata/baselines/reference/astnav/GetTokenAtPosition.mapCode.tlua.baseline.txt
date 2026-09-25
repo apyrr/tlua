@@ -71,7 +71,7 @@
 
 〚Positions: [219, 228]〛
 【TS: UndefinedKeyword [219, 229)】
-《Go: NilKeyword [219, 229)》
+《Go: Identifier [219, 229)》
 6 │    sourceFile: SourceFile,
 7 │    contents: string[],
 8 │    focusLocations: TextSpan[][] |《【〚 undefined〛】》,
@@ -670,16 +670,6 @@
 275 │end〛】》
 276 │
 277 │function wipeNode(node: Mutable<Node>)
-
-
-〚Positions: [8957, 8966]〛
-【TS: Identifier [8957, 8967)】
-《Go: NilKeyword [8957, 8967)》
-277 │function wipeNode(node: Mutable<Node>)
-278 │    resetNodePositions(node);
-279 │    node.parent =《【〚 undefined〛】》!;
-280 │end
-281 │
 
 
 〚Positions: [8969, 8972]〛

@@ -13,6 +13,7 @@ import (
 	"golang.org/x/text/language"
 )
 
+//go:generate go run generate.go -diagnostics ./diagnostics_generated.go -loc ./loc_generated.go -locdir ./loc
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Category -output=stringer_generated.go
 //go:generate npx dprint fmt diagnostics_generated.go loc_generated.go stringer_generated.go
 
@@ -40,6 +41,13 @@ func (category Category) Name() string {
 }
 
 type Key string
+
+// IsKnownKey reports whether this compiler has a message with the given key. A
+// key comes from the message text, so rewording a message retires its old key;
+// data persisted by another build can name one.
+func IsKnownKey(key Key) bool {
+	return keyToMessage(key) != nil
+}
 
 type Message struct {
 	code                         int32

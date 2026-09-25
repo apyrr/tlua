@@ -196,16 +196,10 @@ func (ch *PseudoChecker) typeFromExpression(node *ast.Node) *PseudoType {
 	case ast.KindParenthesizedExpression:
 		// assertions transformed on reparse, just unwrap
 		return ch.typeFromExpression(node.AsParenthesizedExpression().Expression)
-	case ast.KindIdentifier:
-		// !!! TODO: in strada, this uses symbol information to ensure `node` refers to the global `undefined` symbol instead
-		// we should probably import `resolveName` and use it here to check for the same; but we have to setup some barebones pseudoglobals for that to work!
-		if node.AsIdentifier().Text == "undefined" {
-			return PseudoTypeUndefined
-		}
 	case ast.KindNilKeyword:
-		// `nil`/`undefined`/`null` all scan to the nil keyword and name the one nil
-		// type. Reuse the nil pseudo-type so isolatedDeclarations emit prints `nil`,
-		// matching the full checker; there is no distinct null pseudo-type.
+		// `nil` names the one nil type. Reuse the nil pseudo-type so
+		// isolatedDeclarations emit prints `nil`, matching the full checker; there
+		// is no distinct null pseudo-type.
 		return PseudoTypeUndefined
 	case ast.KindArrowFunction, ast.KindFunctionExpression:
 		return ch.typeFromFunctionLikeExpression(node)

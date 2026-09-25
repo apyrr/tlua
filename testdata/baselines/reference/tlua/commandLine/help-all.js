@@ -133,7 +133,7 @@ type: boolean
 default: true
 
 [94m--exactOptionalPropertyTypes[39m
-Interpret optional property types as written, rather than adding 'undefined'.
+Interpret optional property types as written, rather than adding 'nil'.
 type: boolean
 default: false
 
@@ -188,7 +188,7 @@ type: boolean
 default: `true`, unless `strict` is `false`
 
 [94m--strictBuiltinIteratorReturn[39m
-Built-in iterators are instantiated with a 'TReturn' type of 'undefined' instead of 'any'.
+Built-in iterators are instantiated with a 'TReturn' type of 'nil' instead of 'any'.
 type: boolean
 default: `true`, unless `strict` is `false`
 
@@ -198,7 +198,7 @@ type: boolean
 default: `true`, unless `strict` is `false`
 
 [94m--strictNullChecks[39m
-When type checking, take into account 'null' and 'undefined'.
+When type checking, take into account 'nil'.
 type: boolean
 default: `true`, unless `strict` is `false`
 

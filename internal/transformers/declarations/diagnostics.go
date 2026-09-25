@@ -450,7 +450,7 @@ func createGetIsolatedDeclarationErrors(resolver printer.EmitResolver) func(node
 		}
 		message := getErrorByDeclarationKind(node.Kind)
 		if addUndefined {
-			message = diagnostics.Declaration_emit_for_this_parameter_requires_implicitly_adding_undefined_to_its_type_This_is_not_supported_with_isolatedDeclarations
+			message = diagnostics.Declaration_emit_for_this_parameter_requires_implicitly_adding_nil_to_its_type_This_is_not_supported_with_isolatedDeclarations
 		}
 		diag := createDiagnosticForNode(node, message)
 		targetStr := scanner.GetTextOfNode(node.Name())

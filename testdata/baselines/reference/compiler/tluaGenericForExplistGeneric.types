@@ -12,8 +12,8 @@ declare t: Rec;
 for k, v in next, t do
 >k : string
 >v : number
->next, t : <K, V>(value: Table<K, V>, index?: K) => (K?, V), Rec
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>next, t : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Rec
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
 >t : Rec
 
   local key: string = k;
@@ -29,8 +29,8 @@ end
 for k, v in next, t, "seed" do
 >k : string
 >v : number
->next, t, "seed" : <K, V>(value: Table<K, V>, index?: K) => (K?, V), Rec, string
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>next, t, "seed" : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Rec, string
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
 >t : Rec
 >"seed" : "seed"
 
@@ -50,8 +50,8 @@ declare c: string | nil;
 for k, v in next, t, c do
 >k : string
 >v : number
->next, t, c : <K, V>(value: Table<K, V>, index?: K) => (K?, V), Rec, string | nil
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>next, t, c : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Rec, string | nil
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
 >t : Rec
 >c : string | nil
 
@@ -202,9 +202,9 @@ end
 
 for k, v in next, 42 do
 >k : never
->v : unknown
->next, 42 : <K, V>(value: Table<K, V>, index?: K) => (K?, V), number
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>v : {}
+>next, 42 : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), number
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
 >42 : 42
 
   local _ = k;
@@ -212,14 +212,14 @@ for k, v in next, 42 do
 >k : never
 
   local _ = v;
->_ : unknown
->v : unknown
+>_ : {}
+>v : {}
 
 end
 
 for k in next do
 >k : {}
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V)
+>next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
 
   local _ = k;
 >_ : {}

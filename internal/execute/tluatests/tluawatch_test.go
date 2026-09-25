@@ -156,7 +156,7 @@ func TestWatch(t *testing.T) {
 		{
 			subScenario: "watch rebuilds when tsconfig is modified to change strict",
 			files: FileMap{
-				"/home/src/workspaces/project/index.tlua":      `local x = null; local y: string = x;`,
+				"/home/src/workspaces/project/index.tlua":      `local x = nil; local y: string = x;`,
 				"/home/src/workspaces/project/tluaconfig.json": `{}`,
 			},
 			commandLineArgs: []string{"--watch"},
@@ -342,7 +342,7 @@ func TestWatch(t *testing.T) {
 		{
 			subScenario: "watch handles tsconfig with extends base modified",
 			files: FileMap{
-				"/home/src/workspaces/project/index.tlua": `local x = null; local y: string = x;`,
+				"/home/src/workspaces/project/index.tlua": `local x = nil; local y: string = x;`,
 				"/home/src/workspaces/project/base.json": `{
 	"compilerOptions": { "strict": false }
 }`,

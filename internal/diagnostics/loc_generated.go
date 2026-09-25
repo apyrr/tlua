@@ -14,8 +14,6 @@ import (
 
 var matcher = language.NewMatcher([]language.Tag{
 	language.English,
-	language.MustParse("zh-CN"),
-	language.MustParse("zh-TW"),
 	language.MustParse("cs-CZ"),
 	language.MustParse("de-DE"),
 	language.MustParse("es-ES"),
@@ -27,12 +25,12 @@ var matcher = language.NewMatcher([]language.Tag{
 	language.MustParse("pt-BR"),
 	language.MustParse("ru-RU"),
 	language.MustParse("tr-TR"),
+	language.MustParse("zh-CN"),
+	language.MustParse("zh-TW"),
 })
 
 var localeFuncs = []func() map[Key]string{
 	nil, // English (default)
-	zhCN,
-	zhTW,
 	csCZ,
 	deDE,
 	esES,
@@ -44,6 +42,19 @@ var localeFuncs = []func() map[Key]string{
 	ptBR,
 	ruRU,
 	trTR,
+	zhCN,
+	zhTW,
+}
+
+// staleTranslations lists the messages whose archived translations were made
+// from different English text than they have now.
+var staleTranslations = []Key{
+	"Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_tr_2379",
+	"Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_Bun_Try_npm_i_save_dev_types_Slashbun_2868",
+	"Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_a_test_runner_Try_npm_i_save_dev_type_2593",
+	"Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_jQuery_Try_npm_i_save_dev_types_Slash_2592",
+	"Cannot_find_name_0_Do_you_need_to_install_type_definitions_for_node_Try_npm_i_save_dev_types_Slashno_2591",
+	"ECMAScript_imports_and_exports_cannot_be_written_in_a_CommonJS_file_under_verbatimModuleSyntax_Adjus_1295",
 }
 
 func loadLocaleData(data string) map[Key]string {
@@ -56,22 +67,11 @@ func loadLocaleData(data string) map[Key]string {
 	if err := json.UnmarshalRead(gr, &result); err != nil {
 		panic("failed to unmarshal locale data: " + err.Error())
 	}
+	for _, key := range staleTranslations {
+		delete(result, key)
+	}
 	return result
 }
-
-//go:embed loc/zh-CN.json.gz
-var zhCNData string
-
-var zhCN = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(zhCNData)
-})
-
-//go:embed loc/zh-TW.json.gz
-var zhTWData string
-
-var zhTW = sync.OnceValue(func() map[Key]string {
-	return loadLocaleData(zhTWData)
-})
 
 //go:embed loc/cs-CZ.json.gz
 var csCZData string
@@ -148,4 +148,18 @@ var trTRData string
 
 var trTR = sync.OnceValue(func() map[Key]string {
 	return loadLocaleData(trTRData)
+})
+
+//go:embed loc/zh-CN.json.gz
+var zhCNData string
+
+var zhCN = sync.OnceValue(func() map[Key]string {
+	return loadLocaleData(zhCNData)
+})
+
+//go:embed loc/zh-TW.json.gz
+var zhTWData string
+
+var zhTW = sync.OnceValue(func() map[Key]string {
+	return loadLocaleData(zhTWData)
 })

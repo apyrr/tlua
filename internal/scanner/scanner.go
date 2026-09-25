@@ -92,7 +92,6 @@ var textToKeyword = map[string]ast.Kind{
 	"never":      ast.KindNeverKeyword,
 	"nil":        ast.KindNilKeyword,
 	"not":        ast.KindExclamationToken,
-	"null":       ast.KindNilKeyword,
 	"number":     ast.KindNumberKeyword,
 	"table":      ast.KindObjectKeyword,
 	"thread":     ast.KindThreadKeyword,
@@ -121,7 +120,6 @@ var textToKeyword = map[string]ast.Kind{
 	"true":       ast.KindTrueKeyword,
 	"type":       ast.KindTypeKeyword,
 	"typeof":     ast.KindTypeOfKeyword,
-	"undefined":  ast.KindNilKeyword,
 	"unique":     ast.KindUniqueKeyword,
 	"unknown":    ast.KindUnknownKeyword,
 	"until":      ast.KindUntilKeyword,
@@ -193,6 +191,9 @@ type Scanner struct {
 	scriptTarget core.ScriptTarget
 	onError      ErrorCallback
 	skipTrivia   bool
+	// json makes `null` scan as the nil keyword: a JSON literal, where in tlua
+	// source it is an ordinary name.
+	json bool
 	ScannerState
 
 	numberCache    map[string]string
@@ -387,6 +388,11 @@ func (s *Scanner) SetText(text string) {
 
 func (s *Scanner) SetOnError(errorCallback ErrorCallback) {
 	s.onError = errorCallback
+}
+
+// SetJSON scans the text as JSON, whose `null` literal is the nil keyword.
+func (s *Scanner) SetJSON(json bool) {
+	s.json = json
 }
 
 func (s *Scanner) SetScriptTarget(scriptTarget core.ScriptTarget) {
@@ -1904,6 +1910,9 @@ func isWordOperatorKind(kind ast.Kind) bool {
 // punctuation twin, so the spelling is recorded in the token flags here, where
 // it is known — the kind alone cannot recover it.
 func (s *Scanner) identifierToken() ast.Kind {
+	if s.json && s.tokenValue == "null" {
+		return ast.KindNilKeyword
+	}
 	kind := GetIdentifierToken(s.tokenValue)
 	if isWordOperatorKind(kind) {
 		s.tokenFlags |= ast.TokenFlagsWordOperator
@@ -1930,12 +1939,10 @@ var tokenToText = func() [ast.KindCount]string {
 	for text, kind := range textToToken {
 		result[kind] = text
 	}
-	// `nil` and `undefined` both scan to KindNilKeyword; `nil` is the
-	// canonical spelling, so pin the printed text (map iteration order above is
-	// otherwise nondeterministic between the two).
-	result[ast.KindNilKeyword] = "nil"
-	// Same for the logical operators, which have both a punctuation and a Lua
-	// word spelling. The words are canonical, as `~=` is for not-equal.
+	// The logical operators have both a punctuation and a Lua word spelling, so
+	// pin the printed text (map iteration order above is otherwise
+	// nondeterministic between the two). The words are canonical, as `~=` is for
+	// not-equal.
 	result[ast.KindAmpersandAmpersandToken] = "and"
 	result[ast.KindBarBarToken] = "or"
 	// `not` is deliberately NOT canonical: KindExclamationToken is also the
@@ -2236,6 +2243,8 @@ func GetShebang(text string) string {
 
 func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
+	// Rescan the text the way the parser scanned it, so tokens agree with the tree.
+	s.SetJSON(sourceFile.ScriptKind == core.ScriptKindJSON)
 	s.text = sourceFile.Text()
 	s.pos = pos
 	s.end = len(s.text)

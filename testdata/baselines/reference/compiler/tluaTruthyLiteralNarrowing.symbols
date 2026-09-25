@@ -1,0 +1,142 @@
+//// [tests/cases/compiler/tluaTruthyLiteralNarrowing.tlua] ////
+
+=== tluaTruthyLiteralNarrowing.tlua ===
+// Lua treats only nil and false as falsy, so a string, number, table or function
+// literal is always truthy. In `c and <literal> or y` that makes `y` reachable only
+// when `c` is falsy, which is what lets Lua's ternary idiom narrow.
+
+type U = { op: "a"; name: string } | { op: "b" }
+>U : Symbol(U, Decl(tluaTruthyLiteralNarrowing.tlua, 0, 0))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+
+declare function getU(): U;
+>getU : Symbol(getU, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 48))
+>U : Symbol(U, Decl(tluaTruthyLiteralNarrowing.tlua, 0, 0))
+
+local u = getU()
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>getU : Symbol(getU, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 48))
+
+local s: string = u.op == "b" and "b" or u.name
+>s : Symbol(s, Decl(tluaTruthyLiteralNarrowing.tlua, 9, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local n: number | string = u.op == "b" and 0 or u.name
+>n : Symbol(n, Decl(tluaTruthyLiteralNarrowing.tlua, 10, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local e: string = u.op == "b" and "" or u.name
+>e : Symbol(e, Decl(tluaTruthyLiteralNarrowing.tlua, 11, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local tb: table | string = u.op == "b" and {} or u.name
+>tb : Symbol(tb, Decl(tluaTruthyLiteralNarrowing.tlua, 12, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local fn: function | string = u.op == "b" and function() end or u.name
+>fn : Symbol(fn, Decl(tluaTruthyLiteralNarrowing.tlua, 13, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local p: string = u.op == "b" and ("b") or u.name
+>p : Symbol(p, Decl(tluaTruthyLiteralNarrowing.tlua, 14, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local neg: number | string = u.op == "b" and -1 or u.name
+>neg : Symbol(neg, Decl(tluaTruthyLiteralNarrowing.tlua, 15, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local asserted: string = u.op == "b" and ("b" as string) or u.name
+>asserted : Symbol(asserted, Decl(tluaTruthyLiteralNarrowing.tlua, 16, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+local parenthesized: boolean | string = u.op == "b" and (true) or u.name
+>parenthesized : Symbol(parenthesized, Decl(tluaTruthyLiteralNarrowing.tlua, 17, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u.name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>name : Symbol(name, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 19))
+
+// `nil` and `false` are the falsy side: the true branch of `c and nil` is never
+// taken, so the assignment inside it never reaches the read below.
+local v: string | number = "s"
+>v : Symbol(v, Decl(tluaTruthyLiteralNarrowing.tlua, 21, 5))
+
+if u.op == "b" and nil then
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+
+    v = 1
+>v : Symbol(v, Decl(tluaTruthyLiteralNarrowing.tlua, 21, 5))
+
+end
+local onlyString: string = v
+>onlyString : Symbol(onlyString, Decl(tluaTruthyLiteralNarrowing.tlua, 25, 5))
+>v : Symbol(v, Decl(tluaTruthyLiteralNarrowing.tlua, 21, 5))
+
+// A template string is always a Lua string, so it is always truthy.
+declare function label(): string;
+>label : Symbol(label, Decl(tluaTruthyLiteralNarrowing.tlua, 25, 28))
+
+if `${label()}` then
+>label : Symbol(label, Decl(tluaTruthyLiteralNarrowing.tlua, 25, 28))
+
+end
+
+// A middle operand that may be falsy does not narrow.
+declare function maybeName(): string | nil;
+>maybeName : Symbol(maybeName, Decl(tluaTruthyLiteralNarrowing.tlua, 30, 3))
+
+local bad: string | nil = u.op == "b" and maybeName() or u.name
+>bad : Symbol(bad, Decl(tluaTruthyLiteralNarrowing.tlua, 34, 5))
+>u.op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+>op : Symbol(op, Decl(tluaTruthyLiteralNarrowing.tlua, 4, 10), Decl(tluaTruthyLiteralNarrowing.tlua, 4, 38))
+>maybeName : Symbol(maybeName, Decl(tluaTruthyLiteralNarrowing.tlua, 30, 3))
+>u : Symbol(u, Decl(tluaTruthyLiteralNarrowing.tlua, 8, 5))
+
+

@@ -1,0 +1,211 @@
+//// [tests/cases/compiler/tluaOptionalColonCall.tlua] ////
+
+=== tluaOptionalColonCall.tlua ===
+// `obj?:m(args)` is the optional colon call: `obj and obj:m(args)`. The receiver
+// is passed non-nil, since the call only happens when it is not nil, and the
+// result gains `nil` like any other optional chain.
+
+interface Box {
+>Box : Symbol(Box, Decl(tluaOptionalColonCall.tlua, 0, 0))
+
+    value: number;
+>value : Symbol(Box.value, Decl(tluaOptionalColonCall.tlua, 4, 15))
+
+    inner: Box | nil;
+>inner : Symbol(Box.inner, Decl(tluaOptionalColonCall.tlua, 5, 18))
+>Box : Symbol(Box, Decl(tluaOptionalColonCall.tlua, 0, 0))
+
+    read(self: Box): number;
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>self : Symbol(self, Decl(tluaOptionalColonCall.tlua, 7, 9))
+>Box : Symbol(Box, Decl(tluaOptionalColonCall.tlua, 0, 0))
+
+    set(self: Box, v: number): nil;
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>self : Symbol(self, Decl(tluaOptionalColonCall.tlua, 8, 8))
+>Box : Symbol(Box, Decl(tluaOptionalColonCall.tlua, 0, 0))
+>v : Symbol(v, Decl(tluaOptionalColonCall.tlua, 8, 18))
+}
+
+declare function maybeBox(): Box | nil;
+>maybeBox : Symbol(maybeBox, Decl(tluaOptionalColonCall.tlua, 9, 1))
+>Box : Symbol(Box, Decl(tluaOptionalColonCall.tlua, 0, 0))
+
+local b = maybeBox()
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>maybeBox : Symbol(maybeBox, Decl(tluaOptionalColonCall.tlua, 9, 1))
+
+local r1 = b?:read()
+>r1 : Symbol(r1, Decl(tluaOptionalColonCall.tlua, 14, 5))
+>b?:read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+
+local r2: number = b?:read()
+>r2 : Symbol(r2, Decl(tluaOptionalColonCall.tlua, 15, 5))
+>b?:read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+
+b?:set(1)
+>b?:set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+
+b?:set("x")
+>b?:set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+
+// A receiver that is not a plain name is evaluated once.
+local t: { box?: Box } = {}
+>t : Symbol(t, Decl(tluaOptionalColonCall.tlua, 20, 5))
+>box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 20, 10))
+>Box : Symbol(Box, Decl(tluaOptionalColonCall.tlua, 0, 0))
+
+t.box?:set(2)
+>t.box?:set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>t.box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 20, 10))
+>t : Symbol(t, Decl(tluaOptionalColonCall.tlua, 20, 5))
+>box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 20, 10))
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+
+maybeBox()?:set(3)
+>maybeBox()?:set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>maybeBox : Symbol(maybeBox, Decl(tluaOptionalColonCall.tlua, 9, 1))
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+
+// Links chain in both directions.
+local r3 = b?.inner?:read()
+>r3 : Symbol(r3, Decl(tluaOptionalColonCall.tlua, 25, 5))
+>b?.inner?:read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>b?.inner : Symbol(Box.inner, Decl(tluaOptionalColonCall.tlua, 5, 18))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>inner : Symbol(Box.inner, Decl(tluaOptionalColonCall.tlua, 5, 18))
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+
+local r4 = b?:read() == 1
+>r4 : Symbol(r4, Decl(tluaOptionalColonCall.tlua, 26, 5))
+>b?:read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+
+// `?` and `:` are one operator; outer spaces are trivia.
+local r5 = b ?: read()
+>r5 : Symbol(r5, Decl(tluaOptionalColonCall.tlua, 29, 5))
+>b ?: read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 13, 5))
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+
+// A discarded call keeps its captured receiver in a `do ... end`, so its local
+// ends with the statement; a leading comment stays with the statement.
+local function useMany(self: { box?: Box })
+>useMany : Symbol(useMany, Decl(tluaOptionalColonCall.tlua, 29, 22))
+>self : Symbol(self, Decl(tluaOptionalColonCall.tlua, 33, 23))
+>box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 33, 30))
+>Box : Symbol(Box, Decl(tluaOptionalColonCall.tlua, 0, 0))
+
+    -- first
+    self.box?:set(1)
+>self.box?:set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>self.box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 33, 30))
+>self : Symbol(self, Decl(tluaOptionalColonCall.tlua, 33, 23))
+>box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 33, 30))
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+
+    self.box?:set(2)
+>self.box?:set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>self.box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 33, 30))
+>self : Symbol(self, Decl(tluaOptionalColonCall.tlua, 33, 23))
+>box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 33, 30))
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+
+end
+
+// A chain in a non-order-safe slot runs in a function; a `...` argument is passed
+// through to it.
+declare function consume(a: nil, b: number): nil;
+>consume : Symbol(consume, Decl(tluaOptionalColonCall.tlua, 37, 3))
+>a : Symbol(a, Decl(tluaOptionalColonCall.tlua, 41, 25))
+>b : Symbol(b, Decl(tluaOptionalColonCall.tlua, 41, 32))
+
+local function forward(...: number)
+>forward : Symbol(forward, Decl(tluaOptionalColonCall.tlua, 41, 49))
+> : Symbol((Missing), Decl(tluaOptionalColonCall.tlua, 42, 23))
+
+    consume(maybeBox()?:set(select("#", ...)), 1)
+>consume : Symbol(consume, Decl(tluaOptionalColonCall.tlua, 37, 3))
+>maybeBox()?:set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>maybeBox : Symbol(maybeBox, Decl(tluaOptionalColonCall.tlua, 9, 1))
+>set : Symbol(Box.set, Decl(tluaOptionalColonCall.tlua, 7, 28))
+>select : Symbol(select, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+-- A hoisted local keeps its statement's comment above it.
+local r6 = t.box?.inner?:read()
+>r6 : Symbol(r6, Decl(tluaOptionalColonCall.tlua, 47, 5))
+>t.box?.inner?:read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>t.box?.inner : Symbol(Box.inner, Decl(tluaOptionalColonCall.tlua, 5, 18))
+>t.box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 20, 10))
+>t : Symbol(t, Decl(tluaOptionalColonCall.tlua, 20, 5))
+>box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 20, 10))
+>inner : Symbol(Box.inner, Decl(tluaOptionalColonCall.tlua, 5, 18))
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+
+// A trailing comment stays on its statement, after the hoisted locals.
+local r7 = t.box?.inner?:read() -- trailing
+>r7 : Symbol(r7, Decl(tluaOptionalColonCall.tlua, 50, 5))
+>t.box?.inner?:read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+>t.box?.inner : Symbol(Box.inner, Decl(tluaOptionalColonCall.tlua, 5, 18))
+>t.box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 20, 10))
+>t : Symbol(t, Decl(tluaOptionalColonCall.tlua, 20, 5))
+>box : Symbol(box, Decl(tluaOptionalColonCall.tlua, 20, 10))
+>inner : Symbol(Box.inner, Decl(tluaOptionalColonCall.tlua, 5, 18))
+>read : Symbol(Box.read, Decl(tluaOptionalColonCall.tlua, 6, 21))
+
+// `a and a:m()` keeps one value: Lua's `and` yields a single result, so an
+// optional colon call of a multi-value method yields its first value (or nil).
+interface Pair {
+>Pair : Symbol(Pair, Decl(tluaOptionalColonCall.tlua, 50, 31))
+
+    pair(self: Pair): (number, string);
+>pair : Symbol(Pair.pair, Decl(tluaOptionalColonCall.tlua, 54, 16))
+>self : Symbol(self, Decl(tluaOptionalColonCall.tlua, 55, 9))
+>Pair : Symbol(Pair, Decl(tluaOptionalColonCall.tlua, 50, 31))
+}
+declare maybePair: Pair | nil;
+>maybePair : Symbol(maybePair, Decl(tluaOptionalColonCall.tlua, 57, 7))
+>Pair : Symbol(Pair, Decl(tluaOptionalColonCall.tlua, 50, 31))
+
+local first, second = maybePair?:pair()
+>first : Symbol(first, Decl(tluaOptionalColonCall.tlua, 58, 5))
+>second : Symbol(second, Decl(tluaOptionalColonCall.tlua, 58, 12))
+>maybePair?:pair : Symbol(Pair.pair, Decl(tluaOptionalColonCall.tlua, 54, 16))
+>maybePair : Symbol(maybePair, Decl(tluaOptionalColonCall.tlua, 57, 7))
+>pair : Symbol(Pair.pair, Decl(tluaOptionalColonCall.tlua, 54, 16))
+
+local onlyNil: nil = second
+>onlyNil : Symbol(onlyNil, Decl(tluaOptionalColonCall.tlua, 59, 5))
+>second : Symbol(second, Decl(tluaOptionalColonCall.tlua, 58, 12))
+
+// A builtin whose result the checker refines still gains the optional nil.
+declare maybeText: string | nil;
+>maybeText : Symbol(maybeText, Decl(tluaOptionalColonCall.tlua, 62, 7))
+
+declare maybeFile: LuaFile | nil;
+>maybeFile : Symbol(maybeFile, Decl(tluaOptionalColonCall.tlua, 63, 7))
+>LuaFile : Symbol(LuaFile, Decl(lib.luajit.d.tlua, --, --))
+
+local words: () => string | nil = maybeText?:gmatch("%a+")
+>words : Symbol(words, Decl(tluaOptionalColonCall.tlua, 64, 5))
+>maybeText?:gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+>maybeText : Symbol(maybeText, Decl(tluaOptionalColonCall.tlua, 62, 7))
+>gmatch : Symbol(String.gmatch, Decl(lib.luajit.d.tlua, --, --))
+
+local contents: string = maybeFile?:read("*a")
+>contents : Symbol(contents, Decl(tluaOptionalColonCall.tlua, 65, 5))
+>maybeFile?:read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+>maybeFile : Symbol(maybeFile, Decl(tluaOptionalColonCall.tlua, 63, 7))
+>read : Symbol(LuaFile.read, Decl(lib.luajit.d.tlua, --, --))
+

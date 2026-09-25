@@ -282,7 +282,7 @@
   {
     "startPos": 221,
     "endPos": 229,
-    "kind": "NilKeyword",
+    "kind": "Identifier",
     "nodePos": 219,
     "nodeEnd": 229
   },
@@ -9424,7 +9424,7 @@
   {
     "startPos": 8959,
     "endPos": 8967,
-    "kind": "NilKeyword",
+    "kind": "Identifier",
     "nodePos": 8957,
     "nodeEnd": 8967
   },

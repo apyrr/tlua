@@ -40,9 +40,11 @@ end
 // `local function` takes a plain name.
 local function Bad.f(): void
 >Bad : () => void
+>f(): void : any
+>f(): void : any
 >f() : any
 >f : any
-> : any
+>void : any
 
 end
 

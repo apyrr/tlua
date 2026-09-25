@@ -1,4 +1,4 @@
-tluaColonPredicateNarrowing.tlua(76,39): error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+tluaColonPredicateNarrowing.tlua(76,39): error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
 tluaColonPredicateNarrowing.tlua(83,46): error TLUA1225: Cannot find parameter 'missing'.
 tluaColonPredicateNarrowing.tlua(99,14): error TLUA2554: Expected 0 arguments, but got 1.
 tluaColonPredicateNarrowing.tlua(100,11): error TLUA2322: Type 'unknown' is not assignable to type 'Player'.
@@ -83,7 +83,7 @@ tluaColonPredicateNarrowing.tlua(104,23): error TLUA2339: Property 'Nick' does n
     end
     function stillNeedsReturn(gg: Guard): number
                                           ~~~~~~
-!!! error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+!!! error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
         gg:Ensure(true);
     end
     

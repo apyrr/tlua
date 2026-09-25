@@ -194,7 +194,7 @@ func (c *Checker) IsUnknownSymbol(symbol *ast.Symbol) bool {
 	return symbol == c.unknownSymbol
 }
 
-func (c *Checker) IsUndefinedSymbol(symbol *ast.Symbol) bool {
+func (c *Checker) IsNilSymbol(symbol *ast.Symbol) bool {
 	return symbol == c.nilSymbol
 }
 

@@ -57,9 +57,9 @@ local function run(a, getObj)
     local _a = getObj();
     return _a and _a.b;
   end)();
-  local _a = a and a.b;
   -- (B) side-effecting base / nested optional link, order-safe slot — hoist a
   -- `local`, guard with `and`.
+  local _a = a and a.b;
   local b1 = _a and _a.c;
   local _b = getObj();
   local b2 = _b and _b.b;
@@ -74,9 +74,11 @@ local function run(a, getObj)
   if a then
     a.m();
   end
-  local _d = getObj();
-  if _d then
-    _d.m();
+  do
+    local _d = getObj();
+    if _d then
+      _d.m();
+    end
   end
   -- Order-safe `return` slot — hoisting is unnecessary here (copiable base).
   return a and a.b.c;

@@ -58,8 +58,8 @@ function makeRandomName()
     return "Bob!?! ";
 end
 
-function lastElementOf<T>(arr: T[]): T | undefined
-    if arr.length == 0 then return undefined end
+function lastElementOf<T>(arr: T[]): T | nil
+    if arr.length == 0 then return nil end
     return arr[arr.length - 1];
 end
 
@@ -395,7 +395,7 @@ return { createDog = dog.createDog };
   "size": 2261
 }
 //// [/user/username/projects/demo/lib/core/core/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","../../../core/utilities.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"1533d1ad30837e278243f10ddb3cb291-function makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };"],"options":{"composite":true,"declaration":true,"module":1,"noImplicitReturns":true,"noUnusedLocals":true,"noUnusedParameters":true,"outDir":"..","rootDir":"../../..","strict":true,"target":1},"semanticDiagnosticsPerFile":[1,2],"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
+{"version":"FakeTSVersion","root":[2],"fileNames":["lib.luajit.d.tlua","../../../core/utilities.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"f8dfb83b6e621321c19bfd35d7e8a224-function makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | nil\n    if arr.length == 0 then return nil end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };"],"options":{"composite":true,"declaration":true,"module":1,"noImplicitReturns":true,"noUnusedLocals":true,"noUnusedParameters":true,"outDir":"..","rootDir":"../../..","strict":true,"target":1},"semanticDiagnosticsPerFile":[1,2],"emitDiagnosticsPerFile":[[2,[{"end":8,"code":100054,"category":1,"messageKey":"Declaration_emit_is_not_supported_for_a_Lua_module_yet_100054"}]]],"emitSignatures":[2]}
 //// [/user/username/projects/demo/lib/core/core/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -426,8 +426,8 @@ return { createDog = dog.createDog };
     },
     {
       "fileName": "../../../core/utilities.tlua",
-      "version": "1533d1ad30837e278243f10ddb3cb291-function makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
-      "signature": "1533d1ad30837e278243f10ddb3cb291-function makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | undefined\n    if arr.length == 0 then return undefined end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
+      "version": "f8dfb83b6e621321c19bfd35d7e8a224-function makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | nil\n    if arr.length == 0 then return nil end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
+      "signature": "f8dfb83b6e621321c19bfd35d7e8a224-function makeRandomName()\n    return \"Bob!?! \";\nend\n\nfunction lastElementOf<T>(arr: T[]): T | nil\n    if arr.length == 0 then return nil end\n    return arr[arr.length - 1];\nend\n\nreturn { makeRandomName = makeRandomName, lastElementOf = lastElementOf };",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -466,7 +466,7 @@ return { createDog = dog.createDog };
       "original": 2
     }
   ],
-  "size": 1631
+  "size": 1619
 }
 //// [/user/username/projects/demo/lib/core/core/utilities.lua] *new* 
 function makeRandomName()

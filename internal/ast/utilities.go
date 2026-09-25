@@ -790,6 +790,59 @@ func LuaIdentityBuiltin(name string) LuaBuiltins {
 	return 0
 }
 
+// IsLuaPrefixExpression reports whether node is a Lua prefixexp -- a name, an
+// index, a call, or a parenthesized expression -- the only expressions Lua lets a
+// `.`, `[`, `:` or argument list follow. A literal, table constructor, function,
+// `...` or operator expression is a complete expression but not a prefixexp:
+// `"x":upper()` has to be written `("x"):upper()`. Wrappers that erase at emit
+// (`as`, `!`, `satisfies`) are looked through; parentheses are not, since they
+// are what makes any expression a prefixexp.
+func IsLuaPrefixExpression(node *Node) bool {
+	switch SkipOuterExpressions(node, OEKAll&^OEKParentheses).Kind {
+	case KindIdentifier, KindPropertyAccessExpression, KindElementAccessExpression, KindCallExpression, KindParenthesizedExpression,
+		// JS residue that still prints as a name.
+		KindThisKeyword, KindSuperKeyword:
+		return true
+	}
+	return false
+}
+
+// LuaTruthiness classifies an expression's truthiness as far as its form alone
+// decides it.
+type LuaTruthiness int8
+
+const (
+	LuaTruthinessUnknown LuaTruthiness = iota
+	LuaTruthinessAlwaysTruthy
+	LuaTruthinessAlwaysFalsy
+)
+
+// GetLuaSyntacticTruthiness is the one list of expressions whose truthiness their
+// syntax decides. Lua treats only nil and false as falsy, so `true`, every string
+// (`""` included), number (`0` and `-1` included), table constructor and function
+// is truthy, and `false` and `nil` are falsy. Parentheses and type assertions are
+// erased, so they never change the answer. The binder uses it to cut the flow
+// branch a constant can never take; the checker uses it to report constant
+// conditions.
+func GetLuaSyntacticTruthiness(node *Node) LuaTruthiness {
+	node = SkipOuterExpressions(node, OEKAll)
+	switch node.Kind {
+	case KindTrueKeyword,
+		KindStringLiteral, KindNoSubstitutionTemplateLiteral, KindTemplateExpression, KindNumericLiteral,
+		KindObjectLiteralExpression, KindArrayLiteralExpression,
+		KindFunctionExpression, KindArrowFunction, KindRegularExpressionLiteral:
+		return LuaTruthinessAlwaysTruthy
+	case KindFalseKeyword, KindNilKeyword:
+		return LuaTruthinessAlwaysFalsy
+	case KindPrefixUnaryExpression:
+		unary := node.AsPrefixUnaryExpression()
+		if unary.Operator == KindMinusToken && SkipOuterExpressions(unary.Operand, OEKAll).Kind == KindNumericLiteral {
+			return LuaTruthinessAlwaysTruthy
+		}
+	}
+	return LuaTruthinessUnknown
+}
+
 // LuaLocalAliasInitializer returns the bare name a `local` statement initializes
 // declaration from (`type` in `local t = type`), or nil. It is purely syntactic,
 // so the binder can gate on it before any symbol exists. An annotated local is not

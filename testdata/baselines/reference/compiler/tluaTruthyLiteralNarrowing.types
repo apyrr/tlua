@@ -1,0 +1,207 @@
+//// [tests/cases/compiler/tluaTruthyLiteralNarrowing.tlua] ////
+
+=== tluaTruthyLiteralNarrowing.tlua ===
+// Lua treats only nil and false as falsy, so a string, number, table or function
+// literal is always truthy. In `c and <literal> or y` that makes `y` reachable only
+// when `c` is falsy, which is what lets Lua's ternary idiom narrow.
+
+type U = { op: "a"; name: string } | { op: "b" }
+>U : U
+>op : "a"
+>name : string
+>op : "b"
+
+declare function getU(): U;
+>getU : () => U
+
+local u = getU()
+>u : U
+>getU() : U
+>getU : () => U
+
+local s: string = u.op == "b" and "b" or u.name
+>s : string
+>u.op == "b" and "b" or u.name : string
+>u.op == "b" and "b" : "b" | false
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>"b" : "b"
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local n: number | string = u.op == "b" and 0 or u.name
+>n : string | number
+>u.op == "b" and 0 or u.name : string | 0
+>u.op == "b" and 0 : 0 | false
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>0 : 0
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local e: string = u.op == "b" and "" or u.name
+>e : string
+>u.op == "b" and "" or u.name : string
+>u.op == "b" and "" : "" | false
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>"" : ""
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local tb: table | string = u.op == "b" and {} or u.name
+>tb : string | table
+>u.op == "b" and {} or u.name : string | {}
+>u.op == "b" and {} : false | {}
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>{} : {}
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local fn: function | string = u.op == "b" and function() end or u.name
+>fn : string | function
+>u.op == "b" and function() end or u.name : string | (() => void)
+>u.op == "b" and function() end : false | (() => void)
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>function() end : () => void
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local p: string = u.op == "b" and ("b") or u.name
+>p : string
+>u.op == "b" and ("b") or u.name : string
+>u.op == "b" and ("b") : "b" | false
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>("b") : "b"
+>"b" : "b"
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local neg: number | string = u.op == "b" and -1 or u.name
+>neg : string | number
+>u.op == "b" and -1 or u.name : string | -1
+>u.op == "b" and -1 : -1 | false
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>-1 : -1
+>1 : 1
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local asserted: string = u.op == "b" and ("b" as string) or u.name
+>asserted : string
+>u.op == "b" and ("b" as string) or u.name : string
+>u.op == "b" and ("b" as string) : string | false
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>("b" as string) : string
+>"b" as string : string
+>"b" : "b"
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+local parenthesized: boolean | string = u.op == "b" and (true) or u.name
+>parenthesized : string | boolean
+>u.op == "b" and (true) or u.name : string | true
+>u.op == "b" and (true) : boolean
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>(true) : true
+>true : true
+>u.name : string
+>u : { op: "a"; name: string; }
+>name : string
+
+// `nil` and `false` are the falsy side: the true branch of `c and nil` is never
+// taken, so the assignment inside it never reaches the read below.
+local v: string | number = "s"
+>v : string | number
+>"s" : "s"
+
+if u.op == "b" and nil then
+>u.op == "b" and nil : false | nil
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+
+    v = 1
+>v = 1 : 1
+>v : string | number
+>1 : 1
+
+end
+local onlyString: string = v
+>onlyString : string
+>v : string
+
+// A template string is always a Lua string, so it is always truthy.
+declare function label(): string;
+>label : () => string
+
+if `${label()}` then
+>`${label()}` : string
+>label() : string
+>label : () => string
+
+end
+
+// A middle operand that may be falsy does not narrow.
+declare function maybeName(): string | nil;
+>maybeName : () => string | nil
+
+local bad: string | nil = u.op == "b" and maybeName() or u.name
+>bad : string | nil
+>u.op == "b" and maybeName() or u.name : any
+>u.op == "b" and maybeName() : string | false | nil
+>u.op == "b" : boolean
+>u.op : "a" | "b"
+>u : U
+>op : "a" | "b"
+>"b" : "b"
+>maybeName() : string | nil
+>maybeName : () => string | nil
+>u.name : any
+>u : U
+>name : any
+
+

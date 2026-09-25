@@ -1,0 +1,23 @@
+tluaOptionalColonCallParseErrors.tlua(10,12): error TLUA1005: ';' expected.
+tluaOptionalColonCallParseErrors.tlua(10,14): error TLUA1128: Declaration or statement expected.
+tluaOptionalColonCallParseErrors.tlua(10,15): error TLUA2304: Cannot find name 'read'.
+
+
+==== tluaOptionalColonCallParseErrors.tlua (3 errors) ====
+    // A space between `?` and `:` does not spell the optional colon call.
+    
+    interface Box {
+        read(self: Box): number;
+    }
+    
+    declare function maybeBox(): Box | nil;
+    
+    local b = maybeBox()
+    local r = b? :read()
+               ~
+!!! error TLUA1005: ';' expected.
+                 ~
+!!! error TLUA1128: Declaration or statement expected.
+                  ~~~~
+!!! error TLUA2304: Cannot find name 'read'.
+    

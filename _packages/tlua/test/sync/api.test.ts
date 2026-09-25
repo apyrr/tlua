@@ -2584,11 +2584,10 @@ type Alias = typeof value;
             const project = snapshot.getProject("/tluaconfig.json")!;
             const src = `\nlocal value = 1;\ntype Alias = typeof value;\n`;
 
-            // A real symbol is not the unknown/undefined symbol.
+            // A real symbol is not the unknown symbol.
             const valueSymbol = project.checker.getSymbolAtPosition("/src/main.tlua", src.indexOf("value"));
             assert.ok(valueSymbol);
             assert.equal(project.checker.isUnknownSymbol(valueSymbol), false);
-            assert.equal(project.checker.isUndefinedSymbol(valueSymbol), false);
         }
         finally {
             api.close();

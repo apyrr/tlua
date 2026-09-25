@@ -1,0 +1,57 @@
+// @strict: true
+// @noEmit: true
+
+// pairs, ipairs and next never yield a nil value, even from a table whose value
+// type admits nil (a map entries are deleted from).
+
+interface Box {
+    value: number;
+}
+
+local map: Table<string, Box | nil> = {}
+for _, box in pairs(map) do
+    local n: number = box.value
+end
+for _, box in next, map do
+    local n: number = box.value
+end
+
+local list: Table<number, Box | nil> = {}
+for _, box in ipairs(list) do
+    local n: number = box.value
+end
+
+// A direct call types its value the same way. On an empty table it returns
+// `nil, nil`, so the key is the result to test; the value is not correlated with
+// it, which is what keeps a hand-written loop that reassigns both working.
+local k, v = next(map)
+while k ~= nil do
+    local n: number = v.value
+    k, v = next(map, k)
+end
+
+// An iterator that forwards next's results through locals is a LuaPairsIterator,
+// and a loop over it yields non-nil values too.
+local forward: LuaPairsIterator<string, Box | nil> = function(t, key)
+    local nk, nv = next(t, key)
+    return nk, nv
+end
+for _, box in forward, map do
+    local n: number = box.value
+end
+
+// A value type that admits false keeps false: only nil is removed.
+local flags: Table<string, boolean | nil> = {}
+for _, flag in pairs(flags) do
+    local f: true = flag
+end
+
+// A generic value type stays NonNullable<V> until it is instantiated.
+local function values<V>(t: Table<string, V>): NonNullable<V>[]
+    local out: NonNullable<V>[] = {}
+    for _, value in pairs(t) do
+        out[#out + 1] = value
+    end
+    return out
+end
+local boxes: Box[] = values(map)

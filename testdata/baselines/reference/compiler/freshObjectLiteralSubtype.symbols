@@ -14,7 +14,7 @@ function f1()
 
 end
 
-declare f2: () => { valid: boolean, msg?: undefined }
+declare f2: () => { valid: boolean, msg?: nil }
 >f2 : Symbol(f2, Decl(freshObjectLiteralSubtype.tlua, 7, 7))
 >valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 7, 19))
 >msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 7, 35))
@@ -47,7 +47,7 @@ declare function utilValidate(): {
     valid: boolean;
 >valid : Symbol(valid, Decl(freshObjectLiteralSubtype.tlua, 21, 34))
 
-    msg?: undefined;
+    msg?: nil;
 >msg : Symbol(msg, Decl(freshObjectLiteralSubtype.tlua, 22, 19))
 
 } | {

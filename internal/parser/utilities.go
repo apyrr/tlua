@@ -11,31 +11,6 @@ func tokenIsIdentifierOrKeyword(token ast.Kind) bool {
 	return token >= ast.KindIdentifier
 }
 
-// tokenIsLuaMethodName reports whether token can name a Lua colon-call method.
-// Lua's Name grammar excludes only Lua's own reserved words; TS-only keywords
-// (`new`, `type`, `delete`, ...) are valid method names, matching what the dot
-// path accepts via allowIdentifierNames. Keeping Lua's reserved words out is
-// what makes error recovery safe: committing a colon call on `t:end(` or
-// `t:until(` would swallow the enclosing block terminator. (`and`/`or`/`not`
-// scan as operator tokens and never reach here.)
-//
-// The keywords that open a statement whose next token can be `(` are excluded
-// too: in `foo: with (x) { ... }` — a deleted TS label — committing the colon
-// call `foo:with(x)` would detach the statement from its body and warp
-// everything after it. Unlike `new`/`delete`, neither is a plausible Lua
-// method name.
-func tokenIsLuaMethodName(token ast.Kind) bool {
-	switch token {
-	case ast.KindBreakKeyword, ast.KindDoKeyword, ast.KindElseKeyword, ast.KindElseIfKeyword,
-		ast.KindEndKeyword, ast.KindFalseKeyword, ast.KindForKeyword, ast.KindFunctionKeyword,
-		ast.KindGotoKeyword, ast.KindIfKeyword, ast.KindInKeyword, ast.KindLocalKeyword,
-		ast.KindNilKeyword, ast.KindRepeatKeyword, ast.KindReturnKeyword, ast.KindThenKeyword,
-		ast.KindTrueKeyword, ast.KindUntilKeyword, ast.KindWhileKeyword:
-		return false
-	}
-	return tokenIsIdentifierOrKeyword(token)
-}
-
 func GetJSDocCommentRanges(f *ast.NodeFactory, commentRanges []ast.CommentRange, node *ast.Node, text string) []ast.CommentRange {
 	switch node.Kind {
 	case ast.KindParameter, ast.KindTypeParameter, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindParenthesizedExpression, ast.KindVariableDeclaration, ast.KindExportSpecifier:

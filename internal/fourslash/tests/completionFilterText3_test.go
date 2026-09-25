@@ -21,7 +21,7 @@ else
     foo1[|.a|]/*2*/
 end
 
-declare foo2: { b: number; "a bc": string; } | undefined;
+declare foo2: { b: number; "a bc": string; } | nil;
 if true then
     foo2[|.|]/*3*/
 elseif false then

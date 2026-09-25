@@ -45,7 +45,7 @@ interface File {
 }
 interface FileList {
     readonly length: number;
-    item(index: number): File | null;
+    item(index: number): File | nil;
     [index: number]: File;
     [Symbol.iterator](): ArrayIterator<File>;
 }/// <reference no-default-lib="true"/>
@@ -75,7 +75,7 @@ declare function require(module: string): any;
 local createFileListFromFiles = function(files: File[]): FileList
 local fileList: FileList = {
     length: files.length,
-    item: function(index: number): File | null return files[index] || null end,
+    item: function(index: number): File | nil return files[index] || nil end,
     [Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,
 } as unknown as FileList;
 
@@ -99,7 +99,7 @@ Output::
 
 [96ma.tlua[0m:[93m4[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
 
-[7m4[0m     item: function(index: number): File | null return files[index] || null end,
+[7m4[0m     item: function(index: number): File | nil return files[index] || nil end,
 [7m [0m [91m        ~[0m
 
 [96ma.tlua[0m:[93m5[0m:[93m22[0m - [91merror[0m[90m TLUA1005: [0m'=' expected.
@@ -161,7 +161,7 @@ Output::
 
 [96ma.tlua[0m:[93m4[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
 
-[7m4[0m     item: function(index: number): File | null return files[index] || null end,
+[7m4[0m     item: function(index: number): File | nil return files[index] || nil end,
 [7m [0m [91m        ~[0m
 
 [96ma.tlua[0m:[93m5[0m:[93m22[0m - [91merror[0m[90m TLUA1005: [0m'=' expected.
@@ -188,7 +188,7 @@ Output::
 
 [96ma.tlua[0m:[93m4[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
 
-[7m4[0m     item: function(index: number): File | null return files[index] || null end,
+[7m4[0m     item: function(index: number): File | nil return files[index] || nil end,
 [7m [0m [91m        ~[0m
 
 [96ma.tlua[0m:[93m5[0m:[93m22[0m - [91merror[0m[90m TLUA1005: [0m'=' expected.
@@ -201,7 +201,7 @@ Found 3 errors in the same file, starting at: a.tlua[90m:3[0m
 
 //// [/home/src/workspaces/project/a.lua] *rewrite with same content*
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo] *new* 
-{"version":"FakeTSVersion","errors":true,"root":[2],"fileNames":["lib.luajit.d.tlua","./a.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"dd33ec948bae8b9c1de34d88d969a302-local createFileListFromFiles = function(files: File[]): FileList\nlocal fileList: FileList = {\n    length: files.length,\n    item: function(index: number): File | null return files[index] || null end,\n    [Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,\n} as unknown as FileList;\n\nreturn fileList;\nend;"],"options":{"strict":true,"target":4},"semanticDiagnosticsPerFile":[1,2]}
+{"version":"FakeTSVersion","errors":true,"root":[2],"fileNames":["lib.luajit.d.tlua","./a.tlua"],"fileInfos":[{"version":"d4695a71643e88fc868e824886bcb416-/// <reference no-default-lib=\"true\"/>\ninterface Boolean {}\ninterface Function {}\ninterface CallableFunction {}\ninterface NewableFunction {}\ninterface IArguments {}\ninterface Number { toExponential: any; }\ninterface Object {}\ninterface RegExp {}\ninterface String { charAt: any; }\ninterface Array<T> { length: number; [n: number]: T; }\ninterface ReadonlyArray<T> {}\ninterface SymbolConstructor {\n    (desc?: string | number): symbol;\n    for(name: string): symbol;\n    readonly toStringTag: symbol;\n}\ndeclare Symbol: SymbolConstructor;\ninterface Symbol {\n    readonly [Symbol.toStringTag]: string;\n}\ndeclare console: { log(msg: any): void; };\ndeclare function require(module: string): any;","affectsGlobalScope":true,"impliedNodeFormat":1},"c606b6d3c804411cd6dcaaf689f13c15-local createFileListFromFiles = function(files: File[]): FileList\nlocal fileList: FileList = {\n    length: files.length,\n    item: function(index: number): File | nil return files[index] || nil end,\n    [Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,\n} as unknown as FileList;\n\nreturn fileList;\nend;"],"options":{"strict":true,"target":4},"semanticDiagnosticsPerFile":[1,2]}
 //// [/home/src/workspaces/project/tluaconfig.tluabuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -233,8 +233,8 @@ Found 3 errors in the same file, starting at: a.tlua[90m:3[0m
     },
     {
       "fileName": "./a.tlua",
-      "version": "dd33ec948bae8b9c1de34d88d969a302-local createFileListFromFiles = function(files: File[]): FileList\nlocal fileList: FileList = {\n    length: files.length,\n    item: function(index: number): File | null return files[index] || null end,\n    [Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,\n} as unknown as FileList;\n\nreturn fileList;\nend;",
-      "signature": "dd33ec948bae8b9c1de34d88d969a302-local createFileListFromFiles = function(files: File[]): FileList\nlocal fileList: FileList = {\n    length: files.length,\n    item: function(index: number): File | null return files[index] || null end,\n    [Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,\n} as unknown as FileList;\n\nreturn fileList;\nend;",
+      "version": "c606b6d3c804411cd6dcaaf689f13c15-local createFileListFromFiles = function(files: File[]): FileList\nlocal fileList: FileList = {\n    length: files.length,\n    item: function(index: number): File | nil return files[index] || nil end,\n    [Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,\n} as unknown as FileList;\n\nreturn fileList;\nend;",
+      "signature": "c606b6d3c804411cd6dcaaf689f13c15-local createFileListFromFiles = function(files: File[]): FileList\nlocal fileList: FileList = {\n    length: files.length,\n    item: function(index: number): File | nil return files[index] || nil end,\n    [Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,\n} as unknown as FileList;\n\nreturn fileList;\nend;",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -246,7 +246,7 @@ Found 3 errors in the same file, starting at: a.tlua[90m:3[0m
     "lib.luajit.d.tlua",
     "./a.tlua"
   ],
-  "size": 1348
+  "size": 1346
 }
 
 tluaconfig.json::
@@ -268,7 +268,7 @@ Output::
 
 [96ma.tlua[0m:[93m4[0m:[93m9[0m - [91merror[0m[90m TLUA1005: [0m',' expected.
 
-[7m4[0m     item: function(index: number): File | null return files[index] || null end,
+[7m4[0m     item: function(index: number): File | nil return files[index] || nil end,
 [7m [0m [91m        ~[0m
 
 [96ma.tlua[0m:[93m5[0m:[93m22[0m - [91merror[0m[90m TLUA1005: [0m'=' expected.

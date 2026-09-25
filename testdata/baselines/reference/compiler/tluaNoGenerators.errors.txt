@@ -2,9 +2,7 @@ tluaNoGenerators.tlua(4,9): error TLUA2393: Duplicate function implementation.
 tluaNoGenerators.tlua(4,9): error TLUA1003: Identifier expected.
 tluaNoGenerators.tlua(4,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoGenerators.tlua(4,11): error TLUA2304: Cannot find name 'gen'.
-tluaNoGenerators.tlua(4,16): error TLUA1005: ';' expected.
-tluaNoGenerators.tlua(4,16): error TLUA1128: Declaration or statement expected.
-tluaNoGenerators.tlua(4,18): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
+tluaNoGenerators.tlua(4,25): error TLUA1005: '(' expected.
 tluaNoGenerators.tlua(5,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(5,3): error TLUA2304: Cannot find name 'yield'.
 tluaNoGenerators.tlua(5,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
@@ -15,9 +13,7 @@ tluaNoGenerators.tlua(9,17): error TLUA2393: Duplicate function implementation.
 tluaNoGenerators.tlua(9,17): error TLUA1003: Identifier expected.
 tluaNoGenerators.tlua(9,17): error TLUA100057: Incomplete statement: expected assignment or a function call.
 tluaNoGenerators.tlua(9,19): error TLUA2304: Cannot find name 'suspendGen'.
-tluaNoGenerators.tlua(9,31): error TLUA1005: ';' expected.
-tluaNoGenerators.tlua(9,31): error TLUA1128: Declaration or statement expected.
-tluaNoGenerators.tlua(9,33): error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
+tluaNoGenerators.tlua(9,40): error TLUA1005: '(' expected.
 tluaNoGenerators.tlua(10,3): error TLUA1434: Unexpected keyword or identifier.
 tluaNoGenerators.tlua(10,3): error TLUA2304: Cannot find name 'yield'.
 tluaNoGenerators.tlua(10,9): error TLUA100057: Incomplete statement: expected assignment or a function call.
@@ -28,7 +24,7 @@ tluaNoGenerators.tlua(15,5): error TLUA2304: Cannot find name 'yield'.
 tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 
 
-==== tluaNoGenerators.tlua (28 errors) ====
+==== tluaNoGenerators.tlua (24 errors) ====
     // Generators are removed in tlua: `function*`, `yield`, `yield*`, and suspend
     // generators no longer parse. Use the Lua coroutine library directly instead.
     
@@ -37,16 +33,12 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 !!! error TLUA2393: Duplicate function implementation.
             ~
 !!! error TLUA1003: Identifier expected.
-            ~~~~~~~
+            ~~~~~~~~~~~~~~~~
 !!! error TLUA100057: Incomplete statement: expected assignment or a function call.
               ~~~
 !!! error TLUA2304: Cannot find name 'gen'.
-                   ~
-!!! error TLUA1005: ';' expected.
-                   ~
-!!! error TLUA1128: Declaration or statement expected.
-                     ~~~~~~~
-!!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
+                            
+!!! error TLUA1005: '(' expected.
       yield 1;
       ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.
@@ -68,16 +60,12 @@ tluaNoGenerators.tlua(15,11): error TLUA1005: ',' expected.
 !!! error TLUA2393: Duplicate function implementation.
                     ~
 !!! error TLUA1003: Identifier expected.
-                    ~~~~~~~~~~~~~~
+                    ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TLUA100057: Incomplete statement: expected assignment or a function call.
                       ~~~~~~~~~~
 !!! error TLUA2304: Cannot find name 'suspendGen'.
-                                  ~
-!!! error TLUA1005: ';' expected.
-                                  ~
-!!! error TLUA1128: Declaration or statement expected.
-                                    ~~~~~~~
-!!! error TLUA2693: 'unknown' only refers to a type, but is being used as a value here.
+                                           
+!!! error TLUA1005: '(' expected.
       yield 4;
       ~~~~~
 !!! error TLUA1434: Unexpected keyword or identifier.

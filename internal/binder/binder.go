@@ -479,7 +479,12 @@ func (b *Binder) createFlowCondition(flags ast.FlowFlags, antecedent *ast.FlowNo
 		}
 		return b.unreachableFlow
 	}
-	if (expression.Kind == ast.KindTrueKeyword && flags&ast.FlowFlagsFalseCondition != 0 || expression.Kind == ast.KindFalseKeyword && flags&ast.FlowFlagsTrueCondition != 0) && !ast.IsExpressionOfOptionalChainRoot(expression) {
+	// A constant cuts the branch it can never take: the false branch of `true`, a
+	// string, a number or a table, the true branch of `false` or `nil`. That is
+	// what narrows Lua's ternary: in `c and "x" or y` the `or` operand is reached
+	// only when `c` is falsy.
+	truthiness := ast.GetLuaSyntacticTruthiness(expression)
+	if (truthiness == ast.LuaTruthinessAlwaysTruthy && flags&ast.FlowFlagsFalseCondition != 0 || truthiness == ast.LuaTruthinessAlwaysFalsy && flags&ast.FlowFlagsTrueCondition != 0) && !ast.IsExpressionOfOptionalChainRoot(expression) {
 		return b.unreachableFlow
 	}
 	if !b.isNarrowingExpression(expression) {

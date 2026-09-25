@@ -171,7 +171,7 @@ func getSymbolKindOfConstructorPropertyMethodAccessorFunctionOrVar(typeChecker *
 	}
 
 	if typeChecker != nil {
-		if typeChecker.IsUndefinedSymbol(symbol) {
+		if typeChecker.IsNilSymbol(symbol) {
 			return ScriptElementKindVariableElement
 		}
 		if typeChecker.IsArgumentsSymbol(symbol) {

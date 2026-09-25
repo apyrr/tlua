@@ -1454,10 +1454,22 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsLexicalThis
 	case KindAsteriskAsteriskToken:
 		return SubtreeContainsExponentiationOperator
-	case KindQuestionDotToken:
+	}
+	return SubtreeFactsNone
+}
+
+// optionalChainSubtreeFacts is the one place an access or call marks itself part
+// of an optional chain: by having an optional link, whichever token spells it --
+// `?.`, or the `?` of an optional colon call `obj?:m()`.
+func optionalChainSubtreeFacts(link *TokenNode) SubtreeFacts {
+	if link != nil {
 		return SubtreeContainsOptionalChaining
 	}
 	return SubtreeFactsNone
+}
+
+func (node *VarargExpression) computeSubtreeFacts() SubtreeFacts {
+	return SubtreeContainsLuaVararg
 }
 
 func (node *PrivateIdentifier) computeSubtreeFacts() SubtreeFacts {
@@ -1737,12 +1749,18 @@ func (node *PropertyAccessExpression) computeSubtreeFacts() SubtreeFacts {
 		privateName = SubtreeContainsPrivateIdentifierInExpression
 	}
 	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
+		optionalChainSubtreeFacts(node.QuestionDotToken) |
 		propagateSubtreeFacts(node.name) | privateName
 }
 
 func (node *PropertyAccessExpression) propagateSubtreeFacts() SubtreeFacts {
 	return node.SubtreeFacts() & ^SubtreeExclusionsPropertyAccess
+}
+
+func (node *ElementAccessExpression) computeSubtreeFacts() SubtreeFacts {
+	return propagateSubtreeFacts(node.Expression) |
+		optionalChainSubtreeFacts(node.QuestionDotToken) |
+		propagateSubtreeFacts(node.ArgumentExpression)
 }
 
 func (node *ElementAccessExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -1751,7 +1769,7 @@ func (node *ElementAccessExpression) propagateSubtreeFacts() SubtreeFacts {
 
 func (node *CallExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
+		optionalChainSubtreeFacts(node.QuestionDotToken) |
 		propagateEraseableSyntaxListSubtreeFacts(node.TypeArguments) |
 		propagateNodeListSubtreeFacts(node.Arguments, propagateSubtreeFacts) |
 		core.IfElse(node.Expression.Kind == KindImportKeyword, SubtreeContainsDynamicImport, SubtreeFactsNone)

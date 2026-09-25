@@ -1,7 +1,7 @@
-tluaAssertsWithReturn.tlua(24,47): error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+tluaAssertsWithReturn.tlua(24,47): error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
 tluaAssertsWithReturn.tlua(39,7): error TLUA2322: Type '(value: unknown, message: string) => string asserts value is string' is not assignable to type '(value: unknown, message: string) => number asserts value is string'.
   Type 'string' is not assignable to type 'number'.
-tluaAssertsWithReturn.tlua(96,29): error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+tluaAssertsWithReturn.tlua(96,29): error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
 
 
 ==== tluaAssertsWithReturn.tlua (3 errors) ====
@@ -30,7 +30,7 @@ tluaAssertsWithReturn.tlua(96,29): error TLUA2355: A function whose declared typ
     // The body is checked against the return type, not against void.
     local function missingReturn(value: unknown): number asserts value
                                                   ~~~~~~~~~~~~~~~~~~~~
-!!! error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+!!! error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
     end
     
     // A pack return, like the lib's assert.
@@ -107,7 +107,7 @@ tluaAssertsWithReturn.tlua(96,29): error TLUA2355: A function whose declared typ
     
     function overloadReturns(): number
                                 ~~~~~~
-!!! error TLUA2355: A function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+!!! error TLUA2355: A function whose declared type is neither 'nil', 'void', nor 'any' must return a value.
       maybeFail(1)
     end
     

@@ -1,0 +1,87 @@
+//// [tests/cases/compiler/tluaPrefixExpressionParentheses.tlua] ////
+
+=== tluaPrefixExpressionParentheses.tlua ===
+// Lua lets `.`, `[`, `:` and an argument list follow only a prefixexp: a name, an
+// index, a call, or a parenthesized expression. Anything else must be
+// parenthesized first. The emit parenthesizes it either way, so the output is
+// valid Lua even while the error stands.
+
+local a = "x":upper()
+>a : Symbol(a, Decl(tluaPrefixExpressionParentheses.tlua, 5, 5))
+>"x":upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local b = {}.x
+>b : Symbol(b, Decl(tluaPrefixExpressionParentheses.tlua, 6, 5))
+
+local c = { 1 }[1]
+>c : Symbol(c, Decl(tluaPrefixExpressionParentheses.tlua, 7, 5))
+>1 : Symbol(1, Decl(tluaPrefixExpressionParentheses.tlua, 7, 11))
+
+local d = 1 .x
+>d : Symbol(d, Decl(tluaPrefixExpressionParentheses.tlua, 8, 5))
+
+local e = `t`:upper()
+>e : Symbol(e, Decl(tluaPrefixExpressionParentheses.tlua, 9, 5))
+>`t`:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local f = "x"?:upper()
+>f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 10, 5))
+>"x"?:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+// Parentheses make any expression a prefixexp; wrappers that erase at emit are
+// looked through.
+local g = ("x"):upper()
+>g : Symbol(g, Decl(tluaPrefixExpressionParentheses.tlua, 14, 5))
+>("x"):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local h = ({ x = 1 }).x
+>h : Symbol(h, Decl(tluaPrefixExpressionParentheses.tlua, 15, 5))
+>({ x = 1 }).x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 15, 12))
+>x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 15, 12))
+>x : Symbol(x, Decl(tluaPrefixExpressionParentheses.tlua, 15, 12))
+
+local i = (function() return 1 end)()
+>i : Symbol(i, Decl(tluaPrefixExpressionParentheses.tlua, 16, 5))
+
+local j = ("x" as string):upper()
+>j : Symbol(j, Decl(tluaPrefixExpressionParentheses.tlua, 17, 5))
+>("x" as string):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+declare t: { f: () => number } | nil;
+>t : Symbol(t, Decl(tluaPrefixExpressionParentheses.tlua, 18, 7))
+>f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 18, 12))
+
+local k = t!.f()
+>k : Symbol(k, Decl(tluaPrefixExpressionParentheses.tlua, 19, 5))
+>t!.f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 18, 12))
+>t : Symbol(t, Decl(tluaPrefixExpressionParentheses.tlua, 18, 7))
+>f : Symbol(f, Decl(tluaPrefixExpressionParentheses.tlua, 18, 12))
+
+// After anything but a prefixexp, `(` does not continue the expression: Lua ends
+// it there and the `(` starts the next statement.
+declare function report(s: string): nil;
+>report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 19, 16))
+>s : Symbol(s, Decl(tluaPrefixExpressionParentheses.tlua, 23, 24))
+
+local afterString = "abc"
+>afterString : Symbol(afterString, Decl(tluaPrefixExpressionParentheses.tlua, 24, 5))
+
+(report)("x")
+>report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 19, 16))
+
+local afterTable = {}
+>afterTable : Symbol(afterTable, Decl(tluaPrefixExpressionParentheses.tlua, 26, 5))
+
+(report)("y")
+>report : Symbol(report, Decl(tluaPrefixExpressionParentheses.tlua, 19, 16))
+
+// The error is a grammar check, not a syntax error, so type errors elsewhere in
+// the file are still reported.
+local wrong: number = "not a number"
+>wrong : Symbol(wrong, Decl(tluaPrefixExpressionParentheses.tlua, 31, 5))
+

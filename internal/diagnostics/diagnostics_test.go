@@ -93,6 +93,16 @@ func TestLocalize(t *testing.T) {
 			expected: "Ожидался идентификатор.",
 		},
 		{
+			// The key keeps only the first 100 characters of the text, so it survived
+			// the rewording that changed 'undefined' to 'nil'; the archived German
+			// translation still says 'undefined' and must not be shown.
+			name:     "reworded message falls back to english",
+			message:  Argument_of_type_0_is_not_assignable_to_parameter_of_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_nil_to_the_types_of_the_target_s_properties,
+			locale:   locale.Locale(language.MustParse("de-DE")),
+			args:     []any{"A", "B"},
+			expected: "Argument of type 'A' is not assignable to parameter of type 'B' with 'exactOptionalPropertyTypes: true'. Consider adding 'nil' to the types of the target's properties.",
+		},
+		{
 			name:     "german with args",
 			message:  X_0_expected,
 			locale:   locale.Locale(language.MustParse("de-DE")),

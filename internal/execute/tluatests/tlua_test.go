@@ -1352,7 +1352,7 @@ func TestTscIncremental(t *testing.T) {
 					local createFileListFromFiles = function(files: File[]): FileList
 					local fileList: FileList = {
 						length: files.length,
-						item: function(index: number): File | null return files[index] || null end,
+						item: function(index: number): File | nil return files[index] || nil end,
 						[Symbol.iterator]: (0 as any) as () => ArrayIterator<File>,
 					} as unknown as FileList;
 
@@ -1404,7 +1404,7 @@ func TestTscIncremental(t *testing.T) {
 					}
 					interface FileList {
 						readonly length: number;
-						item(index: number): File | null;
+						item(index: number): File | nil;
 						[index: number]: File;
 						[Symbol.iterator](): ArrayIterator<File>;
 					}
@@ -2828,7 +2828,7 @@ func TestGenerateTrace(t *testing.T) {
 					value: T;
 					map<U>(fn: (x: T) => U): Container<U>;
 				}
-				type Nullable<T> = T | null | undefined;
+				type Nullable<T> = T | nil;
 				`),
 				"/home/src/workspaces/project/main.tlua": stringtestutil.Dedent(`
 				local c: Container<number> = { value: 42, map: function(fn) return ({ value: fn(42), map: c.map }) end };

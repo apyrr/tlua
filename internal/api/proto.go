@@ -916,11 +916,10 @@ type GetIntrinsicTypeParams struct {
 }
 
 // WellKnownSymbolsResponse carries the handle ids of the per-checker singleton
-// symbols (unknown, undefined, arguments) so the client can identify them by id
+// symbols (unknown, arguments) so the client can identify them by id
 // without a round-trip on every check.
 type WellKnownSymbolsResponse struct {
 	Unknown   SymbolID `json:"unknown"`
-	Undefined SymbolID `json:"undefined"`
 	Arguments SymbolID `json:"arguments"`
 }
 

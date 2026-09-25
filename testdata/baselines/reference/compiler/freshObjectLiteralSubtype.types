@@ -22,7 +22,7 @@ function f1()
 
 end
 
-declare f2: () => { valid: boolean, msg?: undefined }
+declare f2: () => { valid: boolean, msg?: nil }
 >f2 : () => { valid: boolean; msg?: nil; }
 >valid : boolean
 >msg : nil
@@ -67,7 +67,7 @@ declare function utilValidate(): {
     valid: boolean;
 >valid : boolean
 
-    msg?: undefined;
+    msg?: nil;
 >msg : nil
 
 } | {

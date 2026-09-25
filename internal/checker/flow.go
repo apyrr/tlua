@@ -562,10 +562,10 @@ func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *Ty
 }
 
 func (c *Checker) narrowTypeByAssertion(f *FlowState, t *Type, expr *ast.Node) *Type {
-	node := ast.SkipParentheses(expr)
-	if node.Kind == ast.KindFalseKeyword || node.Kind == ast.KindNilKeyword {
+	if ast.GetLuaSyntacticTruthiness(expr) == ast.LuaTruthinessAlwaysFalsy {
 		return c.unreachableNeverType
 	}
+	node := ast.SkipParentheses(expr)
 	if node.Kind == ast.KindBinaryExpression {
 		if node.AsBinaryExpression().OperatorToken.Kind == ast.KindAmpersandAmpersandToken {
 			return c.narrowTypeByAssertion(f, c.narrowTypeByAssertion(f, t, node.AsBinaryExpression().Left), node.AsBinaryExpression().Right)
@@ -2606,10 +2606,10 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 // isFalseExpression reports whether expr is always falsy: built from Lua's falsy literals,
 // `false` and `nil`.
 func (c *Checker) isFalseExpression(expr *ast.Node) bool {
-	node := ast.SkipParentheses(expr)
-	if node.Kind == ast.KindFalseKeyword || node.Kind == ast.KindNilKeyword {
+	if ast.GetLuaSyntacticTruthiness(expr) == ast.LuaTruthinessAlwaysFalsy {
 		return true
 	}
+	node := ast.SkipParentheses(expr)
 	if ast.IsBinaryExpression(node) {
 		binary := node.AsBinaryExpression()
 		return binary.OperatorToken.Kind == ast.KindAmpersandAmpersandToken && (c.isFalseExpression(binary.Left) || c.isFalseExpression(binary.Right)) ||

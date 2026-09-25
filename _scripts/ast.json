@@ -2223,7 +2223,11 @@
                     },
                     {
                         "name": "QuestionDotToken",
-                        "type": "QuestionDotToken",
+                        "type": [
+                            "QuestionDotToken",
+                            "QuestionToken"
+                        ],
+                        "typeGuard": "isQuestionDotOrQuestionToken",
                         "optional": true
                     },
                     {
@@ -2245,7 +2249,6 @@
                 "arena": true
             },
             "ElementAccessExpression": {
-                "generateSubtreeFacts": true,
                 "extends": [
                     "MemberExpressionBase",
                     "FlowNodeBase",

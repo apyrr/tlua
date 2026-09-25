@@ -6,7 +6,7 @@ recursiveIndexedAccessSimplification.tlua(8,21): error TLUA1005: ']' expected.
 recursiveIndexedAccessSimplification.tlua(8,23): error TLUA100035: A '...' expression is only allowed inside a vararg function.
 recursiveIndexedAccessSimplification.tlua(8,26): error TLUA1005: ';' expected.
 recursiveIndexedAccessSimplification.tlua(8,27): error TLUA1128: Declaration or statement expected.
-recursiveIndexedAccessSimplification.tlua(12,37): error TLUA2589: Type instantiation is excessively deep and possibly infinite.
+recursiveIndexedAccessSimplification.tlua(12,31): error TLUA2589: Type instantiation is excessively deep and possibly infinite.
 
 
 ==== recursiveIndexedAccessSimplification.tlua (9 errors) ====
@@ -37,8 +37,8 @@ recursiveIndexedAccessSimplification.tlua(12,37): error TLUA2589: Type instantia
     end
     
     function a<T>(l: Recur<T>[]): void
-        local x: Recur<T> | undefined = join(l);
-                                        ~~~~~~~
+        local x: Recur<T> | nil = join(l);
+                                  ~~~~~~~
 !!! error TLUA2589: Type instantiation is excessively deep and possibly infinite.
     end
     

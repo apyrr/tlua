@@ -2971,12 +2971,12 @@ type PropertyAccessExpression struct {
 	FlowNodeBase
 	CompositeBase
 	Expression       *Expression
-	QuestionDotToken *QuestionDotToken // Optional
-	ColonToken       *ColonToken       // Optional
+	QuestionDotToken *TokenNode  // Optional
+	ColonToken       *ColonToken // Optional
 	name             *MemberName
 }
 
-func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questionDotToken *QuestionDotToken, colonToken *ColonToken, name *MemberName, flags NodeFlags) *Node {
+func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questionDotToken *TokenNode, colonToken *ColonToken, name *MemberName, flags NodeFlags) *Node {
 	data := f.propertyAccessExpressionArena.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
@@ -2987,7 +2987,7 @@ func (f *NodeFactory) NewPropertyAccessExpression(expression *Expression, questi
 	return node
 }
 
-func (f *NodeFactory) UpdatePropertyAccessExpression(node *PropertyAccessExpression, expression *Expression, questionDotToken *QuestionDotToken, colonToken *ColonToken, name *MemberName, flags NodeFlags) *Node {
+func (f *NodeFactory) UpdatePropertyAccessExpression(node *PropertyAccessExpression, expression *Expression, questionDotToken *TokenNode, colonToken *ColonToken, name *MemberName, flags NodeFlags) *Node {
 	if expression != node.Expression || questionDotToken != node.QuestionDotToken || colonToken != node.ColonToken || name != node.name || flags != node.Flags {
 		return updateNode(f.NewPropertyAccessExpression(expression, questionDotToken, colonToken, name, flags), node.AsNode(), f.hooks)
 	}
@@ -3057,12 +3057,6 @@ func (node *ElementAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *ElementAccessExpression) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewElementAccessExpression(node.Expression, node.QuestionDotToken, node.ArgumentExpression, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *ElementAccessExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) |
-		propagateSubtreeFacts(node.QuestionDotToken) |
-		propagateSubtreeFacts(node.ArgumentExpression)
 }
 
 func IsElementAccessExpression(node *Node) bool {

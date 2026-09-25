@@ -290,6 +290,7 @@ import {
     isNamedExportBindings,
     isNamedImportBindings,
     isPropertyName,
+    isQuestionDotOrQuestionToken,
     isQuestionDotToken,
     isQuestionOrExclamationToken,
     isQuestionOrPlusOrMinusToken,
@@ -655,7 +656,7 @@ const visitEachChildTable: Record<number, VisitEachChildFunction> = {
     },
     [SyntaxKind.PropertyAccessExpression]: (node: PropertyAccessExpression, visitor: Visitor): PropertyAccessExpression => {
         const _expression = visitNode(node.expression, visitor, isExpression);
-        const _questionDotToken = visitNode(node.questionDotToken, visitor, isQuestionDotToken);
+        const _questionDotToken = visitNode(node.questionDotToken, visitor, isQuestionDotOrQuestionToken);
         const _colonToken = visitNode(node.colonToken, visitor, isColonToken);
         const _name = visitNode(node.name, visitor, isMemberName);
         return updatePropertyAccessExpression(node, _expression, _questionDotToken, _colonToken, _name);

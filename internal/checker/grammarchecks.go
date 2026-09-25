@@ -23,6 +23,20 @@ func (c *Checker) grammarErrorOnFirstToken(node *ast.Node, message *diagnostics.
 	return false
 }
 
+// checkGrammarLuaPrefixExpression reports the receiver of an index, member
+// access, or call when Lua does not allow one there: only a prefixexp -- a name,
+// an index, a call, or a parenthesized expression -- can be followed by `.`, `[`,
+// `:` or an argument list, so `"x":upper()` has to be written `("x"):upper()`.
+// The tree is well-formed either way, so this is a grammar check rather than a
+// parse error, which would hide the file's type errors. The printer parenthesizes
+// such a receiver, so the emitted Lua stays valid while the error stands.
+func (c *Checker) checkGrammarLuaPrefixExpression(receiver *ast.Node) bool {
+	if ast.IsLuaPrefixExpression(receiver) {
+		return false
+	}
+	return c.grammarErrorOnFirstToken(receiver, diagnostics.This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called)
+}
+
 func (c *Checker) grammarErrorAtPos(nodeForSourceFile *ast.Node, start int, length int, message *diagnostics.Message, args ...any) bool {
 	sourceFile := ast.GetSourceFileOfNode(nodeForSourceFile)
 	if !c.hasParseDiagnostics(sourceFile) {

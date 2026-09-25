@@ -21,7 +21,7 @@ interface Callback {
 }
 declare function c(callback: Callback): void;
 a((/*1*/) => {
-    return undefined;
+    return nil;
 });
 
 b(/*2*/);

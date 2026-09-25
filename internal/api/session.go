@@ -2283,7 +2283,7 @@ func (s *Session) handleGetIntrinsicType(ctx context.Context, params *GetIntrins
 }
 
 // handleGetWellKnownSymbols returns the handle ids of the per-checker singleton
-// symbols (unknown, undefined, arguments) so the client can identify them by id.
+// symbols (unknown, arguments) so the client can identify them by id.
 func (s *Session) handleGetWellKnownSymbols(ctx context.Context, params *GetIntrinsicTypeParams) (*WellKnownSymbolsResponse, error) {
 	setup, err := s.setupChecker(ctx, params.Snapshot, params.Project)
 	if err != nil {
@@ -2292,11 +2292,9 @@ func (s *Session) handleGetWellKnownSymbols(ctx context.Context, params *GetIntr
 	defer setup.done()
 
 	unknown, _ := setup.sd.registerSymbol(setup.checker.GetUnknownSymbol(), setup.projectID)
-	undefined, _ := setup.sd.registerSymbol(setup.checker.GetUndefinedSymbol(), setup.projectID)
 	arguments, _ := setup.sd.registerSymbol(setup.checker.GetArgumentsSymbol(), setup.projectID)
 	return &WellKnownSymbolsResponse{
 		Unknown:   unknown,
-		Undefined: undefined,
 		Arguments: arguments,
 	}, nil
 }

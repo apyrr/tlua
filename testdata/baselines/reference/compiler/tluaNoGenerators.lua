@@ -30,15 +30,13 @@ end
 -- Generators are removed in tlua: `function*`, `yield`, `yield*`, and suspend
 -- generators no longer parse. Use the Lua coroutine library directly instead.
 function ()
-   * gen();
-  unknown;
+   * gen():unknown();
   yield;
   1;
   yield * more;
 end
 function ()
-   * suspendGen();
-  unknown;
+   * suspendGen():unknown();
   yield;
   4;
 end

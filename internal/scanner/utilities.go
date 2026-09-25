@@ -84,6 +84,37 @@ func IsBareWritableName(name string) bool {
 	return IsIdentifierText(name) && !IsWordOperatorText(name)
 }
 
+// TokenIsLuaMethodName reports whether token can name a Lua colon-call method.
+// Lua's Name grammar excludes only Lua's own reserved words; TS-only keywords
+// (`new`, `type`, `delete`, ...) are valid method names, matching what the dot
+// path accepts via allowIdentifierNames. Keeping Lua's reserved words out is
+// what makes error recovery safe: committing a colon call on `t:end(` or
+// `t:until(` would swallow the enclosing block terminator. (`and`/`or`/`not`
+// scan as operator tokens and never reach here.)
+//
+// The keywords that open a statement whose next token can be `(` are excluded
+// too: in `foo: with (x) { ... }` — a deleted TS label — committing the colon
+// call `foo:with(x)` would detach the statement from its body and warp
+// everything after it. Unlike `new`/`delete`, neither is a plausible Lua
+// method name.
+func TokenIsLuaMethodName(token ast.Kind) bool {
+	switch token {
+	case ast.KindBreakKeyword, ast.KindDoKeyword, ast.KindElseKeyword, ast.KindElseIfKeyword,
+		ast.KindEndKeyword, ast.KindFalseKeyword, ast.KindForKeyword, ast.KindFunctionKeyword,
+		ast.KindGotoKeyword, ast.KindIfKeyword, ast.KindInKeyword, ast.KindLocalKeyword,
+		ast.KindNilKeyword, ast.KindRepeatKeyword, ast.KindReturnKeyword, ast.KindThenKeyword,
+		ast.KindTrueKeyword, ast.KindUntilKeyword, ast.KindWhileKeyword:
+		return false
+	}
+	return token >= ast.KindIdentifier
+}
+
+// IsLuaMethodName reports whether text can name the method of a Lua colon call:
+// an identifier-shaped word that is not one of Lua's reserved words.
+func IsLuaMethodName(text string) bool {
+	return IsIdentifierText(text) && TokenIsLuaMethodName(GetIdentifierToken(text))
+}
+
 func IsIdentifierText(name string) bool {
 	ch, size := utf8.DecodeRuneInString(name)
 	if !IsIdentifierStart(ch) {

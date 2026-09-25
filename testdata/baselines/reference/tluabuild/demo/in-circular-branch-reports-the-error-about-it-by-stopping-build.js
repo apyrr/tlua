@@ -58,8 +58,8 @@ function makeRandomName()
     return "Bob!?! ";
 end
 
-function lastElementOf<T>(arr: T[]): T | undefined
-    if arr.length == 0 then return undefined end
+function lastElementOf<T>(arr: T[]): T | nil
+    if arr.length == 0 then return nil end
     return arr[arr.length - 1];
 end
 
