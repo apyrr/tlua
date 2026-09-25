@@ -147,63 +147,63 @@ closed.x = 1;
 >1 : 1
 
 local collision = {};
->collision : { member(): void; }
->{} : { member(): void; }
+>collision : { member: () => void; }
+>{} : { member: () => void; }
 
 collision.member = 1;
 >collision.member = 1 : 1
 >collision.member : () => void
->collision : { member(): void; }
+>collision : { member: () => void; }
 >member : () => void
 >1 : 1
 
 function collision.member(): void
->collision : { member(): void; }
+>collision : { member: () => void; }
 >member : () => void
 
 end
 
 local reverseCollision = {};
->reverseCollision : { member(): void; }
->{} : { member(): void; }
+>reverseCollision : { member: () => void; }
+>{} : { member: () => void; }
 
 function reverseCollision.member(): void
->reverseCollision : { member(): void; }
+>reverseCollision : { member: () => void; }
 >member : () => void
 
 end
 reverseCollision.member = 1;
 >reverseCollision.member = 1 : 1
 >reverseCollision.member : () => void
->reverseCollision : { member(): void; }
+>reverseCollision : { member: () => void; }
 >member : () => void
 >1 : 1
 
 // Lexically different paths that reach one constructor are grouped before any
 // member is attached, so source/map iteration order cannot pick the declaration.
 local nestedCollision = { root = {} };
->nestedCollision : { root: { member(): void; }; }
->{ root = {} } : { root: { member(): void; }; }
->root : { member(): void; }
->{} : { member(): void; }
+>nestedCollision : { root: { member: () => void; }; }
+>{ root = {} } : { root: { member: () => void; }; }
+>root : { member: () => void; }
+>{} : { member: () => void; }
 
 local nestedCollisionAlias = nestedCollision.root;
->nestedCollisionAlias : { member(): void; }
->nestedCollision.root : { member(): void; }
->nestedCollision : { root: { member(): void; }; }
->root : { member(): void; }
+>nestedCollisionAlias : { member: () => void; }
+>nestedCollision.root : { member: () => void; }
+>nestedCollision : { root: { member: () => void; }; }
+>root : { member: () => void; }
 
 nestedCollisionAlias.member = 1;
 >nestedCollisionAlias.member = 1 : 1
 >nestedCollisionAlias.member : () => void
->nestedCollisionAlias : { member(): void; }
+>nestedCollisionAlias : { member: () => void; }
 >member : () => void
 >1 : 1
 
 function nestedCollision.root.member(): void
->nestedCollision.root : { member(): void; }
->nestedCollision : { root: { member(): void; }; }
->root : { member(): void; }
+>nestedCollision.root : { member: () => void; }
+>nestedCollision : { root: { member: () => void; }; }
+>root : { member: () => void; }
 >member : () => void
 
 end

@@ -16,7 +16,7 @@ function unresolvedBehindAs(): void
 
   assert(c.x)
 >assert(c.x) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >c.x : string | nil
 >c : { x: string | nil; }
 >x : string | nil
@@ -43,7 +43,7 @@ function unresolvedBehindAnnotation(): void
 
   assert(c.x)
 >assert(c.x) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >c.x : string | nil
 >c : { x: string | nil; }
 >x : string | nil

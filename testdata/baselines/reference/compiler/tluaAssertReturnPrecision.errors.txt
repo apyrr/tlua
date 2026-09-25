@@ -1,0 +1,59 @@
+tluaAssertReturnPrecision.tlua(35,3): error TLUA2322: Type 'string | false' is not assignable to type 'string'.
+  Type 'boolean' is not assignable to type 'string'.
+
+
+==== tluaAssertReturnPrecision.tlua (1 errors) ====
+    // assert's first result is its argument with false and nil removed, matching
+    // what the statement form narrows: a generic T becomes T & {} (NonNullable), as
+    // in TS truthiness narrowing -- which likewise keeps `false` from a constraint.
+    declare sfn: string | false | nil
+    declare an: any
+    declare un: unknown
+    declare bo: boolean
+    declare fnil: false | nil
+    declare snil: string | nil
+    declare function f(): (string?, string)
+    declare function g(): number
+    
+    local v1 = assert(sfn)
+    local v2 = assert(an)
+    local v3 = assert(un)
+    local v4 = assert(bo)
+    local v5 = assert(fnil)
+    local v6 = assert(snil)
+    local v7 = assert(1)
+    local v8, m8 = assert("s", "msg")
+    local v9, m9 = assert(f())
+    local ok10, r10 = assert(pcall(g))
+    local h11, e11 = assert(io.open("x"))
+    
+    local function gen<T>(x: T): T
+      local r = assert(x)
+      return r
+    end
+    local function gen2<T extends string | nil>(x: T): string
+      local r = assert(x)
+      return r
+    end
+    local function gen3<T extends string | false | nil>(x: T): string
+      local r = assert(x)
+      return r
+      ~~~~~~
+!!! error TLUA2322: Type 'string | false' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'boolean' is not assignable to type 'string'.
+    end
+    
+    local function stmt(x: string | false | nil, y: boolean, z: any): string
+      assert(x)
+      assert(y)
+      local yy: true = y
+      return x
+    end
+    
+    local function dead(): number
+      assert(false)
+    end
+    local function dead2(): number
+      assert(nil, "m")
+    end
+    

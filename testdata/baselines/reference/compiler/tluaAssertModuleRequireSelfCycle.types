@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireSelfCycle.tlua] ////
+
+=== self.tlua ===
+declare function pick(): string | nil
+>pick : () => string | nil
+
+local S = require("self")
+>S : any
+>require("self") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"self" : "self"
+
+local v = pick()
+>v : string | nil
+>pick() : string | nil
+>pick : () => string | nil
+
+S.check(v)
+>S.check(v) : any
+>S.check : any
+>S : any
+>check : any
+>v : string | nil
+
+local s: string = v
+>s : string
+>v : string | nil
+
+return S
+>S : any
+

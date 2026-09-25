@@ -2,11 +2,11 @@
 
 === tluaDottedFunctionDeclarationEmit.tlua ===
 local Exported = {};
->Exported : { visible(a: number): number; }
->{} : { visible(a: number): number; }
+>Exported : { visible: (a: number) => number; }
+>{} : { visible: (a: number) => number; }
 
 function Exported.visible(a: number): number
->Exported : { visible(a: number): number; }
+>Exported : { visible: (a: number) => number; }
 >visible : (a: number) => number
 >a : number
 
@@ -16,11 +16,11 @@ function Exported.visible(a: number): number
 end
 
 local Hidden = {};
->Hidden : { invisible(): void; }
->{} : { invisible(): void; }
+>Hidden : { invisible: () => void; }
+>{} : { invisible: () => void; }
 
 function Hidden.invisible(): void
->Hidden : { invisible(): void; }
+>Hidden : { invisible: () => void; }
 >invisible : () => void
 
 end

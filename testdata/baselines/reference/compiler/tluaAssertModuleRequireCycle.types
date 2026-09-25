@@ -1,0 +1,116 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireCycle.tlua] ////
+
+=== main.tlua ===
+local m = require("m")
+>m : { check: (x: unknown) => number asserts x; }
+>require("m") : { check: (x: unknown) => number asserts x; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+local a = require("a")
+>a : { value: number; check: (x: unknown) => asserts x; }
+>require("a") : { value: number; check: (x: unknown) => asserts x; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"a" : "a"
+
+local n: number = a.value
+>n : number
+>a.value : number
+>a : { value: number; check: (x: unknown) => asserts x; }
+>value : number
+
+=== m.tlua ===
+declare function pick(): string | nil
+>pick : () => string | nil
+
+local a = require("a")
+>a : { value: number; check: (x: unknown) => asserts x; }
+>require("a") : { value: number; check: (x: unknown) => asserts x; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"a" : "a"
+
+local M = {}
+>M : { check: (x: unknown) => number asserts x; }
+>{} : { check: (x: unknown) => number asserts x; }
+
+function M.check(x: unknown): number asserts x
+>M : { check: (x: unknown) => number asserts x; }
+>check : (x: unknown) => number asserts x
+>x : unknown
+
+  return 1
+>1 : 1
+
+end
+local v = pick()
+>v : string | nil
+>pick() : string | nil
+>pick : () => string | nil
+
+a.check(v)
+>a.check(v) : void
+>a.check : (x: unknown) => asserts x
+>a : { value: number; check: (x: unknown) => asserts x; }
+>check : (x: unknown) => asserts x
+>v : string | nil
+
+local s: string = v
+>s : string
+>v : string
+
+a.check(a.value)
+>a.check(a.value) : void
+>a.check : (x: unknown) => asserts x
+>a : { value: number; check: (x: unknown) => asserts x; }
+>check : (x: unknown) => asserts x
+>a.value : number
+>a : { value: number; check: (x: unknown) => asserts x; }
+>value : number
+
+return M
+>M : { check: (x: unknown) => number asserts x; }
+
+=== a.tlua ===
+local m = require("m")
+>m : { check: (x: unknown) => number asserts x; }
+>require("m") : { check: (x: unknown) => number asserts x; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+local A = {}
+>A : { value: number; check: (x: unknown) => asserts x; }
+>{} : { value: number; check: (x: unknown) => asserts x; }
+
+A.value = m.check(1)
+>A.value = m.check(1) : number
+>A.value : number
+>A : { value: number; check: (x: unknown) => asserts x; }
+>value : number
+>m.check(1) : number
+>m.check : (x: unknown) => number asserts x
+>m : { check: (x: unknown) => number asserts x; }
+>check : (x: unknown) => number asserts x
+>1 : 1
+
+function A.check(x: unknown): asserts x
+>A : { value: number; check: (x: unknown) => asserts x; }
+>check : (x: unknown) => asserts x
+>x : unknown
+
+end
+local w = A.value
+>w : number
+>A.value : number
+>A : { value: number; check: (x: unknown) => asserts x; }
+>value : number
+
+m.check(w)
+>m.check(w) : number
+>m.check : (x: unknown) => number asserts x
+>m : { check: (x: unknown) => number asserts x; }
+>check : (x: unknown) => number asserts x
+>w : number
+
+return A
+>A : { value: number; check: (x: unknown) => asserts x; }
+

@@ -68,7 +68,7 @@ local check = assert;
       }
     },
     {
-      "value": ": "
+      "value": ": false | "
     },
     {
       "value": "T",
@@ -125,7 +125,7 @@ local check = assert;
       }
     },
     {
-      "value": ", ..."
+      "value": " & {}, ..."
     },
     {
       "value": "M",

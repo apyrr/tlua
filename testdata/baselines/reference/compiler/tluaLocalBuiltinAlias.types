@@ -18,8 +18,8 @@ local t = type
 >type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
 
 local check = assert
->check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>check : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 
 local setmetatable = setmetatable
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
@@ -64,7 +64,7 @@ function assertNarrows(a: string | nil, b: number | nil): void
 
   assert(a)
 >assert(a) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >a : string | nil
 
   local s: string = a;
@@ -72,8 +72,8 @@ function assertNarrows(a: string | nil, b: number | nil): void
 >a : string
 
   check(b and type(v) == "string")
->check(b and type(v) == "string") : boolean
->check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>check(b and type(v) == "string") : true
+>check : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >b and type(v) == "string" : boolean | nil
 >b : number | nil
 >type(v) == "string" : boolean
@@ -124,8 +124,8 @@ function assertFalseEnds(): number
 >assertFalseEnds : () => number
 
   assert(false)
->assert(false) : boolean
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(false) : false
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >false : false
 
 end
@@ -134,8 +134,8 @@ function assertNilEnds(): number
 >assertNilEnds : () => number
 
   assert(nil, "unreachable")
->assert(nil, "unreachable") : nil
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(nil, "unreachable") : never
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >"unreachable" : "unreachable"
 
 end
@@ -145,8 +145,8 @@ function assertFalsyChainEnds(x: string | nil): number
 >x : string | nil
 
   assert(x and nil)
->assert(x and nil) : nil
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(x and nil) : never
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >x and nil : nil
 >x : string | nil
 
@@ -297,16 +297,16 @@ function manyAsserts(x: string | nil): string
 >"" : ""
 
   assert(tick() == 1)
->assert(tick() == 1) : boolean
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(tick() == 1) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >tick() == 1 : boolean
 >tick() : number
 >tick : () => number
 >1 : 1
 
   assert(tick() == 2, "two")
->assert(tick() == 2, "two") : boolean
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(tick() == 2, "two") : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >tick() == 2 : boolean
 >tick() : number
 >tick : () => number
@@ -315,13 +315,13 @@ function manyAsserts(x: string | nil): string
 
   assert(tick())
 >assert(tick()) : number
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >tick() : number
 >tick : () => number
 
   assert(select("#", { key = 1 }) == 1)
->assert(select("#", { key = 1 }) == 1) : boolean
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(select("#", { key = 1 }) == 1) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >select("#", { key = 1 }) == 1 : boolean
 >select("#", { key = 1 }) : number
 >select : { (index: "#", ...: any): number; (index: number, ...: any): (any?, ...any); }
@@ -332,8 +332,8 @@ function manyAsserts(x: string | nil): string
 >1 : 1
 
   assert((x as any as Flag).ok)
->assert((x as any as Flag).ok) : boolean
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert((x as any as Flag).ok) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >(x as any as Flag).ok : boolean
 >(x as any as Flag) : Flag
 >x as any as Flag : Flag
@@ -342,8 +342,8 @@ function manyAsserts(x: string | nil): string
 >ok : boolean
 
   assert(pcall(function()
->assert(pcall(function()    local inner = 1    return inner  end)) : boolean
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(pcall(function()    local inner = 1    return inner  end)) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >pcall(function()    local inner = 1    return inner  end) : boolean
 >pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
 >function()    local inner = 1    return inner  end : () => number
@@ -381,7 +381,7 @@ function assertThroughAlias(): string
 
   assert(b.x)
 >assert(b.x) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >b.x : string | nil
 >b : { x: string | nil; }
 >x : string | nil
@@ -411,8 +411,8 @@ function listAssert(): number
 >"12" : "12"
 
   assert(err == nil)
->assert(err == nil) : boolean
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert(err == nil) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >err == nil : boolean
 >err : string | nil
 

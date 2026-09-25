@@ -100,38 +100,38 @@ local k2 = { ["end"] = 1 }
 
 === funcDecl.tlua ===
 local m = {}
->m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
->{} : { end(): void; nil(self: { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }): void; ok(): void; while: { f(): void; }; }
+>m : { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }
+>{} : { end: () => void; nil(self: { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }): void; ok: () => void; while: { f: () => void; }; }
 
 function m.end() end
->m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>m : { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }
 >end : () => void
 
 function m:nil() end
->m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
->nil : (self: { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }) => void
+>m : { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }
+>nil : (self: { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }) => void
 
 function m.ok() end
->m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>m : { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }
 >ok : () => void
 
 m.while = {}
->m.while = {} : { f(): void; }
->m.while : { f(): void; }
->m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
->while : { f(): void; }
->{} : { f(): void; }
+>m.while = {} : { f: () => void; }
+>m.while : { f: () => void; }
+>m : { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }
+>while : { f: () => void; }
+>{} : { f: () => void; }
 
 function m.while.f() end
->m.while : { f(): void; }
->m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
->while : { f(): void; }
+>m.while : { f: () => void; }
+>m : { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }
+>while : { f: () => void; }
 >f : () => void
 
 m["end"] = function() end
 >m["end"] = function() end : () => void
 >m["end"] : () => void
->m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>m : { end: () => void; nil(self: any): void; ok: () => void; while: { f: () => void; }; }
 >"end" : "end"
 >function() end : () => void
 

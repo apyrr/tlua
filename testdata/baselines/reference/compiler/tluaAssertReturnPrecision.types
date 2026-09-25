@@ -1,0 +1,200 @@
+//// [tests/cases/compiler/tluaAssertReturnPrecision.tlua] ////
+
+=== tluaAssertReturnPrecision.tlua ===
+// assert's first result is its argument with false and nil removed, matching
+// what the statement form narrows: a generic T becomes T & {} (NonNullable), as
+// in TS truthiness narrowing -- which likewise keeps `false` from a constraint.
+declare sfn: string | false | nil
+>sfn : string | false | nil
+>false : false
+
+declare an: any
+>an : any
+
+declare un: unknown
+>un : unknown
+
+declare bo: boolean
+>bo : boolean
+
+declare fnil: false | nil
+>fnil : false | nil
+>false : false
+
+declare snil: string | nil
+>snil : string | nil
+
+declare function f(): (string?, string)
+>f : () => (string?, string)
+
+declare function g(): number
+>g : () => number
+
+local v1 = assert(sfn)
+>v1 : string
+>assert(sfn) : string
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>sfn : string | false | nil
+
+local v2 = assert(an)
+>v2 : any
+>assert(an) : any
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>an : any
+
+local v3 = assert(un)
+>v3 : {}
+>assert(un) : {}
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>un : unknown
+
+local v4 = assert(bo)
+>v4 : true
+>assert(bo) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>bo : boolean
+
+local v5 = assert(fnil)
+>v5 : false
+>assert(fnil) : false
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>fnil : false | nil
+
+local v6 = assert(snil)
+>v6 : string
+>assert(snil) : string
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>snil : string | nil
+
+local v7 = assert(1)
+>v7 : number
+>assert(1) : number
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>1 : 1
+
+local v8, m8 = assert("s", "msg")
+>v8 : string
+>m8 : string
+>assert("s", "msg") : string
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>"s" : "s"
+>"msg" : "msg"
+
+local v9, m9 = assert(f())
+>v9 : string
+>m9 : string
+>assert(f()) : string
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>f() : string | nil
+>f : () => (string?, string)
+
+local ok10, r10 = assert(pcall(g))
+>ok10 : true
+>r10 : number
+>assert(pcall(g)) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>pcall(g) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
+>g : () => number
+
+local h11, e11 = assert(io.open("x"))
+>h11 : LuaFile
+>e11 : string | nil
+>assert(io.open("x")) : LuaFile
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>io.open("x") : LuaFile | nil
+>io.open : (filename: string, mode?: string) => (LuaFile?, string?)
+>io : IOLib
+>open : (filename: string, mode?: string) => (LuaFile?, string?)
+>"x" : "x"
+
+local function gen<T>(x: T): T
+>gen : <T>(x: T) => T
+>x : T
+
+  local r = assert(x)
+>r : T & {}
+>assert(x) : T & {}
+>assert : <T_1, ...M>(value: T_1 | false | nil, ...: M) => (T_1 & {}, ...M) asserts value
+>x : T
+
+  return r
+>r : T & {}
+
+end
+local function gen2<T extends string | nil>(x: T): string
+>gen2 : <T extends string | nil>(x: T) => string
+>x : T
+
+  local r = assert(x)
+>r : T & {}
+>assert(x) : T & {}
+>assert : <T_1, ...M>(value: T_1 | false | nil, ...: M) => (T_1 & {}, ...M) asserts value
+>x : T
+
+  return r
+>r : string
+
+end
+local function gen3<T extends string | false | nil>(x: T): string
+>gen3 : <T extends string | false | nil>(x: T) => string
+>false : false
+>x : T
+
+  local r = assert(x)
+>r : T & {}
+>assert(x) : T & {}
+>assert : <T_1, ...M>(value: T_1 | false | nil, ...: M) => (T_1 & {}, ...M) asserts value
+>x : T
+
+  return r
+>r : string | false
+
+end
+
+local function stmt(x: string | false | nil, y: boolean, z: any): string
+>stmt : (x: string | false | nil, y: boolean, z: any) => string
+>x : string | false | nil
+>false : false
+>y : boolean
+>z : any
+
+  assert(x)
+>assert(x) : string
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>x : string | false | nil
+
+  assert(y)
+>assert(y) : true
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>y : boolean
+
+  local yy: true = y
+>yy : true
+>true : true
+>y : true
+
+  return x
+>x : string
+
+end
+
+local function dead(): number
+>dead : () => number
+
+  assert(false)
+>assert(false) : false
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>false : false
+
+end
+local function dead2(): number
+>dead2 : () => number
+
+  assert(nil, "m")
+>assert(nil, "m") : never
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>"m" : "m"
+
+end
+

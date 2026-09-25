@@ -1,0 +1,25 @@
+// @strict: true
+// @noEmit: true
+
+// The required module type is first computed inside a loop in another file.
+// @filename: main.tlua
+declare function pick(): string | nil
+local M = require("m")
+local w = pick()
+while true do
+  M.v = w
+  M.check(w)
+  local z: string = w
+  M.value(w)
+end
+
+// @filename: m.tlua
+local M = {}
+function M.check(x: unknown): asserts x
+end
+function M.value(x: unknown): number asserts x
+  return 1
+end
+M.count = M.value(1) + 1
+M.v = nil as string | nil
+return M

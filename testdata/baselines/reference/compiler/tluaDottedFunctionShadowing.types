@@ -2,11 +2,11 @@
 
 === tluaDottedFunctionShadowing.tlua ===
 local M = {};
->M : { first(): number; }
->{} : { first(): number; }
+>M : { first: () => number; }
+>{} : { first: () => number; }
 
 function M.first(): number
->M : { first(): number; }
+>M : { first: () => number; }
 >first : () => number
 
   return 1;
@@ -18,15 +18,15 @@ local firstOnly = M.first();
 >firstOnly : number
 >M.first() : number
 >M.first : () => number
->M : { first(): number; }
+>M : { first: () => number; }
 >first : () => number
 
 local M = {};
->M : { second(): number; }
->{} : { second(): number; }
+>M : { second: () => number; }
+>{} : { second: () => number; }
 
 function M.second(): number
->M : { second(): number; }
+>M : { second: () => number; }
 >second : () => number
 
   return 2;
@@ -38,13 +38,13 @@ local secondOnly = M.second();
 >secondOnly : number
 >M.second() : number
 >M.second : () => number
->M : { second(): number; }
+>M : { second: () => number; }
 >second : () => number
 
 local gone = M.first();
 >gone : any
 >M.first() : any
 >M.first : any
->M : { second(): number; }
+>M : { second: () => number; }
 >first : any
 

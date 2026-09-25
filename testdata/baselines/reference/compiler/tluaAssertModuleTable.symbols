@@ -1,0 +1,147 @@
+//// [tests/cases/compiler/tluaAssertModuleTable.tlua] ////
+
+=== tluaAssertModuleTable.tlua ===
+// A module table (`local T = {}` plus `function T.m` declarations) is declared
+// like a namespace: assertion calls through it narrow without an annotation,
+// whether the assertion returns a value or not.
+local T = {}
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+
+function T.ncheck(x: unknown): number asserts x
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+>ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 3, 12))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 4, 18))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 4, 18))
+
+  return 1
+end
+function T.vcheck(x: unknown): asserts x
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+>vcheck : Symbol(vcheck, Decl(tluaAssertModuleTable.tlua, 6, 3))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 7, 18))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 7, 18))
+
+end
+
+function f(b: string | nil): string
+>f : Symbol(f, Decl(tluaAssertModuleTable.tlua, 8, 3))
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 10, 11))
+
+  T.ncheck(b)
+>T.ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 3, 12))
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+>ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 3, 12))
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 10, 11))
+
+  return b
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 10, 11))
+
+end
+
+function g(b: string | nil): string
+>g : Symbol(g, Decl(tluaAssertModuleTable.tlua, 13, 3))
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 15, 11))
+
+  T.vcheck(b)
+>T.vcheck : Symbol(vcheck, Decl(tluaAssertModuleTable.tlua, 6, 3))
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+>vcheck : Symbol(vcheck, Decl(tluaAssertModuleTable.tlua, 6, 3))
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 15, 11))
+
+  return b
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 15, 11))
+
+end
+
+local U: { ncheck(x: unknown): number asserts x } = { ncheck = T.ncheck }
+>U : Symbol(U, Decl(tluaAssertModuleTable.tlua, 20, 5))
+>ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 20, 10))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 20, 18))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 20, 18))
+>ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 20, 53))
+>T.ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 3, 12))
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+>ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 3, 12))
+
+function h(b: string | nil): string
+>h : Symbol(h, Decl(tluaAssertModuleTable.tlua, 20, 73))
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 21, 11))
+
+  U.ncheck(b)
+>U.ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 20, 10))
+>U : Symbol(U, Decl(tluaAssertModuleTable.tlua, 20, 5))
+>ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 20, 10))
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 21, 11))
+
+  return b
+>b : Symbol(b, Decl(tluaAssertModuleTable.tlua, 21, 11))
+
+end
+
+// Narrowing stays stable when the table is written inside a loop.
+declare function pick(): string | nil
+>pick : Symbol(pick, Decl(tluaAssertModuleTable.tlua, 24, 3))
+
+local y = pick()
+>y : Symbol(y, Decl(tluaAssertModuleTable.tlua, 28, 5))
+>pick : Symbol(pick, Decl(tluaAssertModuleTable.tlua, 24, 3))
+
+while true do
+  T.x = y
+>T.x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 29, 13))
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 29, 13))
+>y : Symbol(y, Decl(tluaAssertModuleTable.tlua, 28, 5))
+
+  T.ncheck(y)
+>T.ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 3, 12))
+>T : Symbol(T, Decl(tluaAssertModuleTable.tlua, 3, 5))
+>ncheck : Symbol(ncheck, Decl(tluaAssertModuleTable.tlua, 3, 12))
+>y : Symbol(y, Decl(tluaAssertModuleTable.tlua, 28, 5))
+
+  local z: string = y
+>z : Symbol(z, Decl(tluaAssertModuleTable.tlua, 32, 7))
+>y : Symbol(y, Decl(tluaAssertModuleTable.tlua, 28, 5))
+
+end
+
+local R = {}
+>R : Symbol(R, Decl(tluaAssertModuleTable.tlua, 35, 5))
+
+R.self = R
+>R.self : Symbol(self, Decl(tluaAssertModuleTable.tlua, 41, 14), Decl(tluaAssertModuleTable.tlua, 35, 12))
+>R : Symbol(R, Decl(tluaAssertModuleTable.tlua, 35, 5))
+>self : Symbol(self, Decl(tluaAssertModuleTable.tlua, 41, 14), Decl(tluaAssertModuleTable.tlua, 35, 12))
+>R : Symbol(R, Decl(tluaAssertModuleTable.tlua, 35, 5))
+
+function R.check(x: unknown): asserts x
+>R : Symbol(R, Decl(tluaAssertModuleTable.tlua, 35, 5))
+>check : Symbol(check, Decl(tluaAssertModuleTable.tlua, 36, 10))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 37, 17))
+>x : Symbol(x, Decl(tluaAssertModuleTable.tlua, 37, 17))
+
+end
+function loopy(a: string | nil)
+>loopy : Symbol(loopy, Decl(tluaAssertModuleTable.tlua, 38, 3))
+>a : Symbol(a, Decl(tluaAssertModuleTable.tlua, 39, 15))
+
+  while true do
+    R.check(a)
+>R.check : Symbol(check, Decl(tluaAssertModuleTable.tlua, 36, 10))
+>R : Symbol(R, Decl(tluaAssertModuleTable.tlua, 35, 5))
+>check : Symbol(check, Decl(tluaAssertModuleTable.tlua, 36, 10))
+>a : Symbol(a, Decl(tluaAssertModuleTable.tlua, 39, 15))
+
+    R.self = R
+>R.self : Symbol(self, Decl(tluaAssertModuleTable.tlua, 41, 14), Decl(tluaAssertModuleTable.tlua, 35, 12))
+>R : Symbol(R, Decl(tluaAssertModuleTable.tlua, 35, 5))
+>self : Symbol(self, Decl(tluaAssertModuleTable.tlua, 41, 14), Decl(tluaAssertModuleTable.tlua, 35, 12))
+>R : Symbol(R, Decl(tluaAssertModuleTable.tlua, 35, 5))
+
+    local s: string = a
+>s : Symbol(s, Decl(tluaAssertModuleTable.tlua, 43, 9))
+>a : Symbol(a, Decl(tluaAssertModuleTable.tlua, 39, 15))
+
+  end
+end
+

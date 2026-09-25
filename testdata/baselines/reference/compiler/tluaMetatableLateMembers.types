@@ -109,17 +109,17 @@ local _ = s.missing
 
 // The same through a parenthesized or asserted call.
 local Wrapped = (setmetatable({}, { __index = Builder }))
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
->(setmetatable({}, { __index = Builder })) : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
->setmetatable({}, { __index = Builder }) : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
+>(setmetatable({}, { __index = Builder })) : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
+>setmetatable({}, { __index = Builder }) : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
->{} : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>{} : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >{ __index = Builder } : { __index: { build: (self: { name: string; }) => string; }; }
 >__index : { build: (self: { name: string; }) => string; }
 >Builder : { build: (self: { name: string; }) => string; }
 
 function Wrapped.extra(self: table) return true end
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >extra : (self: table) => boolean
 >self : table
 >true : true
@@ -128,63 +128,63 @@ local w: boolean = Wrapped.extra(Wrapped)
 >w : boolean
 >Wrapped.extra(Wrapped) : boolean
 >Wrapped.extra : (self: table) => boolean
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >extra : (self: table) => boolean
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 
 // A colon method, a method declared through an alias, and a method that shadows what
 // __index answers all attach to the table behind the call.
 function Wrapped:colon(x: number) return x end
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
->colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number) => number
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
+>colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number) => number
 >x : number
 >x : number
 
 local Alias = Wrapped
->Alias : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Alias : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 
 function Alias.viaAlias() return true end
->Alias : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Alias : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >viaAlias : () => boolean
 >true : true
 
 function Wrapped.build(self: table) return 42 end
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >build : (self: table) => number
 >self : table
 >42 : 42
 
 local inst = setmetatable({}, { __index = Wrapped })
->inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
->setmetatable({}, { __index = Wrapped }) : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number): number; viaAlias: () => boolean; build(self: table): number; }
+>setmetatable({}, { __index = Wrapped }) : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
 >{} : {}
->{ __index = Wrapped } : { __index: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }; }
->__index : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
->Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>{ __index = Wrapped } : { __index: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }; }
+>__index : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
+>Wrapped : { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 
 local i1: number = inst:colon(1)
 >i1 : number
 >inst:colon(1) : number
->inst:colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number) => number
->inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
->colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number) => number
+>inst:colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number) => number
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number): number; viaAlias: () => boolean; build(self: table): number; }
+>colon : (self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number) => number
 >1 : 1
 
 local i2: number = inst.build(inst)
 >i2 : number
 >inst.build(inst) : number
 >inst.build : (self: table) => number
->inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >build : (self: table) => number
->inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 
 local i3: boolean = inst.viaAlias()
 >i3 : boolean
 >inst.viaAlias() : boolean
 >inst.viaAlias : () => boolean
->inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias(): boolean; build(self: table): number; }, x: number): number; viaAlias(): boolean; build(self: table): number; }
+>inst : { extra(self: table): boolean; colon(self: { extra(self: table): boolean; colon(self: any, x: number): number; viaAlias: () => boolean; build(self: table): number; }, x: number): number; viaAlias: () => boolean; build(self: table): number; }
 >viaAlias : () => boolean
 
 // A typed local behind the call is sealed: nothing attaches.

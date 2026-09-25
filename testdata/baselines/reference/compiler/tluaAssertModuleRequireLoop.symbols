@@ -1,0 +1,74 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireLoop.tlua] ////
+
+=== main.tlua ===
+declare function pick(): string | nil
+>pick : Symbol(pick, Decl(main.tlua, 0, 0))
+
+local M = require("m")
+>M : Symbol(M, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local w = pick()
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+>pick : Symbol(pick, Decl(main.tlua, 0, 0))
+
+while true do
+  M.v = w
+>M.v : Symbol(v, Decl(m.tlua, 6, 24))
+>M : Symbol(M, Decl(main.tlua, 1, 5))
+>v : Symbol(v, Decl(m.tlua, 6, 24))
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+
+  M.check(w)
+>M.check : Symbol(check, Decl(m.tlua, 0, 12))
+>M : Symbol(M, Decl(main.tlua, 1, 5))
+>check : Symbol(check, Decl(m.tlua, 0, 12))
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+
+  local z: string = w
+>z : Symbol(z, Decl(main.tlua, 6, 7))
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+
+  M.value(w)
+>M.value : Symbol(value, Decl(m.tlua, 2, 3))
+>M : Symbol(M, Decl(main.tlua, 1, 5))
+>value : Symbol(value, Decl(m.tlua, 2, 3))
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+
+end
+
+=== m.tlua ===
+local M = {}
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+
+function M.check(x: unknown): asserts x
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+>check : Symbol(check, Decl(m.tlua, 0, 12))
+>x : Symbol(x, Decl(m.tlua, 1, 17))
+>x : Symbol(x, Decl(m.tlua, 1, 17))
+
+end
+function M.value(x: unknown): number asserts x
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+>value : Symbol(value, Decl(m.tlua, 2, 3))
+>x : Symbol(x, Decl(m.tlua, 3, 17))
+>x : Symbol(x, Decl(m.tlua, 3, 17))
+
+  return 1
+end
+M.count = M.value(1) + 1
+>M.count : Symbol(count, Decl(m.tlua, 5, 3))
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+>count : Symbol(count, Decl(m.tlua, 5, 3))
+>M.value : Symbol(value, Decl(m.tlua, 2, 3))
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+>value : Symbol(value, Decl(m.tlua, 2, 3))
+
+M.v = nil as string | nil
+>M.v : Symbol(v, Decl(m.tlua, 6, 24))
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+>v : Symbol(v, Decl(m.tlua, 6, 24))
+
+return M
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+

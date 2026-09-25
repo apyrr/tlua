@@ -72,7 +72,7 @@ function storageThroughAs(): string
 
   assert(b.x)
 >assert(b.x) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >b.x : string | nil
 >b : { x: string | nil; }
 >x : string | nil
@@ -100,7 +100,7 @@ function storageThroughAnnotation(): string
 
   assert(b.x)
 >assert(b.x) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >b.x : string | nil
 >b : { x: string | nil; }
 >x : string | nil
@@ -129,7 +129,7 @@ function storageThroughGlobal(): string
 
   assert(b.x)
 >assert(b.x) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >b.x : string | nil
 >b : { x: string | nil; }
 >x : string | nil

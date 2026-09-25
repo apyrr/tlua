@@ -86,7 +86,7 @@ local asserted, extra = assert(maybe, "message");
 >asserted : number
 >extra : string
 >assert(maybe, "message") : number
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >maybe : number | nil
 >"message" : "message"
 

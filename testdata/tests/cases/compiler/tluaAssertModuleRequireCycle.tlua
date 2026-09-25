@@ -1,0 +1,32 @@
+// @strict: true
+// @noEmit: true
+
+// Assertion calls across a require cycle, including one whose result feeds the
+// other module, resolve without circularity errors.
+// @filename: m.tlua
+declare function pick(): string | nil
+local a = require("a")
+local M = {}
+function M.check(x: unknown): number asserts x
+  return 1
+end
+local v = pick()
+a.check(v)
+local s: string = v
+a.check(a.value)
+return M
+
+// @filename: a.tlua
+local m = require("m")
+local A = {}
+A.value = m.check(1)
+function A.check(x: unknown): asserts x
+end
+local w = A.value
+m.check(w)
+return A
+
+// @filename: main.tlua
+local m = require("m")
+local a = require("a")
+local n: number = a.value

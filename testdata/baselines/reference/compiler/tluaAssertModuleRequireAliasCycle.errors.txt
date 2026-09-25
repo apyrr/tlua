@@ -1,0 +1,28 @@
+m.tlua(1,7): error TLUA7022: 'N' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+main.tlua(5,7): error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+  Type 'nil' is not assignable to type 'string'.
+n.tlua(1,7): error TLUA7022: 'M' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+
+
+==== main.tlua (1 errors) ====
+    declare function pick(): string | nil
+    local M = require("m")
+    local w = pick()
+    M.check(w)
+    local t: string = w
+          ~
+!!! error TLUA2322: Type 'string | nil' is not assignable to type 'string'.
+!!! error TLUA2322:   Type 'nil' is not assignable to type 'string'.
+    
+==== m.tlua (1 errors) ====
+    local N = require("n")
+          ~
+!!! error TLUA7022: 'N' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    return N
+    
+==== n.tlua (1 errors) ====
+    local M = require("m")
+          ~
+!!! error TLUA7022: 'M' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    return M
+    

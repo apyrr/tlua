@@ -1,0 +1,58 @@
+//// [tests/cases/compiler/tluaAssertModuleRequire.tlua] ////
+
+=== main.tlua ===
+local M = require("m")
+>M : Symbol(M, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+function f(b: string | nil): string
+>f : Symbol(f, Decl(main.tlua, 0, 22))
+>b : Symbol(b, Decl(main.tlua, 1, 11))
+
+  M.value(b)
+>M.value : Symbol(value, Decl(m.tlua, 0, 12))
+>M : Symbol(M, Decl(main.tlua, 0, 5))
+>value : Symbol(value, Decl(m.tlua, 0, 12))
+>b : Symbol(b, Decl(main.tlua, 1, 11))
+
+  return b
+>b : Symbol(b, Decl(main.tlua, 1, 11))
+
+end
+function g(b: string | nil): string
+>g : Symbol(g, Decl(main.tlua, 4, 3))
+>b : Symbol(b, Decl(main.tlua, 5, 11))
+
+  M.void(b)
+>M.void : Symbol(void, Decl(m.tlua, 3, 3))
+>M : Symbol(M, Decl(main.tlua, 0, 5))
+>void : Symbol(void, Decl(m.tlua, 3, 3))
+>b : Symbol(b, Decl(main.tlua, 5, 11))
+
+  return b
+>b : Symbol(b, Decl(main.tlua, 5, 11))
+
+end
+
+=== m.tlua ===
+local M = {}
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+
+function M.value(x: unknown): number asserts x
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+>value : Symbol(value, Decl(m.tlua, 0, 12))
+>x : Symbol(x, Decl(m.tlua, 1, 17))
+>x : Symbol(x, Decl(m.tlua, 1, 17))
+
+  return 1
+end
+function M.void(x: unknown): asserts x
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+>void : Symbol(void, Decl(m.tlua, 3, 3))
+>x : Symbol(x, Decl(m.tlua, 4, 16))
+>x : Symbol(x, Decl(m.tlua, 4, 16))
+
+end
+return M
+>M : Symbol(M, Decl(m.tlua, 0, 5))
+

@@ -230,11 +230,11 @@ local plain: typeof Plain = Narrow
 
 -- A member statement without a receiver is a module function: still strict.
 local M = {}
->M : { parse(s: string | number): string; }
->{} : { parse(s: string | number): string; }
+>M : { parse: (s: string | number) => string; }
+>{} : { parse: (s: string | number) => string; }
 
 function M.parse(s: string | number): string
->M : { parse(s: string | number): string; }
+>M : { parse: (s: string | number) => string; }
 >parse : (s: string | number) => string
 >s : string | number
 
@@ -247,7 +247,7 @@ end
 M.parse = function(s: string): string
 >M.parse = function(s: string): string    return send : (s: string) => string
 >M.parse : (s: string | number) => string
->M : { parse(s: string | number): string; }
+>M : { parse: (s: string | number) => string; }
 >parse : (s: string | number) => string
 >function(s: string): string    return send : (s: string) => string
 >s : string

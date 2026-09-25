@@ -45,7 +45,7 @@ local a = require("a")
 
 assert(a.x)
 >assert(a.x) : number
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >a.x : number
 >a : { x: number; }
 >x : number
@@ -93,7 +93,7 @@ local m = require("m")
 
 assert(m.y, "need y")
 >assert(m.y, "need y") : number
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >m.y : number
 >m : { y: number; } | { y: number; }
 >y : number

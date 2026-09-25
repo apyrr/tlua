@@ -1,0 +1,49 @@
+// @strict: true
+// @noEmit: true
+
+// A module table (`local T = {}` plus `function T.m` declarations) is declared
+// like a namespace: assertion calls through it narrow without an annotation,
+// whether the assertion returns a value or not.
+local T = {}
+function T.ncheck(x: unknown): number asserts x
+  return 1
+end
+function T.vcheck(x: unknown): asserts x
+end
+
+function f(b: string | nil): string
+  T.ncheck(b)
+  return b
+end
+
+function g(b: string | nil): string
+  T.vcheck(b)
+  return b
+end
+
+local U: { ncheck(x: unknown): number asserts x } = { ncheck = T.ncheck }
+function h(b: string | nil): string
+  U.ncheck(b)
+  return b
+end
+
+// Narrowing stays stable when the table is written inside a loop.
+declare function pick(): string | nil
+local y = pick()
+while true do
+  T.x = y
+  T.ncheck(y)
+  local z: string = y
+end
+
+local R = {}
+R.self = R
+function R.check(x: unknown): asserts x
+end
+function loopy(a: string | nil)
+  while true do
+    R.check(a)
+    R.self = R
+    local s: string = a
+  end
+end

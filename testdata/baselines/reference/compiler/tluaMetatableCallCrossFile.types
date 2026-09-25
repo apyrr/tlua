@@ -2,22 +2,22 @@
 
 === producer.tlua ===
 app = app or {};
->app = app or {} : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->app or {} : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>app = app or {} : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>app or {} : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
 >app : nil
->{} : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
+>{} : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
 
 app.sql = app.sql or {};
->app.sql = app.sql or {} : { begin(): void; }
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
->app.sql or {} : { begin(): void; }
->app.sql : { begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { begin(): void; }
->{} : { begin(): void; }
+>app.sql = app.sql or {} : { begin: () => void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app.sql or {} : { begin: () => void; }
+>app.sql : { begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { begin: () => void; }
+>{} : { begin: () => void; }
 
 local executeSql = suspend function<T extends table>(query: string): T[]
 >executeSql : suspend <T extends table>(query: string) => T[]
@@ -30,19 +30,19 @@ local executeSql = suspend function<T extends table>(query: string): T[]
 end;
 
 function app.sql.begin(): void
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
 >begin : () => void
 
 end
 
 setmetatable(app.sql, {
->setmetatable(app.sql, {  __call = suspend function<T extends table>(_self: table, query: string): T[]    return executeSql(query);  end,}) : { <T extends table>(query: string): T[]; begin(): void; }
+>setmetatable(app.sql, {  __call = suspend function<T extends table>(_self: table, query: string): T[]    return executeSql(query);  end,}) : { <T extends table>(query: string): T[]; begin: () => void; }
 >setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
 >{  __call = suspend function<T extends table>(_self: table, query: string): T[]    return executeSql(query);  end,} : { __call: <T extends table>(_self: table, query: string) => T[]; }
 
   __call = suspend function<T extends table>(_self: table, query: string): T[]
@@ -66,17 +66,17 @@ suspend function producerUse(): void
   app.sql.begin();
 >app.sql.begin() : void
 >app.sql.begin : () => void
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
 >begin : () => void
 
   local rows = app.sql("SELECT 1");
 >rows : table[]
 >app.sql("SELECT 1") : table[]
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
 >"SELECT 1" : "SELECT 1"
 
 end
@@ -89,17 +89,17 @@ local run = suspend function()
   app.sql.begin();
 >app.sql.begin() : void
 >app.sql.begin : () => void
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
 >begin : () => void
 
   local rows = app.sql<{ id: number }>("SELECT id FROM example");
 >rows : { id: number; }[]
 >app.sql<{ id: number }>("SELECT id FROM example") : { id: number; }[]
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
 >id : number
 >"SELECT id FROM example" : "SELECT id FROM example"
 
@@ -115,15 +115,15 @@ end;
 // A defaulted guard in another file still checks: a store supplies the table,
 // not the pairing the setmetatable statements install.
 app.sql = app.sql or {};
->app.sql = app.sql or {} : { begin(): void; }
->app.sql : { <T extends table>(query: string): T[]; begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { <T extends table>(query: string): T[]; begin(): void; }
->app.sql or {} : { begin(): void; }
->app.sql : { begin(): void; }
->app : { sql: { <T extends table>(query: string): T[]; begin(): void; }; }
->sql : { begin(): void; }
->{} : { begin(): void; }
+>app.sql = app.sql or {} : { begin: () => void; }
+>app.sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { <T extends table>(query: string): T[]; begin: () => void; }
+>app.sql or {} : { begin: () => void; }
+>app.sql : { begin: () => void; }
+>app : { sql: { <T extends table>(query: string): T[]; begin: () => void; }; }
+>sql : { begin: () => void; }
+>{} : { begin: () => void; }
 
 === globalRoot.tlua ===
 // A pairing on an implicit global root, consumed cross-file.

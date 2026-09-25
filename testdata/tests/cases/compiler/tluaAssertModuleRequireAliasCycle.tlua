@@ -1,0 +1,21 @@
+// @strict: true
+// @noEmit: true
+
+// A require alias chain that cycles (two chunks re-exporting each other) must
+// stop, not overflow the stack, when an assertion call through it asks whether
+// the callee is explicitly typed. (The self-requiring chunk is
+// tluaAssertModuleRequireSelfCycle.)
+// @filename: m.tlua
+local N = require("n")
+return N
+
+// @filename: n.tlua
+local M = require("m")
+return M
+
+// @filename: main.tlua
+declare function pick(): string | nil
+local M = require("m")
+local w = pick()
+M.check(w)
+local t: string = w

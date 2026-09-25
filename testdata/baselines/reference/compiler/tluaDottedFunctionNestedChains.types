@@ -2,15 +2,15 @@
 
 === tluaDottedFunctionNestedChains.tlua ===
 local a = { b = {} };
->a : { b: { deep(x: number): number; }; }
->{ b = {} } : { b: { deep(x: number): number; }; }
->b : { deep(x: number): number; }
->{} : { deep(x: number): number; }
+>a : { b: { deep: (x: number) => number; }; }
+>{ b = {} } : { b: { deep: (x: number) => number; }; }
+>b : { deep: (x: number) => number; }
+>{} : { deep: (x: number) => number; }
 
 function a.b.deep(x: number): number
->a.b : { deep(x: number): number; }
->a : { b: { deep(x: number): number; }; }
->b : { deep(x: number): number; }
+>a.b : { deep: (x: number) => number; }
+>a : { b: { deep: (x: number) => number; }; }
+>b : { deep: (x: number) => number; }
 >deep : (x: number) => number
 >x : number
 
@@ -23,18 +23,18 @@ local viaChain = a.b.deep(1);
 >viaChain : number
 >a.b.deep(1) : number
 >a.b.deep : (x: number) => number
->a.b : { deep(x: number): number; }
->a : { b: { deep(x: number): number; }; }
->b : { deep(x: number): number; }
+>a.b : { deep: (x: number) => number; }
+>a : { b: { deep: (x: number) => number; }; }
+>b : { deep: (x: number) => number; }
 >deep : (x: number) => number
 >1 : 1
 
 local outer = {};
->outer : { mid(): void; }
->{} : { mid(): void; }
+>outer : { mid: () => void; }
+>{} : { mid: () => void; }
 
 function outer.mid(): void
->outer : { mid(): void; }
+>outer : { mid: () => void; }
 >mid : () => void
 
 end

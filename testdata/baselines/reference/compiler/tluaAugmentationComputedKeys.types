@@ -149,55 +149,55 @@ local WKEY = "widened" as string
 >"widened" : "widened"
 
 local M = {}
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
->{} : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>{} : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 
 M.sub = {}
->M.sub = {} : { helper(): number; }
->M.sub : { helper(): number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
->sub : { helper(): number; }
->{} : { helper(): number; }
+>M.sub = {} : { helper: () => number; }
+>M.sub : { helper: () => number; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>sub : { helper: () => number; }
+>{} : { helper: () => number; }
 
 M[1] = {}
 >M[1] = {} : { count: number; }
 >M[1] : { count: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >1 : 1
 >{} : { count: number; }
 
 M.annotated = {}
 >M.annotated = {} : { flag: boolean; aliased: string; }
 >M.annotated : { flag: boolean; aliased: string; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >annotated : { flag: boolean; aliased: string; }
 >{} : { flag: boolean; aliased: string; }
 
 M.typed = {}
 >M.typed = {} : { deep: number; }
 >M.typed : { deep: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >typed : { deep: number; }
 >{} : { deep: number; }
 
 M.casted = {}
 >M.casted = {} : { chained: number; kept: number; }
 >M.casted : { chained: number; kept: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >casted : { chained: number; kept: number; }
 >{} : { chained: number; kept: number; }
 
 M.widened = {}
 >M.widened = {} : {}
 >M.widened : {}
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >widened : {}
 >{} : {}
 
 local viaKey = M[KEY]
 >viaKey : any
 >M[KEY] : any
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >KEY : string
 
 function viaKey.helper(): number
@@ -212,7 +212,7 @@ end
 local viaNumber = M[NKEY]
 >viaNumber : any
 >M[NKEY] : any
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >NKEY : number
 
 viaNumber.count = 2
@@ -225,7 +225,7 @@ viaNumber.count = 2
 local viaAnnotation = M[AKEY]
 >viaAnnotation : { flag: boolean; aliased: string; }
 >M[AKEY] : { flag: boolean; aliased: string; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >AKEY : "annotated"
 
 viaAnnotation.flag = true
@@ -238,7 +238,7 @@ viaAnnotation.flag = true
 local viaTypeAlias = M[TKEY]
 >viaTypeAlias : { deep: number; }
 >M[TKEY] : { deep: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >TKEY : "typed"
 
 viaTypeAlias.deep = 3
@@ -259,7 +259,7 @@ local ALIAS = AKEY
 local viaAlias = M[ALIAS]
 >viaAlias : { flag: boolean; aliased: string; }
 >M[ALIAS] : { flag: boolean; aliased: string; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >ALIAS : "annotated"
 
 viaAlias.aliased = "yes"
@@ -276,7 +276,7 @@ local CALIAS = CKEY
 local viaConstAlias = M[CALIAS]
 >viaConstAlias : { chained: number; kept: number; }
 >M[CALIAS] : { chained: number; kept: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >CALIAS : "casted"
 
 viaConstAlias.chained = 6
@@ -293,7 +293,7 @@ local FALIAS = KEY
 local viaFresh = M[FALIAS]
 >viaFresh : any
 >M[FALIAS] : any
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >FALIAS : string
 
 viaFresh.dropped = 7
@@ -309,7 +309,7 @@ viaFresh.dropped = 7
 local viaConst = M[CKEY]
 >viaConst : { chained: number; kept: number; }
 >M[CKEY] : { chained: number; kept: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >CKEY : "casted"
 
 viaConst.kept = 4
@@ -322,7 +322,7 @@ viaConst.kept = 4
 local viaWidened = M[WKEY]
 >viaWidened : any
 >M[WKEY] : any
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >WKEY : string
 
 viaWidened.dropped = 5
@@ -345,7 +345,7 @@ local IKEY = makeKey()
 local viaInferred = M[IKEY]
 >viaInferred : { deep: number; }
 >M[IKEY] : { deep: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >IKEY : "typed"
 
 viaInferred.inferred = 8
@@ -416,16 +416,16 @@ local helperResult: number = M.sub.helper()
 >helperResult : number
 >M.sub.helper() : number
 >M.sub.helper : () => number
->M.sub : { helper(): number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
->sub : { helper(): number; }
+>M.sub : { helper: () => number; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>sub : { helper: () => number; }
 >helper : () => number
 
 local deepResult: number = M.typed.deep
 >deepResult : number
 >M.typed.deep : number
 >M.typed : { deep: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >typed : { deep: number; }
 >deep : number
 
@@ -433,7 +433,7 @@ local keptResult: number = M.casted.kept
 >keptResult : number
 >M.casted.kept : number
 >M.casted : { chained: number; kept: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >casted : { chained: number; kept: number; }
 >kept : number
 
@@ -441,7 +441,7 @@ local countResult: number = M[1].count
 >countResult : number
 >M[1].count : number
 >M[1] : { count: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >1 : 1
 >count : number
 
@@ -449,7 +449,7 @@ local flagResult: boolean = M.annotated.flag
 >flagResult : boolean
 >M.annotated.flag : boolean
 >M.annotated : { flag: boolean; aliased: string; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >annotated : { flag: boolean; aliased: string; }
 >flag : boolean
 
@@ -457,7 +457,7 @@ local aliasedResult: string = M.annotated.aliased
 >aliasedResult : string
 >M.annotated.aliased : string
 >M.annotated : { flag: boolean; aliased: string; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >annotated : { flag: boolean; aliased: string; }
 >aliased : string
 
@@ -465,7 +465,7 @@ local chainedResult: number = M.casted.chained
 >chainedResult : number
 >M.casted.chained : number
 >M.casted : { chained: number; kept: number; }
->M : { sub: { helper(): number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
+>M : { sub: { helper: () => number; }; 1: { count: number; }; annotated: { flag: boolean; aliased: string; }; typed: { deep: number; }; casted: { chained: number; kept: number; }; widened: {}; }
 >casted : { chained: number; kept: number; }
 >chained : number
 

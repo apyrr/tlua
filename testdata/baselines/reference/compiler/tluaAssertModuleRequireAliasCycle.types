@@ -1,0 +1,48 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireAliasCycle.tlua] ////
+
+=== main.tlua ===
+declare function pick(): string | nil
+>pick : () => string | nil
+
+local M = require("m")
+>M : any
+>require("m") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+local w = pick()
+>w : string | nil
+>pick() : string | nil
+>pick : () => string | nil
+
+M.check(w)
+>M.check(w) : any
+>M.check : any
+>M : any
+>check : any
+>w : string | nil
+
+local t: string = w
+>t : string
+>w : string | nil
+
+=== m.tlua ===
+local N = require("n")
+>N : any
+>require("n") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"n" : "n"
+
+return N
+>N : any
+
+=== n.tlua ===
+local M = require("m")
+>M : any
+>require("m") : any
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+return M
+>M : any
+

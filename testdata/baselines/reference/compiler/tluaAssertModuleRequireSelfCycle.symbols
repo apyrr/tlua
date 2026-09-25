@@ -1,0 +1,25 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireSelfCycle.tlua] ////
+
+=== self.tlua ===
+declare function pick(): string | nil
+>pick : Symbol(pick, Decl(self.tlua, 0, 0))
+
+local S = require("self")
+>S : Symbol(S, Decl(self.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local v = pick()
+>v : Symbol(v, Decl(self.tlua, 2, 5))
+>pick : Symbol(pick, Decl(self.tlua, 0, 0))
+
+S.check(v)
+>S : Symbol(S, Decl(self.tlua, 1, 5))
+>v : Symbol(v, Decl(self.tlua, 2, 5))
+
+local s: string = v
+>s : Symbol(s, Decl(self.tlua, 4, 5))
+>v : Symbol(v, Decl(self.tlua, 2, 5))
+
+return S
+>S : Symbol(S, Decl(self.tlua, 1, 5))
+

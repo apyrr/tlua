@@ -1,0 +1,161 @@
+//// [tests/cases/compiler/tluaAssertModuleTable.tlua] ////
+
+=== tluaAssertModuleTable.tlua ===
+// A module table (`local T = {}` plus `function T.m` declarations) is declared
+// like a namespace: assertion calls through it narrow without an annotation,
+// whether the assertion returns a value or not.
+local T = {}
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>{} : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+
+function T.ncheck(x: unknown): number asserts x
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>ncheck : (x: unknown) => number asserts x
+>x : unknown
+
+  return 1
+>1 : 1
+
+end
+function T.vcheck(x: unknown): asserts x
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>vcheck : (x: unknown) => asserts x
+>x : unknown
+
+end
+
+function f(b: string | nil): string
+>f : (b: string | nil) => string
+>b : string | nil
+
+  T.ncheck(b)
+>T.ncheck(b) : number
+>T.ncheck : (x: unknown) => number asserts x
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>ncheck : (x: unknown) => number asserts x
+>b : string | nil
+
+  return b
+>b : string
+
+end
+
+function g(b: string | nil): string
+>g : (b: string | nil) => string
+>b : string | nil
+
+  T.vcheck(b)
+>T.vcheck(b) : void
+>T.vcheck : (x: unknown) => asserts x
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>vcheck : (x: unknown) => asserts x
+>b : string | nil
+
+  return b
+>b : string
+
+end
+
+local U: { ncheck(x: unknown): number asserts x } = { ncheck = T.ncheck }
+>U : { ncheck(x: unknown): number asserts x; }
+>ncheck : (x: unknown) => number asserts x
+>x : unknown
+>{ ncheck = T.ncheck } : { ncheck: (x: unknown) => number asserts x; }
+>ncheck : (x: unknown) => number asserts x
+>T.ncheck : (x: unknown) => number asserts x
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>ncheck : (x: unknown) => number asserts x
+
+function h(b: string | nil): string
+>h : (b: string | nil) => string
+>b : string | nil
+
+  U.ncheck(b)
+>U.ncheck(b) : number
+>U.ncheck : (x: unknown) => number asserts x
+>U : { ncheck(x: unknown): number asserts x; }
+>ncheck : (x: unknown) => number asserts x
+>b : string | nil
+
+  return b
+>b : string
+
+end
+
+// Narrowing stays stable when the table is written inside a loop.
+declare function pick(): string | nil
+>pick : () => string | nil
+
+local y = pick()
+>y : string | nil
+>pick() : string | nil
+>pick : () => string | nil
+
+while true do
+>true : true
+
+  T.x = y
+>T.x = y : string | nil
+>T.x : string | nil
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>x : string | nil
+>y : string | nil
+
+  T.ncheck(y)
+>T.ncheck(y) : number
+>T.ncheck : (x: unknown) => number asserts x
+>T : { ncheck: (x: unknown) => number asserts x; vcheck: (x: unknown) => asserts x; x: string | nil; }
+>ncheck : (x: unknown) => number asserts x
+>y : string | nil
+
+  local z: string = y
+>z : string
+>y : string
+
+end
+
+local R = {}
+>R : { check: (x: unknown) => asserts x; self: any; }
+>{} : { check: (x: unknown) => asserts x; self: { check: (x: unknown) => asserts x; self: any; }; }
+
+R.self = R
+>R.self = R : { check: (x: unknown) => asserts x; self: any; }
+>R.self : { check: (x: unknown) => asserts x; self: any; }
+>R : { check: (x: unknown) => asserts x; self: any; }
+>self : { check: (x: unknown) => asserts x; self: any; }
+>R : { check: (x: unknown) => asserts x; self: any; }
+
+function R.check(x: unknown): asserts x
+>R : { check: (x: unknown) => asserts x; self: any; }
+>check : (x: unknown) => asserts x
+>x : unknown
+
+end
+function loopy(a: string | nil)
+>loopy : (a: string | nil) => void
+>a : string | nil
+
+  while true do
+>true : true
+
+    R.check(a)
+>R.check(a) : void
+>R.check : (x: unknown) => asserts x
+>R : { check: (x: unknown) => asserts x; self: any; }
+>check : (x: unknown) => asserts x
+>a : string | nil
+
+    R.self = R
+>R.self = R : { check: (x: unknown) => asserts x; self: any; }
+>R.self : { check: (x: unknown) => asserts x; self: any; }
+>R : { check: (x: unknown) => asserts x; self: any; }
+>self : { check: (x: unknown) => asserts x; self: any; }
+>R : { check: (x: unknown) => asserts x; self: any; }
+
+    local s: string = a
+>s : string
+>a : string
+
+  end
+end
+

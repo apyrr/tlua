@@ -1,0 +1,24 @@
+// @strict: true
+// @noEmit: true
+
+// `local M = require("m")` resolves like an import alias: assertions declared on
+// the module table narrow through it, value-returning or not.
+// @filename: m.tlua
+local M = {}
+function M.value(x: unknown): number asserts x
+  return 1
+end
+function M.void(x: unknown): asserts x
+end
+return M
+
+// @filename: main.tlua
+local M = require("m")
+function f(b: string | nil): string
+  M.value(b)
+  return b
+end
+function g(b: string | nil): string
+  M.void(b)
+  return b
+end

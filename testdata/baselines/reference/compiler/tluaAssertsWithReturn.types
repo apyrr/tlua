@@ -76,7 +76,7 @@ local function both(a: string | nil, b: number): (string, number) asserts a
   return assert(a), b
 >assert(a), b : string, number
 >assert(a) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >a : string | nil
 >b : number
 
@@ -118,8 +118,8 @@ local noPredicate: (value: unknown, message: string) => string = expectString
 
 // The lib's assert, directly and through an alias, as a statement and as a value.
 local check = assert
->check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>check : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 
 function libAssert(a: string | nil, b: number | nil): number
 >libAssert : (a: string | nil, b: number | nil) => number
@@ -128,7 +128,7 @@ function libAssert(a: string | nil, b: number | nil): number
 
   assert(a)
 >assert(a) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >a : string | nil
 
   local s: string = a
@@ -137,7 +137,7 @@ function libAssert(a: string | nil, b: number | nil): number
 
   check(b, "b is required")
 >check(b, "b is required") : number
->check : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>check : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >b : number | nil
 >"b is required" : "b is required"
 
@@ -153,7 +153,7 @@ function libAssertValue(a: string | nil): string
   local s = assert(a)
 >s : string
 >assert(a) : string
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >a : string | nil
 
   return s
@@ -168,35 +168,35 @@ declare maybe: string | nil
 >maybe : string | nil
 
 local M = { assert = assert }
->M : { assert: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
->{ assert = assert } : { assert: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>M : { assert: <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value; }
+>{ assert = assert } : { assert: <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value; }
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 
 M.assert(maybe)
 >M.assert(maybe) : string
->M.assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
->M : { assert: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>M.assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>M : { assert: <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value; }
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >maybe : string | nil
 
 local fns = { assert }
->fns : { 1: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
->{ assert } : { 1: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>fns : { 1: <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value; }
+>{ assert } : { 1: <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value; }
 >assert : any
 
 fns[1](maybe)
 >fns[1](maybe) : string
->fns[1] : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
->fns : { 1: <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value; }
+>fns[1] : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
+>fns : { 1: <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value; }
 >1 : 1
 >maybe : string | nil
 
 _G.assert(maybe)
 >_G.assert(maybe) : string
->_G.assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>_G.assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >_G : typeof _G
->assert : <T, ...M>(value: T | nil, ...: M) => (T, ...M) asserts value
+>assert : <T, ...M>(value: T | false | nil, ...: M) => (T & {}, ...M) asserts value
 >maybe : string | nil
 
 // A never-returning assertion ends flow like any never-returning call.

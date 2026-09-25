@@ -1,0 +1,12 @@
+// @strict: true
+// @noEmit: true
+
+// A chunk that requires itself is a require alias cycle of one: an assertion call
+// through it must stop, not overflow the stack, and report as unannotated.
+// @filename: self.tlua
+declare function pick(): string | nil
+local S = require("self")
+local v = pick()
+S.check(v)
+local s: string = v
+return S

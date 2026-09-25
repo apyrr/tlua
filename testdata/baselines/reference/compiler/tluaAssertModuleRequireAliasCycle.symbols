@@ -1,0 +1,38 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireAliasCycle.tlua] ////
+
+=== main.tlua ===
+declare function pick(): string | nil
+>pick : Symbol(pick, Decl(main.tlua, 0, 0))
+
+local M = require("m")
+>M : Symbol(M, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local w = pick()
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+>pick : Symbol(pick, Decl(main.tlua, 0, 0))
+
+M.check(w)
+>M : Symbol(M, Decl(main.tlua, 1, 5))
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+
+local t: string = w
+>t : Symbol(t, Decl(main.tlua, 4, 5))
+>w : Symbol(w, Decl(main.tlua, 2, 5))
+
+=== m.tlua ===
+local N = require("n")
+>N : Symbol(N, Decl(m.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+return N
+>N : Symbol(N, Decl(m.tlua, 0, 5))
+
+=== n.tlua ===
+local M = require("m")
+>M : Symbol(M, Decl(n.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+return M
+>M : Symbol(M, Decl(n.tlua, 0, 5))
+

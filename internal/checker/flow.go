@@ -2332,6 +2332,23 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 					return t
 				}
 			}
+			// A module table (`local M = {}`) is tlua's namespace: its type is an empty
+			// table plus the members its `function M.f` statements and assignments declare,
+			// none of which it computes, so like a namespace it needs no annotation. Each
+			// member still answers for itself.
+			if isLuaModuleTableDeclaration(declaration) {
+				return c.getTypeOfSymbol(symbol)
+			}
+			// `local M = require("m")` is tlua's import: a chunk that solely returns a name
+			// aliases it, and the name's explicit type is the import's.
+			// Requires can cycle (a chunk requiring itself, two chunks re-exporting each
+			// other), so an alias already being followed answers "not explicit" and the
+			// call reports as unannotated instead of recursing without bound.
+			if target := c.getLuaRequireAliasTarget(declaration); target != nil {
+				if t := c.getExplicitTypeOfLuaRequireAlias(symbol, target); t != nil {
+					return t
+				}
+			}
 			// (Upstream had a JS `for (x of y)` element-type branch here. tlua's
 			// only ForOfStatement producer is the Lua generic-for, which always
 			// sets NodeFlagsLuaLocal, so a non-Lua for-of can never reach this
@@ -2342,6 +2359,59 @@ func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Di
 		}
 	}
 	return nil
+}
+
+// getExplicitTypeOfLuaRequireAlias follows a require alias to its target unless the
+// alias is already being followed, in which case the chain has cycled back.
+func (c *Checker) getExplicitTypeOfLuaRequireAlias(alias *ast.Symbol, target *ast.Symbol) *Type {
+	if c.luaRequireAliasesVisiting.Has(alias) {
+		return nil
+	}
+	c.luaRequireAliasesVisiting.Add(alias)
+	defer c.luaRequireAliasesVisiting.Delete(alias)
+	return c.getExplicitTypeOfSymbol(target, nil /*diagnostic*/)
+}
+
+// isLuaModuleTableDeclaration reports whether declaration is an unannotated Lua local
+// initialized with an empty table constructor, `local M = {}`.
+func isLuaModuleTableDeclaration(declaration *ast.Node) bool {
+	if !ast.IsVariableDeclaration(declaration) || !ast.IsLuaLocal(declaration) || declaration.Type() != nil {
+		return false
+	}
+	initializer := ast.LuaExplicitVariableInitializer(declaration)
+	if initializer == nil {
+		return false
+	}
+	initializer = ast.SkipParentheses(initializer)
+	return ast.IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0
+}
+
+// getLuaRequireAliasTarget returns the name a `local M = require("m")` declaration imports:
+// the one m's sole chunk return aliases. Resolving it names symbols only; nothing is checked.
+func (c *Checker) getLuaRequireAliasTarget(declaration *ast.Node) *ast.Symbol {
+	if !ast.IsVariableDeclaration(declaration) || !ast.IsLuaLocal(declaration) || declaration.Type() != nil {
+		return nil
+	}
+	initializer := ast.LuaExplicitVariableInitializer(declaration)
+	if initializer == nil {
+		return nil
+	}
+	initializer = ast.SkipParentheses(initializer)
+	if !ast.IsRequireCall(initializer, true /*requireStringLiteralLikeArgument*/) || !c.isLuaRequireReference(initializer.Expression()) {
+		return nil
+	}
+	specifier := initializer.Arguments()[0]
+	moduleSymbol := c.resolveExternalModuleName(specifier, specifier, true /*ignoreErrors*/)
+	if moduleSymbol == nil {
+		return nil
+	}
+	// Aggregate returns export a property symbol, whose type is checked from the returned
+	// expressions; only an alias names a declaration.
+	exportEquals := moduleSymbol.Exports[ast.InternalSymbolNameExportEquals]
+	if exportEquals == nil || exportEquals.Flags&ast.SymbolFlagsAlias == 0 {
+		return nil
+	}
+	return c.resolveAlias(exportEquals)
 }
 
 func (c *Checker) isDeclarationWithExplicitTypeAnnotation(node *ast.Node) bool {

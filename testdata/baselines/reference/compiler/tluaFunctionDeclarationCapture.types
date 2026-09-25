@@ -43,11 +43,11 @@ end
 
 // And through a dotted target.
 local M = {};
->M : { greet(): string; }
->{} : { greet(): string; }
+>M : { greet: () => string; }
+>{} : { greet: () => string; }
 
 function M.greet(): string
->M : { greet(): string; }
+>M : { greet: () => string; }
 >greet : () => string
 
   return name;

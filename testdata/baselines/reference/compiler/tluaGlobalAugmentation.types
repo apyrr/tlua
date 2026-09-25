@@ -4,14 +4,14 @@
 G.x = 1;
 >G.x = 1 : 1
 >G.x : string | number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >x : string | number
 >1 : 1
 
 local gx: number | string = G.x;
 >gx : string | number
 >G.x : number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >x : number
 
 local n: number | string = N;
@@ -20,14 +20,14 @@ local n: number | string = N;
 
 === b.tlua ===
 G = {};
->G = {} : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
->{} : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G = {} : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
+>{} : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 
 G.x = "two";
 >G.x = "two" : "two"
 >G.x : string | number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >x : string | number
 >"two" : "two"
 
@@ -43,24 +43,24 @@ N = "two";
 
 === c.tlua ===
 local G = {};
->G : { localOnly: boolean; identity(value: number): number; }
->{} : { localOnly: boolean; identity(value: number): number; }
+>G : { localOnly: boolean; identity: (value: number) => number; }
+>{} : { localOnly: boolean; identity: (value: number) => number; }
 
 G.localOnly = true;
 >G.localOnly = true : true
 >G.localOnly : boolean
->G : { localOnly: boolean; identity(value: number): number; }
+>G : { localOnly: boolean; identity: (value: number) => number; }
 >localOnly : boolean
 >true : true
 
 local localOnly: boolean = G.localOnly;
 >localOnly : boolean
 >G.localOnly : true
->G : { localOnly: boolean; identity(value: number): number; }
+>G : { localOnly: boolean; identity: (value: number) => number; }
 >localOnly : true
 
 function G.identity(value: number): number
->G : { localOnly: boolean; identity(value: number): number; }
+>G : { localOnly: boolean; identity: (value: number) => number; }
 >identity : (value: number) => number
 >value : number
 
@@ -73,13 +73,13 @@ local localIdentity: number = G.identity(1);
 >localIdentity : number
 >G.identity(1) : number
 >G.identity : (value: number) => number
->G : { localOnly: boolean; identity(value: number): number; }
+>G : { localOnly: boolean; identity: (value: number) => number; }
 >identity : (value: number) => number
 >1 : 1
 
 === d.tlua ===
 function G.double(value: number): number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >double : (value: number) => number
 >value : number
 
@@ -94,12 +94,12 @@ local doubled: number = G.double(2);
 >doubled : number
 >G.double(2) : number
 >G.double : (value: number) => number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >double : (value: number) => number
 >2 : 2
 
 function G:triple(value: number): number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >triple : (self: typeof G, value: number) => number
 >value : number
 
@@ -114,9 +114,9 @@ local tripled: number = G.triple(G, 3);
 >tripled : number
 >G.triple(G, 3) : number
 >G.triple : (self: typeof G, value: number) => number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >triple : (self: typeof G, value: number) => number
->G : { x: string | number; double(value: number): number; triple(self: typeof G, value: number): number; }
+>G : { x: string | number; double: (value: number) => number; triple(self: typeof G, value: number): number; }
 >3 : 3
 
 === e.tlua ===

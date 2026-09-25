@@ -2,32 +2,32 @@
 
 === tluaDottedFunctionNonEmptyTable.tlua ===
 local Counter = { count = 0, label = "hits" };
->Counter : { count: number; label: string; bump(by: number): number; }
->{ count = 0, label = "hits" } : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
+>{ count = 0, label = "hits" } : { count: number; label: string; bump: (by: number) => number; }
 >count : number
 >0 : 0
 >label : string
 >"hits" : "hits"
 
 function Counter.bump(by: number): number
->Counter : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
 >bump : (by: number) => number
 >by : number
 
   Counter.count = Counter.count + by;
 >Counter.count = Counter.count + by : number
 >Counter.count : number
->Counter : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
 >count : number
 >Counter.count + by : number
 >Counter.count : number
->Counter : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
 >count : number
 >by : number
 
   return Counter.count;
 >Counter.count : number
->Counter : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
 >count : number
 
 end
@@ -37,17 +37,17 @@ local total = Counter.bump(2) + Counter.count;
 >Counter.bump(2) + Counter.count : number
 >Counter.bump(2) : number
 >Counter.bump : (by: number) => number
->Counter : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
 >bump : (by: number) => number
 >2 : 2
 >Counter.count : number
->Counter : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
 >count : number
 
 local name = Counter.label;
 >name : string
 >Counter.label : string
->Counter : { count: number; label: string; bump(by: number): number; }
+>Counter : { count: number; label: string; bump: (by: number) => number; }
 >label : string
 
 // A dotted declaration may not redeclare a field written in the table itself.

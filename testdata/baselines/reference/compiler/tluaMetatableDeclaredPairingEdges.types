@@ -558,14 +558,14 @@ local viaAssertion: number = Asserted();
 // Function storage keeps its function type: metatables on functions are
 // per-type at runtime, so no declared pairing forms.
 Mod = Mod or {};
->Mod = Mod or {} : { f(): number; }
->Mod : { f(): number; }
->Mod or {} : { f(): number; }
+>Mod = Mod or {} : { f: () => number; }
+>Mod : { f: () => number; }
+>Mod or {} : { f: () => number; }
 >Mod : nil
->{} : { f(): number; }
+>{} : { f: () => number; }
 
 function Mod.f(): number
->Mod : { f(): number; }
+>Mod : { f: () => number; }
 >f : () => number
 
   return 1;
@@ -578,7 +578,7 @@ debug.setmetatable(Mod.f, {
 >debug : DebugLib
 >setmetatable : { <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil): T; <T>(value: T, metatable: table | nil): T; }
 >Mod.f : () => number
->Mod : { f(): number; }
+>Mod : { f: () => number; }
 >f : () => number
 >{  __index = { attached = true },} : { __index: { attached: boolean; }; }
 
@@ -595,7 +595,7 @@ local viaMethod: number = Mod.f();
 >viaMethod : number
 >Mod.f() : number
 >Mod.f : () => number
->Mod : { f(): number; }
+>Mod : { f: () => number; }
 >f : () => number
 
 === doRebind.tlua ===

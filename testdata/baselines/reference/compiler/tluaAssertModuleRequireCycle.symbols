@@ -1,0 +1,99 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireCycle.tlua] ////
+
+=== main.tlua ===
+local m = require("m")
+>m : Symbol(m, Decl(main.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local a = require("a")
+>a : Symbol(a, Decl(main.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local n: number = a.value
+>n : Symbol(n, Decl(main.tlua, 2, 5))
+>a.value : Symbol(value, Decl(a.tlua, 1, 12))
+>a : Symbol(a, Decl(main.tlua, 1, 5))
+>value : Symbol(value, Decl(a.tlua, 1, 12))
+
+=== m.tlua ===
+declare function pick(): string | nil
+>pick : Symbol(pick, Decl(m.tlua, 0, 0))
+
+local a = require("a")
+>a : Symbol(a, Decl(m.tlua, 1, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local M = {}
+>M : Symbol(M, Decl(m.tlua, 2, 5))
+
+function M.check(x: unknown): number asserts x
+>M : Symbol(M, Decl(m.tlua, 2, 5))
+>check : Symbol(check, Decl(m.tlua, 2, 12))
+>x : Symbol(x, Decl(m.tlua, 3, 17))
+>x : Symbol(x, Decl(m.tlua, 3, 17))
+
+  return 1
+end
+local v = pick()
+>v : Symbol(v, Decl(m.tlua, 6, 5))
+>pick : Symbol(pick, Decl(m.tlua, 0, 0))
+
+a.check(v)
+>a.check : Symbol(check, Decl(a.tlua, 2, 20))
+>a : Symbol(a, Decl(m.tlua, 1, 5))
+>check : Symbol(check, Decl(a.tlua, 2, 20))
+>v : Symbol(v, Decl(m.tlua, 6, 5))
+
+local s: string = v
+>s : Symbol(s, Decl(m.tlua, 8, 5))
+>v : Symbol(v, Decl(m.tlua, 6, 5))
+
+a.check(a.value)
+>a.check : Symbol(check, Decl(a.tlua, 2, 20))
+>a : Symbol(a, Decl(m.tlua, 1, 5))
+>check : Symbol(check, Decl(a.tlua, 2, 20))
+>a.value : Symbol(value, Decl(a.tlua, 1, 12))
+>a : Symbol(a, Decl(m.tlua, 1, 5))
+>value : Symbol(value, Decl(a.tlua, 1, 12))
+
+return M
+>M : Symbol(M, Decl(m.tlua, 2, 5))
+
+=== a.tlua ===
+local m = require("m")
+>m : Symbol(m, Decl(a.tlua, 0, 5))
+>require : Symbol(require, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --) ... and 4 more)
+
+local A = {}
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+
+A.value = m.check(1)
+>A.value : Symbol(value, Decl(a.tlua, 1, 12))
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+>value : Symbol(value, Decl(a.tlua, 1, 12))
+>m.check : Symbol(check, Decl(m.tlua, 2, 12))
+>m : Symbol(m, Decl(a.tlua, 0, 5))
+>check : Symbol(check, Decl(m.tlua, 2, 12))
+
+function A.check(x: unknown): asserts x
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+>check : Symbol(check, Decl(a.tlua, 2, 20))
+>x : Symbol(x, Decl(a.tlua, 3, 17))
+>x : Symbol(x, Decl(a.tlua, 3, 17))
+
+end
+local w = A.value
+>w : Symbol(w, Decl(a.tlua, 5, 5))
+>A.value : Symbol(value, Decl(a.tlua, 1, 12))
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+>value : Symbol(value, Decl(a.tlua, 1, 12))
+
+m.check(w)
+>m.check : Symbol(check, Decl(m.tlua, 2, 12))
+>m : Symbol(m, Decl(a.tlua, 0, 5))
+>check : Symbol(check, Decl(m.tlua, 2, 12))
+>w : Symbol(w, Decl(a.tlua, 5, 5))
+
+return A
+>A : Symbol(A, Decl(a.tlua, 1, 5))
+

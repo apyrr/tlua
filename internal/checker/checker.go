@@ -591,6 +591,7 @@ type Checker struct {
 	luaMetatablePairings                   map[*ast.Symbol][]*ast.Node
 	luaMetatablePairingCalls               map[*ast.Node][]*ast.Symbol
 	luaLocalAliasTargets                   map[*ast.Symbol]*ast.Symbol
+	luaRequireAliasesVisiting              collections.Set[*ast.Symbol]
 	luaBuiltinAliases                      map[string]ast.LuaBuiltins
 	luaOrderedPairingSymbols               []*ast.Symbol
 	luaPairedSymbolsResolved               bool

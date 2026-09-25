@@ -2482,16 +2482,21 @@ func (b *NodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 		signatures := b.ch.getSignaturesOfType(b.ch.filterType(propertyType, func(t *Type) bool {
 			return t.flags&TypeFlagsNil == 0
 		}), SignatureKindCall)
-		for _, signature := range signatures {
-			methodDeclaration := b.signatureToSignatureDeclarationHelper(signature, ast.KindMethodSignature, &SignatureToSignatureDeclarationOptions{
-				name:          propertyName,
-				questionToken: optionalToken,
-			})
-			b.setCommentRange(methodDeclaration, core.Coalesce(signature.declaration, propertySymbol.ValueDeclaration))
-			typeElements = append(typeElements, methodDeclaration)
-		}
-		if len(signatures) != 0 || optionalToken == nil {
-			return typeElements
+		// Method syntax declares a method, whose parameters compare bivariantly, so only a
+		// method's signatures print that way. A module function (`function M.parse(s)`) is
+		// strict and prints as a property, so the printed type reads back as the same type.
+		if core.Every(signatures, isMethodSignature) {
+			for _, signature := range signatures {
+				methodDeclaration := b.signatureToSignatureDeclarationHelper(signature, ast.KindMethodSignature, &SignatureToSignatureDeclarationOptions{
+					name:          propertyName,
+					questionToken: optionalToken,
+				})
+				b.setCommentRange(methodDeclaration, core.Coalesce(signature.declaration, propertySymbol.ValueDeclaration))
+				typeElements = append(typeElements, methodDeclaration)
+			}
+			if len(signatures) != 0 || optionalToken == nil {
+				return typeElements
+			}
 		}
 	}
 	var propertyTypeNode *ast.TypeNode

@@ -1,0 +1,90 @@
+//// [tests/cases/compiler/tluaAssertModuleRequireLoop.tlua] ////
+
+=== main.tlua ===
+declare function pick(): string | nil
+>pick : () => string | nil
+
+local M = require("m")
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>require("m") : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+local w = pick()
+>w : string | nil
+>pick() : string | nil
+>pick : () => string | nil
+
+while true do
+>true : true
+
+  M.v = w
+>M.v = w : string | nil
+>M.v : string | nil
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>v : string | nil
+>w : string | nil
+
+  M.check(w)
+>M.check(w) : void
+>M.check : (x: unknown) => asserts x
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>check : (x: unknown) => asserts x
+>w : string | nil
+
+  local z: string = w
+>z : string
+>w : string
+
+  M.value(w)
+>M.value(w) : number
+>M.value : (x: unknown) => number asserts x
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>value : (x: unknown) => number asserts x
+>w : string
+
+end
+
+=== m.tlua ===
+local M = {}
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>{} : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+
+function M.check(x: unknown): asserts x
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>check : (x: unknown) => asserts x
+>x : unknown
+
+end
+function M.value(x: unknown): number asserts x
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>value : (x: unknown) => number asserts x
+>x : unknown
+
+  return 1
+>1 : 1
+
+end
+M.count = M.value(1) + 1
+>M.count = M.value(1) + 1 : number
+>M.count : number
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>count : number
+>M.value(1) + 1 : number
+>M.value(1) : number
+>M.value : (x: unknown) => number asserts x
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>value : (x: unknown) => number asserts x
+>1 : 1
+>1 : 1
+
+M.v = nil as string | nil
+>M.v = nil as string | nil : string | nil
+>M.v : string | nil
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+>v : string | nil
+>nil as string | nil : string | nil
+
+return M
+>M : { check: (x: unknown) => asserts x; value: (x: unknown) => number asserts x; count: number; v: string | nil; }
+

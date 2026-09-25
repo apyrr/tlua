@@ -1,0 +1,63 @@
+//// [tests/cases/compiler/tluaAssertModuleRequire.tlua] ////
+
+=== main.tlua ===
+local M = require("m")
+>M : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+>require("m") : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+>require : { (module: "bit"): BitLib; (module: "jit"): JITLib; (module: "ffi"): FFILib; (module: "jit.profile"): JITProfileLib; (module: "jit.util"): JITUtilLib; (module: "table.clear"): TableClear; (module: "table.new"): TableNew; (module: "string.buffer"): StringBufferLib; (module: string): any; }
+>"m" : "m"
+
+function f(b: string | nil): string
+>f : (b: string | nil) => string
+>b : string | nil
+
+  M.value(b)
+>M.value(b) : number
+>M.value : (x: unknown) => number asserts x
+>M : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+>value : (x: unknown) => number asserts x
+>b : string | nil
+
+  return b
+>b : string
+
+end
+function g(b: string | nil): string
+>g : (b: string | nil) => string
+>b : string | nil
+
+  M.void(b)
+>M.void(b) : void
+>M.void : (x: unknown) => asserts x
+>M : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+>void : (x: unknown) => asserts x
+>b : string | nil
+
+  return b
+>b : string
+
+end
+
+=== m.tlua ===
+local M = {}
+>M : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+>{} : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+
+function M.value(x: unknown): number asserts x
+>M : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+>value : (x: unknown) => number asserts x
+>x : unknown
+
+  return 1
+>1 : 1
+
+end
+function M.void(x: unknown): asserts x
+>M : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+>void : (x: unknown) => asserts x
+>x : unknown
+
+end
+return M
+>M : { value: (x: unknown) => number asserts x; void: (x: unknown) => asserts x; }
+

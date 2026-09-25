@@ -1,0 +1,175 @@
+//// [tests/cases/compiler/tluaAssertReturnPrecision.tlua] ////
+
+=== tluaAssertReturnPrecision.tlua ===
+// assert's first result is its argument with false and nil removed, matching
+// what the statement form narrows: a generic T becomes T & {} (NonNullable), as
+// in TS truthiness narrowing -- which likewise keeps `false` from a constraint.
+declare sfn: string | false | nil
+>sfn : Symbol(sfn, Decl(tluaAssertReturnPrecision.tlua, 3, 7))
+
+declare an: any
+>an : Symbol(an, Decl(tluaAssertReturnPrecision.tlua, 4, 7))
+
+declare un: unknown
+>un : Symbol(un, Decl(tluaAssertReturnPrecision.tlua, 5, 7))
+
+declare bo: boolean
+>bo : Symbol(bo, Decl(tluaAssertReturnPrecision.tlua, 6, 7))
+
+declare fnil: false | nil
+>fnil : Symbol(fnil, Decl(tluaAssertReturnPrecision.tlua, 7, 7))
+
+declare snil: string | nil
+>snil : Symbol(snil, Decl(tluaAssertReturnPrecision.tlua, 8, 7))
+
+declare function f(): (string?, string)
+>f : Symbol(f, Decl(tluaAssertReturnPrecision.tlua, 8, 26))
+
+declare function g(): number
+>g : Symbol(g, Decl(tluaAssertReturnPrecision.tlua, 9, 39))
+
+local v1 = assert(sfn)
+>v1 : Symbol(v1, Decl(tluaAssertReturnPrecision.tlua, 12, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>sfn : Symbol(sfn, Decl(tluaAssertReturnPrecision.tlua, 3, 7))
+
+local v2 = assert(an)
+>v2 : Symbol(v2, Decl(tluaAssertReturnPrecision.tlua, 13, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>an : Symbol(an, Decl(tluaAssertReturnPrecision.tlua, 4, 7))
+
+local v3 = assert(un)
+>v3 : Symbol(v3, Decl(tluaAssertReturnPrecision.tlua, 14, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>un : Symbol(un, Decl(tluaAssertReturnPrecision.tlua, 5, 7))
+
+local v4 = assert(bo)
+>v4 : Symbol(v4, Decl(tluaAssertReturnPrecision.tlua, 15, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>bo : Symbol(bo, Decl(tluaAssertReturnPrecision.tlua, 6, 7))
+
+local v5 = assert(fnil)
+>v5 : Symbol(v5, Decl(tluaAssertReturnPrecision.tlua, 16, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>fnil : Symbol(fnil, Decl(tluaAssertReturnPrecision.tlua, 7, 7))
+
+local v6 = assert(snil)
+>v6 : Symbol(v6, Decl(tluaAssertReturnPrecision.tlua, 17, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>snil : Symbol(snil, Decl(tluaAssertReturnPrecision.tlua, 8, 7))
+
+local v7 = assert(1)
+>v7 : Symbol(v7, Decl(tluaAssertReturnPrecision.tlua, 18, 5))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+local v8, m8 = assert("s", "msg")
+>v8 : Symbol(v8, Decl(tluaAssertReturnPrecision.tlua, 19, 5))
+>m8 : Symbol(m8, Decl(tluaAssertReturnPrecision.tlua, 19, 9))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+local v9, m9 = assert(f())
+>v9 : Symbol(v9, Decl(tluaAssertReturnPrecision.tlua, 20, 5))
+>m9 : Symbol(m9, Decl(tluaAssertReturnPrecision.tlua, 20, 9))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>f : Symbol(f, Decl(tluaAssertReturnPrecision.tlua, 8, 26))
+
+local ok10, r10 = assert(pcall(g))
+>ok10 : Symbol(ok10, Decl(tluaAssertReturnPrecision.tlua, 21, 5))
+>r10 : Symbol(r10, Decl(tluaAssertReturnPrecision.tlua, 21, 11))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>g : Symbol(g, Decl(tluaAssertReturnPrecision.tlua, 9, 39))
+
+local h11, e11 = assert(io.open("x"))
+>h11 : Symbol(h11, Decl(tluaAssertReturnPrecision.tlua, 22, 5))
+>e11 : Symbol(e11, Decl(tluaAssertReturnPrecision.tlua, 22, 10))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>io.open : Symbol(IOLib.open, Decl(lib.luajit.d.tlua, --, --))
+>io : Symbol(io, Decl(lib.luajit.d.tlua, --, --))
+>open : Symbol(IOLib.open, Decl(lib.luajit.d.tlua, --, --))
+
+local function gen<T>(x: T): T
+>gen : Symbol(gen, Decl(tluaAssertReturnPrecision.tlua, 22, 37))
+>T : Symbol(T, Decl(tluaAssertReturnPrecision.tlua, 24, 19))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 24, 22))
+>T : Symbol(T, Decl(tluaAssertReturnPrecision.tlua, 24, 19))
+>T : Symbol(T, Decl(tluaAssertReturnPrecision.tlua, 24, 19))
+
+  local r = assert(x)
+>r : Symbol(r, Decl(tluaAssertReturnPrecision.tlua, 25, 7))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 24, 22))
+
+  return r
+>r : Symbol(r, Decl(tluaAssertReturnPrecision.tlua, 25, 7))
+
+end
+local function gen2<T extends string | nil>(x: T): string
+>gen2 : Symbol(gen2, Decl(tluaAssertReturnPrecision.tlua, 27, 3))
+>T : Symbol(T, Decl(tluaAssertReturnPrecision.tlua, 28, 20))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 28, 44))
+>T : Symbol(T, Decl(tluaAssertReturnPrecision.tlua, 28, 20))
+
+  local r = assert(x)
+>r : Symbol(r, Decl(tluaAssertReturnPrecision.tlua, 29, 7))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 28, 44))
+
+  return r
+>r : Symbol(r, Decl(tluaAssertReturnPrecision.tlua, 29, 7))
+
+end
+local function gen3<T extends string | false | nil>(x: T): string
+>gen3 : Symbol(gen3, Decl(tluaAssertReturnPrecision.tlua, 31, 3))
+>T : Symbol(T, Decl(tluaAssertReturnPrecision.tlua, 32, 20))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 32, 52))
+>T : Symbol(T, Decl(tluaAssertReturnPrecision.tlua, 32, 20))
+
+  local r = assert(x)
+>r : Symbol(r, Decl(tluaAssertReturnPrecision.tlua, 33, 7))
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 32, 52))
+
+  return r
+>r : Symbol(r, Decl(tluaAssertReturnPrecision.tlua, 33, 7))
+
+end
+
+local function stmt(x: string | false | nil, y: boolean, z: any): string
+>stmt : Symbol(stmt, Decl(tluaAssertReturnPrecision.tlua, 35, 3))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 37, 20))
+>y : Symbol(y, Decl(tluaAssertReturnPrecision.tlua, 37, 44))
+>z : Symbol(z, Decl(tluaAssertReturnPrecision.tlua, 37, 56))
+
+  assert(x)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 37, 20))
+
+  assert(y)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+>y : Symbol(y, Decl(tluaAssertReturnPrecision.tlua, 37, 44))
+
+  local yy: true = y
+>yy : Symbol(yy, Decl(tluaAssertReturnPrecision.tlua, 40, 7))
+>y : Symbol(y, Decl(tluaAssertReturnPrecision.tlua, 37, 44))
+
+  return x
+>x : Symbol(x, Decl(tluaAssertReturnPrecision.tlua, 37, 20))
+
+end
+
+local function dead(): number
+>dead : Symbol(dead, Decl(tluaAssertReturnPrecision.tlua, 42, 3))
+
+  assert(false)
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+end
+local function dead2(): number
+>dead2 : Symbol(dead2, Decl(tluaAssertReturnPrecision.tlua, 46, 3))
+
+  assert(nil, "m")
+>assert : Symbol(assert, Decl(lib.luajit.d.tlua, --, --))
+
+end
+

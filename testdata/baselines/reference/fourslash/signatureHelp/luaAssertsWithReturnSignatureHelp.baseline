@@ -11,7 +11,7 @@
 // assert(1);
 //        ^
 // | ----------------------------------------------------------------------
-// | assert(**value: number | nil**): number asserts value
+// | assert(**value: number | false | nil**): number asserts value
 // | ----------------------------------------------------------------------
 [
   {
@@ -52,10 +52,10 @@
     "item": {
       "signatures": [
         {
-          "label": "assert(value: number | nil): number asserts value",
+          "label": "assert(value: number | false | nil): number asserts value",
           "parameters": [
             {
-              "label": "value: number | nil"
+              "label": "value: number | false | nil"
             }
           ],
           "activeParameter": 0
