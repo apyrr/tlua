@@ -669,6 +669,13 @@ func (c *Checker) luaAugmentationUsesReceiverContract(target *ast.Node, referenc
 func (c *Checker) checkLuaAugmentationTarget(target *ast.Node, symbol *ast.Symbol, checkMode CheckMode) *Type {
 	reference := ast.GetLuaAssignmentTargetReference(target)
 	if reference != nil && ast.IsAccessExpression(reference) {
+		// This replaces checkPropertyAccessExpression for the target, so it owes the
+		// same grammar checks: `m.end = f` on a module table is no more a Lua Name
+		// than on any other table.
+		c.checkGrammarLuaPrefixExpression(reference.Expression())
+		if ast.IsPropertyAccessExpression(reference) {
+			c.checkGrammarLuaFieldName(reference.Name())
+		}
 		c.checkExpressionEx(reference.Expression(), checkMode)
 		if ast.IsElementAccessExpression(reference) {
 			c.checkExpressionEx(reference.AsElementAccessExpression().ArgumentExpression, checkMode)

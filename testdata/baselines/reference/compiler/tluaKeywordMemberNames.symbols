@@ -1,0 +1,143 @@
+//// [tests/cases/compiler/tluaKeywordMemberNames.tlua] ////
+
+=== access.tlua ===
+local t: { [k: string]: number } = {}
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>k : Symbol(k, Decl(access.tlua, 0, 12))
+
+local a1 = _G.nil
+>a1 : Symbol(a1, Decl(access.tlua, 1, 5))
+>_G.nil : Symbol(nil)
+>_G : Symbol(_G)
+>nil : Symbol(nil)
+
+local a2 = t.end
+>a2 : Symbol(a2, Decl(access.tlua, 2, 5))
+>t.end : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>end : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local a3 = t.then
+>a3 : Symbol(a3, Decl(access.tlua, 3, 5))
+>t.then : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>then : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local a4 = t.local
+>a4 : Symbol(a4, Decl(access.tlua, 4, 5))
+>t.local : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>local : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local a5 = t.true
+>a5 : Symbol(a5, Decl(access.tlua, 5, 5))
+>t.true : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>true : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local a6 = t?.until
+>a6 : Symbol(a6, Decl(access.tlua, 6, 5))
+>t?.until : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>until : Symbol(__index, Decl(access.tlua, 0, 10))
+
+t.end = 1
+>t.end : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>end : Symbol(__index, Decl(access.tlua, 0, 10))
+
+t.nil = 2
+>t.nil : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>nil : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local ok1 = t.continue
+>ok1 : Symbol(ok1, Decl(access.tlua, 9, 5))
+>t.continue : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>continue : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local ok2 = t.type
+>ok2 : Symbol(ok2, Decl(access.tlua, 10, 5))
+>t.type : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>type : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local ok3 = t.self
+>ok3 : Symbol(ok3, Decl(access.tlua, 11, 5))
+>t.self : Symbol(__index, Decl(access.tlua, 0, 10))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+>self : Symbol(__index, Decl(access.tlua, 0, 10))
+
+local ok4 = t["end"]
+>ok4 : Symbol(ok4, Decl(access.tlua, 12, 5))
+>t : Symbol(t, Decl(access.tlua, 0, 5))
+
+=== tableKeys.tlua ===
+local k1 = { nil = 1, self = 2, type = 3 }
+>k1 : Symbol(k1, Decl(tableKeys.tlua, 0, 5))
+>nil : Symbol(nil, Decl(tableKeys.tlua, 0, 12))
+>self : Symbol(self, Decl(tableKeys.tlua, 0, 21))
+>type : Symbol(type, Decl(tableKeys.tlua, 0, 31))
+
+local k2 = { ["end"] = 1 }
+>k2 : Symbol(k2, Decl(tableKeys.tlua, 1, 5))
+>["end"] : Symbol(["end"], Decl(tableKeys.tlua, 1, 12))
+>"end" : Symbol(["end"], Decl(tableKeys.tlua, 1, 12))
+
+=== funcDecl.tlua ===
+local m = {}
+>m : Symbol(m, Decl(funcDecl.tlua, 0, 5))
+
+function m.end() end
+>m : Symbol(m, Decl(funcDecl.tlua, 0, 5))
+>end : Symbol(end, Decl(funcDecl.tlua, 0, 12), Decl(funcDecl.tlua, 5, 24))
+
+function m:nil() end
+>m : Symbol(m, Decl(funcDecl.tlua, 0, 5))
+>nil : Symbol(nil, Decl(funcDecl.tlua, 1, 20))
+
+function m.ok() end
+>m : Symbol(m, Decl(funcDecl.tlua, 0, 5))
+>ok : Symbol(ok, Decl(funcDecl.tlua, 2, 20))
+
+m.while = {}
+>m.while : Symbol(while, Decl(funcDecl.tlua, 3, 19))
+>m : Symbol(m, Decl(funcDecl.tlua, 0, 5))
+>while : Symbol(while, Decl(funcDecl.tlua, 3, 19))
+
+function m.while.f() end
+>m.while : Symbol(while, Decl(funcDecl.tlua, 3, 19))
+>m : Symbol(m, Decl(funcDecl.tlua, 0, 5))
+>while : Symbol(while, Decl(funcDecl.tlua, 3, 19))
+>f : Symbol(f, Decl(funcDecl.tlua, 4, 12))
+
+m["end"] = function() end
+>m : Symbol(m, Decl(funcDecl.tlua, 0, 5))
+>"end" : Symbol(end, Decl(funcDecl.tlua, 0, 12), Decl(funcDecl.tlua, 5, 24))
+
+=== iface.tlua ===
+interface K { end: number; nil: number }
+>K : Symbol(K, Decl(iface.tlua, 0, 0))
+>end : Symbol(K.end, Decl(iface.tlua, 0, 13))
+>nil : Symbol(K.nil, Decl(iface.tlua, 0, 26))
+
+local k: K = { ["end"] = 1, ["nil"] = 2 }
+>k : Symbol(k, Decl(iface.tlua, 1, 5))
+>K : Symbol(K, Decl(iface.tlua, 0, 0))
+>["end"] : Symbol(["end"], Decl(iface.tlua, 1, 14))
+>"end" : Symbol(["end"], Decl(iface.tlua, 1, 14))
+>["nil"] : Symbol(["nil"], Decl(iface.tlua, 1, 27))
+>"nil" : Symbol(["nil"], Decl(iface.tlua, 1, 27))
+
+local r1 = k["end"]
+>r1 : Symbol(r1, Decl(iface.tlua, 2, 5))
+>k : Symbol(k, Decl(iface.tlua, 1, 5))
+>"end" : Symbol(K.end, Decl(iface.tlua, 0, 13))
+
+local r2 = k.end
+>r2 : Symbol(r2, Decl(iface.tlua, 3, 5))
+>k.end : Symbol(K.end, Decl(iface.tlua, 0, 13))
+>k : Symbol(k, Decl(iface.tlua, 1, 5))
+>end : Symbol(K.end, Decl(iface.tlua, 0, 13))
+

@@ -147,6 +147,8 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		InlineSourceMap: options.InlineSourceMap.IsTrue(),
 		InlineSources:   options.InlineSources.IsTrue(),
 		Target:          options.Target,
+		// .lua output: `t.end` has to print as `t["end"]` to parse as Lua.
+		BracketLuaReservedFieldNames: true,
 		// !!!
 	}
 

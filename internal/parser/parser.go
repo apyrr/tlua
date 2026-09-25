@@ -3684,7 +3684,7 @@ func (p *Parser) parseVarargExpression() *ast.Expression {
 
 func (p *Parser) isUpdateExpression() bool {
 	switch p.token {
-	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken, ast.KindVoidKeyword, ast.KindLessThanToken:
+	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken, ast.KindVoidKeyword:
 		return false
 	case ast.KindDotDotDotToken:
 		// The Lua vararg is not a prefixexp: it cannot be called, indexed, or
@@ -3708,11 +3708,6 @@ func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 		return p.parseCallExpressionRest(pos, p.parseVarargExpression())
 	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken:
 		return p.parsePrefixUnaryExpression()
-	case ast.KindLessThanToken:
-		// // This is modified UnaryExpression grammar in TypeScript
-		// //  UnaryExpression (modified):
-		// //      < type > UnaryExpression
-		return p.parseTypeAssertion()
 	default:
 		// `await` is an ordinary identifier in tlua: no AwaitExpression.
 		return p.parseLeftHandSideExpressionOrHigher()
@@ -3727,15 +3722,6 @@ func (p *Parser) parsePrefixUnaryExpression() *ast.Node {
 	// operand at unary precedence admits `^`, but stops before multiplicative operators.
 	operand := p.parseBinaryExpressionOrHigher(ast.OperatorPrecedenceUnary)
 	return p.finishNode(p.factory.NewPrefixUnaryExpression(operator, operand), pos)
-}
-
-func (p *Parser) parseTypeAssertion() *ast.Node {
-	pos := p.nodePos()
-	p.parseExpected(ast.KindLessThanToken)
-	typeNode := p.parseType()
-	p.parseExpected(ast.KindGreaterThanToken)
-	expression := p.parseSimpleUnaryExpression()
-	return p.finishNode(p.factory.NewTypeAssertion(typeNode, expression), pos)
 }
 
 func (p *Parser) parseLeftHandSideExpressionOrHigher() *ast.Expression {
@@ -4661,7 +4647,7 @@ func (p *Parser) isStartOfExpression() bool {
 	// here would make the statement list re-enter on a token no expression parser
 	// consumes, which never terminates.
 	case ast.KindPlusToken, ast.KindMinusToken, ast.KindExclamationToken, ast.KindHashToken,
-		ast.KindVoidKeyword, ast.KindLessThanToken,
+		ast.KindVoidKeyword,
 		ast.KindYieldKeyword, ast.KindPrivateIdentifier:
 		// Yield always starts an expression: either it is an identifier (in which case
 		// it is definitely an expression), or it started a yield expression.

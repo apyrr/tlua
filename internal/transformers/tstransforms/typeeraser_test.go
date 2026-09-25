@@ -29,8 +29,6 @@ func TestTypeEraser(t *testing.T) {
 		{title: "ParameterDeclaration", input: "function f(a: number, b?: boolean) end", output: "function f(a, b)\nend"},
 		{title: "CallExpression", input: "f<T>()", output: "f();"},
 		{title: "NonNullExpression", input: "local _ = x!", output: "local _ = x;"},
-		{title: "TypeAssertionExpression#1", input: "local _ = <T>x", output: "local _ = x;"},
-		{title: "TypeAssertionExpression#2", input: "local _ = (<T>x).c", output: "local _ = x.c;"},
 		{title: "AsExpression#1", input: "local _ = x as T", output: "local _ = x;"},
 		{title: "AsExpression#2", input: "local _ = (x as T).c", output: "local _ = x.c;"},
 		{title: "SatisfiesExpression#1", input: "local _ = x satisfies T", output: "local _ = x;"},

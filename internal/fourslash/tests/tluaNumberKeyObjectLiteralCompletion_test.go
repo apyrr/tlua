@@ -8,8 +8,8 @@ import (
 	"github.com/apyrr/tlua/internal/testutil"
 )
 
-// In an object literal, a number-key member is written `1: v` (a numeric
-// literal name) while the disjoint string key is written `"1": v`. Their
+// In a table constructor, a number-key field is written `1 = v` (a numeric
+// literal name) while the disjoint string key is written `["1"] = v`. Their
 // completions are therefore distinct entries with distinct labels.
 func TestTluaNumberKeyObjectLiteralCompletion(t *testing.T) {
 	t.Parallel()
@@ -29,7 +29,7 @@ local n: NegOpts = { /*neg*/ };`
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				"1",
-				"\"1\"",
+				"[\"1\"]",
 			},
 		},
 	})

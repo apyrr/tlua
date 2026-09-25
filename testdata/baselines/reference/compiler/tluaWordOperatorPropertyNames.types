@@ -45,11 +45,11 @@ local readNot = t["not"];
 >t : { "and": number; "or": number; "not": number; while: number; plain: number; }
 >"not" : "not"
 
-local readWhile = t.while;
+local readWhile = t["while"];
 >readWhile : number
->t.while : number
+>t["while"] : number
 >t : { "and": number; "or": number; "not": number; while: number; plain: number; }
->while : number
+>"while" : "while"
 
 // Interfaces declare them the same way.
 interface Bits {

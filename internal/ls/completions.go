@@ -94,10 +94,13 @@ func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsp
 type completionData = any
 
 type completionDataData struct {
-	symbols          []*ast.Symbol
-	autoImports      []*autoimport.FixAndExport
-	completionKind   CompletionKind
-	isInSnippetScope bool
+	symbols        []*ast.Symbol
+	autoImports    []*autoimport.FixAndExport
+	completionKind CompletionKind
+	// luaTableConstructor marks CompletionKindObjectPropertyDeclaration completions
+	// that name the fields of a value table constructor rather than type members.
+	luaTableConstructor bool
+	isInSnippetScope    bool
 	// Note that the presence of this alone doesn't mean that we need a conversion. Only do that if the completion is not an ordinary identifier.
 	propertyAccessToConvert      *ast.PropertyAccessExpressionNode
 	isNewIdentifierLocation      bool
@@ -613,6 +616,10 @@ func (l *LanguageService) getCompletionData(
 	}
 
 	completionKind := CompletionKindNone
+	// Set when the member completions name fields of a value-position table
+	// constructor, where only a Lua Name may be written bare (`{ end = 1 }` does
+	// not parse), as opposed to members of a type literal (`{ end: number }`).
+	luaTableConstructor := false
 	hasUnresolvedAutoImports := false
 	// This also gets mutated in nested-functions after the return
 	var symbols []*ast.Symbol
@@ -640,7 +647,7 @@ func (l *LanguageService) getCompletionData(
 	// callable by its declaration; only other members need their type resolved, which
 	// keeps completion cheap on interfaces with hundreds of methods.
 	isColonCallCandidate := func(symbol *ast.Symbol) bool {
-		if !scanner.IsLuaMethodName(symbol.Name) {
+		if !scanner.IsLuaName(symbol.Name) {
 			return false
 		}
 		if symbol.Flags&(ast.SymbolFlagsMethod|ast.SymbolFlagsFunction) != 0 {
@@ -914,6 +921,7 @@ func (l *LanguageService) getCompletionData(
 			if instantiatedType == nil {
 				return globalsSearchContinue, nil
 			}
+			luaTableConstructor = true
 			completionsType := typeChecker.GetContextualType(objectLikeContainer, checker.ContextFlagsIgnoreNodeInferences)
 			t := core.IfElse(completionsType != nil, completionsType, instantiatedType)
 			stringIndexType := typeChecker.GetStringIndexType(t)
@@ -1382,6 +1390,7 @@ func (l *LanguageService) getCompletionData(
 		symbols:                      symbols,
 		autoImports:                  autoImports,
 		completionKind:               completionKind,
+		luaTableConstructor:          luaTableConstructor,
 		isInSnippetScope:             isInSnippetScope,
 		propertyAccessToConvert:      propertyAccessToConvert,
 		isNewIdentifierLocation:      isNewIdentifierLocation,
@@ -1519,6 +1528,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			symbol,
 			origin,
 			data.completionKind,
+			data.luaTableConstructor,
 		)
 		// Dedupe number keys by their mangled name so key 1 can never collapse
 		// with the disjoint string key "1" regardless of how each displays.
@@ -2139,6 +2149,7 @@ func getCompletionEntryDisplayNameForSymbol(
 	symbol *ast.Symbol,
 	origin *symbolOriginInfo,
 	completionKind CompletionKind,
+	luaTableConstructor bool,
 ) (displayName string, needsConvertPropertyAccess bool) {
 	if originIsIgnore(origin) {
 		return "", false
@@ -2189,7 +2200,13 @@ func getCompletionEntryDisplayNameForSymbol(
 	// name is a valid identifier or private identifier text. The word operators
 	// are identifier-shaped but scan as punctuation, so they need the bracket
 	// spelling `t["and"]` rather than a bare `t.and`, which does not parse.
-	if scanner.IsBareWritableName(name) {
+	// After `.` and as a table-constructor field only a Lua Name is legal bare:
+	// Lua's reserved words take the bracket spelling too (`t["end"]`, TLUA100061).
+	bare := scanner.IsBareWritableName(name)
+	if completionKind == CompletionKindPropertyAccess || luaTableConstructor {
+		bare = scanner.IsLuaName(name)
+	}
+	if bare {
 		return name, false
 	}
 	if symbol.Flags&ast.SymbolFlagsAlias != 0 {
@@ -2206,6 +2223,10 @@ func getCompletionEntryDisplayNameForSymbol(
 	case CompletionKindObjectPropertyDeclaration:
 		// TODO: microsoft/TypeScript#18169
 		escapedName, _ := core.StringifyJson(name, "", "")
+		if luaTableConstructor {
+			// A table constructor keys a non-Name field with brackets: `["end"] = v`.
+			return "[" + escapedName + "]", false
+		}
 		return escapedName, false
 	case CompletionKindPropertyAccess, CompletionKindGlobal:
 		// For a 'this.' completion it will be in a global context, but may have a non-identifier name.
@@ -2350,7 +2371,7 @@ func isContextTokenTypeLocation(contextToken *ast.Node) bool {
 		case ast.KindAsKeyword:
 			return parentKind == ast.KindAsExpression
 		case ast.KindLessThanToken:
-			return parentKind == ast.KindTypeReference || parentKind == ast.KindTypeAssertionExpression
+			return parentKind == ast.KindTypeReference
 		case ast.KindExtendsKeyword:
 			return parentKind == ast.KindTypeParameter
 		case ast.KindSatisfiesKeyword:
@@ -4027,7 +4048,7 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	// completion entry.
 	for index, symbol := range data.symbols {
 		origin := data.symbolToOriginInfoMap[index]
-		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind)
+		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.luaTableConstructor)
 		if displayName == itemData.Name &&
 			(itemData.Source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
 				getSourceFromOrigin(origin) == itemData.Source ||

@@ -8513,5 +8513,13 @@
     "This expression must be parenthesized before it can be indexed or called.": {
         "category": "Error",
         "code": 100060
+    },
+    "'{0}' is a reserved word in Lua and cannot name a field here. Use '[\"{0}\"]' instead.": {
+        "category": "Error",
+        "code": 100061
+    },
+    "'{0}' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '[\"{0}\"]' field instead.": {
+        "category": "Error",
+        "code": 100062
     }
 }

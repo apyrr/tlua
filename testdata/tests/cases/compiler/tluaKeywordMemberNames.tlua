@@ -1,0 +1,41 @@
+// @target: esnext
+
+// Lua reserved words are not Lua Names, so they cannot follow `.` or key a
+// `name = value` table field (TLUA100061), or be any segment of a `function t.x`
+// name, which has no bracket form (TLUA100062: assign a function to the field).
+// The printer spells the access and the table key with brackets. Words Lua does
+// not reserve (`continue`, `type`, `self`) stay valid field names.
+
+// @filename: access.tlua
+local t: { [k: string]: number } = {}
+local a1 = _G.nil
+local a2 = t.end
+local a3 = t.then
+local a4 = t.local
+local a5 = t.true
+local a6 = t?.until
+t.end = 1
+t.nil = 2
+local ok1 = t.continue
+local ok2 = t.type
+local ok3 = t.self
+local ok4 = t["end"]
+
+// @filename: tableKeys.tlua
+local k1 = { nil = 1, self = 2, type = 3 }
+local k2 = { ["end"] = 1 }
+
+// @filename: funcDecl.tlua
+local m = {}
+function m.end() end
+function m:nil() end
+function m.ok() end
+m.while = {}
+function m.while.f() end
+m["end"] = function() end
+
+// @filename: iface.tlua
+interface K { end: number; nil: number }
+local k: K = { ["end"] = 1, ["nil"] = 2 }
+local r1 = k["end"]
+local r2 = k.end

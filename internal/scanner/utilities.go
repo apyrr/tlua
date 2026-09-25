@@ -109,9 +109,12 @@ func TokenIsLuaMethodName(token ast.Kind) bool {
 	return token >= ast.KindIdentifier
 }
 
-// IsLuaMethodName reports whether text can name the method of a Lua colon call:
-// an identifier-shaped word that is not one of Lua's reserved words.
-func IsLuaMethodName(text string) bool {
+// IsLuaName reports whether text is a Lua Name: an identifier-shaped word that is
+// not one of Lua's reserved words. Only a Name can follow `.` or `:`, name a
+// `name = value` table field, or name a `function a.b:c` segment; any other key
+// needs the bracket spelling `t["end"]`. (`and`/`or`/`not` are covered too:
+// GetIdentifierToken maps them to operator tokens.)
+func IsLuaName(text string) bool {
 	return IsIdentifierText(text) && TokenIsLuaMethodName(GetIdentifierToken(text))
 }
 

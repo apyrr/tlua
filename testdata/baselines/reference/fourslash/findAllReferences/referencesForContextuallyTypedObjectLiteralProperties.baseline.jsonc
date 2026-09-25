@@ -11,7 +11,7 @@
 // consumer({ [|xy|] = 1 });
 // 
 // // Type cast
-// local c = <IFoo>{ [|xy|] = 0 };
+// local c = { [|xy|] = 0 } as IFoo;
 // 
 // // Array literal
 // local ar: IFoo[] = [{ xy = 1 }, { xy = 2 }];

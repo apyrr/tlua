@@ -17,7 +17,7 @@
 // consumer({ a = 0, [|b|] = 0, common = 1 });
 // 
 // // Type cast
-// local c = <A | B> { common = 0, [|b|] = 0 };
+// local c = { common = 0, [|b|] = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];

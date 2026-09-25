@@ -1,0 +1,78 @@
+access.tlua(2,15): error TLUA100061: 'nil' is a reserved word in Lua and cannot name a field here. Use '["nil"]' instead.
+access.tlua(3,14): error TLUA100061: 'end' is a reserved word in Lua and cannot name a field here. Use '["end"]' instead.
+access.tlua(4,14): error TLUA100061: 'then' is a reserved word in Lua and cannot name a field here. Use '["then"]' instead.
+access.tlua(5,14): error TLUA100061: 'local' is a reserved word in Lua and cannot name a field here. Use '["local"]' instead.
+access.tlua(6,14): error TLUA100061: 'true' is a reserved word in Lua and cannot name a field here. Use '["true"]' instead.
+access.tlua(7,15): error TLUA100061: 'until' is a reserved word in Lua and cannot name a field here. Use '["until"]' instead.
+access.tlua(8,3): error TLUA100061: 'end' is a reserved word in Lua and cannot name a field here. Use '["end"]' instead.
+access.tlua(9,3): error TLUA100061: 'nil' is a reserved word in Lua and cannot name a field here. Use '["nil"]' instead.
+funcDecl.tlua(2,12): error TLUA100062: 'end' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '["end"]' field instead.
+funcDecl.tlua(3,12): error TLUA100062: 'nil' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '["nil"]' field instead.
+funcDecl.tlua(5,3): error TLUA100061: 'while' is a reserved word in Lua and cannot name a field here. Use '["while"]' instead.
+funcDecl.tlua(6,12): error TLUA100062: 'while' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '["while"]' field instead.
+iface.tlua(4,14): error TLUA100061: 'end' is a reserved word in Lua and cannot name a field here. Use '["end"]' instead.
+tableKeys.tlua(1,14): error TLUA100061: 'nil' is a reserved word in Lua and cannot name a field here. Use '["nil"]' instead.
+
+
+==== access.tlua (8 errors) ====
+    local t: { [k: string]: number } = {}
+    local a1 = _G.nil
+                  ~~~
+!!! error TLUA100061: 'nil' is a reserved word in Lua and cannot name a field here. Use '["nil"]' instead.
+    local a2 = t.end
+                 ~~~
+!!! error TLUA100061: 'end' is a reserved word in Lua and cannot name a field here. Use '["end"]' instead.
+    local a3 = t.then
+                 ~~~~
+!!! error TLUA100061: 'then' is a reserved word in Lua and cannot name a field here. Use '["then"]' instead.
+    local a4 = t.local
+                 ~~~~~
+!!! error TLUA100061: 'local' is a reserved word in Lua and cannot name a field here. Use '["local"]' instead.
+    local a5 = t.true
+                 ~~~~
+!!! error TLUA100061: 'true' is a reserved word in Lua and cannot name a field here. Use '["true"]' instead.
+    local a6 = t?.until
+                  ~~~~~
+!!! error TLUA100061: 'until' is a reserved word in Lua and cannot name a field here. Use '["until"]' instead.
+    t.end = 1
+      ~~~
+!!! error TLUA100061: 'end' is a reserved word in Lua and cannot name a field here. Use '["end"]' instead.
+    t.nil = 2
+      ~~~
+!!! error TLUA100061: 'nil' is a reserved word in Lua and cannot name a field here. Use '["nil"]' instead.
+    local ok1 = t.continue
+    local ok2 = t.type
+    local ok3 = t.self
+    local ok4 = t["end"]
+    
+==== tableKeys.tlua (1 errors) ====
+    local k1 = { nil = 1, self = 2, type = 3 }
+                 ~~~
+!!! error TLUA100061: 'nil' is a reserved word in Lua and cannot name a field here. Use '["nil"]' instead.
+    local k2 = { ["end"] = 1 }
+    
+==== funcDecl.tlua (4 errors) ====
+    local m = {}
+    function m.end() end
+               ~~~
+!!! error TLUA100062: 'end' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '["end"]' field instead.
+    function m:nil() end
+               ~~~
+!!! error TLUA100062: 'nil' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '["nil"]' field instead.
+    function m.ok() end
+    m.while = {}
+      ~~~~~
+!!! error TLUA100061: 'while' is a reserved word in Lua and cannot name a field here. Use '["while"]' instead.
+    function m.while.f() end
+               ~~~~~
+!!! error TLUA100062: 'while' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '["while"]' field instead.
+    m["end"] = function() end
+    
+==== iface.tlua (1 errors) ====
+    interface K { end: number; nil: number }
+    local k: K = { ["end"] = 1, ["nil"] = 2 }
+    local r1 = k["end"]
+    local r2 = k.end
+                 ~~~
+!!! error TLUA100061: 'end' is a reserved word in Lua and cannot name a field here. Use '["end"]' instead.
+    

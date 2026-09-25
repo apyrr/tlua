@@ -1,0 +1,179 @@
+//// [tests/cases/compiler/tluaTemplateStringReceiver.tlua] ////
+
+=== tluaTemplateStringReceiver.tlua ===
+// A template lowers to a `..` chain, which is not a Lua prefixexp: as a receiver or
+// operand it needs exactly one pair of parentheses, wherever those come from.
+
+local t: number = 5
+>t : number
+>5 : 5
+
+local u: string = "u"
+>u : string
+>"u" : "u"
+
+local f: (s: string) => string = function(s: string) return s end
+>f : (s: string) => string
+>s : string
+>function(s: string) return s end : (s: string) => string
+>s : string
+>s : string
+
+// Parenthesized in source (the valid spelling).
+local a1 = (`a${t}`):upper()
+>a1 : string
+>(`a${t}`):upper() : string
+>(`a${t}`):upper : (self: string) => string
+>(`a${t}`) : string
+>`a${t}` : string
+>t : number
+>upper : (self: string) => string
+
+local a2 = (`a${t}`).len
+>a2 : (self: string) => number
+>(`a${t}`).len : (self: string) => number
+>(`a${t}`) : string
+>`a${t}` : string
+>t : number
+>len : (self: string) => number
+
+local a3 = (`a${t}`)[1]
+>a3 : any
+>(`a${t}`)[1] : any
+>(`a${t}`) : string
+>`a${t}` : string
+>t : number
+>1 : 1
+
+local a4 = (`${t}`):upper()
+>a4 : string
+>(`${t}`):upper() : string
+>(`${t}`):upper : (self: string) => string
+>(`${t}`) : string
+>`${t}` : string
+>t : number
+>upper : (self: string) => string
+
+local a5 = (`a`):upper()
+>a5 : string
+>(`a`):upper() : string
+>(`a`):upper : (self: string) => string
+>(`a`) : "a"
+>`a` : "a"
+>upper : (self: string) => string
+
+local a6 = ("a"):upper()
+>a6 : string
+>("a"):upper() : string
+>("a"):upper : (self: string) => string
+>("a") : "a"
+>"a" : "a"
+>upper : (self: string) => string
+
+// Bare receivers (TLUA100060); the printer still has to parenthesize once.
+local b1 = `a${t}`:upper()
+>b1 : string
+>`a${t}`:upper() : string
+>`a${t}`:upper : (self: string) => string
+>`a${t}` : string
+>t : number
+>upper : (self: string) => string
+
+local b2 = `a${t}`.len
+>b2 : (self: string) => number
+>`a${t}`.len : (self: string) => number
+>`a${t}` : string
+>t : number
+>len : (self: string) => number
+
+local b3 = `a${t}`[1]
+>b3 : any
+>`a${t}`[1] : any
+>`a${t}` : string
+>t : number
+>1 : 1
+
+local b4 = `a`:upper()
+>b4 : string
+>`a`:upper() : string
+>`a`:upper : (self: string) => string
+>`a` : "a"
+>upper : (self: string) => string
+
+local b5 = "a":upper()
+>b5 : string
+>"a":upper() : string
+>"a":upper : (self: string) => string
+>"a" : "a"
+>upper : (self: string) => string
+
+// Operands.
+local c1 = #`a${t}`
+>c1 : number
+>#`a${t}` : number
+>`a${t}` : string
+>t : number
+
+local c2 = `a${t}` .. "b"
+>c2 : string
+>`a${t}` .. "b" : string
+>`a${t}` : string
+>t : number
+>"b" : "b"
+
+local c3 = "b" .. `a${t}`
+>c3 : string
+>"b" .. `a${t}` : string
+>"b" : "b"
+>`a${t}` : string
+>t : number
+
+local c4 = `a${t}` == u
+>c4 : boolean
+>`a${t}` == u : boolean
+>`a${t}` : string
+>t : number
+>u : string
+
+local c5 = #`${t}`
+>c5 : number
+>#`${t}` : number
+>`${t}` : string
+>t : number
+
+local c6 = f(`a${t}`)
+>c6 : string
+>f(`a${t}`) : string
+>f : (s: string) => string
+>`a${t}` : string
+>t : number
+
+local c7 = `${t}`
+>c7 : string
+>`${t}` : string
+>t : number
+
+local c8 = `a${t}` .. `b${t}`
+>c8 : string
+>`a${t}` .. `b${t}` : string
+>`a${t}` : string
+>t : number
+>`b${t}` : string
+>t : number
+
+local c9 = { `a${t}`, k = `b${t}` }
+>c9 : { 1: string; k: string; }
+>{ `a${t}`, k = `b${t}` } : { 1: string; k: string; }
+>`a${t}` : string
+>t : number
+>k : string
+>`b${t}` : string
+>t : number
+
+local c10 = (`a${t}`)()
+>c10 : any
+>(`a${t}`)() : any
+>(`a${t}`) : string
+>`a${t}` : string
+>t : number
+

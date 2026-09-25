@@ -1,0 +1,67 @@
+tluaTemplateStringReceiver.tlua(11,12): error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'String'.
+  Property '1' does not exist on type 'String'.
+tluaTemplateStringReceiver.tlua(17,12): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaTemplateStringReceiver.tlua(18,12): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaTemplateStringReceiver.tlua(19,12): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaTemplateStringReceiver.tlua(19,12): error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'String'.
+  Property '1' does not exist on type 'String'.
+tluaTemplateStringReceiver.tlua(20,12): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaTemplateStringReceiver.tlua(21,12): error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+tluaTemplateStringReceiver.tlua(33,13): error TLUA2349: This expression is not callable.
+  Type 'String' has no call signatures.
+
+
+==== tluaTemplateStringReceiver.tlua (8 errors) ====
+    // A template lowers to a `..` chain, which is not a Lua prefixexp: as a receiver or
+    // operand it needs exactly one pair of parentheses, wherever those come from.
+    
+    local t: number = 5
+    local u: string = "u"
+    local f: (s: string) => string = function(s: string) return s end
+    
+    // Parenthesized in source (the valid spelling).
+    local a1 = (`a${t}`):upper()
+    local a2 = (`a${t}`).len
+    local a3 = (`a${t}`)[1]
+               ~~~~~~~~~~~~
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'String'.
+!!! error TLUA7053:   Property '1' does not exist on type 'String'.
+    local a4 = (`${t}`):upper()
+    local a5 = (`a`):upper()
+    local a6 = ("a"):upper()
+    
+    // Bare receivers (TLUA100060); the printer still has to parenthesize once.
+    local b1 = `a${t}`:upper()
+               ~~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    local b2 = `a${t}`.len
+               ~~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    local b3 = `a${t}`[1]
+               ~~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+               ~~~~~~~~~~
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type 'String'.
+!!! error TLUA7053:   Property '1' does not exist on type 'String'.
+    local b4 = `a`:upper()
+               ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    local b5 = "a":upper()
+               ~~~
+!!! error TLUA100060: This expression must be parenthesized before it can be indexed or called.
+    
+    // Operands.
+    local c1 = #`a${t}`
+    local c2 = `a${t}` .. "b"
+    local c3 = "b" .. `a${t}`
+    local c4 = `a${t}` == u
+    local c5 = #`${t}`
+    local c6 = f(`a${t}`)
+    local c7 = `${t}`
+    local c8 = `a${t}` .. `b${t}`
+    local c9 = { `a${t}`, k = `b${t}` }
+    local c10 = (`a${t}`)()
+                ~~~~~~~~~
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type 'String' has no call signatures.
+    

@@ -4,5 +4,5 @@
 //     (a: number): void
 // }
 // 
-// local bar2 = <Foo> [|function(a) end|];
+// local bar2 = [|function(a) end|] as Foo;
 // 

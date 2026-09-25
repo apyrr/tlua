@@ -1,0 +1,124 @@
+//// [tests/cases/compiler/tluaTemplateStringReceiver.tlua] ////
+
+=== tluaTemplateStringReceiver.tlua ===
+// A template lowers to a `..` chain, which is not a Lua prefixexp: as a receiver or
+// operand it needs exactly one pair of parentheses, wherever those come from.
+
+local t: number = 5
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local u: string = "u"
+>u : Symbol(u, Decl(tluaTemplateStringReceiver.tlua, 4, 5))
+
+local f: (s: string) => string = function(s: string) return s end
+>f : Symbol(f, Decl(tluaTemplateStringReceiver.tlua, 5, 5))
+>s : Symbol(s, Decl(tluaTemplateStringReceiver.tlua, 5, 10))
+>s : Symbol(s, Decl(tluaTemplateStringReceiver.tlua, 5, 42))
+>s : Symbol(s, Decl(tluaTemplateStringReceiver.tlua, 5, 42))
+
+// Parenthesized in source (the valid spelling).
+local a1 = (`a${t}`):upper()
+>a1 : Symbol(a1, Decl(tluaTemplateStringReceiver.tlua, 8, 5))
+>(`a${t}`):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local a2 = (`a${t}`).len
+>a2 : Symbol(a2, Decl(tluaTemplateStringReceiver.tlua, 9, 5))
+>(`a${t}`).len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+
+local a3 = (`a${t}`)[1]
+>a3 : Symbol(a3, Decl(tluaTemplateStringReceiver.tlua, 10, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local a4 = (`${t}`):upper()
+>a4 : Symbol(a4, Decl(tluaTemplateStringReceiver.tlua, 11, 5))
+>(`${t}`):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local a5 = (`a`):upper()
+>a5 : Symbol(a5, Decl(tluaTemplateStringReceiver.tlua, 12, 5))
+>(`a`):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local a6 = ("a"):upper()
+>a6 : Symbol(a6, Decl(tluaTemplateStringReceiver.tlua, 13, 5))
+>("a"):upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+// Bare receivers (TLUA100060); the printer still has to parenthesize once.
+local b1 = `a${t}`:upper()
+>b1 : Symbol(b1, Decl(tluaTemplateStringReceiver.tlua, 16, 5))
+>`a${t}`:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local b2 = `a${t}`.len
+>b2 : Symbol(b2, Decl(tluaTemplateStringReceiver.tlua, 17, 5))
+>`a${t}`.len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>len : Symbol(String.len, Decl(lib.luajit.d.tlua, --, --))
+
+local b3 = `a${t}`[1]
+>b3 : Symbol(b3, Decl(tluaTemplateStringReceiver.tlua, 18, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local b4 = `a`:upper()
+>b4 : Symbol(b4, Decl(tluaTemplateStringReceiver.tlua, 19, 5))
+>`a`:upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+local b5 = "a":upper()
+>b5 : Symbol(b5, Decl(tluaTemplateStringReceiver.tlua, 20, 5))
+>"a":upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+>upper : Symbol(String.upper, Decl(lib.luajit.d.tlua, --, --))
+
+// Operands.
+local c1 = #`a${t}`
+>c1 : Symbol(c1, Decl(tluaTemplateStringReceiver.tlua, 23, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c2 = `a${t}` .. "b"
+>c2 : Symbol(c2, Decl(tluaTemplateStringReceiver.tlua, 24, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c3 = "b" .. `a${t}`
+>c3 : Symbol(c3, Decl(tluaTemplateStringReceiver.tlua, 25, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c4 = `a${t}` == u
+>c4 : Symbol(c4, Decl(tluaTemplateStringReceiver.tlua, 26, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>u : Symbol(u, Decl(tluaTemplateStringReceiver.tlua, 4, 5))
+
+local c5 = #`${t}`
+>c5 : Symbol(c5, Decl(tluaTemplateStringReceiver.tlua, 27, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c6 = f(`a${t}`)
+>c6 : Symbol(c6, Decl(tluaTemplateStringReceiver.tlua, 28, 5))
+>f : Symbol(f, Decl(tluaTemplateStringReceiver.tlua, 5, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c7 = `${t}`
+>c7 : Symbol(c7, Decl(tluaTemplateStringReceiver.tlua, 29, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c8 = `a${t}` .. `b${t}`
+>c8 : Symbol(c8, Decl(tluaTemplateStringReceiver.tlua, 30, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c9 = { `a${t}`, k = `b${t}` }
+>c9 : Symbol(c9, Decl(tluaTemplateStringReceiver.tlua, 31, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+>k : Symbol(k, Decl(tluaTemplateStringReceiver.tlua, 31, 21))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+
+local c10 = (`a${t}`)()
+>c10 : Symbol(c10, Decl(tluaTemplateStringReceiver.tlua, 32, 5))
+>t : Symbol(t, Decl(tluaTemplateStringReceiver.tlua, 3, 5))
+

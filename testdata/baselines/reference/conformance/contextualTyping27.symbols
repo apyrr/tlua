@@ -3,15 +3,16 @@
 === contextualTyping27.tlua ===
 -- ported from tests/cases/compiler/contextualTyping27.ts
 -- dropped: @target: es2015 directive (tlua defaults to latest target)
+-- rewritten: `<T>x` type assertions as `x as T` (tlua has only the `as` form)
 
 function foo(param: { id: number })
 >foo : Symbol(foo, Decl(contextualTyping27.tlua, 0, 0))
->param : Symbol(param, Decl(contextualTyping27.tlua, 3, 13))
->id : Symbol(id, Decl(contextualTyping27.tlua, 3, 21))
+>param : Symbol(param, Decl(contextualTyping27.tlua, 4, 13))
+>id : Symbol(id, Decl(contextualTyping27.tlua, 4, 21))
 
 end
 
-foo(<{ id: number }>({}))
+foo(({}) as { id: number })
 >foo : Symbol(foo, Decl(contextualTyping27.tlua, 0, 0))
->id : Symbol(id, Decl(contextualTyping27.tlua, 6, 6))
+>id : Symbol(id, Decl(contextualTyping27.tlua, 7, 13))
 

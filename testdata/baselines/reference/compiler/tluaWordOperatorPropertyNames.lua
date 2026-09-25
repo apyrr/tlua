@@ -14,7 +14,7 @@ local t = { ["and"] = 1, ["or"] = 2, ["not"] = 3, ["while"] = 4, plain = 5 };
 local readAnd = t["and"];
 local readOr = t["or"];
 local readNot = t["not"];
-local readWhile = t.while;
+local readWhile = t["while"];
 
 // Interfaces declare them the same way.
 interface Bits {
@@ -44,7 +44,7 @@ local t = { ["and"] = 1, ["or"] = 2, ["not"] = 3, ["while"] = 4, plain = 5 };
 local readAnd = t["and"];
 local readOr = t["or"];
 local readNot = t["not"];
-local readWhile = t.while;
+local readWhile = t["while"];
 local banded = bits["and"](1);
 -- An expando member named `and` is skipped by declaration emit rather than
 -- emitted as the bare alias `export { ... as and }`, which would not parse.

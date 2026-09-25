@@ -19,7 +19,7 @@
 // consumer({ a = 0, b = 0, [|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { [|common|] = 0, b = 0 };
+// local c = { [|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
@@ -54,7 +54,7 @@
 // consumer({ a = 0, b = 0, [|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { [|common|] = 0, b = 0 };
+// local c = { [|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
@@ -92,7 +92,7 @@
 // consumer({ a = 0, b = 0, [|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { [|common|] = 0, b = 0 };
+// local c = { [|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
@@ -130,7 +130,7 @@
 // consumer({ a = 0, b = 0, [|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { [|common|] = 0, b = 0 };
+// local c = { [|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
@@ -168,7 +168,7 @@
 // consumer({ a = 0, b = 0, /*FIND ALL REFS*/[|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { [|common|] = 0, b = 0 };
+// local c = { [|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
@@ -206,7 +206,7 @@
 // consumer({ a = 0, b = 0, [|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { /*FIND ALL REFS*/[|common|] = 0, b = 0 };
+// local c = { /*FIND ALL REFS*/[|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
@@ -226,7 +226,7 @@
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.tlua ===
 // --- (line: 19) skipped ---
-// local c = <A | B> { common = 0, b = 0 };
+// local c = { common = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, /*FIND ALL REFS*/[|common|] = "" }, { b = 0, common = 0 }];
@@ -240,7 +240,7 @@
 // === findAllReferences ===
 // === /referencesForContextuallyTypedUnionProperties.tlua ===
 // --- (line: 19) skipped ---
-// local c = <A | B> { common = 0, b = 0 };
+// local c = { common = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, /*FIND ALL REFS*/[|common|] = 0 }];
@@ -272,7 +272,7 @@
 // consumer({ a = 0, b = 0, [|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { [|common|] = 0, b = 0 };
+// local c = { [|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];
@@ -310,7 +310,7 @@
 // consumer({ a = 0, b = 0, [|common|] = 1 });
 // 
 // // Type cast
-// local c = <A | B> { [|common|] = 0, b = 0 };
+// local c = { [|common|] = 0, b = 0 } as A | B;
 // 
 // // Array literal
 // local ar: Array<A|B> = [{ a = 0, common = "" }, { b = 0, common = 0 }];

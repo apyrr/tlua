@@ -36,15 +36,14 @@ local readNot = t["not"];
 >t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
 >"not" : Symbol(["not"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 36))
 
-local readWhile = t.while;
+local readWhile = t["while"];
 >readWhile : Symbol(readWhile, Decl(tluaWordOperatorPropertyNames.tlua, 13, 5))
->t.while : Symbol(["while"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 49))
 >t : Symbol(t, Decl(tluaWordOperatorPropertyNames.tlua, 7, 5))
->while : Symbol(["while"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 49))
+>"while" : Symbol(["while"], Decl(tluaWordOperatorPropertyNames.tlua, 7, 49))
 
 // Interfaces declare them the same way.
 interface Bits {
->Bits : Symbol(Bits, Decl(tluaWordOperatorPropertyNames.tlua, 13, 26))
+>Bits : Symbol(Bits, Decl(tluaWordOperatorPropertyNames.tlua, 13, 29))
 
   "and"(v: number): number;
 >"and" : Symbol(Bits["and"], Decl(tluaWordOperatorPropertyNames.tlua, 16, 16))
@@ -59,7 +58,7 @@ interface Bits {
 }
 declare bits: Bits;
 >bits : Symbol(bits, Decl(tluaWordOperatorPropertyNames.tlua, 21, 7))
->Bits : Symbol(Bits, Decl(tluaWordOperatorPropertyNames.tlua, 13, 26))
+>Bits : Symbol(Bits, Decl(tluaWordOperatorPropertyNames.tlua, 13, 29))
 
 local banded = bits["and"](1);
 >banded : Symbol(banded, Decl(tluaWordOperatorPropertyNames.tlua, 22, 5))

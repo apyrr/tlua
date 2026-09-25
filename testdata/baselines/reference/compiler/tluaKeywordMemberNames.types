@@ -1,0 +1,164 @@
+//// [tests/cases/compiler/tluaKeywordMemberNames.tlua] ////
+
+=== access.tlua ===
+local t: { [k: string]: number } = {}
+>t : { [k: string]: number; }
+>k : string
+>{} : {}
+
+local a1 = _G.nil
+>a1 : nil
+>_G.nil : nil
+>_G : typeof _G
+>nil : nil
+
+local a2 = t.end
+>a2 : number | nil
+>t.end : number | nil
+>t : { [k: string]: number; }
+>end : number | nil
+
+local a3 = t.then
+>a3 : number | nil
+>t.then : number | nil
+>t : { [k: string]: number; }
+>then : number | nil
+
+local a4 = t.local
+>a4 : number | nil
+>t.local : number | nil
+>t : { [k: string]: number; }
+>local : number | nil
+
+local a5 = t.true
+>a5 : number | nil
+>t.true : number | nil
+>t : { [k: string]: number; }
+>true : number | nil
+
+local a6 = t?.until
+>a6 : number | nil
+>t?.until : number | nil
+>t : { [k: string]: number; }
+>until : number | nil
+
+t.end = 1
+>t.end = 1 : 1
+>t.end : number | nil
+>t : { [k: string]: number; }
+>end : number | nil
+>1 : 1
+
+t.nil = 2
+>t.nil = 2 : 2
+>t.nil : number | nil
+>t : { [k: string]: number; }
+>nil : number | nil
+>2 : 2
+
+local ok1 = t.continue
+>ok1 : number | nil
+>t.continue : number | nil
+>t : { [k: string]: number; }
+>continue : number | nil
+
+local ok2 = t.type
+>ok2 : number | nil
+>t.type : number | nil
+>t : { [k: string]: number; }
+>type : number | nil
+
+local ok3 = t.self
+>ok3 : number | nil
+>t.self : number | nil
+>t : { [k: string]: number; }
+>self : number | nil
+
+local ok4 = t["end"]
+>ok4 : number
+>t["end"] : number
+>t : { [k: string]: number; }
+>"end" : "end"
+
+=== tableKeys.tlua ===
+local k1 = { nil = 1, self = 2, type = 3 }
+>k1 : { nil: number; self: number; type: number; }
+>{ nil = 1, self = 2, type = 3 } : { nil: number; self: number; type: number; }
+>nil : number
+>1 : 1
+>self : number
+>2 : 2
+>type : number
+>3 : 3
+
+local k2 = { ["end"] = 1 }
+>k2 : { end: number; }
+>{ ["end"] = 1 } : { end: number; }
+>["end"] : number
+>"end" : "end"
+>1 : 1
+
+=== funcDecl.tlua ===
+local m = {}
+>m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>{} : { end(): void; nil(self: { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }): void; ok(): void; while: { f(): void; }; }
+
+function m.end() end
+>m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>end : () => void
+
+function m:nil() end
+>m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>nil : (self: { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }) => void
+
+function m.ok() end
+>m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>ok : () => void
+
+m.while = {}
+>m.while = {} : { f(): void; }
+>m.while : { f(): void; }
+>m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>while : { f(): void; }
+>{} : { f(): void; }
+
+function m.while.f() end
+>m.while : { f(): void; }
+>m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>while : { f(): void; }
+>f : () => void
+
+m["end"] = function() end
+>m["end"] = function() end : () => void
+>m["end"] : () => void
+>m : { end(): void; nil(self: any): void; ok(): void; while: { f(): void; }; }
+>"end" : "end"
+>function() end : () => void
+
+=== iface.tlua ===
+interface K { end: number; nil: number }
+>end : number
+>nil : number
+
+local k: K = { ["end"] = 1, ["nil"] = 2 }
+>k : K
+>{ ["end"] = 1, ["nil"] = 2 } : { end: number; nil: number; }
+>["end"] : number
+>"end" : "end"
+>1 : 1
+>["nil"] : number
+>"nil" : "nil"
+>2 : 2
+
+local r1 = k["end"]
+>r1 : number
+>k["end"] : number
+>k : K
+>"end" : "end"
+
+local r2 = k.end
+>r2 : number
+>k.end : number
+>k : K
+>end : number
+

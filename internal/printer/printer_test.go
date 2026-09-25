@@ -69,7 +69,6 @@ func TestEmit(t *testing.T) {
 		{title: "CallExpression#13", input: `a?.b()`, output: `a?.b();`},
 		// Tagged templates are a non-Lua construct: the tag applied to the lowered
 		// string emits as `tag ""` (Lua string-call sugar) which tlua does not parse.
-		{title: "TypeAssertionExpression#1", input: `local _ = <T>a`, output: `local _ = <T>a;`},
 		{title: "FunctionExpression#1", input: "local _ = (function() end)", output: "local _ = (function()\nend);"},
 		{title: "FunctionExpression#2", input: "local _ = (function(a) return a end)", output: "local _ = (function(a)\n    return a;\nend);"},
 		{title: "FunctionExpression#4", input: "local _ = (suspend function() end)", output: "local _ = (suspend function()\nend);"},
@@ -111,8 +110,12 @@ func TestEmit(t *testing.T) {
 		// tlua has no conditional expression in source; the node survives only in
 		// emit-time synthesis (`?.`/`??` lowering), covered by the factory-built
 		// TestParenthesizeConditional tests below.
-		{title: "TemplateExpression#1", input: "local _ = `a${b}c`", output: `local _ = ("a" .. tostring(b) .. "c");`},
-		{title: "TemplateExpression#2", input: "local _ = `a${b}c${d}e`", output: `local _ = ("a" .. tostring(b) .. "c" .. tostring(d) .. "e");`},
+		{title: "TemplateExpression#1", input: "local _ = `a${b}c`", output: `local _ = "a" .. tostring(b) .. "c";`},
+		{title: "TemplateExpression#2", input: "local _ = `a${b}c${d}e`", output: `local _ = "a" .. tostring(b) .. "c" .. tostring(d) .. "e";`},
+		{title: "TemplateExpression#3", input: "local _ = `a${b}`:upper()", output: `local _ = ("a" .. tostring(b)):upper();`},
+		{title: "TemplateExpression#4", input: "local _ = (`a${b}`):upper()", output: `local _ = ("a" .. tostring(b)):upper();`},
+		{title: "TemplateExpression#5", input: "local _ = #`a${b}`", output: `local _ = #("a" .. tostring(b));`},
+		{title: "TemplateExpression#6", input: "local _ = `${b}`", output: `local _ = tostring(b);`},
 		{title: "VarargExpression", input: `f(...)`, output: `f(...);`},
 		{title: "ExpressionWithTypeArguments", input: `local _ = a<T>`, output: `local _ = a<T>;`},
 		{title: "AsExpression", input: `local _ = a as T`, output: `local _ = a as T;`},
@@ -499,35 +502,6 @@ func TestParenthesizeCall4(t *testing.T) {
 
 	parsetestutil.MarkSyntheticRecursive(file)
 	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "a(b or c);")
-}
-
-func TestParenthesizeTypeAssertion1(t *testing.T) {
-	t.Parallel()
-
-	var factory ast.NodeFactory
-	file := factory.NewSourceFile(ast.SourceFileParseOptions{FileName: "/file.tlua", Path: "/file.tlua"}, "", factory.NewNodeList(
-		[]*ast.Node{
-			localDeclOf(&factory,
-				factory.NewTypeAssertion(
-					factory.NewTypeReferenceNode(
-						factory.NewIdentifier("T"),
-						nil, /*typeArguments*/
-					),
-					// will be parenthesized on emit:
-					factory.NewBinaryExpression(
-						nil, /*modifiers*/
-						factory.NewIdentifier("a"),
-						nil, /*typeNode*/
-						factory.NewToken(ast.KindPlusToken),
-						factory.NewIdentifier("b"),
-					),
-				),
-			),
-		},
-	), factory.NewToken(ast.KindEndOfFile))
-
-	parsetestutil.MarkSyntheticRecursive(file)
-	emittestutil.CheckEmit(t, nil, file.AsSourceFile(), "local _ = <T>(a + b);")
 }
 
 func TestParenthesizeArrowFunction1(t *testing.T) {

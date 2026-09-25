@@ -2835,6 +2835,7 @@ func (c *Checker) checkFunctionDeclaration(node *ast.Node) {
 	c.checkFunctionOrMethodDeclaration(node)
 	c.checkCollisionsForDeclarationName(node, node.Name())
 	if target := node.AsFunctionDeclaration().Target; target != nil {
+		c.checkGrammarLuaFieldName(node.Name())
 		c.checkLuaDottedFunctionDeclaration(node, target)
 	}
 }
@@ -8435,6 +8436,7 @@ func (c *Checker) isInAmbientOrTypeNode(node *ast.Node) bool {
 
 func (c *Checker) checkPropertyAccessExpression(node *ast.Node, checkMode CheckMode, writeOnly bool) *Type {
 	c.checkGrammarLuaPrefixExpression(node.Expression())
+	c.checkGrammarLuaFieldName(node.Name())
 	if node.Flags&ast.NodeFlagsOptionalChain != 0 {
 		return c.checkPropertyAccessChain(node, checkMode)
 	}

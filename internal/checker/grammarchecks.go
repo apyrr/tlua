@@ -37,6 +37,47 @@ func (c *Checker) checkGrammarLuaPrefixExpression(receiver *ast.Node) bool {
 	return c.grammarErrorOnFirstToken(receiver, diagnostics.This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called)
 }
 
+// checkGrammarLuaFieldName reports a Lua reserved word written where Lua wants a
+// Name: after `.` in a member access, as the key of a `name = value` table field,
+// or as the last segment of a `function a.b.c` name. The parser reads any keyword
+// as an identifier name there, as TS does, and a type-level member named `end`
+// stays legal because types are erased; a value has to spell the key `t["end"]`.
+// Like checkGrammarLuaPrefixExpression this is a grammar check rather than a
+// parse error, and the printer lowers the member access and the table key to the
+// bracket spelling, so the emitted Lua stays valid while the error stands.
+func (c *Checker) checkGrammarLuaFieldName(name *ast.Node) bool {
+	if name == nil || !ast.IsIdentifier(name) {
+		return false
+	}
+	text := name.Text()
+	if !scanner.IsIdentifierText(text) || scanner.IsLuaName(text) {
+		return false
+	}
+	if isInLuaFunctionName(name) {
+		// A funcname has no bracket form (`function t["end"]()` does not parse), so
+		// the only spelling is assigning a function expression to the field.
+		return c.grammarErrorOnNode(name, diagnostics.X_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_instead, text)
+	}
+	return c.grammarErrorOnNode(name, diagnostics.X_0_is_a_reserved_word_in_Lua_and_cannot_name_a_field_here_Use_0_instead, text)
+}
+
+// isInLuaFunctionName reports whether name is a segment of a `function a.b:c` name:
+// the declaration's own name, or a member name within its dotted target.
+func isInLuaFunctionName(name *ast.Node) bool {
+	n := name.Parent
+	if ast.IsFunctionDeclaration(n) {
+		return true
+	}
+	for ast.IsPropertyAccessExpression(n) {
+		parent := n.Parent
+		if ast.IsFunctionDeclaration(parent) && parent.AsFunctionDeclaration().Target == n {
+			return true
+		}
+		n = parent
+	}
+	return false
+}
+
 func (c *Checker) grammarErrorAtPos(nodeForSourceFile *ast.Node, start int, length int, message *diagnostics.Message, args ...any) bool {
 	sourceFile := ast.GetSourceFileOfNode(nodeForSourceFile)
 	if !c.hasParseDiagnostics(sourceFile) {
@@ -712,6 +753,7 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 			continue
 		}
 		name := prop.Name()
+		c.checkGrammarLuaFieldName(name)
 		if name.Kind == ast.KindComputedPropertyName {
 			// If the name is not a ComputedPropertyName, the grammar checking will skip it
 			c.checkGrammarComputedPropertyName(name)

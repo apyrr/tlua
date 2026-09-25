@@ -4252,6 +4252,10 @@ var A_const_modifier_cannot_appear_on_a_generic_pack_parameter = &Message{code: 
 
 var This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called = &Message{code: 100060, category: CategoryError, key: "This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called_100060", text: "This expression must be parenthesized before it can be indexed or called."}
 
+var X_0_is_a_reserved_word_in_Lua_and_cannot_name_a_field_here_Use_0_instead = &Message{code: 100061, category: CategoryError, key: "_0_is_a_reserved_word_in_Lua_and_cannot_name_a_field_here_Use_0_instead_100061", text: "'{0}' is a reserved word in Lua and cannot name a field here. Use '[\"{0}\"]' instead."}
+
+var X_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_instead = &Message{code: 100062, category: CategoryError, key: "_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_i_100062", text: "'{0}' is a reserved word in Lua and cannot appear in a function name. Assign a function to the '[\"{0}\"]' field instead."}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8504,6 +8508,10 @@ func keyToMessage(key Key) *Message {
 		return A_const_modifier_cannot_appear_on_a_generic_pack_parameter
 	case "This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called_100060":
 		return This_expression_must_be_parenthesized_before_it_can_be_indexed_or_called
+	case "_0_is_a_reserved_word_in_Lua_and_cannot_name_a_field_here_Use_0_instead_100061":
+		return X_0_is_a_reserved_word_in_Lua_and_cannot_name_a_field_here_Use_0_instead
+	case "_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_i_100062":
+		return X_0_is_a_reserved_word_in_Lua_and_cannot_appear_in_a_function_name_Assign_a_function_to_the_0_field_instead
 	default:
 		return nil
 	}

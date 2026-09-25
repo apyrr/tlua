@@ -2,4 +2,4 @@
 // === /goToImplementationInterface_03.tlua ===
 // interface Fo/*GOTO IMPL*/o { hello: () => void }
 // 
-// local x = <Foo> [|{ hello: () => {} }|];
+// local x = [|{ hello: () => {} }|] as Foo;

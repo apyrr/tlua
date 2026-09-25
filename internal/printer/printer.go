@@ -50,6 +50,12 @@ type PrinterOptions struct {
 	// StripInternal                 bool
 	PreserveSourceNewlines        bool
 	TerminateUnterminatedLiterals bool // !!!
+	// BracketLuaReservedFieldNames spells a Lua reserved word used as a field name
+	// (`t.end`, `{ nil = v }`) as the bracketed string key (`t["end"]`,
+	// `{ ["nil"] = v }`), so emitted Lua stays valid while the checker's
+	// TLUA100061 stands. Only .lua output sets it: symbol display (`I.then`) and
+	// printers that round-trip tlua source keep the dotted spelling.
+	BracketLuaReservedFieldNames bool
 }
 
 type PrintHandlers struct {
@@ -2325,7 +2331,7 @@ func (p *Printer) emitObjectLiteralExpression(node *ast.ObjectLiteralExpression)
 // emitting source that still has that error. It also retires the JS `1..toString`
 // spelling, which in Lua is a concatenation.
 func (p *Printer) emitLuaPrefixExpression(node *ast.Expression, precedence ast.OperatorPrecedence) {
-	if !ast.IsLuaPrefixExpression(node) && ast.GetExpressionPrecedence(ast.SkipPartiallyEmittedExpressions(node)) >= precedence {
+	if !ast.IsLuaPrefixExpression(node) && getEmitPrecedence(node) >= precedence {
 		p.writePunctuation("(")
 		p.emitExpression(node, precedence)
 		p.writePunctuation(")")
@@ -2346,9 +2352,38 @@ func (p *Printer) emitTokenAs(token *ast.TokenNode, kind ast.Kind, contextNode *
 	p.emitToken(kind, token.Pos(), WriteKindPunctuation, contextNode)
 }
 
+// isLuaReservedFieldName reports whether name is an identifier Lua reserves
+// (`end`, `nil`, ...). Such a name cannot follow `.` or key a `name = value`
+// table field in Lua, so the printer spells the key `["end"]` instead. The
+// checker reports such source (TLUA100061), so this keeps the emitted Lua valid
+// while that error stands.
+func isLuaReservedFieldName(name *ast.Node) bool {
+	if name == nil || !ast.IsIdentifier(name) {
+		return false
+	}
+	text := name.Text()
+	return scanner.IsIdentifierText(text) && !scanner.IsLuaName(text)
+}
+
+// emitLuaBracketKey prints the identifier name as the bracketed string key `["name"]`.
+func (p *Printer) emitLuaBracketKey(name *ast.Node) {
+	p.writePunctuation("[")
+	p.writer.WriteStringLiteral(luaStringLiteral(name.Text(), QuoteCharDoubleQuote))
+	p.writePunctuation("]")
+}
+
 func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpression) {
 	state := p.enterNode(node.AsNode())
 	p.emitLuaPrefixExpression(node.Expression, core.IfElse(ast.IsOptionalChain(node.AsNode()), ast.OperatorPrecedenceOptionalChain, ast.OperatorPrecedenceMember))
+	if p.Options.BracketLuaReservedFieldNames && node.ColonToken == nil && isLuaReservedFieldName(node.Name()) {
+		// `t.end` is not Lua (TLUA100061); index with the string key instead.
+		if node.QuestionDotToken != nil {
+			p.emitTokenAs(node.QuestionDotToken, ast.KindQuestionDotToken, node.AsNode())
+		}
+		p.emitLuaBracketKey(node.Name())
+		p.exitNode(node.AsNode(), state)
+		return
+	}
 	token := node.QuestionDotToken
 	if token == nil {
 		// A colon-call access prints its `:` where a plain access prints `.`.
@@ -2663,13 +2698,38 @@ func (p *Printer) emitShortCircuitExpression(node *ast.Expression) {
 	p.emitExpression(node, ast.OperatorPrecedenceLogicalOR)
 }
 
+// getEmitPrecedence is the precedence of node as the printer spells it, which
+// decides where emitExpression and emitLuaPrefixExpression add parentheses. It is
+// the source precedence, except for a template: Lua has no template syntax, so it
+// prints as what it lowers to -- a `..` chain, or `tostring(x)` for a template that
+// is a lone substitution -- and needs parentheses exactly where that would.
+func getEmitPrecedence(node *ast.Expression) ast.OperatorPrecedence {
+	node = ast.SkipPartiallyEmittedExpressions(node)
+	if node.Kind == ast.KindTemplateExpression {
+		if isLoneSubstitutionTemplate(node.AsTemplateExpression()) {
+			return ast.OperatorPrecedenceMember
+		}
+		return ast.OperatorPrecedenceConcatenation
+	}
+	return ast.GetExpressionPrecedence(node)
+}
+
+// isLoneSubstitutionTemplate reports whether node is `${x}` alone, which prints
+// as the single call `tostring(x)`.
+func isLoneSubstitutionTemplate(node *ast.TemplateExpression) bool {
+	return node.Head.Text() == "" && len(node.TemplateSpans.Nodes) == 1 &&
+		node.TemplateSpans.Nodes[0].AsTemplateSpan().Literal.Text() == ""
+}
+
 func (p *Printer) emitTemplateExpression(node *ast.TemplateExpression) {
 	state := p.enterNode(node.AsNode())
-	// tlua: Lua has no `${}` interpolation. Lower to a parenthesized `..` concatenation,
-	// wrapping each substitution in tostring() so non-string values coerce like Luau's native
-	// string interpolation (a table/number/nil becomes its tostring text rather than erroring
-	// on `..`). Empty string pieces are dropped since concatenating "" is a no-op.
-	p.writePunctuation("(")
+	// tlua: Lua has no `${}` interpolation. Lower to a `..` concatenation, wrapping each
+	// substitution in tostring() so non-string values coerce like Luau's native string
+	// interpolation (a table/number/nil becomes its tostring text rather than erroring on
+	// `..`). Empty string pieces are dropped since concatenating "" is a no-op. The chain
+	// is not parenthesized here: getEmitPrecedence gives the template the precedence of
+	// its lowering, so the caller adds the one pair a context needs (a receiver, a `#` or
+	// arithmetic operand) and none where `..` already binds (an argument, an initializer).
 	wroteAny := false
 	sep := func() {
 		if wroteAny {
@@ -2700,7 +2760,6 @@ func (p *Printer) emitTemplateExpression(node *ast.TemplateExpression) {
 		// >=1 span), but guards a hand-synthesized zero-span node from emitting bare `()`.
 		p.writer.WriteStringLiteral("\"\"")
 	}
-	p.writePunctuation(")")
 	p.exitNode(node.AsNode(), state)
 }
 
@@ -2947,7 +3006,7 @@ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPr
 	// A Lua expression list is grammar, not the comma operator: its commas
 	// separate values, so it always prints bare regardless of context.
 	parens := node.Kind != ast.KindExpressionList &&
-		ast.GetExpressionPrecedence(ast.SkipPartiallyEmittedExpressions(node)) < precedence
+		getEmitPrecedence(node) < precedence
 	if parens {
 		p.writePunctuation("(")
 	}
@@ -3863,7 +3922,12 @@ func (p *Printer) emitHeritageClauseNode(node *ast.HeritageClauseNode) {
 
 func (p *Printer) emitPropertyAssignment(node *ast.PropertyAssignment) {
 	state := p.enterNode(node.AsNode())
-	p.emitPropertyName(node.Name())
+	if p.Options.BracketLuaReservedFieldNames && ast.IsLuaTableField(node.AsNode()) && isLuaReservedFieldName(node.Name()) {
+		// `{ nil = v }` is not Lua (TLUA100061); the key has to be spelled `["nil"]`.
+		p.emitLuaBracketKey(node.Name())
+	} else {
+		p.emitPropertyName(node.Name())
+	}
 	if ast.IsLuaTableField(node.AsNode()) {
 		// Lua table fields (`x = v` and `[k] = v`) round-trip with `=`.
 		p.writeSpace()

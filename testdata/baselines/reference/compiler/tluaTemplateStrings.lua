@@ -43,18 +43,18 @@ local b = "hi";
 -- No substitutions: just a plain Lua string.
 local plain = "hello world";
 -- Leading and trailing text around substitutions.
-local s1 = ("x" .. tostring(a) .. "y" .. tostring(b) .. "z");
+local s1 = "x" .. tostring(a) .. "y" .. tostring(b) .. "z";
 -- Substitution only, empty head and tail.
-local s2 = (tostring(a));
+local s2 = tostring(a);
 -- Adjacent substitutions, no text between.
-local s3 = (tostring(a) .. tostring(b));
+local s3 = tostring(a) .. tostring(b);
 -- Text that needs escaping in a Lua string.
-local s4 = ("line \"one\"\nline two " .. tostring(a));
+local s4 = "line \"one\"\nline two " .. tostring(a);
 -- Nested template inside a substitution.
-local s5 = ("outer " .. tostring(("inner " .. tostring(a))) .. " end");
+local s5 = "outer " .. tostring("inner " .. tostring(a)) .. " end";
 -- An expression substitution.
-local s6 = ("sum is " .. tostring(a + a));
+local s6 = "sum is " .. tostring(a + a);
 -- Control characters must use Lua's `\ddd` decimal escape, not JS `\uXXXX` (invalid Lua).
 -- Here \x1b is an ANSI escape (ESC, 0x1B) and \u{2028} is a non-ASCII separator kept raw.
-local s7 = ("color " .. tostring(a) .. "\x1b[0m");
+local s7 = "color " .. tostring(a) .. "\x1b[0m";
 local s8 = " sep";

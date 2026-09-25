@@ -5200,12 +5200,16 @@
             ]
         },
         "tlua-colon-call": {
-            "match": "(:)\\s*([_$[:alpha:]][_$[:alnum:]]*)(?=\\s*\\()",
+            "comment": "`obj:m(...)` and the optional colon call `obj?:m(...)`; like `?.` in #punctuation-accessor, the `?:` pair is one optional accessor token (the parser requires it written without a space).",
+            "match": "(?:(:)|(\\?:))\\s*([_$[:alpha:]][_$[:alnum:]]*)(?=\\s*\\()",
             "captures": {
                 "1": {
                     "name": "punctuation.accessor.tlua"
                 },
                 "2": {
+                    "name": "punctuation.accessor.optional.tlua"
+                },
+                "3": {
                     "name": "entity.name.function.tlua"
                 }
             }
