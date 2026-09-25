@@ -9675,7 +9675,7 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 		for _, name := range slices.Sorted(maps.Keys(mergedLiteralSymbol.Exports)) {
 			member := mergedLiteralSymbol.Exports[name]
 			if existing := propertiesTable[name]; existing != nil {
-				c.error(member.ValueDeclaration.Name(), diagnostics.Duplicate_identifier_0, ast.NumberKeyDisplayName(name))
+				c.error(member.ValueDeclaration.Name(), diagnostics.Duplicate_identifier_0, ast.KeyDisplayName(name))
 				continue
 			}
 			propertiesTable[name] = member
@@ -12256,7 +12256,7 @@ func (c *Checker) lateBindMember(parent *ast.Symbol, earlySymbols ast.SymbolTabl
 					name = scanner.DeclarationNameToString(declName)
 				} else {
 					// Decode number-key names for display.
-					name = ast.NumberKeyDisplayName(memberName)
+					name = ast.KeyDisplayName(memberName)
 				}
 				for _, d := range declarations {
 					c.error(core.OrElse(ast.GetNameOfDeclaration(d), d), diagnostics.Duplicate_identifier_0, name)
@@ -15031,6 +15031,9 @@ func (c *Checker) getApplicableIndexInfoForName(t *Type, name string) *IndexInfo
 func (c *Checker) keyTypeForPropertyName(name string) *Type {
 	if n, ok := ast.NumberKeyNumber(name); ok {
 		return c.getNumberLiteralType(n)
+	}
+	if s, ok := ast.StringKeyValue(name); ok {
+		return c.getStringLiteralType(s)
 	}
 	return c.getStringLiteralType(name)
 }
@@ -22845,7 +22848,7 @@ func (c *Checker) getLiteralTypeFromPropertyName(name *ast.Node) *Type {
 	}
 	propertyName := ast.GetPropertyNameForPropertyNameNode(name)
 	if propertyName != ast.InternalSymbolNameMissing {
-		return c.getStringLiteralType(propertyName)
+		return c.keyTypeForPropertyName(propertyName)
 	}
 	if ast.IsExpression(name) {
 		return c.getRegularTypeOfLiteralType(c.checkExpression(name))
@@ -23106,7 +23109,7 @@ func (c *Checker) getPropertyTypeForIndexType(originalObjectType *Type, objectTy
 		hasPropName = propName != ast.InternalSymbolNameMissing
 	}
 	// User-facing spelling of propName; semantic lookups keep the raw name.
-	propDisplayName := ast.NumberKeyDisplayName(propName)
+	propDisplayName := ast.KeyDisplayName(propName)
 	if hasPropName {
 		if accessFlags&AccessFlagsContextual != 0 {
 			t := c.getTypeOfPropertyOfContextualType(objectType, propName)
@@ -26438,10 +26441,10 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		}
 
 		if objectType != nil {
-			name := node.Text()
+			name := ast.StringKeyName(node.Text())
 			if node.Kind == ast.KindNumericLiteral {
 				// Number keys live in their own name namespace.
-				name = ast.NumberKeyNameFromText(name)
+				name = ast.NumberKeyNameFromText(node.Text())
 			}
 			return c.getPropertyOfType(objectType, name)
 		}

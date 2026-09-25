@@ -1,0 +1,113 @@
+//// [tests/cases/compiler/tluaStringKeyReservedByte.tlua] ////
+
+=== tluaStringKeyReservedByte.tlua ===
+// A Lua string key may begin with any byte, including 0xFE, the byte that begins
+// the checker's internal names ("\xFEcall", "\xFEindex", "\xFEn:1", ...). Such a
+// key is an ordinary string key: it names neither a number key nor a call or
+// index signature.
+local t = { ["\xfen:1"] = "s" }
+>t : { "\xfen:1": string; }
+>{ ["\xfen:1"] = "s" } : { "\xfen:1": string; }
+>["\xfen:1"] : string
+>"\xfen:1" : "\xfen:1"
+>"s" : "s"
+
+local s: string = t["\xfen:1"]
+>s : string
+>t["\xfen:1"] : string
+>t : { "\xfen:1": string; }
+>"\xfen:1" : "\xfen:1"
+
+local n: number = t[1]
+>n : number
+>t[1] : any
+>t : { "\xfen:1": string; }
+>1 : 1
+
+interface Keys { "\xfecall": number; "\xfeindex": string; "\xfefoo": boolean }
+>"\xfecall" : number
+>"\xfeindex" : string
+>"\xfefoo" : boolean
+
+local missing: Keys = { ["\xfecall"] = 1, ["\xfeindex"] = "x" }
+>missing : Keys
+>{ ["\xfecall"] = 1, ["\xfeindex"] = "x" } : { "\xfecall": number; "\xfeindex": string; }
+>["\xfecall"] : number
+>"\xfecall" : "\xfecall"
+>1 : 1
+>["\xfeindex"] : string
+>"\xfeindex" : "\xfeindex"
+>"x" : "x"
+
+local k: Keys = { ["\xfecall"] = 1, ["\xfeindex"] = "x", ["\xfefoo"] = true }
+>k : Keys
+>{ ["\xfecall"] = 1, ["\xfeindex"] = "x", ["\xfefoo"] = true } : { "\xfecall": number; "\xfeindex": string; "\xfefoo": true; }
+>["\xfecall"] : number
+>"\xfecall" : "\xfecall"
+>1 : 1
+>["\xfeindex"] : string
+>"\xfeindex" : "\xfeindex"
+>"x" : "x"
+>["\xfefoo"] : true
+>"\xfefoo" : "\xfefoo"
+>true : true
+
+local c: number = k["\xfecall"]
+>c : number
+>k["\xfecall"] : number
+>k : Keys
+>"\xfecall" : "\xfecall"
+
+local notCallable = k()
+>notCallable : any
+>k() : any
+>k : Keys
+
+type KeyNames = keyof Keys
+>KeyNames : keyof Keys
+
+local key: KeyNames = "\xfefoo"
+>key : keyof Keys
+>"\xfefoo" : "\xfefoo"
+
+local notAKey: KeyNames = "foo"
+>notAKey : keyof Keys
+>"foo" : "foo"
+
+// Diagnostics spell a byte that is not valid UTF-8 as `\xHH`, so two different
+// bytes never look alike.
+local ab = { a = 1 }
+>ab : { a: number; }
+>{ a = 1 } : { a: number; }
+>a : number
+>1 : 1
+
+local ff = ab["\xff"]
+>ff : any
+>ab["\xff"] : any
+>ab : { a: number; }
+>"\xff" : "\xff"
+
+local fe = ab["\xfe"]
+>fe : any
+>ab["\xfe"] : any
+>ab : { a: number; }
+>"\xfe" : "\xfe"
+
+// Inferring an object type from a key keeps the key a string key.
+declare function fromKey<T>(k: keyof T): T
+>fromKey : <T>(k: keyof T) => T
+>k : keyof T
+
+local numberLike = fromKey("\xfen:1")
+>numberLike : { "\xfen:1": any; }
+>fromKey("\xfen:1") : { "\xfen:1": any; }
+>fromKey : <T>(k: keyof T) => T
+>"\xfen:1" : "\xfen:1"
+
+local callLike = fromKey("\xfecall")
+>callLike : { "\xfecall": any; }
+>fromKey("\xfecall") : { "\xfecall": any; }
+>fromKey : <T>(k: keyof T) => T
+>"\xfecall" : "\xfecall"
+

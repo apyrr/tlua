@@ -3373,18 +3373,18 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 	switch name.Kind {
 	case KindNumericLiteral:
 		return NumberKeyNameFromText(name.Text())
-	case KindIdentifier,
-		KindPrivateIdentifier,
-		KindStringLiteral,
-		KindNoSubstitutionTemplateLiteral:
+	case KindIdentifier, KindPrivateIdentifier:
 		return name.Text()
+	case KindStringLiteral,
+		KindNoSubstitutionTemplateLiteral:
+		return StringKeyName(name.Text())
 	case KindComputedPropertyName:
 		nameExpression := name.Expression()
 		if nameExpression.Kind == KindNumericLiteral {
 			return NumberKeyNameFromText(nameExpression.Text())
 		}
 		if IsStringOrNumericLiteralLike(nameExpression) {
-			return nameExpression.Text()
+			return StringKeyName(nameExpression.Text())
 		}
 		if IsSignedNumericLiteral(nameExpression) {
 			unaryExpression := nameExpression.AsPrefixUnaryExpression()

@@ -987,6 +987,11 @@ func (b *NodeBuilderImpl) getNameOfSymbolAsWritten(symbol *ast.Symbol) string {
 	if value, ok := ast.NumberKeyValue(symbol.Name); ok {
 		return numberKeyDisplayText(value)
 	}
+	if value, ok := ast.StringKeyValue(symbol.Name); ok {
+		// A string key that begins with 0xFE is never bare: quote it, as the
+		// nameType path above quotes every non-bare string key.
+		return b.ch.valueToString(value)
+	}
 	return ast.EscapeInternalSymbolName(symbol.Name)
 }
 
@@ -2396,6 +2401,11 @@ func (b *NodeBuilderImpl) getPropertyNameNodeForSymbol(symbol *ast.Symbol) *ast.
 	// Number keys print as numeric literal names.
 	if value, ok := ast.NumberKeyValue(name); ok {
 		return b.createNumberKeyPropertyNameNode(value, symbol)
+	}
+	// A string key that begins with 0xFE is an ordinary string key, not an
+	// internal name, so it skips the private-name rewrite below.
+	if value, ok := ast.StringKeyValue(name); ok {
+		return b.createPropertyNameNodeForIdentifierOrLiteral(value, singleQuote, isMethod, symbol)
 	}
 	const privateNamePrefix = ast.InternalSymbolNamePrefix + "#"
 	if strings.HasPrefix(name, privateNamePrefix) {

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/apyrr/tlua/internal/core"
 	"github.com/apyrr/tlua/internal/locale"
+	"github.com/apyrr/tlua/internal/stringutil"
 	"golang.org/x/text/language"
 )
 
@@ -126,10 +126,9 @@ func Format(text string, args []string) string {
 		return text
 	}
 
-	// Replace invalid UTF-8 with Unicode replacement character
-	args = core.SameMap(args, func(arg string) string {
-		return strings.ToValidUTF8(arg, "\uFFFD")
-	})
+	// A Lua string is a byte string: spell a byte that is not valid UTF-8 as its
+	// `\xHH` escape, so the message stays text and distinct bytes stay distinct.
+	args = core.SameMap(args, stringutil.EscapeInvalidUTF8)
 
 	return placeholderRegexp.ReplaceAllStringFunc(text, func(match string) string {
 		index, err := strconv.ParseInt(match[1:len(match)-1], 10, 0)

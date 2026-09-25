@@ -538,7 +538,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 			propertyName = c.TypeToString(nameType)
 		} else {
 			// Decode number-key names for display.
-			propertyName = ast.NumberKeyDisplayName(propertyName)
+			propertyName = ast.KeyDisplayName(propertyName)
 		}
 		if !c.program.IsSourceFileDefaultLibrary(ast.GetSourceFileOfNode(targetNode).Path()) {
 			diagnostic.AddRelatedInfo(createDiagnosticForNode(targetNode, diagnostics.The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1, propertyName, c.TypeToString(target)))

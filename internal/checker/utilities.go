@@ -786,7 +786,7 @@ func tryGetNameFromType(t *Type) (string, bool) {
 	case t.flags&TypeFlagsNumberLiteral != 0:
 		return ast.NumberKeyName(t.AsLiteralType().value.(jsnum.Number)), true
 	case t.flags&TypeFlagsStringLiteral != 0:
-		return t.AsLiteralType().value.(string), true
+		return ast.StringKeyName(t.AsLiteralType().value.(string)), true
 	}
 	return "", false
 }
@@ -1341,7 +1341,7 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 		if baseStr != "" && ast.IsPropertyName(expr.AsElementAccessExpression().ArgumentExpression) {
 			name := ast.GetPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
 			// Display path: decode number-key names to their numeric text.
-			return baseStr + "." + ast.NumberKeyDisplayName(name)
+			return baseStr + "." + ast.KeyDisplayName(name)
 		}
 	case ast.IsIdentifier(expr):
 		return expr.Text()
@@ -1395,7 +1395,7 @@ func getAnyImportSyntax(node *ast.Node) *ast.Node {
 // a well known ES Symbol instance and the '#' character indicates that the name is a PrivateIdentifier.
 // Number-key names (see ast.NumberKeyName) are real members, not reserved names.
 func isReservedMemberName(name string) bool {
-	return len(name) >= 2 && name[0] == '\xFE' && name[1] != '@' && name[1] != '#' && !ast.IsNumberKeyName(name)
+	return len(name) >= 2 && name[0] == '\xFE' && name[1] != '@' && name[1] != '#' && !ast.IsKeyName(name)
 }
 
 func introducesArgumentsExoticObject(node *ast.Node) bool {

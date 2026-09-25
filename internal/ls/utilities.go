@@ -15,12 +15,10 @@ import (
 	"github.com/apyrr/tlua/internal/ls/lsconv"
 	"github.com/apyrr/tlua/internal/ls/lsutil"
 	"github.com/apyrr/tlua/internal/lsp/lsproto"
+	"github.com/apyrr/tlua/internal/printer"
 	"github.com/apyrr/tlua/internal/scanner"
-	"github.com/apyrr/tlua/internal/stringutil"
 	"github.com/apyrr/tlua/internal/tspath"
 )
-
-var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
 
 func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Node) bool {
 	if previousToken != nil && ast.IsStringTextContainingNode(previousToken) {
@@ -297,12 +295,12 @@ func (l *LanguageService) createLspPosition(position int, file *ast.SourceFile) 
 
 func quote(file *ast.SourceFile, preferences lsutil.UserPreferences, text string) string {
 	// Editors can pass in undefined or empty string - we want to infer the preference in those cases.
-	quotePreference := lsutil.GetQuotePreference(file, preferences)
-	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
-	if quotePreference == lsutil.QuotePreferenceSingle {
-		quoted = quoteReplacer.Replace(stringutil.StripQuotes(quoted))
+	quoteChar := printer.QuoteCharDoubleQuote
+	if lsutil.GetQuotePreference(file, preferences) == lsutil.QuotePreferenceSingle {
+		quoteChar = printer.QuoteCharSingleQuote
 	}
-	return quoted
+	q := string(rune(quoteChar))
+	return q + printer.EscapeString(text, quoteChar) + q
 }
 
 var typeKeywords *collections.Set[ast.Kind] = collections.NewSetFromItems(

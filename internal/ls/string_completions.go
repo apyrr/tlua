@@ -142,14 +142,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 		}
 	case completion.fromTypes != nil:
 		completion := completion.fromTypes
-		var quoteChar printer.QuoteChar
-		if contextToken.Kind == ast.KindNoSubstitutionTemplateLiteral {
-			quoteChar = printer.QuoteCharBacktick
-		} else if strings.HasPrefix(contextToken.Text(), "'") {
-			quoteChar = printer.QuoteCharSingleQuote
-		} else {
-			quoteChar = printer.QuoteCharDoubleQuote
-		}
+		quoteChar := stringLiteralQuoteChar(contextToken)
 		items := core.Map(completion.types, func(t *checker.StringLiteralType) *CompletionItem {
 			name := printer.EscapeString(t.AsLiteralType().Value().(string), quoteChar)
 			lspItem := l.createLSPCompletionItem(
@@ -500,7 +493,7 @@ func fromUnionableLiteralType(
 				fromProperties: &completionsFromProperties{
 					symbols: core.Filter(
 						result.symbols,
-						func(s *ast.Symbol) bool { return !slices.Contains(alreadyUsedTypes, s.Name) },
+						func(s *ast.Symbol) bool { return !slices.Contains(alreadyUsedTypes, ast.KeyDisplayName(s.Name)) },
 					),
 					hasIndexSignature: result.hasIndexSignature,
 				},
@@ -1846,17 +1839,20 @@ func (l *LanguageService) stringLiteralCompletionDetails(
 		return item
 	case completion.fromProperties != nil:
 		properties := completion.fromProperties
+		quoteChar := stringLiteralQuoteChar(location)
 		for _, symbol := range properties.symbols {
 			// Number keys are filtered out of string-literal completions upstream,
-			// so symbol.Name here is always a plain (string-key) name.
-			if symbol.Name == name {
+			// so symbol.Name here is always a string key; the item is labeled with
+			// its escaped spelling.
+			if printer.EscapeString(ast.KeyDisplayName(symbol.Name), quoteChar) == name {
 				return l.createCompletionDetailsForSymbol(item, symbol, checker, location, position, docFormat)
 			}
 		}
 	case completion.fromTypes != nil:
 		types := completion.fromTypes
+		quoteChar := stringLiteralQuoteChar(location)
 		for _, t := range types.types {
-			if t.AsLiteralType().Value().(string) == name {
+			if printer.EscapeString(t.AsLiteralType().Value().(string), quoteChar) == name {
 				return createCompletionDetails(item, name, "" /*documentation*/, docFormat)
 			}
 		}

@@ -1920,7 +1920,7 @@ func (c *Checker) tryGetElementAccessExpressionName(node *ast.ElementAccessExpre
 		// t[1] accesses the number key 1, distinct from t["1"].
 		return ast.NumberKeyNameFromText(node.ArgumentExpression.Text()), true
 	case ast.IsStringOrNumericLiteralLike(node.ArgumentExpression):
-		return node.ArgumentExpression.Text(), true
+		return ast.StringKeyName(node.ArgumentExpression.Text()), true
 	case ast.IsEntityNameExpression(node.ArgumentExpression):
 		return c.tryGetNameFromEntityNameExpression(node.ArgumentExpression)
 	}
@@ -2080,7 +2080,7 @@ func tryGetStaticNameFromLiteral(node *ast.Node) (string, bool) {
 	case ast.IsNumericLiteral(node):
 		return ast.NumberKeyNameFromText(node.Text()), true
 	case ast.IsStringLiteralLike(node):
-		return node.Text(), true
+		return ast.StringKeyName(node.Text()), true
 	case ast.IsPrefixUnaryExpression(node) && node.AsPrefixUnaryExpression().Operator == ast.KindMinusToken &&
 		ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand):
 		return ast.NumberKeyNameFromSignedText(true, node.AsPrefixUnaryExpression().Operand.Text()), true

@@ -520,7 +520,7 @@ func (c *Checker) reportLuaAugmentationCollision(group []luaAugmentation, name s
 }
 
 func (c *Checker) reportLuaMethodCollision(methods []*ast.Node, name string) {
-	displayName := ast.NumberKeyDisplayName(name)
+	displayName := ast.KeyDisplayName(name)
 	for _, declaration := range methods {
 		if !c.luaReportedMethodCollisions.AddIfAbsent(declaration) {
 			continue

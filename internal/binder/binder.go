@@ -329,7 +329,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			if name.Kind == ast.KindNumericLiteral {
 				return ast.NumberKeyNameFromText(name.Text())
 			}
-			return name.Text()
+			return ast.StringKeyName(name.Text())
 		}
 		if ast.IsComputedPropertyName(name) {
 			nameExpression := name.Expression()
@@ -338,7 +338,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 				if nameExpression.Kind == ast.KindNumericLiteral {
 					return ast.NumberKeyNameFromText(nameExpression.Text())
 				}
-				return nameExpression.Text()
+				return ast.StringKeyName(nameExpression.Text())
 			}
 			if ast.IsSignedNumericLiteral(nameExpression) {
 				unaryExpression := nameExpression.AsPrefixUnaryExpression()
@@ -1183,7 +1183,7 @@ func (b *Binder) lookupEntity(node *ast.Node, container *ast.Node) *ast.Symbol {
 	}
 	if symbol := getInitializerSymbol(b.lookupEntity(node.Expression(), container)); symbol != nil && symbol.Exports != nil {
 		if name := ast.GetElementOrPropertyAccessName(node); name != nil {
-			return symbol.Exports[name.Text()]
+			return symbol.Exports[ast.GetPropertyNameForPropertyNameNode(name)]
 		}
 	}
 	return nil

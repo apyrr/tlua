@@ -200,9 +200,9 @@ func getSourceDefCheckerInfo(
 	if len(declarations) == 0 && isPropertyName {
 		if left := node.Parent.Expression(); left != nil {
 			// Number keys are mangled in the symbol table (t[1] != t["1"]).
-			name := node.Text()
+			name := ast.StringKeyName(node.Text())
 			if ast.IsNumericLiteral(node) {
-				name = ast.NumberKeyNameFromText(name)
+				name = ast.NumberKeyNameFromText(node.Text())
 			}
 			if prop := c.GetPropertyOfType(c.GetTypeAtLocation(left), name); prop != nil {
 				declarations = prop.Declarations

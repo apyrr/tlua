@@ -1247,7 +1247,7 @@ func (c *Checker) createEmptyObjectTypeFromStringLiteral(t *Type) *Type {
 		if t.flags&TypeFlagsStringLiteral == 0 {
 			continue
 		}
-		name := getStringLiteralValue(t)
+		name := ast.StringKeyName(getStringLiteralValue(t))
 		literalProp := c.newSymbol(ast.SymbolFlagsProperty, name)
 		c.valueSymbolLinks.Get(literalProp).resolvedType = c.anyType
 		if t.symbol != nil {

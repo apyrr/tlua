@@ -170,13 +170,44 @@ func NumberKeyValue(name string) (string, bool) {
 	return strings.CutPrefix(name, numberKeyPrefix)
 }
 
-// NumberKeyDisplayName returns the user-visible text of a symbol name: a
-// number-key name ("\xFEn:1") decodes to its decimal value ("1"); any other
-// name passes through unchanged. Use this wherever a symbol name flows into a
-// diagnostic message or other user-facing text, so the "\xFEn:" sentinel never
-// leaks.
-func NumberKeyDisplayName(name string) string {
+// stringKeyPrefix marks a string key whose own first byte is 0xFE, the
+// internal-name prefix. A Lua string is a byte string, so any byte can begin a
+// key; moving such keys into their own namespace keeps every internal name
+// ("\xFEcall", "\xFEn:1", ...) out of reach of a string key.
+const stringKeyPrefix = InternalSymbolNamePrefix + "s:"
+
+// StringKeyName returns the symbol-table name for the string key s. Every
+// conversion from a string key (a string literal, a string literal type) to a
+// name must go through here, next to the number-key conversions.
+func StringKeyName(s string) string {
+	if strings.HasPrefix(s, InternalSymbolNamePrefix) {
+		return stringKeyPrefix + s
+	}
+	return s
+}
+
+// StringKeyValue returns the string key of a name that StringKeyName moved into
+// the string-key namespace.
+func StringKeyValue(name string) (string, bool) {
+	return strings.CutPrefix(name, stringKeyPrefix)
+}
+
+// IsKeyName reports whether a name that begins with the internal-name prefix
+// is still an ordinary member: a number key or a string key.
+func IsKeyName(name string) bool {
+	return IsNumberKeyName(name) || strings.HasPrefix(name, stringKeyPrefix)
+}
+
+// KeyDisplayName returns the user-visible text of a symbol name: a number-key
+// name ("\xFEn:1") decodes to its decimal value ("1"), a string-key name to its
+// string, and any other name passes through unchanged. Use this wherever a
+// symbol name flows into a diagnostic message or other user-facing text, so the
+// key-namespace prefixes never leak.
+func KeyDisplayName(name string) string {
 	if value, ok := NumberKeyValue(name); ok {
+		return value
+	}
+	if value, ok := StringKeyValue(name); ok {
 		return value
 	}
 	return name

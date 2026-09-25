@@ -1245,7 +1245,7 @@ func (l *LanguageService) getReferencesForStringLiteral(
 
 func isStringLiteralPropertyReference(node *ast.StringLiteralLike, checker *checker.Checker) bool {
 	if ast.IsPropertySignatureDeclaration(node.Parent) {
-		return checker.GetPropertyOfType(checker.GetTypeAtLocation(node.Parent.Parent), node.Text()) != nil
+		return checker.GetPropertyOfType(checker.GetTypeAtLocation(node.Parent.Parent), ast.StringKeyName(node.Text())) != nil
 	}
 	return false
 }
@@ -1694,12 +1694,12 @@ func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comi
 				s = symbol
 			}
 		}
-		// Number-key names are mangled; the source spells them as the numeric
-		// text, which is what the reference text-scan searches for.
-		if value, ok := ast.NumberKeyValue(ast.SymbolName(s)); ok {
-			text = value
+		// Number- and string-key names are mangled; the source spells them as
+		// the key itself, which is what the reference text-scan searches for.
+		if name := ast.SymbolName(s); ast.IsKeyName(name) {
+			text = ast.KeyDisplayName(name)
 		} else {
-			text = stringutil.StripQuotes(ast.SymbolName(s))
+			text = stringutil.StripQuotes(name)
 		}
 	}
 	if len(allSearchSymbols) == 0 {

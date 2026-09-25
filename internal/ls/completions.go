@@ -1529,6 +1529,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			origin,
 			data.completionKind,
 			data.luaTableConstructor,
+			data.contextToken,
 		)
 		// Dedupe number keys by their mangled name so key 1 can never collapse
 		// with the disjoint string key "1" regardless of how each displays.
@@ -2150,6 +2151,7 @@ func getCompletionEntryDisplayNameForSymbol(
 	origin *symbolOriginInfo,
 	completionKind CompletionKind,
 	luaTableConstructor bool,
+	contextToken *ast.Node,
 ) (displayName string, needsConvertPropertyAccess bool) {
 	if originIsIgnore(origin) {
 		return "", false
@@ -2184,6 +2186,11 @@ func getCompletionEntryDisplayNameForSymbol(
 		default:
 			return value, false
 		}
+	}
+	// A string key that begins with the internal-name byte 0xFE lives in its own
+	// namespace; from here on it is an ordinary string key.
+	if value, ok := ast.StringKeyValue(name); ok {
+		name = value
 	}
 	if name == "" ||
 		// A vararg parameter's `...` name is synthetic and unreferenceable: no
@@ -2222,7 +2229,7 @@ func getCompletionEntryDisplayNameForSymbol(
 		return "", false
 	case CompletionKindObjectPropertyDeclaration:
 		// TODO: microsoft/TypeScript#18169
-		escapedName, _ := core.StringifyJson(name, "", "")
+		escapedName := "\"" + printer.EscapeString(name, printer.QuoteCharDoubleQuote) + "\""
 		if luaTableConstructor {
 			// A table constructor keys a non-Name field with brackets: `["end"] = v`.
 			return "[" + escapedName + "]", false
@@ -2236,7 +2243,11 @@ func getCompletionEntryDisplayNameForSymbol(
 			return "", false
 		}
 		return name, true
-	case CompletionKindNone, CompletionKindString:
+	case CompletionKindString:
+		// The name is inserted into the string literal it completes, so it is
+		// spelled with that literal's escapes.
+		return printer.EscapeString(name, stringLiteralQuoteChar(contextToken)), false
+	case CompletionKindNone:
 		return name, false
 	default:
 		panic(fmt.Sprintf("Unexpected completion kind: %v", completionKind))
@@ -2647,6 +2658,18 @@ func (l *LanguageService) createRangeFromStringLiteralLikeContent(file *ast.Sour
 // so must bypass string quoting.
 func isNumberKeyCompletion(symbol *ast.Symbol, origin *symbolOriginInfo) bool {
 	return !originIncludesSymbolName(origin) && ast.IsNumberKeyName(ast.SymbolName(symbol))
+}
+
+// stringLiteralQuoteChar is the quote that delimits the string literal token.
+func stringLiteralQuoteChar(token *ast.Node) printer.QuoteChar {
+	debug.Assert(token != nil && ast.IsStringLiteralLike(token), "string completions always complete inside a string literal")
+	switch {
+	case token.Kind == ast.KindNoSubstitutionTemplateLiteral:
+		return printer.QuoteCharBacktick
+	case ast.IsStringLiteral(token) && token.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0:
+		return printer.QuoteCharSingleQuote
+	}
+	return printer.QuoteCharDoubleQuote
 }
 
 func quotePropertyName(file *ast.SourceFile, preferences lsutil.UserPreferences, name string) string {
@@ -3620,6 +3643,11 @@ func (l *LanguageService) createLSPCompletionItem(
 	autoImportFix *lsproto.AutoImportFix,
 	detail *string,
 ) *lsproto.CompletionItem {
+	// Completion text travels as JSON: spell a byte of a Lua string key that is
+	// not valid UTF-8 as `\xHH` in the label, the edit and the resolve data alike,
+	// instead of letting it become U+FFFD.
+	name = stringutil.EscapeInvalidUTF8(name)
+	insertText = stringutil.EscapeInvalidUTF8(insertText)
 	kind := getCompletionsSymbolKind(elementKind)
 	data := &lsproto.CompletionItemData{
 		FileName:   file.FileName(),
@@ -3675,6 +3703,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		insertTextFormat = new(lsproto.InsertTextFormatSnippet)
 	}
 
+	filterText = stringutil.EscapeInvalidUTF8(filterText)
 	return &lsproto.CompletionItem{
 		Label:            name,
 		LabelDetails:     labelDetails,
@@ -4048,8 +4077,8 @@ func (l *LanguageService) getSymbolCompletionFromItemData(
 	// completion entry.
 	for index, symbol := range data.symbols {
 		origin := data.symbolToOriginInfoMap[index]
-		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.luaTableConstructor)
-		if displayName == itemData.Name &&
+		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.luaTableConstructor, data.contextToken)
+		if stringutil.EscapeInvalidUTF8(displayName) == itemData.Name &&
 			(itemData.Source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
 				getSourceFromOrigin(origin) == itemData.Source ||
 				itemData.Source == string(completionSourceObjectLiteralMemberWithComma)) {

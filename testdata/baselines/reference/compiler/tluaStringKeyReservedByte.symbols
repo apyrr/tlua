@@ -1,0 +1,96 @@
+//// [tests/cases/compiler/tluaStringKeyReservedByte.tlua] ////
+
+=== tluaStringKeyReservedByte.tlua ===
+// A Lua string key may begin with any byte, including 0xFE, the byte that begins
+// the checker's internal names ("\xFEcall", "\xFEindex", "\xFEn:1", ...). Such a
+// key is an ordinary string key: it names neither a number key nor a call or
+// index signature.
+local t = { ["\xfen:1"] = "s" }
+>t : Symbol(t, Decl(tluaStringKeyReservedByte.tlua, 4, 5))
+>["\xfen:1"] : Symbol(["\xfen:1"], Decl(tluaStringKeyReservedByte.tlua, 4, 11))
+>"\xfen:1" : Symbol(["\xfen:1"], Decl(tluaStringKeyReservedByte.tlua, 4, 11))
+
+local s: string = t["\xfen:1"]
+>s : Symbol(s, Decl(tluaStringKeyReservedByte.tlua, 5, 5))
+>t : Symbol(t, Decl(tluaStringKeyReservedByte.tlua, 4, 5))
+>"\xfen:1" : Symbol(["\xfen:1"], Decl(tluaStringKeyReservedByte.tlua, 4, 11))
+
+local n: number = t[1]
+>n : Symbol(n, Decl(tluaStringKeyReservedByte.tlua, 6, 5))
+>t : Symbol(t, Decl(tluaStringKeyReservedByte.tlua, 4, 5))
+
+interface Keys { "\xfecall": number; "\xfeindex": string; "\xfefoo": boolean }
+>Keys : Symbol(Keys, Decl(tluaStringKeyReservedByte.tlua, 6, 22))
+>"\xfecall" : Symbol(Keys["\xfecall"], Decl(tluaStringKeyReservedByte.tlua, 8, 16))
+>"\xfeindex" : Symbol(Keys["\xfeindex"], Decl(tluaStringKeyReservedByte.tlua, 8, 36))
+>"\xfefoo" : Symbol(Keys["\xfefoo"], Decl(tluaStringKeyReservedByte.tlua, 8, 57))
+
+local missing: Keys = { ["\xfecall"] = 1, ["\xfeindex"] = "x" }
+>missing : Symbol(missing, Decl(tluaStringKeyReservedByte.tlua, 9, 5))
+>Keys : Symbol(Keys, Decl(tluaStringKeyReservedByte.tlua, 6, 22))
+>["\xfecall"] : Symbol(["\xfecall"], Decl(tluaStringKeyReservedByte.tlua, 9, 23))
+>"\xfecall" : Symbol(["\xfecall"], Decl(tluaStringKeyReservedByte.tlua, 9, 23))
+>["\xfeindex"] : Symbol(["\xfeindex"], Decl(tluaStringKeyReservedByte.tlua, 9, 41))
+>"\xfeindex" : Symbol(["\xfeindex"], Decl(tluaStringKeyReservedByte.tlua, 9, 41))
+
+local k: Keys = { ["\xfecall"] = 1, ["\xfeindex"] = "x", ["\xfefoo"] = true }
+>k : Symbol(k, Decl(tluaStringKeyReservedByte.tlua, 10, 5))
+>Keys : Symbol(Keys, Decl(tluaStringKeyReservedByte.tlua, 6, 22))
+>["\xfecall"] : Symbol(["\xfecall"], Decl(tluaStringKeyReservedByte.tlua, 10, 17))
+>"\xfecall" : Symbol(["\xfecall"], Decl(tluaStringKeyReservedByte.tlua, 10, 17))
+>["\xfeindex"] : Symbol(["\xfeindex"], Decl(tluaStringKeyReservedByte.tlua, 10, 35))
+>"\xfeindex" : Symbol(["\xfeindex"], Decl(tluaStringKeyReservedByte.tlua, 10, 35))
+>["\xfefoo"] : Symbol(["\xfefoo"], Decl(tluaStringKeyReservedByte.tlua, 10, 56))
+>"\xfefoo" : Symbol(["\xfefoo"], Decl(tluaStringKeyReservedByte.tlua, 10, 56))
+
+local c: number = k["\xfecall"]
+>c : Symbol(c, Decl(tluaStringKeyReservedByte.tlua, 11, 5))
+>k : Symbol(k, Decl(tluaStringKeyReservedByte.tlua, 10, 5))
+>"\xfecall" : Symbol(Keys["\xfecall"], Decl(tluaStringKeyReservedByte.tlua, 8, 16))
+
+local notCallable = k()
+>notCallable : Symbol(notCallable, Decl(tluaStringKeyReservedByte.tlua, 12, 5))
+>k : Symbol(k, Decl(tluaStringKeyReservedByte.tlua, 10, 5))
+
+type KeyNames = keyof Keys
+>KeyNames : Symbol(KeyNames, Decl(tluaStringKeyReservedByte.tlua, 12, 23))
+>Keys : Symbol(Keys, Decl(tluaStringKeyReservedByte.tlua, 6, 22))
+
+local key: KeyNames = "\xfefoo"
+>key : Symbol(key, Decl(tluaStringKeyReservedByte.tlua, 15, 5))
+>KeyNames : Symbol(KeyNames, Decl(tluaStringKeyReservedByte.tlua, 12, 23))
+
+local notAKey: KeyNames = "foo"
+>notAKey : Symbol(notAKey, Decl(tluaStringKeyReservedByte.tlua, 16, 5))
+>KeyNames : Symbol(KeyNames, Decl(tluaStringKeyReservedByte.tlua, 12, 23))
+
+// Diagnostics spell a byte that is not valid UTF-8 as `\xHH`, so two different
+// bytes never look alike.
+local ab = { a = 1 }
+>ab : Symbol(ab, Decl(tluaStringKeyReservedByte.tlua, 20, 5))
+>a : Symbol(a, Decl(tluaStringKeyReservedByte.tlua, 20, 12))
+
+local ff = ab["\xff"]
+>ff : Symbol(ff, Decl(tluaStringKeyReservedByte.tlua, 21, 5))
+>ab : Symbol(ab, Decl(tluaStringKeyReservedByte.tlua, 20, 5))
+
+local fe = ab["\xfe"]
+>fe : Symbol(fe, Decl(tluaStringKeyReservedByte.tlua, 22, 5))
+>ab : Symbol(ab, Decl(tluaStringKeyReservedByte.tlua, 20, 5))
+
+// Inferring an object type from a key keeps the key a string key.
+declare function fromKey<T>(k: keyof T): T
+>fromKey : Symbol(fromKey, Decl(tluaStringKeyReservedByte.tlua, 22, 21))
+>T : Symbol(T, Decl(tluaStringKeyReservedByte.tlua, 25, 25))
+>k : Symbol(k, Decl(tluaStringKeyReservedByte.tlua, 25, 28))
+>T : Symbol(T, Decl(tluaStringKeyReservedByte.tlua, 25, 25))
+>T : Symbol(T, Decl(tluaStringKeyReservedByte.tlua, 25, 25))
+
+local numberLike = fromKey("\xfen:1")
+>numberLike : Symbol(numberLike, Decl(tluaStringKeyReservedByte.tlua, 26, 5))
+>fromKey : Symbol(fromKey, Decl(tluaStringKeyReservedByte.tlua, 22, 21))
+
+local callLike = fromKey("\xfecall")
+>callLike : Symbol(callLike, Decl(tluaStringKeyReservedByte.tlua, 27, 5))
+>fromKey : Symbol(fromKey, Decl(tluaStringKeyReservedByte.tlua, 22, 21))
+

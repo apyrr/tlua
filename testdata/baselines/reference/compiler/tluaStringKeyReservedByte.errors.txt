@@ -1,0 +1,59 @@
+tluaStringKeyReservedByte.tlua(7,19): error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type '{ "\xfen:1": string; }'.
+  Property '1' does not exist on type '{ "\xfen:1": string; }'.
+tluaStringKeyReservedByte.tlua(10,7): error TLUA2741: Property '"\xfefoo"' is missing in type '{ "\xfecall": number; "\xfeindex": string; }' but required in type 'Keys'.
+tluaStringKeyReservedByte.tlua(13,21): error TLUA2349: This expression is not callable.
+  Type 'Keys' has no call signatures.
+tluaStringKeyReservedByte.tlua(17,7): error TLUA2820: Type '"foo"' is not assignable to type 'keyof Keys'. Did you mean '"\xfefoo"'?
+tluaStringKeyReservedByte.tlua(22,12): error TLUA7053: Element implicitly has an 'any' type because expression of type '"\xff"' can't be used to index type '{ a: number; }'.
+  Property '\xff' does not exist on type '{ a: number; }'.
+tluaStringKeyReservedByte.tlua(23,12): error TLUA7053: Element implicitly has an 'any' type because expression of type '"\xfe"' can't be used to index type '{ a: number; }'.
+  Property '\xfe' does not exist on type '{ a: number; }'.
+
+
+==== tluaStringKeyReservedByte.tlua (6 errors) ====
+    // A Lua string key may begin with any byte, including 0xFE, the byte that begins
+    // the checker's internal names ("\xFEcall", "\xFEindex", "\xFEn:1", ...). Such a
+    // key is an ordinary string key: it names neither a number key nor a call or
+    // index signature.
+    local t = { ["\xfen:1"] = "s" }
+    local s: string = t["\xfen:1"]
+    local n: number = t[1]
+                      ~~~~
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '1' can't be used to index type '{ "\xfen:1": string; }'.
+!!! error TLUA7053:   Property '1' does not exist on type '{ "\xfen:1": string; }'.
+    
+    interface Keys { "\xfecall": number; "\xfeindex": string; "\xfefoo": boolean }
+    local missing: Keys = { ["\xfecall"] = 1, ["\xfeindex"] = "x" }
+          ~~~~~~~
+!!! error TLUA2741: Property '"\xfefoo"' is missing in type '{ "\xfecall": number; "\xfeindex": string; }' but required in type 'Keys'.
+!!! related TLUA2728 tluaStringKeyReservedByte.tlua:9:59: '"\xfefoo"' is declared here.
+    local k: Keys = { ["\xfecall"] = 1, ["\xfeindex"] = "x", ["\xfefoo"] = true }
+    local c: number = k["\xfecall"]
+    local notCallable = k()
+                        ~
+!!! error TLUA2349: This expression is not callable.
+!!! error TLUA2349:   Type 'Keys' has no call signatures.
+    
+    type KeyNames = keyof Keys
+    local key: KeyNames = "\xfefoo"
+    local notAKey: KeyNames = "foo"
+          ~~~~~~~
+!!! error TLUA2820: Type '"foo"' is not assignable to type 'keyof Keys'. Did you mean '"\xfefoo"'?
+    
+    // Diagnostics spell a byte that is not valid UTF-8 as `\xHH`, so two different
+    // bytes never look alike.
+    local ab = { a = 1 }
+    local ff = ab["\xff"]
+               ~~~~~~~~~~
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '"\xff"' can't be used to index type '{ a: number; }'.
+!!! error TLUA7053:   Property '\xff' does not exist on type '{ a: number; }'.
+    local fe = ab["\xfe"]
+               ~~~~~~~~~~
+!!! error TLUA7053: Element implicitly has an 'any' type because expression of type '"\xfe"' can't be used to index type '{ a: number; }'.
+!!! error TLUA7053:   Property '\xfe' does not exist on type '{ a: number; }'.
+    
+    // Inferring an object type from a key keeps the key a string key.
+    declare function fromKey<T>(k: keyof T): T
+    local numberLike = fromKey("\xfen:1")
+    local callLike = fromKey("\xfecall")
+    

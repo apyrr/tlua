@@ -26,6 +26,7 @@ import (
 	"github.com/apyrr/tlua/internal/pprof"
 	"github.com/apyrr/tlua/internal/printer"
 	"github.com/apyrr/tlua/internal/project"
+	"github.com/apyrr/tlua/internal/stringutil"
 	"github.com/apyrr/tlua/internal/tsoptions"
 	"github.com/apyrr/tlua/internal/tspath"
 )
@@ -140,8 +141,13 @@ func (sd *snapshotData) newSymbolResponse(symbol *ast.Symbol, canonicalProject P
 	}
 
 	id, project := sd.registerSymbol(symbol, canonicalProject)
-	// Decode number-key names to their numeric text for the protocol.
-	name := ast.NumberKeyDisplayName(symbol.Name)
+	name := symbol.Name
+	if !strings.HasPrefix(name, ast.InternalSymbolNamePrefix) || ast.IsKeyName(name) {
+		// A user key: decode its key namespace, and spell a byte that is not
+		// valid UTF-8 as `\xHH`, so a key that begins with 0xFE can never read
+		// as an internal name (EscapeSymbolName turns 0xFE into "__").
+		name = stringutil.EscapeInvalidUTF8(ast.KeyDisplayName(name))
+	}
 	resp := &SymbolResponse{
 		Id:         id,
 		Project:    project,
