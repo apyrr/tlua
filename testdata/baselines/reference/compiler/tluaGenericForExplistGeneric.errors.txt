@@ -1,6 +1,6 @@
 tluaGenericForExplistGeneric.tlua(46,21): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'number[]'.
 tluaGenericForExplistGeneric.tlua(53,22): error TLUA2554: Expected 1 arguments, but got 2.
-tluaGenericForExplistGeneric.tlua(65,19): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'Table<never, unknown>'.
+tluaGenericForExplistGeneric.tlua(65,19): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'table | Table<{}, unknown>'.
 
 
 ==== tluaGenericForExplistGeneric.tlua (3 errors) ====
@@ -74,7 +74,7 @@ tluaGenericForExplistGeneric.tlua(65,19): error TLUA2345: Argument of type 'numb
     
     for k, v in next, 42 do
                       ~~
-!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'Table<never, unknown>'.
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'table | Table<{}, unknown>'.
       local _ = k;
       local _ = v;
     end

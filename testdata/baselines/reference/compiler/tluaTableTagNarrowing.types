@@ -1,0 +1,857 @@
+//// [tests/cases/compiler/tluaTableTagNarrowing.tlua] ////
+
+=== tluaTableTagNarrowing.tlua ===
+// `type(x) == "table"` says a value is a table and nothing about its keys, so a type
+// that states nothing about the value (unknown, a bare type parameter) narrows to
+// Table<{}, unknown>: any key reads unknown through its index signature, and
+// pairs visits it. A declared `table` states no key and stays closed; code that reads
+// arbitrary keys declares Table<K, V>.
+
+local function isMarked(value: unknown): boolean
+>isMarked : (value: unknown) => boolean
+>value : unknown
+
+    return type(value) == "table" and value._marked == true
+>type(value) == "table" and value._marked == true : boolean
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+>value._marked == true : boolean
+>value._marked : unknown
+>value : Table<{}, unknown>
+>_marked : unknown
+>true : true
+
+end
+
+-- Flow facts narrow the read, in either spelling.
+local function readCode(err: unknown): string | nil
+>readCode : (err: unknown) => string | nil
+>err : unknown
+
+    if type(err) == "table" and type(err.code) == "string" then
+>type(err) == "table" and type(err.code) == "string" : boolean
+>type(err) == "table" : boolean
+>type(err) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>err : unknown
+>"table" : "table"
+>type(err.code) == "string" : boolean
+>type(err.code) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>err.code : unknown
+>err : Table<{}, unknown>
+>code : unknown
+>"string" : "string"
+
+        return err.code
+>err.code : string
+>err : Table<{}, unknown>
+>code : string
+
+    end
+    return nil
+end
+local function readSlot(err: unknown): string | nil
+>readSlot : (err: unknown) => string | nil
+>err : unknown
+
+    if type(err) == "table" and type(err["name"]) == "string" then
+>type(err) == "table" and type(err["name"]) == "string" : boolean
+>type(err) == "table" : boolean
+>type(err) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>err : unknown
+>"table" : "table"
+>type(err["name"]) == "string" : boolean
+>type(err["name"]) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>err["name"] : unknown
+>err : Table<{}, unknown>
+>"name" : "name"
+>"string" : "string"
+
+        return err["name"]
+>err["name"] : string
+>err : Table<{}, unknown>
+>"name" : "name"
+
+    end
+    return nil
+end
+
+-- Any key reads: strings, numbers, booleans, tables.
+local function readKeys(value: unknown, key: string, other: table): (unknown, unknown, unknown, unknown)
+>readKeys : (value: unknown, key: string, other: table) => (unknown, unknown, unknown, unknown)
+>value : unknown
+>key : string
+>other : table
+
+    if type(value) ~= "table" then
+>type(value) ~= "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+
+        return nil, nil, nil, nil
+>nil, nil, nil, nil : nil, nil, nil, nil
+
+    end
+    return value[key], value[1], value[true], value[other]
+>value[key], value[1], value[true], value[other] : unknown, unknown, unknown, unknown
+>value[key] : unknown
+>value : Table<{}, unknown>
+>key : string
+>value[1] : unknown
+>value : Table<{}, unknown>
+>1 : 1
+>value[true] : unknown
+>value : Table<{}, unknown>
+>true : true
+>value[other] : unknown
+>value : Table<{}, unknown>
+>other : table
+
+end
+
+-- The narrowed type is the declared Table<{}, unknown>, so it iterates, and it
+-- is not a table of anything narrower.
+local function keysOf(value: unknown): unknown[]
+>keysOf : (value: unknown) => unknown[]
+>value : unknown
+
+    local keys: unknown[] = {}
+>keys : unknown[]
+>{} : never[]
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+
+        for key, v in pairs(value) do
+>key : {}
+>v : {}
+>pairs(value) : LuaPairsIterator<{}, unknown>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>value : Table<{}, unknown>
+
+            keys[#keys + 1] = key
+>keys[#keys + 1] = key : {}
+>keys[#keys + 1] : unknown
+>keys : unknown[]
+>#keys + 1 : number
+>#keys : number
+>keys : unknown[]
+>1 : 1
+>key : {}
+
+            local asString: string = key
+>asString : string
+>key : {}
+
+        end
+        local anyTable: Table<{}, unknown> = value
+>anyTable : Table<{}, unknown>
+>value : Table<{}, unknown>
+
+        local asTable: table = value
+>asTable : table
+>value : Table<{}, unknown>
+
+        local numbers: Table<string, number> = value
+>numbers : Table<string, number>
+>value : Table<{}, unknown>
+
+        local strings: Table<string, unknown> = value
+>strings : Table<string, unknown>
+>value : Table<{}, unknown>
+
+        local cast = value as Table<string, unknown>
+>cast : Table<string, unknown>
+>value as Table<string, unknown> : Table<string, unknown>
+>value : Table<{}, unknown>
+
+    end
+    return keys
+>keys : unknown[]
+
+end
+
+-- A generic narrows to an intersection with it. It reads any key, but a generic
+-- is indexed for reading only, so writes need a stated type.
+local function readGeneric<T>(value: T): unknown
+>readGeneric : <T>(value: T) => unknown
+>value : T
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : T
+>"table" : "table"
+
+        value.field = 1
+>value.field = 1 : 1
+>value.field : any
+>value : T & Table<{}, unknown>
+>field : any
+>1 : 1
+
+        value["slot"] = 2
+>value["slot"] = 2 : 2
+>value["slot"] : any
+>value : T & Table<{}, unknown>
+>"slot" : "slot"
+>2 : 2
+
+        return value.field
+>value.field : unknown
+>value : T & Table<{}, unknown>
+>field : unknown
+
+    end
+    return nil
+end
+
+-- A stated type keeps its shape: the tag selects the table members of a union.
+interface Named { name: string; }
+>name : string
+
+local function readUnion(value: string | Named | nil): string | nil
+>readUnion : (value: string | Named | nil) => string | nil
+>value : string | Named | nil
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : string | Named | nil
+>"table" : "table"
+
+        return value.name
+>value.name : string
+>value : Named
+>name : string
+
+    end
+    return nil
+end
+local function readList(value: string | number[]): number | nil
+>readList : (value: string | number[]) => number | nil
+>value : string | number[]
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : string | number[]
+>"table" : "table"
+
+        return value[1]
+>value[1] : number | nil
+>value : number[]
+>1 : 1
+
+    end
+    return nil
+end
+local function notTable(value: string | Named): string
+>notTable : (value: string | Named) => string
+>value : string | Named
+
+    if type(value) ~= "table" then
+>type(value) ~= "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : string | Named
+>"table" : "table"
+
+        return value
+>value : string
+
+    end
+    return value.name
+>value.name : string
+>value : Named
+>name : string
+
+end
+
+-- A declared `table` states no key: it stays `table` under the tag, a read is an
+-- error, and it does not iterate. Declare the keys it holds instead.
+local function readDeclared(t: table): unknown
+>readDeclared : (t: table) => unknown
+>t : table
+
+    if type(t) == "table" then
+>type(t) == "table" : boolean
+>type(t) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>t : table
+>"table" : "table"
+
+        return t.name
+>t.name : any
+>t : table
+>name : any
+
+    end
+    return nil
+end
+-- pairs and next visit it with unknown keys and values, as Luau's do; ipairs and
+-- the table library want a stated array.
+local function iterateDeclared(t: table, list: Table<number, string>)
+>iterateDeclared : (t: table, list: Table<number, string>) => void
+>t : table
+>list : Table<number, string>
+
+    for key, value in pairs(t) do
+>key : {}
+>value : {}
+>pairs(t) : LuaPairsIterator<{}, unknown>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>t : table
+
+        local k: {} = key
+>k : {}
+>key : {}
+
+        local n: number = key
+>n : number
+>key : {}
+
+        local v: unknown = value
+>v : unknown
+>value : {}
+
+        local s: string = value
+>s : string
+>value : {}
+
+    end
+    local firstKey, firstValue = next(t)
+>firstKey : {} | nil
+>firstValue : {}
+>next(t) : {} | nil
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
+>t : table
+
+    local k2: {} | nil = firstKey
+>k2 : {} | nil
+>firstKey : {} | nil
+
+    local v2: {} = firstValue
+>v2 : {}
+>firstValue : {}
+
+    for key, value in next, t do
+>key : {}
+>value : {}
+>next, t : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {}), table
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
+>t : table
+
+        local v3: {} = value
+>v3 : {}
+>value : {}
+
+    end
+    for index, value in pairs(list) do
+>index : number
+>value : string
+>pairs(list) : LuaPairsIterator<number, string>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>list : Table<number, string>
+
+        local i: number = index
+>i : number
+>index : number
+
+        local s: string = value
+>s : string
+>value : string
+
+    end
+    for index, value in ipairs(t) do end
+>index : number
+>value : {}
+>ipairs(t) : LuaIPairsIterator<unknown>
+>ipairs : <T>(value: Table<number, T>) => (LuaIPairsIterator<T>, Table<number, T>, number)
+>t : table
+
+    table.insert(t, 1)
+>table.insert(t, 1) : void
+>table.insert : { <T>(values: Table<number, T>, value: T): void; <T>(values: Table<number, T>, position: number, value: T): void; }
+>table : TableLib
+>insert : { <T>(values: Table<number, T>, value: T): void; <T>(values: Table<number, T>, position: number, value: T): void; }
+>t : table
+>1 : 1
+
+end
+local function readStated(t: Table<string, unknown>): unknown
+>readStated : (t: Table<string, unknown>) => unknown
+>t : Table<string, unknown>
+
+    for key, value in pairs(t) do
+>key : string
+>value : {}
+>pairs(t) : LuaPairsIterator<string, unknown>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>t : Table<string, unknown>
+
+        local asString: string = key
+>asString : string
+>key : string
+
+    end
+    return t.name
+>t.name : unknown
+>t : Table<string, unknown>
+>name : unknown
+
+end
+local function readConstrained<T extends table>(t: T): unknown
+>readConstrained : <T extends table>(t: T) => unknown
+>t : T
+
+    if type(t) == "table" then
+>type(t) == "table" : boolean
+>type(t) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>t : T
+>"table" : "table"
+
+        return t.field
+>t.field : any
+>t : T
+>field : any
+
+    end
+    return nil
+end
+
+-- Writes go through the index signature too.
+local function mark(value: unknown)
+>mark : (value: unknown) => void
+>value : unknown
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+
+        value._marked = true
+>value._marked = true : true
+>value._marked : unknown
+>value : Table<{}, unknown>
+>_marked : unknown
+>true : true
+
+        value[1] = "x"
+>value[1] = "x" : "x"
+>value[1] : unknown
+>value : Table<{}, unknown>
+>1 : 1
+>"x" : "x"
+
+    end
+end
+
+-- Nested reads go through unknown, which states nothing.
+local function nested(value: unknown): unknown
+>nested : (value: unknown) => unknown
+>value : unknown
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+
+        return value.inner.value
+>value.inner.value : any
+>value.inner : unknown
+>value : Table<{}, unknown>
+>inner : unknown
+>value : any
+
+    end
+    return nil
+end
+
+-- A key no table takes is an error on the narrowed table too.
+local function readBadKeys(value: unknown, k: string | nil, u: unknown)
+>readBadKeys : (value: unknown, k: string | nil, u: unknown) => void
+>value : unknown
+>k : string | nil
+>u : unknown
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+
+        local a = value[k]
+>a : any
+>value[k] : any
+>value : Table<{}, unknown>
+>k : string | nil
+
+        local b = value[u]
+>b : any
+>value[u] : any
+>value : Table<{}, unknown>
+>u : unknown
+
+    end
+end
+
+-- The narrowed table is a table, stays one under a second check, and takes a
+-- metatable.
+local function useAsTable(value: unknown)
+>useAsTable : (value: unknown) => void
+>value : unknown
+
+    if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+
+        if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : Table<{}, unknown>
+>"table" : "table"
+
+            local again: Table<{}, unknown> = value
+>again : Table<{}, unknown>
+>value : Table<{}, unknown>
+
+        end
+        setmetatable(value, nil)
+>setmetatable(value, nil) : Table<{}, unknown>
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>value : Table<{}, unknown>
+
+        local n: number = #value
+>n : number
+>#value : number
+>value : Table<{}, unknown>
+
+    end
+end
+
+-- A type guard to a stated shape still narrows the table to it.
+local function isRecord(value: unknown): value is Table<string, unknown>
+>isRecord : (value: unknown) => value is Table<string, unknown>
+>value : unknown
+
+    return type(value) == "table"
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+
+end
+local function guarded(value: unknown)
+>guarded : (value: unknown) => void
+>value : unknown
+
+    if type(value) == "table" and isRecord(value) then
+>type(value) == "table" and isRecord(value) : boolean
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : unknown
+>"table" : "table"
+>isRecord(value) : boolean
+>isRecord : (value: unknown) => value is Table<string, unknown>
+>value : Table<{}, unknown>
+
+        local record: Table<string, unknown> = value
+>record : Table<string, unknown>
+>value : Table<{}, unknown> & Table<string, unknown>
+
+    end
+end
+
+-- A utility over any table is generic, as the lib's pairs is; a table stating
+-- members passes as one whose keys and values are those members'. Its values
+-- narrow like any unknown.
+local function deepCopy<K, V>(t: Table<K, V>): Table<K, V>
+>deepCopy : <K, V>(t: Table<K, V>) => Table<K, V>
+>t : Table<K, V>
+
+    local copy: Table<K, V> = {}
+>copy : Table<K, V>
+>{} : {}
+
+    for key, value in pairs(t) do
+>key : NonNullable<K>
+>value : V & {}
+>pairs(t) : LuaPairsIterator<K, V>
+>pairs : <K_1 = {}, V_1 = unknown>(value: Table<K_1, V_1> | table) => (LuaPairsIterator<K_1, V_1>, Table<K_1, V_1>, nil)
+>t : Table<K, V>
+
+        if type(value) == "table" then
+>type(value) == "table" : boolean
+>type(value) : "boolean" | "cdata" | "function" | "nil" | "number" | "string" | "table" | "thread" | "userdata"
+>type : (value: any) => "nil" | "number" | "string" | "boolean" | "table" | "function" | "thread" | "userdata" | "cdata"
+>value : V & {}
+>"table" : "table"
+
+            local inner: unknown = value.anything
+>inner : unknown
+>value.anything : unknown
+>value : V & Table<{}, unknown>
+>anything : unknown
+
+        end
+        rawset(copy, key, value)
+>rawset(copy, key, value) : Table<K, V>
+>rawset : <K_1, V_1>(value: Table<K_1, V_1>, index: K_1, item: V_1) => Table<K_1, V_1>
+>copy : Table<K, V>
+>key : NonNullable<K>
+>value : V & {}
+
+    end
+    return copy
+>copy : Table<K, V>
+
+end
+local named: Named = { name = "x" }
+>named : Named
+>{ name = "x" } : { name: string; }
+>name : string
+>"x" : "x"
+
+local copied: Table<"name", string> = deepCopy(named)
+>copied : Table<"name", string>
+>deepCopy(named) : Table<"name", string>
+>deepCopy : <K, V>(t: Table<K, V>) => Table<K, V>
+>named : Named
+
+local list: number[] = deepCopy({ 1, 2 })
+>list : number[]
+>deepCopy({ 1, 2 }) : Table<1 | 2, number>
+>deepCopy : <K, V>(t: Table<K, V>) => Table<K, V>
+>{ 1, 2 } : { 1: number; 2: number; }
+
+local record: Table<string, number> = deepCopy({} as Table<string, number>)
+>record : Table<string, number>
+>deepCopy({} as Table<string, number>) : Table<string, number>
+>deepCopy : <K, V>(t: Table<K, V>) => Table<K, V>
+>{} as Table<string, number> : Table<string, number>
+>{} : {}
+
+for key, value in pairs(named) do
+>key : "name"
+>value : string
+>pairs(named) : LuaPairsIterator<"name", string>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>named : Named
+
+    local asString: string = value
+>asString : string
+>value : string
+
+end
+
+-- Table<{}, unknown> is a type of its own, not the type of every table: K is
+-- invariant, so a Table of narrower keys is not one, nor is a `table`, and it is not
+-- a Table of narrower keys. A record passes because its members stand in for the
+-- index signature, as they do for every Table.
+local function readAny(t: Table<{}, unknown>): unknown
+>readAny : (t: Table<{}, unknown>) => unknown
+>t : Table<{}, unknown>
+
+    return t.anything
+>t.anything : unknown
+>t : Table<{}, unknown>
+>anything : unknown
+
+end
+readAny(named)
+>readAny(named) : unknown
+>readAny : (t: Table<{}, unknown>) => unknown
+>named : Named
+
+readAny({} as Table<string, number>)
+>readAny({} as Table<string, number>) : unknown
+>readAny : (t: Table<{}, unknown>) => unknown
+>{} as Table<string, number> : Table<string, number>
+>{} : {}
+
+readAny({} as table)
+>readAny({} as table) : unknown
+>readAny : (t: Table<{}, unknown>) => unknown
+>{} as table : table
+>{} : {}
+
+local function toStated(t: Table<{}, unknown>): Table<string, unknown>
+>toStated : (t: Table<{}, unknown>) => Table<string, unknown>
+>t : Table<{}, unknown>
+
+    return t
+>t : Table<{}, unknown>
+
+end
+
+-- pairs and next keep one signature, so a caller that reads it still correlates
+-- the table's keys and values.
+local numbers: Table<string, number> = {}
+>numbers : Table<string, number>
+>{} : {}
+
+local ok, firstName, firstNumber = pcall(next, numbers)
+>ok : boolean
+>firstName : string | nil
+>firstNumber : number
+>pcall(next, numbers) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
+>numbers : Table<string, number>
+
+local n: number | nil = firstNumber
+>n : number | nil
+>firstNumber : number
+
+local okPairs, iterate = pcall(pairs, numbers)
+>okPairs : boolean
+>iterate : LuaPairsIterator<string, number>
+>pcall(pairs, numbers) : boolean
+>pcall : { <...A, ...R>(fn: (...: A) => (...R), ...: A): (boolean, ...R); (fn: function, ...: any): (boolean, ...any); }
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>numbers : Table<string, number>
+
+local typedIterator: LuaPairsIterator<string, number> = iterate
+>typedIterator : LuaPairsIterator<string, number>
+>iterate : LuaPairsIterator<string, number>
+
+for key, value in pairs(42) do end
+>key : {}
+>value : {}
+>pairs(42) : LuaPairsIterator<{}, unknown>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>42 : 42
+
+-- A union with an opaque `table` iterates with the keys and values that side may
+-- hold, not only the keyed side's.
+local function iterateMixed(x: Table<string, number> | table, y: Named | table)
+>iterateMixed : (x: Table<string, number> | table, y: Named | table) => void
+>x : table | Table<string, number>
+>y : table | Named
+
+    for key, value in pairs(x) do
+>key : {}
+>value : {}
+>pairs(x) : LuaPairsIterator<{}, unknown>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>x : table | Table<string, number>
+
+        local s: string = key
+>s : string
+>key : {}
+
+        local n: number = value
+>n : number
+>value : {}
+
+    end
+    for key, value in pairs(y) do
+>key : {}
+>value : {}
+>pairs(y) : LuaPairsIterator<{}, unknown>
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>y : table | Named
+
+        local s: string = key
+>s : string
+>key : {}
+
+        local n: string = value
+>n : string
+>value : {}
+
+    end
+    local firstKey, firstValue = next(x)
+>firstKey : {} | nil
+>firstValue : {}
+>next(x) : {} | nil
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
+>x : table | Table<string, number>
+
+    local k: string | nil = firstKey
+>k : string | nil
+>firstKey : {} | nil
+
+    local v: number = firstValue
+>v : number
+>firstValue : {}
+
+    local afterKey = next(x, "a")
+>afterKey : {} | nil
+>next(x, "a") : {} | nil
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
+>x : table | Table<string, number>
+>"a" : "a"
+
+    local k2: string | nil = afterKey
+>k2 : string | nil
+>afterKey : {} | nil
+
+end
+-- The same holds for any signature of that shape: a stated key, an intersection.
+interface Tagged { tag?: string; }
+>tag : string | nil
+
+local function valuesOf<V>(t: Table<string, V> | table): V
+>valuesOf : <V>(t: Table<string, V> | table) => V
+>t : table | Table<string, V>
+
+    return nil as any
+>nil as any : any
+
+end
+local function taggedValues<K, V>(t: (Table<K, V> & Tagged) | table): V
+>taggedValues : <K, V>(t: (Table<K, V> & Tagged) | table) => V
+>t : table | (Table<K, V> & Tagged)
+
+    return nil as any
+>nil as any : any
+
+end
+local function useMixed(x: Table<string, number> | table)
+>useMixed : (x: Table<string, number> | table) => void
+>x : table | Table<string, number>
+
+    local a: number = valuesOf(x)
+>a : number
+>valuesOf(x) : unknown
+>valuesOf : <V>(t: Table<string, V> | table) => V
+>x : table | Table<string, number>
+
+    local b: number = taggedValues(x as (Table<string, number> & Tagged) | table)
+>b : number
+>taggedValues(x as (Table<string, number> & Tagged) | table) : unknown
+>taggedValues : <K, V>(t: (Table<K, V> & Tagged) | table) => V
+>x as (Table<string, number> & Tagged) | table : table | (Table<string, number> & Tagged)
+>x : table | Table<string, number>
+
+end
+

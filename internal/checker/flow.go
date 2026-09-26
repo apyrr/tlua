@@ -949,6 +949,14 @@ func (c *Checker) narrowTypeByLuaTypeGuard(f *FlowState, t *Type, guard luaGuard
 }
 
 func (c *Checker) narrowTypeByTypeFacts(t *Type, impliedType *Type, facts TypeFacts) *Type {
+	return c.narrowTypeByTypeFactsEx(t, impliedType, impliedType, facts)
+}
+
+// narrowTypeByTypeFactsEx narrows t as narrowTypeByTypeFacts does, but where the
+// implied type would be the result it is resultType instead; the subtype tests stay
+// on impliedType. `type(x) == "table"` implies `table` and results in the table of
+// any key (narrowTypeByLuaTable).
+func (c *Checker) narrowTypeByTypeFactsEx(t *Type, impliedType *Type, resultType *Type, facts TypeFacts) *Type {
 	return c.mapType(t, func(t *Type) *Type {
 		switch {
 		case c.isTypeRelatedTo(t, impliedType, c.strictSubtypeRelation):
@@ -957,9 +965,9 @@ func (c *Checker) narrowTypeByTypeFacts(t *Type, impliedType *Type, facts TypeFa
 			}
 			return c.neverType
 		case c.isTypeSubtypeOf(impliedType, t):
-			return impliedType
+			return resultType
 		case c.hasTypeFacts(t, facts):
-			return c.getIntersectionType([]*Type{t, impliedType})
+			return c.getIntersectionType([]*Type{t, resultType})
 		}
 		return c.neverType
 	})

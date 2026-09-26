@@ -25,8 +25,15 @@ declare function newproxy(prototype?: boolean | userdata): userdata;
 // direct call's key is the result to test. This is an approximation: at the end
 // of iteration (or on an empty table) both results are nil, and unlike Luau, a
 // nil-able V loses its nil here too, so `for k, v in next, t` agrees with pairs.
-declare function next<K, V>(value: Table<K, V>, index?: K): (K?, V & {});
-declare function pairs<K, V>(value: Table<K, V>): (LuaPairsIterator<K, V>, Table<K, V>, nil);
+//
+// A `table` states no keys, so pairs and next visit it with non-nil keys and
+// unknown values (as Luau's do): K and V are then uninferred and take their
+// defaults. One signature, not a `table` overload, so a caller that reads a single
+// signature -- pcall(next, t), xpcall(pairs, h, t) -- still correlates K and V.
+// Every other read of a `table` is an error; code that reads keys declares
+// Table<K, V>.
+declare function next<K = {}, V = unknown>(value: Table<K, V> | table, index?: K): (K?, V & {});
+declare function pairs<K = {}, V = unknown>(value: Table<K, V> | table): (LuaPairsIterator<K, V>, Table<K, V>, nil);
 // `pcall` correlates the callee's arguments and results: A is inferred from the
 // trailing arguments and checked against `fn`'s parameters, and the success results
 // become the pack `...R`. The true/false result is approximated as `(boolean, ...R)`:

@@ -276,7 +276,15 @@ func (c *Checker) narrowTypeByLuaTable(t *Type, assumeTrue bool) *Type {
 		return t
 	}
 	if assumeTrue {
-		return c.narrowTypeByTypeFacts(c.filterType(t, func(s *Type) bool { return !c.isLuaBrandedType(s) }), c.nonPrimitiveType, TypeFactsTypeofEQObject)
+		// The tag says the value is a table and nothing about its keys. A type that
+		// states nothing about the value (unknown, a bare type parameter) therefore
+		// narrows to the table of any key and unknown values, Table<{}, unknown>:
+		// every key reads unknown through its index signature and pairs visits it,
+		// with no rule of its own. A stated type keeps its shape, and a declared
+		// `table` -- which states no key -- stays `table`. The subtype tests stay on
+		// `table`, since a stated table type such as Named is not a subtype of
+		// Table<{}, unknown> (it has no index signature).
+		return c.narrowTypeByTypeFactsEx(c.filterType(t, func(s *Type) bool { return !c.isLuaBrandedType(s) }), c.nonPrimitiveType, c.getLuaAnyTableType(), TypeFactsTypeofEQObject)
 	}
 	return c.mapType(t, func(s *Type) *Type {
 		if c.isLuaBrandedType(s) {

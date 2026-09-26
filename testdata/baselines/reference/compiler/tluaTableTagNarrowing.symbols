@@ -1,0 +1,753 @@
+//// [tests/cases/compiler/tluaTableTagNarrowing.tlua] ////
+
+=== tluaTableTagNarrowing.tlua ===
+// `type(x) == "table"` says a value is a table and nothing about its keys, so a type
+// that states nothing about the value (unknown, a bare type parameter) narrows to
+// Table<{}, unknown>: any key reads unknown through its index signature, and
+// pairs visits it. A declared `table` states no key and stays closed; code that reads
+// arbitrary keys declares Table<K, V>.
+
+local function isMarked(value: unknown): boolean
+>isMarked : Symbol(isMarked, Decl(tluaTableTagNarrowing.tlua, 0, 0))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 6, 24))
+
+    return type(value) == "table" and value._marked == true
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 6, 24))
+>value._marked : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 6, 24))
+>_marked : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+end
+
+-- Flow facts narrow the read, in either spelling.
+local function readCode(err: unknown): string | nil
+>readCode : Symbol(readCode, Decl(tluaTableTagNarrowing.tlua, 8, 3))
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 11, 24))
+
+    if type(err) == "table" and type(err.code) == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 11, 24))
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>err.code : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 11, 24))
+>code : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+        return err.code
+>err.code : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 11, 24))
+>code : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+    end
+    return nil
+end
+local function readSlot(err: unknown): string | nil
+>readSlot : Symbol(readSlot, Decl(tluaTableTagNarrowing.tlua, 16, 3))
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 17, 24))
+
+    if type(err) == "table" and type(err["name"]) == "string" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 17, 24))
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 17, 24))
+
+        return err["name"]
+>err : Symbol(err, Decl(tluaTableTagNarrowing.tlua, 17, 24))
+
+    end
+    return nil
+end
+
+-- Any key reads: strings, numbers, booleans, tables.
+local function readKeys(value: unknown, key: string, other: table): (unknown, unknown, unknown, unknown)
+>readKeys : Symbol(readKeys, Decl(tluaTableTagNarrowing.tlua, 22, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 25, 24))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 25, 39))
+>other : Symbol(other, Decl(tluaTableTagNarrowing.tlua, 25, 52))
+
+    if type(value) ~= "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 25, 24))
+
+        return nil, nil, nil, nil
+    end
+    return value[key], value[1], value[true], value[other]
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 25, 24))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 25, 39))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 25, 24))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 25, 24))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 25, 24))
+>other : Symbol(other, Decl(tluaTableTagNarrowing.tlua, 25, 52))
+
+end
+
+-- The narrowed type is the declared Table<{}, unknown>, so it iterates, and it
+-- is not a table of anything narrower.
+local function keysOf(value: unknown): unknown[]
+>keysOf : Symbol(keysOf, Decl(tluaTableTagNarrowing.tlua, 30, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+
+    local keys: unknown[] = {}
+>keys : Symbol(keys, Decl(tluaTableTagNarrowing.tlua, 35, 9))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+
+        for key, v in pairs(value) do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 37, 11))
+>v : Symbol(v, Decl(tluaTableTagNarrowing.tlua, 37, 16))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+
+            keys[#keys + 1] = key
+>keys : Symbol(keys, Decl(tluaTableTagNarrowing.tlua, 35, 9))
+>keys : Symbol(keys, Decl(tluaTableTagNarrowing.tlua, 35, 9))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 37, 11))
+
+            local asString: string = key
+>asString : Symbol(asString, Decl(tluaTableTagNarrowing.tlua, 39, 17))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 37, 11))
+
+        end
+        local anyTable: Table<{}, unknown> = value
+>anyTable : Symbol(anyTable, Decl(tluaTableTagNarrowing.tlua, 41, 13))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+
+        local asTable: table = value
+>asTable : Symbol(asTable, Decl(tluaTableTagNarrowing.tlua, 42, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+
+        local numbers: Table<string, number> = value
+>numbers : Symbol(numbers, Decl(tluaTableTagNarrowing.tlua, 43, 13))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+
+        local strings: Table<string, unknown> = value
+>strings : Symbol(strings, Decl(tluaTableTagNarrowing.tlua, 44, 13))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+
+        local cast = value as Table<string, unknown>
+>cast : Symbol(cast, Decl(tluaTableTagNarrowing.tlua, 45, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 34, 22))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    end
+    return keys
+>keys : Symbol(keys, Decl(tluaTableTagNarrowing.tlua, 35, 9))
+
+end
+
+-- A generic narrows to an intersection with it. It reads any key, but a generic
+-- is indexed for reading only, so writes need a stated type.
+local function readGeneric<T>(value: T): unknown
+>readGeneric : Symbol(readGeneric, Decl(tluaTableTagNarrowing.tlua, 48, 3))
+>T : Symbol(T, Decl(tluaTableTagNarrowing.tlua, 52, 27))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 52, 30))
+>T : Symbol(T, Decl(tluaTableTagNarrowing.tlua, 52, 27))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 52, 30))
+
+        value.field = 1
+>value.field : Symbol(__index, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 52, 30))
+>field : Symbol(__index, Decl(lib.luajit.d.tlua, --, --))
+
+        value["slot"] = 2
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 52, 30))
+
+        return value.field
+>value.field : Symbol(__index, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 52, 30))
+>field : Symbol(__index, Decl(lib.luajit.d.tlua, --, --))
+
+    end
+    return nil
+end
+
+-- A stated type keeps its shape: the tag selects the table members of a union.
+interface Named { name: string; }
+>Named : Symbol(Named, Decl(tluaTableTagNarrowing.tlua, 59, 3))
+>name : Symbol(Named.name, Decl(tluaTableTagNarrowing.tlua, 62, 17))
+
+local function readUnion(value: string | Named | nil): string | nil
+>readUnion : Symbol(readUnion, Decl(tluaTableTagNarrowing.tlua, 62, 33))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 63, 25))
+>Named : Symbol(Named, Decl(tluaTableTagNarrowing.tlua, 59, 3))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 63, 25))
+
+        return value.name
+>value.name : Symbol(Named.name, Decl(tluaTableTagNarrowing.tlua, 62, 17))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 63, 25))
+>name : Symbol(Named.name, Decl(tluaTableTagNarrowing.tlua, 62, 17))
+
+    end
+    return nil
+end
+local function readList(value: string | number[]): number | nil
+>readList : Symbol(readList, Decl(tluaTableTagNarrowing.tlua, 68, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 69, 24))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 69, 24))
+
+        return value[1]
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 69, 24))
+
+    end
+    return nil
+end
+local function notTable(value: string | Named): string
+>notTable : Symbol(notTable, Decl(tluaTableTagNarrowing.tlua, 74, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 75, 24))
+>Named : Symbol(Named, Decl(tluaTableTagNarrowing.tlua, 59, 3))
+
+    if type(value) ~= "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 75, 24))
+
+        return value
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 75, 24))
+
+    end
+    return value.name
+>value.name : Symbol(Named.name, Decl(tluaTableTagNarrowing.tlua, 62, 17))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 75, 24))
+>name : Symbol(Named.name, Decl(tluaTableTagNarrowing.tlua, 62, 17))
+
+end
+
+-- A declared `table` states no key: it stays `table` under the tag, a read is an
+-- error, and it does not iterate. Declare the keys it holds instead.
+local function readDeclared(t: table): unknown
+>readDeclared : Symbol(readDeclared, Decl(tluaTableTagNarrowing.tlua, 80, 3))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 84, 28))
+
+    if type(t) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 84, 28))
+
+        return t.name
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 84, 28))
+
+    end
+    return nil
+end
+-- pairs and next visit it with unknown keys and values, as Luau's do; ipairs and
+-- the table library want a stated array.
+local function iterateDeclared(t: table, list: Table<number, string>)
+>iterateDeclared : Symbol(iterateDeclared, Decl(tluaTableTagNarrowing.tlua, 89, 3))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 92, 31))
+>list : Symbol(list, Decl(tluaTableTagNarrowing.tlua, 92, 40))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    for key, value in pairs(t) do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 93, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 93, 12))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 92, 31))
+
+        local k: {} = key
+>k : Symbol(k, Decl(tluaTableTagNarrowing.tlua, 94, 13))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 93, 7))
+
+        local n: number = key
+>n : Symbol(n, Decl(tluaTableTagNarrowing.tlua, 95, 13))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 93, 7))
+
+        local v: unknown = value
+>v : Symbol(v, Decl(tluaTableTagNarrowing.tlua, 96, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 93, 12))
+
+        local s: string = value
+>s : Symbol(s, Decl(tluaTableTagNarrowing.tlua, 97, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 93, 12))
+
+    end
+    local firstKey, firstValue = next(t)
+>firstKey : Symbol(firstKey, Decl(tluaTableTagNarrowing.tlua, 99, 9))
+>firstValue : Symbol(firstValue, Decl(tluaTableTagNarrowing.tlua, 99, 19))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 92, 31))
+
+    local k2: {} | nil = firstKey
+>k2 : Symbol(k2, Decl(tluaTableTagNarrowing.tlua, 100, 9))
+>firstKey : Symbol(firstKey, Decl(tluaTableTagNarrowing.tlua, 99, 9))
+
+    local v2: {} = firstValue
+>v2 : Symbol(v2, Decl(tluaTableTagNarrowing.tlua, 101, 9))
+>firstValue : Symbol(firstValue, Decl(tluaTableTagNarrowing.tlua, 99, 19))
+
+    for key, value in next, t do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 102, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 102, 12))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 92, 31))
+
+        local v3: {} = value
+>v3 : Symbol(v3, Decl(tluaTableTagNarrowing.tlua, 103, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 102, 12))
+
+    end
+    for index, value in pairs(list) do
+>index : Symbol(index, Decl(tluaTableTagNarrowing.tlua, 105, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 105, 14))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>list : Symbol(list, Decl(tluaTableTagNarrowing.tlua, 92, 40))
+
+        local i: number = index
+>i : Symbol(i, Decl(tluaTableTagNarrowing.tlua, 106, 13))
+>index : Symbol(index, Decl(tluaTableTagNarrowing.tlua, 105, 7))
+
+        local s: string = value
+>s : Symbol(s, Decl(tluaTableTagNarrowing.tlua, 107, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 105, 14))
+
+    end
+    for index, value in ipairs(t) do end
+>index : Symbol(index, Decl(tluaTableTagNarrowing.tlua, 109, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 109, 14))
+>ipairs : Symbol(ipairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 92, 31))
+
+    table.insert(t, 1)
+>table.insert : Symbol(TableLib.insert, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>table : Symbol(table, Decl(lib.luajit.d.tlua, --, --))
+>insert : Symbol(TableLib.insert, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 92, 31))
+
+end
+local function readStated(t: Table<string, unknown>): unknown
+>readStated : Symbol(readStated, Decl(tluaTableTagNarrowing.tlua, 111, 3))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 112, 26))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    for key, value in pairs(t) do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 113, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 113, 12))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 112, 26))
+
+        local asString: string = key
+>asString : Symbol(asString, Decl(tluaTableTagNarrowing.tlua, 114, 13))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 113, 7))
+
+    end
+    return t.name
+>t.name : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 112, 26))
+>name : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+end
+local function readConstrained<T extends table>(t: T): unknown
+>readConstrained : Symbol(readConstrained, Decl(tluaTableTagNarrowing.tlua, 117, 3))
+>T : Symbol(T, Decl(tluaTableTagNarrowing.tlua, 118, 31))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 118, 48))
+>T : Symbol(T, Decl(tluaTableTagNarrowing.tlua, 118, 31))
+
+    if type(t) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 118, 48))
+
+        return t.field
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 118, 48))
+
+    end
+    return nil
+end
+
+-- Writes go through the index signature too.
+local function mark(value: unknown)
+>mark : Symbol(mark, Decl(tluaTableTagNarrowing.tlua, 123, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 126, 20))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 126, 20))
+
+        value._marked = true
+>value._marked : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 126, 20))
+>_marked : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+        value[1] = "x"
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 126, 20))
+
+    end
+end
+
+-- Nested reads go through unknown, which states nothing.
+local function nested(value: unknown): unknown
+>nested : Symbol(nested, Decl(tluaTableTagNarrowing.tlua, 131, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 134, 22))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 134, 22))
+
+        return value.inner.value
+>value.inner : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 134, 22))
+>inner : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+    end
+    return nil
+end
+
+-- A key no table takes is an error on the narrowed table too.
+local function readBadKeys(value: unknown, k: string | nil, u: unknown)
+>readBadKeys : Symbol(readBadKeys, Decl(tluaTableTagNarrowing.tlua, 139, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 142, 27))
+>k : Symbol(k, Decl(tluaTableTagNarrowing.tlua, 142, 42))
+>u : Symbol(u, Decl(tluaTableTagNarrowing.tlua, 142, 59))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 142, 27))
+
+        local a = value[k]
+>a : Symbol(a, Decl(tluaTableTagNarrowing.tlua, 144, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 142, 27))
+>k : Symbol(k, Decl(tluaTableTagNarrowing.tlua, 142, 42))
+
+        local b = value[u]
+>b : Symbol(b, Decl(tluaTableTagNarrowing.tlua, 145, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 142, 27))
+>u : Symbol(u, Decl(tluaTableTagNarrowing.tlua, 142, 59))
+
+    end
+end
+
+-- The narrowed table is a table, stays one under a second check, and takes a
+-- metatable.
+local function useAsTable(value: unknown)
+>useAsTable : Symbol(useAsTable, Decl(tluaTableTagNarrowing.tlua, 147, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 151, 26))
+
+    if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 151, 26))
+
+        if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 151, 26))
+
+            local again: Table<{}, unknown> = value
+>again : Symbol(again, Decl(tluaTableTagNarrowing.tlua, 154, 17))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 151, 26))
+
+        end
+        setmetatable(value, nil)
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 151, 26))
+
+        local n: number = #value
+>n : Symbol(n, Decl(tluaTableTagNarrowing.tlua, 157, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 151, 26))
+
+    end
+end
+
+-- A type guard to a stated shape still narrows the table to it.
+local function isRecord(value: unknown): value is Table<string, unknown>
+>isRecord : Symbol(isRecord, Decl(tluaTableTagNarrowing.tlua, 159, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 162, 24))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 162, 24))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    return type(value) == "table"
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 162, 24))
+
+end
+local function guarded(value: unknown)
+>guarded : Symbol(guarded, Decl(tluaTableTagNarrowing.tlua, 164, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 165, 23))
+
+    if type(value) == "table" and isRecord(value) then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 165, 23))
+>isRecord : Symbol(isRecord, Decl(tluaTableTagNarrowing.tlua, 159, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 165, 23))
+
+        local record: Table<string, unknown> = value
+>record : Symbol(record, Decl(tluaTableTagNarrowing.tlua, 167, 13))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 165, 23))
+
+    end
+end
+
+-- A utility over any table is generic, as the lib's pairs is; a table stating
+-- members passes as one whose keys and values are those members'. Its values
+-- narrow like any unknown.
+local function deepCopy<K, V>(t: Table<K, V>): Table<K, V>
+>deepCopy : Symbol(deepCopy, Decl(tluaTableTagNarrowing.tlua, 169, 3))
+>K : Symbol(K, Decl(tluaTableTagNarrowing.tlua, 174, 24))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 174, 26))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 174, 30))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaTableTagNarrowing.tlua, 174, 24))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 174, 26))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaTableTagNarrowing.tlua, 174, 24))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 174, 26))
+
+    local copy: Table<K, V> = {}
+>copy : Symbol(copy, Decl(tluaTableTagNarrowing.tlua, 175, 9))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaTableTagNarrowing.tlua, 174, 24))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 174, 26))
+
+    for key, value in pairs(t) do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 176, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 176, 12))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 174, 30))
+
+        if type(value) == "table" then
+>type : Symbol(type, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 176, 12))
+
+            local inner: unknown = value.anything
+>inner : Symbol(inner, Decl(tluaTableTagNarrowing.tlua, 178, 17))
+>value.anything : Symbol(__index, Decl(lib.luajit.d.tlua, --, --))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 176, 12))
+>anything : Symbol(__index, Decl(lib.luajit.d.tlua, --, --))
+
+        end
+        rawset(copy, key, value)
+>rawset : Symbol(rawset, Decl(lib.luajit.d.tlua, --, --))
+>copy : Symbol(copy, Decl(tluaTableTagNarrowing.tlua, 175, 9))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 176, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 176, 12))
+
+    end
+    return copy
+>copy : Symbol(copy, Decl(tluaTableTagNarrowing.tlua, 175, 9))
+
+end
+local named: Named = { name = "x" }
+>named : Symbol(named, Decl(tluaTableTagNarrowing.tlua, 184, 5))
+>Named : Symbol(Named, Decl(tluaTableTagNarrowing.tlua, 59, 3))
+>name : Symbol(name, Decl(tluaTableTagNarrowing.tlua, 184, 22))
+
+local copied: Table<"name", string> = deepCopy(named)
+>copied : Symbol(copied, Decl(tluaTableTagNarrowing.tlua, 185, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>deepCopy : Symbol(deepCopy, Decl(tluaTableTagNarrowing.tlua, 169, 3))
+>named : Symbol(named, Decl(tluaTableTagNarrowing.tlua, 184, 5))
+
+local list: number[] = deepCopy({ 1, 2 })
+>list : Symbol(list, Decl(tluaTableTagNarrowing.tlua, 186, 5))
+>deepCopy : Symbol(deepCopy, Decl(tluaTableTagNarrowing.tlua, 169, 3))
+
+local record: Table<string, number> = deepCopy({} as Table<string, number>)
+>record : Symbol(record, Decl(tluaTableTagNarrowing.tlua, 187, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>deepCopy : Symbol(deepCopy, Decl(tluaTableTagNarrowing.tlua, 169, 3))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+for key, value in pairs(named) do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 188, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 188, 8))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>named : Symbol(named, Decl(tluaTableTagNarrowing.tlua, 184, 5))
+
+    local asString: string = value
+>asString : Symbol(asString, Decl(tluaTableTagNarrowing.tlua, 189, 9))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 188, 8))
+
+end
+
+-- Table<{}, unknown> is a type of its own, not the type of every table: K is
+-- invariant, so a Table of narrower keys is not one, nor is a `table`, and it is not
+-- a Table of narrower keys. A record passes because its members stand in for the
+-- index signature, as they do for every Table.
+local function readAny(t: Table<{}, unknown>): unknown
+>readAny : Symbol(readAny, Decl(tluaTableTagNarrowing.tlua, 190, 3))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 196, 23))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    return t.anything
+>t.anything : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 196, 23))
+>anything : Symbol(Table.__index, Decl(lib.luajit.d.tlua, --, --))
+
+end
+readAny(named)
+>readAny : Symbol(readAny, Decl(tluaTableTagNarrowing.tlua, 190, 3))
+>named : Symbol(named, Decl(tluaTableTagNarrowing.tlua, 184, 5))
+
+readAny({} as Table<string, number>)
+>readAny : Symbol(readAny, Decl(tluaTableTagNarrowing.tlua, 190, 3))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+readAny({} as table)
+>readAny : Symbol(readAny, Decl(tluaTableTagNarrowing.tlua, 190, 3))
+
+local function toStated(t: Table<{}, unknown>): Table<string, unknown>
+>toStated : Symbol(toStated, Decl(tluaTableTagNarrowing.tlua, 201, 20))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 202, 24))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    return t
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 202, 24))
+
+end
+
+-- pairs and next keep one signature, so a caller that reads it still correlates
+-- the table's keys and values.
+local numbers: Table<string, number> = {}
+>numbers : Symbol(numbers, Decl(tluaTableTagNarrowing.tlua, 208, 5))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+local ok, firstName, firstNumber = pcall(next, numbers)
+>ok : Symbol(ok, Decl(tluaTableTagNarrowing.tlua, 209, 5))
+>firstName : Symbol(firstName, Decl(tluaTableTagNarrowing.tlua, 209, 9))
+>firstNumber : Symbol(firstNumber, Decl(tluaTableTagNarrowing.tlua, 209, 20))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>numbers : Symbol(numbers, Decl(tluaTableTagNarrowing.tlua, 208, 5))
+
+local n: number | nil = firstNumber
+>n : Symbol(n, Decl(tluaTableTagNarrowing.tlua, 210, 5))
+>firstNumber : Symbol(firstNumber, Decl(tluaTableTagNarrowing.tlua, 209, 20))
+
+local okPairs, iterate = pcall(pairs, numbers)
+>okPairs : Symbol(okPairs, Decl(tluaTableTagNarrowing.tlua, 211, 5))
+>iterate : Symbol(iterate, Decl(tluaTableTagNarrowing.tlua, 211, 14))
+>pcall : Symbol(pcall, Decl(lib.luajit.d.tlua, --, --), Decl(lib.luajit.d.tlua, --, --))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>numbers : Symbol(numbers, Decl(tluaTableTagNarrowing.tlua, 208, 5))
+
+local typedIterator: LuaPairsIterator<string, number> = iterate
+>typedIterator : Symbol(typedIterator, Decl(tluaTableTagNarrowing.tlua, 212, 5))
+>LuaPairsIterator : Symbol(LuaPairsIterator, Decl(lib.luajit.d.tlua, --, --))
+>iterate : Symbol(iterate, Decl(tluaTableTagNarrowing.tlua, 211, 14))
+
+for key, value in pairs(42) do end
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 213, 3))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 213, 8))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+
+-- A union with an opaque `table` iterates with the keys and values that side may
+-- hold, not only the keyed side's.
+local function iterateMixed(x: Table<string, number> | table, y: Named | table)
+>iterateMixed : Symbol(iterateMixed, Decl(tluaTableTagNarrowing.tlua, 213, 34))
+>x : Symbol(x, Decl(tluaTableTagNarrowing.tlua, 217, 28))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>y : Symbol(y, Decl(tluaTableTagNarrowing.tlua, 217, 61))
+>Named : Symbol(Named, Decl(tluaTableTagNarrowing.tlua, 59, 3))
+
+    for key, value in pairs(x) do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 218, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 218, 12))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaTableTagNarrowing.tlua, 217, 28))
+
+        local s: string = key
+>s : Symbol(s, Decl(tluaTableTagNarrowing.tlua, 219, 13))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 218, 7))
+
+        local n: number = value
+>n : Symbol(n, Decl(tluaTableTagNarrowing.tlua, 220, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 218, 12))
+
+    end
+    for key, value in pairs(y) do
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 222, 7))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 222, 12))
+>pairs : Symbol(pairs, Decl(lib.luajit.d.tlua, --, --))
+>y : Symbol(y, Decl(tluaTableTagNarrowing.tlua, 217, 61))
+
+        local s: string = key
+>s : Symbol(s, Decl(tluaTableTagNarrowing.tlua, 223, 13))
+>key : Symbol(key, Decl(tluaTableTagNarrowing.tlua, 222, 7))
+
+        local n: string = value
+>n : Symbol(n, Decl(tluaTableTagNarrowing.tlua, 224, 13))
+>value : Symbol(value, Decl(tluaTableTagNarrowing.tlua, 222, 12))
+
+    end
+    local firstKey, firstValue = next(x)
+>firstKey : Symbol(firstKey, Decl(tluaTableTagNarrowing.tlua, 226, 9))
+>firstValue : Symbol(firstValue, Decl(tluaTableTagNarrowing.tlua, 226, 19))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaTableTagNarrowing.tlua, 217, 28))
+
+    local k: string | nil = firstKey
+>k : Symbol(k, Decl(tluaTableTagNarrowing.tlua, 227, 9))
+>firstKey : Symbol(firstKey, Decl(tluaTableTagNarrowing.tlua, 226, 9))
+
+    local v: number = firstValue
+>v : Symbol(v, Decl(tluaTableTagNarrowing.tlua, 228, 9))
+>firstValue : Symbol(firstValue, Decl(tluaTableTagNarrowing.tlua, 226, 19))
+
+    local afterKey = next(x, "a")
+>afterKey : Symbol(afterKey, Decl(tluaTableTagNarrowing.tlua, 229, 9))
+>next : Symbol(next, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaTableTagNarrowing.tlua, 217, 28))
+
+    local k2: string | nil = afterKey
+>k2 : Symbol(k2, Decl(tluaTableTagNarrowing.tlua, 230, 9))
+>afterKey : Symbol(afterKey, Decl(tluaTableTagNarrowing.tlua, 229, 9))
+
+end
+-- The same holds for any signature of that shape: a stated key, an intersection.
+interface Tagged { tag?: string; }
+>Tagged : Symbol(Tagged, Decl(tluaTableTagNarrowing.tlua, 231, 3))
+>tag : Symbol(Tagged.tag, Decl(tluaTableTagNarrowing.tlua, 233, 18))
+
+local function valuesOf<V>(t: Table<string, V> | table): V
+>valuesOf : Symbol(valuesOf, Decl(tluaTableTagNarrowing.tlua, 233, 34))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 234, 24))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 234, 27))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 234, 24))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 234, 24))
+
+    return nil as any
+end
+local function taggedValues<K, V>(t: (Table<K, V> & Tagged) | table): V
+>taggedValues : Symbol(taggedValues, Decl(tluaTableTagNarrowing.tlua, 236, 3))
+>K : Symbol(K, Decl(tluaTableTagNarrowing.tlua, 237, 28))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 237, 30))
+>t : Symbol(t, Decl(tluaTableTagNarrowing.tlua, 237, 34))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>K : Symbol(K, Decl(tluaTableTagNarrowing.tlua, 237, 28))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 237, 30))
+>Tagged : Symbol(Tagged, Decl(tluaTableTagNarrowing.tlua, 231, 3))
+>V : Symbol(V, Decl(tluaTableTagNarrowing.tlua, 237, 30))
+
+    return nil as any
+end
+local function useMixed(x: Table<string, number> | table)
+>useMixed : Symbol(useMixed, Decl(tluaTableTagNarrowing.tlua, 239, 3))
+>x : Symbol(x, Decl(tluaTableTagNarrowing.tlua, 240, 24))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    local a: number = valuesOf(x)
+>a : Symbol(a, Decl(tluaTableTagNarrowing.tlua, 241, 9))
+>valuesOf : Symbol(valuesOf, Decl(tluaTableTagNarrowing.tlua, 233, 34))
+>x : Symbol(x, Decl(tluaTableTagNarrowing.tlua, 240, 24))
+
+    local b: number = taggedValues(x as (Table<string, number> & Tagged) | table)
+>b : Symbol(b, Decl(tluaTableTagNarrowing.tlua, 242, 9))
+>taggedValues : Symbol(taggedValues, Decl(tluaTableTagNarrowing.tlua, 236, 3))
+>x : Symbol(x, Decl(tluaTableTagNarrowing.tlua, 240, 24))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+>Tagged : Symbol(Tagged, Decl(tluaTableTagNarrowing.tlua, 231, 3))
+
+end
+

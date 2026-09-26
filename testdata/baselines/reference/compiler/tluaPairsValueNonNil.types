@@ -17,7 +17,7 @@ for _, box in pairs(map) do
 >_ : string
 >box : Box
 >pairs(map) : LuaPairsIterator<string, Box | nil>
->pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
 >map : Table<string, Box | nil>
 
     local n: number = box.value
@@ -30,8 +30,8 @@ end
 for _, box in next, map do
 >_ : string
 >box : Box
->next, map : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Table<string, Box | nil>
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next, map : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {}), Table<string, Box | nil>
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >map : Table<string, Box | nil>
 
     local n: number = box.value
@@ -68,7 +68,7 @@ local k, v = next(map)
 >k : string | nil
 >v : Box
 >next(map) : string | nil
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >map : Table<string, Box | nil>
 
 while k ~= nil do
@@ -87,7 +87,7 @@ while k ~= nil do
 >k : string | nil
 >v : Box
 >next(map, k) : string | nil
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >map : Table<string, Box | nil>
 >k : string
 
@@ -105,7 +105,7 @@ local forward: LuaPairsIterator<string, Box | nil> = function(t, key)
 >nk : string | nil
 >nv : Box
 >next(t, key) : string | nil
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >t : Table<string, Box | nil>
 >key : string | nil
 
@@ -139,7 +139,7 @@ for _, flag in pairs(flags) do
 >_ : string
 >flag : boolean
 >pairs(flags) : LuaPairsIterator<string, boolean | nil>
->pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
 >flags : Table<string, boolean | nil>
 
     local f: true = flag
@@ -162,7 +162,7 @@ local function values<V>(t: Table<string, V>): NonNullable<V>[]
 >_ : string
 >value : V & {}
 >pairs(t) : LuaPairsIterator<string, V>
->pairs : <K, V_1>(value: Table<K, V_1>) => (LuaPairsIterator<K, V_1>, Table<K, V_1>, nil)
+>pairs : <K = {}, V_1 = unknown>(value: Table<K, V_1> | table) => (LuaPairsIterator<K, V_1>, Table<K, V_1>, nil)
 >t : Table<string, V>
 
         out[#out + 1] = value

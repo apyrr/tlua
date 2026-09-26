@@ -12,8 +12,8 @@ declare t: Rec;
 for k, v in next, t do
 >k : string
 >v : number
->next, t : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Rec
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next, t : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {}), Rec
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >t : Rec
 
   local key: string = k;
@@ -29,8 +29,8 @@ end
 for k, v in next, t, "seed" do
 >k : string
 >v : number
->next, t, "seed" : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Rec, string
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next, t, "seed" : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {}), Rec, string
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >t : Rec
 >"seed" : "seed"
 
@@ -50,8 +50,8 @@ declare c: string | nil;
 for k, v in next, t, c do
 >k : string
 >v : number
->next, t, c : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), Rec, string | nil
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next, t, c : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {}), Rec, string | nil
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >t : Rec
 >c : string | nil
 
@@ -69,7 +69,7 @@ for k, v in pairs(t) do
 >k : string
 >v : number
 >pairs(t) : LuaPairsIterator<string, number>
->pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
 >t : Rec
 
   local key: string = k;
@@ -201,15 +201,15 @@ for k, v in requiredControl, t, nil do
 end
 
 for k, v in next, 42 do
->k : never
+>k : {}
 >v : {}
->next, 42 : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {}), number
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next, 42 : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {}), number
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 >42 : 42
 
   local _ = k;
->_ : never
->k : never
+>_ : {}
+>k : {}
 
   local _ = v;
 >_ : {}
@@ -219,7 +219,7 @@ end
 
 for k in next do
 >k : {}
->next : <K, V>(value: Table<K, V>, index?: K) => (K?, V & {})
+>next : <K = {}, V = unknown>(value: Table<K, V> | table, index?: K) => (K?, V & {})
 
   local _ = k;
 >_ : {}

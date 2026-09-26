@@ -810,6 +810,7 @@ type Checker struct {
 	getLuaUserdataType                          func() *Type
 	getLuaCDataType                             func() *Type
 	getLuaFunctionType                          func() *Type
+	getLuaAnyTableType                          func() *Type
 	getLuaFileType                              func() *Type
 	getLuaBrandTypes                            func() []*Type
 	getLuaBrandMembers                          func() map[string]*Type
@@ -1044,6 +1045,18 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.getLuaDebugGlobalSymbol = c.getGlobalValueSymbolResolver("debug", false /*reportErrors*/)
 	c.getLuaThreadType = c.getLuaBrandTypeResolver("LuaThread")
 	c.getLuaUserdataType = c.getLuaBrandTypeResolver("LuaUserdata")
+	c.getLuaAnyTableType = core.Memoize(func() *Type {
+		// Table<{}, unknown>, the lib's table of any (non-nil) key and unknown values:
+		// what `type(x) == "table"` narrows a value it knows nothing about to
+		// (narrowTypeByLuaTable), and the spelling a user can write for it (an index key
+		// cannot include nil, so it is not Table<unknown, unknown>). Without the lib
+		// type it is `table`, the closed keyword type.
+		globalType := c.getGlobalType("Table", 2 /*arity*/, false /*reportErrors*/)
+		if globalType == c.emptyGenericType {
+			return c.nonPrimitiveType
+		}
+		return c.createTypeFromGenericGlobalType(globalType, []*Type{c.emptyObjectType, c.unknownType})
+	})
 	c.getLuaFunctionType = core.Memoize(func() *Type {
 		// The `function` keyword type: the top of every Lua function -- variadic any
 		// parameters, any results, `(...: any) => (any?, ...any)`. Built here rather than

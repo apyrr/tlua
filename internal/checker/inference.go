@@ -109,6 +109,9 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		// First, infer between identically matching source and target constituents and remove the
 		// matching types.
 		tempSources, tempTargets := c.inferFromMatchingTypes(n, sourceTypes, target.Distributed(), (*Checker).isTypeOrBaseIdenticalTo)
+		if containsType(sourceTypes, c.nonPrimitiveType) && !containsType(tempSources, c.nonPrimitiveType) {
+			c.inferFromMatchedLuaTable(n, tempTargets)
+		}
 		// Next, infer between closely matching source and target constituents and remove
 		// the matching types. Types closely match when they are instantiations of the same
 		// object type or instantiations of the same type alias.
@@ -903,6 +906,23 @@ func (c *Checker) nonPackReturnAsPack(t *Type) *Type {
 	return c.createPackTypeEx([]*Type{t}, []TupleElementInfo{{flags: ElementFlagsRequired}}, false /*collapse*/)
 }
 
+// inferFromMatchedLuaTable infers what a `table` source says about the remaining
+// table targets after identity matching consumed it against a `table` target member,
+// as in `Table<string, number> | table` to pairs' `Table<K, V> | table`: the table may
+// hold any non-nil key and unknown values, so it infers as Table<{}, unknown> would,
+// and K and V admit those too rather than being decided by the keyed member alone.
+// Inferred at the current priority, before the keyed member's close match, so neither
+// hides the other. A naked type parameter target is not a table target: the `table`
+// member already covers the table.
+func (c *Checker) inferFromMatchedLuaTable(n *InferenceState, targets []*Type) {
+	anyTable := c.getLuaAnyTableType()
+	for _, t := range targets {
+		if t.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 {
+			c.inferFromTypes(n, anyTable, t)
+		}
+	}
+}
+
 func (c *Checker) inferFromIndexTypes(n *InferenceState, source *Type, target *Type) {
 	// Inferences across mapped type index signatures are pretty much the same a inferences to homomorphic variables
 	priority := InferencePriorityNone
@@ -918,8 +938,13 @@ func (c *Checker) inferFromIndexTypes(n *InferenceState, source *Type, target *T
 			// unfixed type parameter, so the applicability filters below cannot match.
 			// Infer the source's whole key domain -- getIndexType, exactly what keyof
 			// reports -- at the priority upstream uses for a mapped type constraint,
-			// so an explicitly supplied key argument still wins over the table's keys.
-			c.inferWithPriority(n, c.getIndexTypeEx(source, IndexFlagsNone), targetInfo.keyType, InferencePriorityMappedTypeConstraint)
+			// so an explicitly supplied key argument still wins over the table's keys. A
+			// source that states no key (`table`, an empty table) says nothing about K:
+			// inferring its never would make every key silently never, so K falls back
+			// to its default or constraint instead.
+			if keys := c.getIndexTypeEx(source, IndexFlagsNone); keys.flags&TypeFlagsNever == 0 {
+				c.inferWithPriority(n, keys, targetInfo.keyType, InferencePriorityMappedTypeConstraint)
+			}
 			var valueTypes []*Type
 			for _, info := range sourceInfos {
 				valueTypes = append(valueTypes, info.valueType)

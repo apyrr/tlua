@@ -1,0 +1,354 @@
+tluaTableTagNarrowing.tlua(40,19): error TLUA2322: Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(44,15): error TLUA2322: Type 'Table<{}, unknown>' is not assignable to type 'Table<string, number>'.
+  '{}' and 'string' index signatures are incompatible.
+    Type 'unknown' is not assignable to type 'number'.
+tluaTableTagNarrowing.tlua(45,15): error TLUA2322: Type 'Table<{}, unknown>' is not assignable to type 'Table<string, unknown>'.
+  Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(46,22): error TLUA2352: Conversion of type 'Table<{}, unknown>' to type 'Table<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{}' is not comparable to type 'string'.
+tluaTableTagNarrowing.tlua(55,15): error TLUA2339: Property 'field' does not exist on type 'T & Table<{}, unknown>'.
+tluaTableTagNarrowing.tlua(56,9): error TLUA2862: Type 'T & Table<{}, unknown>' is generic and can only be indexed for reading.
+tluaTableTagNarrowing.tlua(87,18): error TLUA2339: Property 'name' does not exist on type 'table'.
+tluaTableTagNarrowing.tlua(96,15): error TLUA2322: Type '{}' is not assignable to type 'number'.
+tluaTableTagNarrowing.tlua(98,15): error TLUA2322: Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(110,32): error TLUA2345: Argument of type 'table' is not assignable to parameter of type 'Table<number, unknown>'.
+  Index signature for type 'number' is missing in type '{}'.
+tluaTableTagNarrowing.tlua(111,18): error TLUA2345: Argument of type 'table' is not assignable to parameter of type 'Table<number, number>'.
+  Index signature for type 'number' is missing in type '{}'.
+tluaTableTagNarrowing.tlua(121,18): error TLUA2339: Property 'field' does not exist on type 'T'.
+tluaTableTagNarrowing.tlua(137,16): error TLUA18046: 'value.inner' is of type 'unknown'.
+tluaTableTagNarrowing.tlua(145,25): error TLUA2538: Type 'nil' cannot be used as an index type.
+tluaTableTagNarrowing.tlua(146,25): error TLUA2538: Type 'unknown' cannot be used as an index type.
+tluaTableTagNarrowing.tlua(201,9): error TLUA2345: Argument of type 'Table<string, number>' is not assignable to parameter of type 'Table<{}, unknown>'.
+  Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(202,9): error TLUA2345: Argument of type 'table' is not assignable to parameter of type 'Table<{}, unknown>'.
+  Index signature for type '{}' is missing in type '{}'.
+tluaTableTagNarrowing.tlua(204,5): error TLUA2322: Type 'Table<{}, unknown>' is not assignable to type 'Table<string, unknown>'.
+  Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(214,25): error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'table | Table<{}, unknown>'.
+tluaTableTagNarrowing.tlua(220,15): error TLUA2322: Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(221,15): error TLUA2322: Type '{}' is not assignable to type 'number'.
+tluaTableTagNarrowing.tlua(224,15): error TLUA2322: Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(225,15): error TLUA2322: Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(228,11): error TLUA2322: Type '{} | nil' is not assignable to type 'string | nil'.
+  Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(229,11): error TLUA2322: Type '{}' is not assignable to type 'number'.
+tluaTableTagNarrowing.tlua(231,11): error TLUA2322: Type '{} | nil' is not assignable to type 'string | nil'.
+  Type '{}' is not assignable to type 'string'.
+tluaTableTagNarrowing.tlua(242,11): error TLUA2322: Type 'unknown' is not assignable to type 'number'.
+tluaTableTagNarrowing.tlua(243,11): error TLUA2322: Type 'unknown' is not assignable to type 'number'.
+
+
+==== tluaTableTagNarrowing.tlua (28 errors) ====
+    // `type(x) == "table"` says a value is a table and nothing about its keys, so a type
+    // that states nothing about the value (unknown, a bare type parameter) narrows to
+    // Table<{}, unknown>: any key reads unknown through its index signature, and
+    // pairs visits it. A declared `table` states no key and stays closed; code that reads
+    // arbitrary keys declares Table<K, V>.
+    
+    local function isMarked(value: unknown): boolean
+        return type(value) == "table" and value._marked == true
+    end
+    
+    -- Flow facts narrow the read, in either spelling.
+    local function readCode(err: unknown): string | nil
+        if type(err) == "table" and type(err.code) == "string" then
+            return err.code
+        end
+        return nil
+    end
+    local function readSlot(err: unknown): string | nil
+        if type(err) == "table" and type(err["name"]) == "string" then
+            return err["name"]
+        end
+        return nil
+    end
+    
+    -- Any key reads: strings, numbers, booleans, tables.
+    local function readKeys(value: unknown, key: string, other: table): (unknown, unknown, unknown, unknown)
+        if type(value) ~= "table" then
+            return nil, nil, nil, nil
+        end
+        return value[key], value[1], value[true], value[other]
+    end
+    
+    -- The narrowed type is the declared Table<{}, unknown>, so it iterates, and it
+    -- is not a table of anything narrower.
+    local function keysOf(value: unknown): unknown[]
+        local keys: unknown[] = {}
+        if type(value) == "table" then
+            for key, v in pairs(value) do
+                keys[#keys + 1] = key
+                local asString: string = key
+                      ~~~~~~~~
+!!! error TLUA2322: Type '{}' is not assignable to type 'string'.
+            end
+            local anyTable: Table<{}, unknown> = value
+            local asTable: table = value
+            local numbers: Table<string, number> = value
+                  ~~~~~~~
+!!! error TLUA2322: Type 'Table<{}, unknown>' is not assignable to type 'Table<string, number>'.
+!!! error TLUA2322:   '{}' and 'string' index signatures are incompatible.
+!!! error TLUA2322:     Type 'unknown' is not assignable to type 'number'.
+            local strings: Table<string, unknown> = value
+                  ~~~~~~~
+!!! error TLUA2322: Type 'Table<{}, unknown>' is not assignable to type 'Table<string, unknown>'.
+!!! error TLUA2322:   Type '{}' is not assignable to type 'string'.
+            local cast = value as Table<string, unknown>
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2352: Conversion of type 'Table<{}, unknown>' to type 'Table<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+!!! error TLUA2352:   Type '{}' is not comparable to type 'string'.
+        end
+        return keys
+    end
+    
+    -- A generic narrows to an intersection with it. It reads any key, but a generic
+    -- is indexed for reading only, so writes need a stated type.
+    local function readGeneric<T>(value: T): unknown
+        if type(value) == "table" then
+            value.field = 1
+                  ~~~~~
+!!! error TLUA2339: Property 'field' does not exist on type 'T & Table<{}, unknown>'.
+            value["slot"] = 2
+            ~~~~~~~~~~~~~
+!!! error TLUA2862: Type 'T & Table<{}, unknown>' is generic and can only be indexed for reading.
+            return value.field
+        end
+        return nil
+    end
+    
+    -- A stated type keeps its shape: the tag selects the table members of a union.
+    interface Named { name: string; }
+    local function readUnion(value: string | Named | nil): string | nil
+        if type(value) == "table" then
+            return value.name
+        end
+        return nil
+    end
+    local function readList(value: string | number[]): number | nil
+        if type(value) == "table" then
+            return value[1]
+        end
+        return nil
+    end
+    local function notTable(value: string | Named): string
+        if type(value) ~= "table" then
+            return value
+        end
+        return value.name
+    end
+    
+    -- A declared `table` states no key: it stays `table` under the tag, a read is an
+    -- error, and it does not iterate. Declare the keys it holds instead.
+    local function readDeclared(t: table): unknown
+        if type(t) == "table" then
+            return t.name
+                     ~~~~
+!!! error TLUA2339: Property 'name' does not exist on type 'table'.
+        end
+        return nil
+    end
+    -- pairs and next visit it with unknown keys and values, as Luau's do; ipairs and
+    -- the table library want a stated array.
+    local function iterateDeclared(t: table, list: Table<number, string>)
+        for key, value in pairs(t) do
+            local k: {} = key
+            local n: number = key
+                  ~
+!!! error TLUA2322: Type '{}' is not assignable to type 'number'.
+            local v: unknown = value
+            local s: string = value
+                  ~
+!!! error TLUA2322: Type '{}' is not assignable to type 'string'.
+        end
+        local firstKey, firstValue = next(t)
+        local k2: {} | nil = firstKey
+        local v2: {} = firstValue
+        for key, value in next, t do
+            local v3: {} = value
+        end
+        for index, value in pairs(list) do
+            local i: number = index
+            local s: string = value
+        end
+        for index, value in ipairs(t) do end
+                                   ~
+!!! error TLUA2345: Argument of type 'table' is not assignable to parameter of type 'Table<number, unknown>'.
+!!! error TLUA2345:   Index signature for type 'number' is missing in type '{}'.
+        table.insert(t, 1)
+                     ~
+!!! error TLUA2345: Argument of type 'table' is not assignable to parameter of type 'Table<number, number>'.
+!!! error TLUA2345:   Index signature for type 'number' is missing in type '{}'.
+    end
+    local function readStated(t: Table<string, unknown>): unknown
+        for key, value in pairs(t) do
+            local asString: string = key
+        end
+        return t.name
+    end
+    local function readConstrained<T extends table>(t: T): unknown
+        if type(t) == "table" then
+            return t.field
+                     ~~~~~
+!!! error TLUA2339: Property 'field' does not exist on type 'T'.
+        end
+        return nil
+    end
+    
+    -- Writes go through the index signature too.
+    local function mark(value: unknown)
+        if type(value) == "table" then
+            value._marked = true
+            value[1] = "x"
+        end
+    end
+    
+    -- Nested reads go through unknown, which states nothing.
+    local function nested(value: unknown): unknown
+        if type(value) == "table" then
+            return value.inner.value
+                   ~~~~~~~~~~~
+!!! error TLUA18046: 'value.inner' is of type 'unknown'.
+        end
+        return nil
+    end
+    
+    -- A key no table takes is an error on the narrowed table too.
+    local function readBadKeys(value: unknown, k: string | nil, u: unknown)
+        if type(value) == "table" then
+            local a = value[k]
+                            ~
+!!! error TLUA2538: Type 'nil' cannot be used as an index type.
+            local b = value[u]
+                            ~
+!!! error TLUA2538: Type 'unknown' cannot be used as an index type.
+        end
+    end
+    
+    -- The narrowed table is a table, stays one under a second check, and takes a
+    -- metatable.
+    local function useAsTable(value: unknown)
+        if type(value) == "table" then
+            if type(value) == "table" then
+                local again: Table<{}, unknown> = value
+            end
+            setmetatable(value, nil)
+            local n: number = #value
+        end
+    end
+    
+    -- A type guard to a stated shape still narrows the table to it.
+    local function isRecord(value: unknown): value is Table<string, unknown>
+        return type(value) == "table"
+    end
+    local function guarded(value: unknown)
+        if type(value) == "table" and isRecord(value) then
+            local record: Table<string, unknown> = value
+        end
+    end
+    
+    -- A utility over any table is generic, as the lib's pairs is; a table stating
+    -- members passes as one whose keys and values are those members'. Its values
+    -- narrow like any unknown.
+    local function deepCopy<K, V>(t: Table<K, V>): Table<K, V>
+        local copy: Table<K, V> = {}
+        for key, value in pairs(t) do
+            if type(value) == "table" then
+                local inner: unknown = value.anything
+            end
+            rawset(copy, key, value)
+        end
+        return copy
+    end
+    local named: Named = { name = "x" }
+    local copied: Table<"name", string> = deepCopy(named)
+    local list: number[] = deepCopy({ 1, 2 })
+    local record: Table<string, number> = deepCopy({} as Table<string, number>)
+    for key, value in pairs(named) do
+        local asString: string = value
+    end
+    
+    -- Table<{}, unknown> is a type of its own, not the type of every table: K is
+    -- invariant, so a Table of narrower keys is not one, nor is a `table`, and it is not
+    -- a Table of narrower keys. A record passes because its members stand in for the
+    -- index signature, as they do for every Table.
+    local function readAny(t: Table<{}, unknown>): unknown
+        return t.anything
+    end
+    readAny(named)
+    readAny({} as Table<string, number>)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TLUA2345: Argument of type 'Table<string, number>' is not assignable to parameter of type 'Table<{}, unknown>'.
+!!! error TLUA2345:   Type '{}' is not assignable to type 'string'.
+    readAny({} as table)
+            ~~~~~~~~~~~
+!!! error TLUA2345: Argument of type 'table' is not assignable to parameter of type 'Table<{}, unknown>'.
+!!! error TLUA2345:   Index signature for type '{}' is missing in type '{}'.
+    local function toStated(t: Table<{}, unknown>): Table<string, unknown>
+        return t
+        ~~~~~~
+!!! error TLUA2322: Type 'Table<{}, unknown>' is not assignable to type 'Table<string, unknown>'.
+!!! error TLUA2322:   Type '{}' is not assignable to type 'string'.
+    end
+    
+    -- pairs and next keep one signature, so a caller that reads it still correlates
+    -- the table's keys and values.
+    local numbers: Table<string, number> = {}
+    local ok, firstName, firstNumber = pcall(next, numbers)
+    local n: number | nil = firstNumber
+    local okPairs, iterate = pcall(pairs, numbers)
+    local typedIterator: LuaPairsIterator<string, number> = iterate
+    for key, value in pairs(42) do end
+                            ~~
+!!! error TLUA2345: Argument of type 'number' is not assignable to parameter of type 'table | Table<{}, unknown>'.
+    
+    -- A union with an opaque `table` iterates with the keys and values that side may
+    -- hold, not only the keyed side's.
+    local function iterateMixed(x: Table<string, number> | table, y: Named | table)
+        for key, value in pairs(x) do
+            local s: string = key
+                  ~
+!!! error TLUA2322: Type '{}' is not assignable to type 'string'.
+            local n: number = value
+                  ~
+!!! error TLUA2322: Type '{}' is not assignable to type 'number'.
+        end
+        for key, value in pairs(y) do
+            local s: string = key
+                  ~
+!!! error TLUA2322: Type '{}' is not assignable to type 'string'.
+            local n: string = value
+                  ~
+!!! error TLUA2322: Type '{}' is not assignable to type 'string'.
+        end
+        local firstKey, firstValue = next(x)
+        local k: string | nil = firstKey
+              ~
+!!! error TLUA2322: Type '{} | nil' is not assignable to type 'string | nil'.
+!!! error TLUA2322:   Type '{}' is not assignable to type 'string'.
+        local v: number = firstValue
+              ~
+!!! error TLUA2322: Type '{}' is not assignable to type 'number'.
+        local afterKey = next(x, "a")
+        local k2: string | nil = afterKey
+              ~~
+!!! error TLUA2322: Type '{} | nil' is not assignable to type 'string | nil'.
+!!! error TLUA2322:   Type '{}' is not assignable to type 'string'.
+    end
+    -- The same holds for any signature of that shape: a stated key, an intersection.
+    interface Tagged { tag?: string; }
+    local function valuesOf<V>(t: Table<string, V> | table): V
+        return nil as any
+    end
+    local function taggedValues<K, V>(t: (Table<K, V> & Tagged) | table): V
+        return nil as any
+    end
+    local function useMixed(x: Table<string, number> | table)
+        local a: number = valuesOf(x)
+              ~
+!!! error TLUA2322: Type 'unknown' is not assignable to type 'number'.
+        local b: number = taggedValues(x as (Table<string, number> & Tagged) | table)
+              ~
+!!! error TLUA2322: Type 'unknown' is not assignable to type 'number'.
+    end
+    

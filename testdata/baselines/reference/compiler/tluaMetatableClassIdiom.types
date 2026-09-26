@@ -148,7 +148,7 @@ for k, v in pairs(paired) do
 >k : "balance" | "deposit" | "withdraw"
 >v : number | ((self: Account, amount: number) => void) | ((self: Account, amount: number) => boolean)
 >pairs(paired) : LuaPairsIterator<"balance" | "deposit" | "withdraw", number | ((self: Account, amount: number) => void) | ((self: Account, amount: number) => boolean)>
->pairs : <K, V>(value: Table<K, V>) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
+>pairs : <K = {}, V = unknown>(value: Table<K, V> | table) => (LuaPairsIterator<K, V>, Table<K, V>, nil)
 >paired : { deposit: (self: Account, amount: number) => void; withdraw: (self: Account, amount: number) => boolean; balance: number; }
 
   local key: string = k;

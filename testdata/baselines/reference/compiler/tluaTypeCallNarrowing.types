@@ -208,7 +208,7 @@ function tops(u: unknown, a: any): void
 
     local o: table = u;
 >o : table
->u : table
+>u : Table<{}, unknown>
 
   end
   if type(u) == "thread" then
