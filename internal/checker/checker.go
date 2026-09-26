@@ -810,6 +810,7 @@ type Checker struct {
 	getLuaUserdataType                          func() *Type
 	getLuaCDataType                             func() *Type
 	getLuaFunctionType                          func() *Type
+	getGlobalLuaMetatableType                   func() *Type
 	getLuaAnyTableType                          func() *Type
 	getLuaFileType                              func() *Type
 	getLuaBrandTypes                            func() []*Type
@@ -1045,6 +1046,7 @@ func NewChecker(program Program, tracer *Tracer) (*Checker, *sync.Mutex) {
 	c.getLuaDebugGlobalSymbol = c.getGlobalValueSymbolResolver("debug", false /*reportErrors*/)
 	c.getLuaThreadType = c.getLuaBrandTypeResolver("LuaThread")
 	c.getLuaUserdataType = c.getLuaBrandTypeResolver("LuaUserdata")
+	c.getGlobalLuaMetatableType = c.getGlobalTypeResolver("LuaMetatable", 1 /*arity*/, false /*reportErrors*/)
 	c.getLuaAnyTableType = core.Memoize(func() *Type {
 		// Table<{}, unknown>, the lib's table of any (non-nil) key and unknown values:
 		// what `type(x) == "table"` narrows a value it knows nothing about to

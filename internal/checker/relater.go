@@ -2720,20 +2720,26 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 				return TernaryFalse
 			}
 		}
+		// A primitive is never a table, so it is checked even when its apparent type is
+		// memberless (tlua's Number and Boolean are empty); nil and void are rejected
+		// structurally, with their own message.
 		isPerformingCommonPropertyChecks := (r.relation != r.c.comparableRelation || isUnitType(source)) &&
 			intersectionState&IntersectionStateTarget == 0 &&
 			source.flags&(TypeFlagsPrimitive|TypeFlagsObject|TypeFlagsIntersection) != 0 &&
-			target.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && r.c.isWeakType(target) && (len(r.c.getPropertiesOfType(source)) > 0 || r.c.typeHasCallOrConstructSignatures(source))
+			target.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && r.c.isWeakType(target) && (len(r.c.getPropertiesOfType(source)) > 0 || r.c.typeHasCallOrConstructSignatures(source) || source.flags&(TypeFlagsPrimitive&^TypeFlagsVoidLike) != 0)
 		if isPerformingCommonPropertyChecks && !r.c.hasCommonProperties(source, target) {
 			if reportErrors {
 				sourceString := r.c.TypeToString(core.IfElse(originalSource.alias != nil, originalSource, source))
 				targetString := r.c.TypeToString(core.IfElse(originalTarget.alias != nil, originalTarget, target))
 				calls := r.c.getSignaturesOfType(source, SignatureKindCall)
 				constructs := r.c.getSignaturesOfType(source, SignatureKindConstruct)
-				if len(calls) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(calls[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse ||
-					len(constructs) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(constructs[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse {
+				switch {
+				case len(calls) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(calls[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse ||
+					len(constructs) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(constructs[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse:
 					r.reportError(diagnostics.Value_of_type_0_has_no_properties_in_common_with_type_1_Did_you_mean_to_call_it, sourceString, targetString)
-				} else {
+				case r.c.isLuaMetatableContractType(target):
+					r.reportLuaMetatableWithoutMetamethods(source, target, sourceString)
+				default:
 					r.reportError(diagnostics.Type_0_has_no_properties_in_common_with_type_1, sourceString, targetString)
 				}
 			}

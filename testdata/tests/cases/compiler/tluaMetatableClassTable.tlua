@@ -1,0 +1,73 @@
+// @strict: true
+// The checker reads a metatable's effect off the metamethods it states, so a
+// metatable must state them. A table that states none is reported at the
+// setmetatable call, with the fix, rather than typing the paired table as bare.
+
+local Point = {}
+Point.__index = Point
+function Point.len(self: table): number
+    return 0
+end
+local p = setmetatable({ x = 1 }, Point)
+local length: number = p:len()
+
+-- A metamethod stated after the call still counts.
+local Late = {}
+local late = setmetatable({}, Late)
+function Late.describe(self: table): string
+    return "late"
+end
+Late.__index = Late
+
+-- A table stating only other metamethods relates as before.
+local Named = { __tostring = function(self: table): string return "named" end }
+local n = setmetatable({}, Named)
+local weak = setmetatable({}, { __mode = "k" })
+
+-- A table with no stated keys is not checked.
+local empty = setmetatable({}, {})
+local record = setmetatable({}, {} as Table<string, unknown>)
+
+-- A class table whose helper installs __index states no metamethod.
+local function inherit(cls: Table<string, unknown>)
+    rawset(cls, "__index", cls)
+end
+local Helped = {}
+function Helped.len(self: table): number
+    return 0
+end
+inherit(Helped)
+local helped = setmetatable({ x = 1 }, Helped)
+
+-- A misspelled metamethod: a literal gets the excess-property check, a table
+-- held in a variable a suggestion.
+local typo = setmetatable({}, { __indx = Point })
+local typoMeta = { __indx = Point }
+local typoHeld = setmetatable({}, typoMeta)
+local underscoreMeta = { _index = Point }
+local underscoreHeld = setmetatable({}, underscoreMeta)
+local weakMeta = { _mode = "k" }
+local weakHeld = setmetatable({}, weakMeta)
+
+-- A metatable must be a table.
+local notTable = setmetatable({}, "abc")
+local notFunction = setmetatable({}, function(x: number) end)
+local notNumber = setmetatable({}, 42)
+local notBoolean = setmetatable({}, true)
+
+-- No primitive is a table, so none satisfies a table type whose members are all
+-- optional.
+local weakTarget: { name?: string } = 42
+-- nil is rejected as not assignable, as before.
+local weakNil: { name?: string } = nil
+
+-- A data field is not a misspelled metamethod.
+local Stack = { _len = 0 }
+function Stack.push(self: table, v: unknown) end
+local stack = setmetatable({}, Stack)
+
+-- A metatable factory passed uncalled is told to call it.
+local function makeMeta(): LuaMetatable<table>
+    return { __index = {} }
+end
+local made = setmetatable({}, makeMeta)

@@ -1,0 +1,211 @@
+//// [tests/cases/compiler/tluaMetatableClassTable.tlua] ////
+
+=== tluaMetatableClassTable.tlua ===
+// The checker reads a metatable's effect off the metamethods it states, so a
+// metatable must state them. A table that states none is reported at the
+// setmetatable call, with the fix, rather than typing the paired table as bare.
+
+local Point = {}
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+
+Point.__index = Point
+>Point.__index : Symbol(__index, Decl(tluaMetatableClassTable.tlua, 4, 16))
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+>__index : Symbol(__index, Decl(tluaMetatableClassTable.tlua, 4, 16))
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+
+function Point.len(self: table): number
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+>len : Symbol(len, Decl(tluaMetatableClassTable.tlua, 5, 21))
+>self : Symbol(self, Decl(tluaMetatableClassTable.tlua, 6, 19))
+
+    return 0
+end
+local p = setmetatable({ x = 1 }, Point)
+>p : Symbol(p, Decl(tluaMetatableClassTable.tlua, 9, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaMetatableClassTable.tlua, 9, 24))
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+
+local length: number = p:len()
+>length : Symbol(length, Decl(tluaMetatableClassTable.tlua, 10, 5))
+>p:len : Symbol(len, Decl(tluaMetatableClassTable.tlua, 5, 21))
+>p : Symbol(p, Decl(tluaMetatableClassTable.tlua, 9, 5))
+>len : Symbol(len, Decl(tluaMetatableClassTable.tlua, 5, 21))
+
+-- A metamethod stated after the call still counts.
+local Late = {}
+>Late : Symbol(Late, Decl(tluaMetatableClassTable.tlua, 13, 5))
+
+local late = setmetatable({}, Late)
+>late : Symbol(late, Decl(tluaMetatableClassTable.tlua, 14, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Late : Symbol(Late, Decl(tluaMetatableClassTable.tlua, 13, 5))
+
+function Late.describe(self: table): string
+>Late : Symbol(Late, Decl(tluaMetatableClassTable.tlua, 13, 5))
+>describe : Symbol(describe, Decl(tluaMetatableClassTable.tlua, 14, 35))
+>self : Symbol(self, Decl(tluaMetatableClassTable.tlua, 15, 23))
+
+    return "late"
+end
+Late.__index = Late
+>Late.__index : Symbol(__index, Decl(tluaMetatableClassTable.tlua, 17, 3))
+>Late : Symbol(Late, Decl(tluaMetatableClassTable.tlua, 13, 5))
+>__index : Symbol(__index, Decl(tluaMetatableClassTable.tlua, 17, 3))
+>Late : Symbol(Late, Decl(tluaMetatableClassTable.tlua, 13, 5))
+
+-- A table stating only other metamethods relates as before.
+local Named = { __tostring = function(self: table): string return "named" end }
+>Named : Symbol(Named, Decl(tluaMetatableClassTable.tlua, 21, 5))
+>__tostring : Symbol(__tostring, Decl(tluaMetatableClassTable.tlua, 21, 15))
+>self : Symbol(self, Decl(tluaMetatableClassTable.tlua, 21, 38))
+
+local n = setmetatable({}, Named)
+>n : Symbol(n, Decl(tluaMetatableClassTable.tlua, 22, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Named : Symbol(Named, Decl(tluaMetatableClassTable.tlua, 21, 5))
+
+local weak = setmetatable({}, { __mode = "k" })
+>weak : Symbol(weak, Decl(tluaMetatableClassTable.tlua, 23, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__mode : Symbol(__mode, Decl(tluaMetatableClassTable.tlua, 23, 31))
+
+-- A table with no stated keys is not checked.
+local empty = setmetatable({}, {})
+>empty : Symbol(empty, Decl(tluaMetatableClassTable.tlua, 26, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+local record = setmetatable({}, {} as Table<string, unknown>)
+>record : Symbol(record, Decl(tluaMetatableClassTable.tlua, 27, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+-- A class table whose helper installs __index states no metamethod.
+local function inherit(cls: Table<string, unknown>)
+>inherit : Symbol(inherit, Decl(tluaMetatableClassTable.tlua, 27, 61))
+>cls : Symbol(cls, Decl(tluaMetatableClassTable.tlua, 30, 23))
+>Table : Symbol(Table, Decl(lib.luajit.d.tlua, --, --))
+
+    rawset(cls, "__index", cls)
+>rawset : Symbol(rawset, Decl(lib.luajit.d.tlua, --, --))
+>cls : Symbol(cls, Decl(tluaMetatableClassTable.tlua, 30, 23))
+>cls : Symbol(cls, Decl(tluaMetatableClassTable.tlua, 30, 23))
+
+end
+local Helped = {}
+>Helped : Symbol(Helped, Decl(tluaMetatableClassTable.tlua, 33, 5))
+
+function Helped.len(self: table): number
+>Helped : Symbol(Helped, Decl(tluaMetatableClassTable.tlua, 33, 5))
+>len : Symbol(len, Decl(tluaMetatableClassTable.tlua, 33, 17))
+>self : Symbol(self, Decl(tluaMetatableClassTable.tlua, 34, 20))
+
+    return 0
+end
+inherit(Helped)
+>inherit : Symbol(inherit, Decl(tluaMetatableClassTable.tlua, 27, 61))
+>Helped : Symbol(Helped, Decl(tluaMetatableClassTable.tlua, 33, 5))
+
+local helped = setmetatable({ x = 1 }, Helped)
+>helped : Symbol(helped, Decl(tluaMetatableClassTable.tlua, 38, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaMetatableClassTable.tlua, 38, 29))
+>Helped : Symbol(Helped, Decl(tluaMetatableClassTable.tlua, 33, 5))
+
+-- A misspelled metamethod: a literal gets the excess-property check, a table
+-- held in a variable a suggestion.
+local typo = setmetatable({}, { __indx = Point })
+>typo : Symbol(typo, Decl(tluaMetatableClassTable.tlua, 42, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>__indx : Symbol(__indx, Decl(tluaMetatableClassTable.tlua, 42, 31))
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+
+local typoMeta = { __indx = Point }
+>typoMeta : Symbol(typoMeta, Decl(tluaMetatableClassTable.tlua, 43, 5))
+>__indx : Symbol(__indx, Decl(tluaMetatableClassTable.tlua, 43, 18))
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+
+local typoHeld = setmetatable({}, typoMeta)
+>typoHeld : Symbol(typoHeld, Decl(tluaMetatableClassTable.tlua, 44, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>typoMeta : Symbol(typoMeta, Decl(tluaMetatableClassTable.tlua, 43, 5))
+
+local underscoreMeta = { _index = Point }
+>underscoreMeta : Symbol(underscoreMeta, Decl(tluaMetatableClassTable.tlua, 45, 5))
+>_index : Symbol(_index, Decl(tluaMetatableClassTable.tlua, 45, 24))
+>Point : Symbol(Point, Decl(tluaMetatableClassTable.tlua, 4, 5))
+
+local underscoreHeld = setmetatable({}, underscoreMeta)
+>underscoreHeld : Symbol(underscoreHeld, Decl(tluaMetatableClassTable.tlua, 46, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>underscoreMeta : Symbol(underscoreMeta, Decl(tluaMetatableClassTable.tlua, 45, 5))
+
+local weakMeta = { _mode = "k" }
+>weakMeta : Symbol(weakMeta, Decl(tluaMetatableClassTable.tlua, 47, 5))
+>_mode : Symbol(_mode, Decl(tluaMetatableClassTable.tlua, 47, 18))
+
+local weakHeld = setmetatable({}, weakMeta)
+>weakHeld : Symbol(weakHeld, Decl(tluaMetatableClassTable.tlua, 48, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>weakMeta : Symbol(weakMeta, Decl(tluaMetatableClassTable.tlua, 47, 5))
+
+-- A metatable must be a table.
+local notTable = setmetatable({}, "abc")
+>notTable : Symbol(notTable, Decl(tluaMetatableClassTable.tlua, 51, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+local notFunction = setmetatable({}, function(x: number) end)
+>notFunction : Symbol(notFunction, Decl(tluaMetatableClassTable.tlua, 52, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>x : Symbol(x, Decl(tluaMetatableClassTable.tlua, 52, 46))
+
+local notNumber = setmetatable({}, 42)
+>notNumber : Symbol(notNumber, Decl(tluaMetatableClassTable.tlua, 53, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+local notBoolean = setmetatable({}, true)
+>notBoolean : Symbol(notBoolean, Decl(tluaMetatableClassTable.tlua, 54, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+
+-- No primitive is a table, so none satisfies a table type whose members are all
+-- optional.
+local weakTarget: { name?: string } = 42
+>weakTarget : Symbol(weakTarget, Decl(tluaMetatableClassTable.tlua, 58, 5))
+>name : Symbol(name, Decl(tluaMetatableClassTable.tlua, 58, 19))
+
+-- nil is rejected as not assignable, as before.
+local weakNil: { name?: string } = nil
+>weakNil : Symbol(weakNil, Decl(tluaMetatableClassTable.tlua, 60, 5))
+>name : Symbol(name, Decl(tluaMetatableClassTable.tlua, 60, 16))
+
+-- A data field is not a misspelled metamethod.
+local Stack = { _len = 0 }
+>Stack : Symbol(Stack, Decl(tluaMetatableClassTable.tlua, 63, 5))
+>_len : Symbol(_len, Decl(tluaMetatableClassTable.tlua, 63, 15))
+
+function Stack.push(self: table, v: unknown) end
+>Stack : Symbol(Stack, Decl(tluaMetatableClassTable.tlua, 63, 5))
+>push : Symbol(push, Decl(tluaMetatableClassTable.tlua, 63, 26))
+>self : Symbol(self, Decl(tluaMetatableClassTable.tlua, 64, 20))
+>v : Symbol(v, Decl(tluaMetatableClassTable.tlua, 64, 32))
+
+local stack = setmetatable({}, Stack)
+>stack : Symbol(stack, Decl(tluaMetatableClassTable.tlua, 65, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>Stack : Symbol(Stack, Decl(tluaMetatableClassTable.tlua, 63, 5))
+
+-- A metatable factory passed uncalled is told to call it.
+local function makeMeta(): LuaMetatable<table>
+>makeMeta : Symbol(makeMeta, Decl(tluaMetatableClassTable.tlua, 65, 37))
+>LuaMetatable : Symbol(LuaMetatable, Decl(lib.luajit.d.tlua, --, --))
+
+    return { __index = {} }
+>__index : Symbol(__index, Decl(tluaMetatableClassTable.tlua, 69, 12))
+
+end
+local made = setmetatable({}, makeMeta)
+>made : Symbol(made, Decl(tluaMetatableClassTable.tlua, 71, 5))
+>setmetatable : Symbol(setmetatable, Decl(lib.luajit.d.tlua, --, --))
+>makeMeta : Symbol(makeMeta, Decl(tluaMetatableClassTable.tlua, 65, 37))
+

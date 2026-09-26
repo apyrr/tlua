@@ -2,6 +2,7 @@ package checker
 
 import (
 	"slices"
+	"strings"
 
 	"github.com/apyrr/tlua/internal/ast"
 	"github.com/apyrr/tlua/internal/core"
@@ -335,7 +336,7 @@ func (c *Checker) augmentLuaMetatableParamType(callNode *ast.Node, argIndex int,
 		return cached
 	}
 	result := paramType
-	globalType := c.getGlobalType("LuaMetatable", 1 /*arity*/, false /*reportErrors*/)
+	globalType := c.getGlobalLuaMetatableType()
 	probe := c.getLuaMetatableIndexProbeType(arg)
 	if probe != nil {
 		if args := callNode.Arguments(); len(args) != 0 {
@@ -351,7 +352,7 @@ func (c *Checker) augmentLuaMetatableParamType(callNode *ast.Node, argIndex int,
 		// works uninstantiated -- instantiation distributes over the intersection -- and
 		// getIntersectionType dedups, so augmenting twice augments once.
 		result = c.mapType(paramType, func(t *Type) *Type {
-			if t.flags&TypeFlagsObject == 0 || t.objectFlags&ObjectFlagsReference == 0 || t.Target() != globalType {
+			if !c.isLuaMetatableContractType(t) {
 				return t
 			}
 			typeArguments := c.getTypeArguments(t)
@@ -415,6 +416,39 @@ func (c *Checker) getLuaMetatableReceiverBaseType(typeArgument *Type, callNode *
 		return base
 	}
 	return operand
+}
+
+// isLuaMetatableContractType reports an instantiation of the lib's LuaMetatable<T>.
+func (c *Checker) isLuaMetatableContractType(t *Type) bool {
+	globalType := c.getGlobalLuaMetatableType()
+	return globalType != c.emptyGenericType && c.isReferenceToType(t, globalType)
+}
+
+// reportLuaMetatableWithoutMetamethods reports source sharing no member with a
+// LuaMetatable<T> target (isLuaMetatableContractType), in place of the generic
+// weak-type error. At run time any
+// table is a valid metatable, but the checker reads a metatable's effect off its
+// stated metamethods: one it cannot see types the paired table as the bare table, far
+// from the cause. So the table must state them -- a class table whose helper installs
+// `__index` states `X.__index = X` itself. A `_`-prefixed key close to a metamethod,
+// whose value could be that metamethod (`_mode = "k"` could be `__mode`), is the
+// likely typo; a `_len = 0` data field is not.
+func (r *Relater) reportLuaMetatableWithoutMetamethods(source *Type, target *Type, sourceString string) {
+	if source.flags&(TypeFlagsObject|TypeFlagsIntersection) == 0 || !r.c.isLuaTableType(source) {
+		r.reportError(diagnostics.A_metatable_must_be_a_table_and_0_is_not_one, sourceString)
+		return
+	}
+	metamethods := r.c.getPropertiesOfType(target)
+	for _, prop := range r.c.getPropertiesOfType(source) {
+		if !strings.HasPrefix(prop.Name, "_") {
+			continue
+		}
+		if suggestion := r.c.getSpellingSuggestionForName(prop.Name, slices.Values(metamethods), ast.SymbolFlagsValue); suggestion != nil && r.c.isTypeAssignableTo(r.c.getTypeOfSymbol(prop), r.c.getBaseTypeOfLiteralType(r.c.getTypeOfSymbol(suggestion))) {
+			r.reportError(diagnostics.Metatable_0_states_no_metamethod_Did_you_mean_1_instead_of_2, sourceString, suggestion.Name, prop.Name)
+			return
+		}
+	}
+	r.reportError(diagnostics.Metatable_0_states_no_metamethod_State_the_metamethods_it_carries_on_the_table_itself_such_as_index, sourceString)
 }
 
 // reduceLuaMetatableProbeType drops from the __index fallback every key the table declares for
@@ -767,7 +801,7 @@ func (c *Checker) getLuaDeclaredPairingMetatableType(node *ast.Node, tableType *
 		}
 	}
 	var t *Type
-	if globalType := c.getGlobalType("LuaMetatable", 1 /*arity*/, false /*reportErrors*/); globalType != c.emptyGenericType {
+	if globalType := c.getGlobalLuaMetatableType(); globalType != c.emptyGenericType {
 		contextualType := c.createTypeFromGenericGlobalType(globalType, []*Type{operandType})
 		t = c.checkExpressionWithContextualType(arg, contextualType, nil /*inferenceContext*/, CheckModeNormal)
 		t = c.getWidenedType(c.getRegularTypeOfObjectLiteral(t))

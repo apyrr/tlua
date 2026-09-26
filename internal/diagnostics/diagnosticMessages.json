@@ -8553,5 +8553,17 @@
     "The 'luaEnvironments' entry for '{0}' names '{1}', which is not a global type.": {
         "category": "Error",
         "code": 100070
+    },
+    "A metatable must be a table, and '{0}' is not one.": {
+        "category": "Error",
+        "code": 100071
+    },
+    "Metatable '{0}' states no metamethod. State the metamethods it carries on the table itself, such as '__index'.": {
+        "category": "Error",
+        "code": 100072
+    },
+    "Metatable '{0}' states no metamethod. Did you mean '{1}' instead of '{2}'?": {
+        "category": "Error",
+        "code": 100073
     }
 }

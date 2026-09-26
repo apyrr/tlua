@@ -4272,6 +4272,12 @@ var Unknown_key_0_in_a_luaEnvironments_entry_Expected_root_globals_or_registry =
 
 var The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type = &Message{code: 100070, category: CategoryError, key: "The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type_100070", text: "The 'luaEnvironments' entry for '{0}' names '{1}', which is not a global type."}
 
+var A_metatable_must_be_a_table_and_0_is_not_one = &Message{code: 100071, category: CategoryError, key: "A_metatable_must_be_a_table_and_0_is_not_one_100071", text: "A metatable must be a table, and '{0}' is not one."}
+
+var Metatable_0_states_no_metamethod_State_the_metamethods_it_carries_on_the_table_itself_such_as_index = &Message{code: 100072, category: CategoryError, key: "Metatable_0_states_no_metamethod_State_the_metamethods_it_carries_on_the_table_itself_such_as_index_100072", text: "Metatable '{0}' states no metamethod. State the metamethods it carries on the table itself, such as '__index'."}
+
+var Metatable_0_states_no_metamethod_Did_you_mean_1_instead_of_2 = &Message{code: 100073, category: CategoryError, key: "Metatable_0_states_no_metamethod_Did_you_mean_1_instead_of_2_100073", text: "Metatable '{0}' states no metamethod. Did you mean '{1}' instead of '{2}'?"}
+
 func keyToMessage(key Key) *Message {
 	switch key {
 	case "Unterminated_string_literal_1002":
@@ -8544,6 +8550,12 @@ func keyToMessage(key Key) *Message {
 		return Unknown_key_0_in_a_luaEnvironments_entry_Expected_root_globals_or_registry
 	case "The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type_100070":
 		return The_luaEnvironments_entry_for_0_names_1_which_is_not_a_global_type
+	case "A_metatable_must_be_a_table_and_0_is_not_one_100071":
+		return A_metatable_must_be_a_table_and_0_is_not_one
+	case "Metatable_0_states_no_metamethod_State_the_metamethods_it_carries_on_the_table_itself_such_as_index_100072":
+		return Metatable_0_states_no_metamethod_State_the_metamethods_it_carries_on_the_table_itself_such_as_index
+	case "Metatable_0_states_no_metamethod_Did_you_mean_1_instead_of_2_100073":
+		return Metatable_0_states_no_metamethod_Did_you_mean_1_instead_of_2
 	default:
 		return nil
 	}

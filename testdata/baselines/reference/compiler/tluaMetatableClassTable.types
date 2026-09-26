@@ -1,0 +1,281 @@
+//// [tests/cases/compiler/tluaMetatableClassTable.tlua] ////
+
+=== tluaMetatableClassTable.tlua ===
+// The checker reads a metatable's effect off the metamethods it states, so a
+// metatable must state them. A table that states none is reported at the
+// setmetatable call, with the fix, rather than typing the paired table as bare.
+
+local Point = {}
+>Point : { __index: any; len(self: table): number; }
+>{} : { __index: { __index: any; len(self: table): number; }; len(self: table): number; }
+
+Point.__index = Point
+>Point.__index = Point : { __index: any; len(self: table): number; }
+>Point.__index : { __index: any; len(self: table): number; }
+>Point : { __index: any; len(self: table): number; }
+>__index : { __index: any; len(self: table): number; }
+>Point : { __index: any; len(self: table): number; }
+
+function Point.len(self: table): number
+>Point : { __index: any; len(self: table): number; }
+>len : (self: table) => number
+>self : table
+
+    return 0
+>0 : 0
+
+end
+local p = setmetatable({ x = 1 }, Point)
+>p : { __index: { __index: any; len(self: table): number; }; len(self: table): number; x: number; }
+>setmetatable({ x = 1 }, Point) : { __index: { __index: any; len(self: table): number; }; len(self: table): number; x: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+>Point : { __index: any; len(self: table): number; }
+
+local length: number = p:len()
+>length : number
+>p:len() : number
+>p:len : (self: table) => number
+>p : { __index: { __index: any; len(self: table): number; }; len(self: table): number; x: number; }
+>len : (self: table) => number
+
+-- A metamethod stated after the call still counts.
+local Late = {}
+>Late : { describe(self: table): string; __index: any; }
+>{} : { describe(self: table): string; __index: { describe(self: table): string; __index: any; }; }
+
+local late = setmetatable({}, Late)
+>late : { describe(self: table): string; __index: { describe(self: table): string; __index: any; }; }
+>setmetatable({}, Late) : { describe(self: table): string; __index: { describe(self: table): string; __index: any; }; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>Late : { describe(self: table): string; __index: any; }
+
+function Late.describe(self: table): string
+>Late : { describe(self: table): string; __index: any; }
+>describe : (self: table) => string
+>self : table
+
+    return "late"
+>"late" : "late"
+
+end
+Late.__index = Late
+>Late.__index = Late : { describe(self: table): string; __index: any; }
+>Late.__index : { describe(self: table): string; __index: any; }
+>Late : { describe(self: table): string; __index: any; }
+>__index : { describe(self: table): string; __index: any; }
+>Late : { describe(self: table): string; __index: any; }
+
+-- A table stating only other metamethods relates as before.
+local Named = { __tostring = function(self: table): string return "named" end }
+>Named : { __tostring: (self: table) => string; }
+>{ __tostring = function(self: table): string return "named" end } : { __tostring: (self: table) => string; }
+>__tostring : (self: table) => string
+>function(self: table): string return "named" end : (self: table) => string
+>self : table
+>"named" : "named"
+
+local n = setmetatable({}, Named)
+>n : {}
+>setmetatable({}, Named) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>Named : { __tostring: (self: table) => string; }
+
+local weak = setmetatable({}, { __mode = "k" })
+>weak : {}
+>setmetatable({}, { __mode = "k" }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __mode = "k" } : { __mode: "k"; }
+>__mode : "k"
+>"k" : "k"
+
+-- A table with no stated keys is not checked.
+local empty = setmetatable({}, {})
+>empty : {}
+>setmetatable({}, {}) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{} : {}
+
+local record = setmetatable({}, {} as Table<string, unknown>)
+>record : {}
+>setmetatable({}, {} as Table<string, unknown>) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{} as Table<string, unknown> : Table<string, unknown>
+>{} : {}
+
+-- A class table whose helper installs __index states no metamethod.
+local function inherit(cls: Table<string, unknown>)
+>inherit : (cls: Table<string, unknown>) => void
+>cls : Table<string, unknown>
+
+    rawset(cls, "__index", cls)
+>rawset(cls, "__index", cls) : Table<string, unknown>
+>rawset : <K, V>(value: Table<K, V>, index: K, item: V) => Table<K, V>
+>cls : Table<string, unknown>
+>"__index" : "__index"
+>cls : Table<string, unknown>
+
+end
+local Helped = {}
+>Helped : { len(self: table): number; }
+>{} : { len(self: table): number; }
+
+function Helped.len(self: table): number
+>Helped : { len(self: table): number; }
+>len : (self: table) => number
+>self : table
+
+    return 0
+>0 : 0
+
+end
+inherit(Helped)
+>inherit(Helped) : void
+>inherit : (cls: Table<string, unknown>) => void
+>Helped : { len(self: table): number; }
+
+local helped = setmetatable({ x = 1 }, Helped)
+>helped : { x: number; }
+>setmetatable({ x = 1 }, Helped) : { x: number; }
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{ x = 1 } : { x: number; }
+>x : number
+>1 : 1
+>Helped : { len(self: table): number; }
+
+-- A misspelled metamethod: a literal gets the excess-property check, a table
+-- held in a variable a suggestion.
+local typo = setmetatable({}, { __indx = Point })
+>typo : {}
+>setmetatable({}, { __indx = Point }) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>{ __indx = Point } : { __indx: { __index: any; len(self: table): number; }; }
+>__indx : { __index: any; len(self: table): number; }
+>Point : { __index: any; len(self: table): number; }
+
+local typoMeta = { __indx = Point }
+>typoMeta : { __indx: { __index: any; len(self: table): number; }; }
+>{ __indx = Point } : { __indx: { __index: any; len(self: table): number; }; }
+>__indx : { __index: any; len(self: table): number; }
+>Point : { __index: any; len(self: table): number; }
+
+local typoHeld = setmetatable({}, typoMeta)
+>typoHeld : {}
+>setmetatable({}, typoMeta) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>typoMeta : { __indx: { __index: any; len(self: table): number; }; }
+
+local underscoreMeta = { _index = Point }
+>underscoreMeta : { _index: { __index: any; len(self: table): number; }; }
+>{ _index = Point } : { _index: { __index: any; len(self: table): number; }; }
+>_index : { __index: any; len(self: table): number; }
+>Point : { __index: any; len(self: table): number; }
+
+local underscoreHeld = setmetatable({}, underscoreMeta)
+>underscoreHeld : {}
+>setmetatable({}, underscoreMeta) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>underscoreMeta : { _index: { __index: any; len(self: table): number; }; }
+
+local weakMeta = { _mode = "k" }
+>weakMeta : { _mode: string; }
+>{ _mode = "k" } : { _mode: string; }
+>_mode : string
+>"k" : "k"
+
+local weakHeld = setmetatable({}, weakMeta)
+>weakHeld : {}
+>setmetatable({}, weakMeta) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>weakMeta : { _mode: string; }
+
+-- A metatable must be a table.
+local notTable = setmetatable({}, "abc")
+>notTable : {}
+>setmetatable({}, "abc") : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>"abc" : "abc"
+
+local notFunction = setmetatable({}, function(x: number) end)
+>notFunction : {}
+>setmetatable({}, function(x: number) end) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>function(x: number) end : (x: number) => void
+>x : number
+
+local notNumber = setmetatable({}, 42)
+>notNumber : {}
+>setmetatable({}, 42) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>42 : 42
+
+local notBoolean = setmetatable({}, true)
+>notBoolean : {}
+>setmetatable({}, true) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>true : true
+
+-- No primitive is a table, so none satisfies a table type whose members are all
+-- optional.
+local weakTarget: { name?: string } = 42
+>weakTarget : { name?: string; }
+>name : string | nil
+>42 : 42
+
+-- nil is rejected as not assignable, as before.
+local weakNil: { name?: string } = nil
+>weakNil : { name?: string; }
+>name : string | nil
+
+-- A data field is not a misspelled metamethod.
+local Stack = { _len = 0 }
+>Stack : { _len: number; push(self: table, v: unknown): void; }
+>{ _len = 0 } : { _len: number; push(self: table, v: unknown): void; }
+>_len : number
+>0 : 0
+
+function Stack.push(self: table, v: unknown) end
+>Stack : { _len: number; push(self: table, v: unknown): void; }
+>push : (self: table, v: unknown) => void
+>self : table
+>v : unknown
+
+local stack = setmetatable({}, Stack)
+>stack : {}
+>setmetatable({}, Stack) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>Stack : { _len: number; push(self: table, v: unknown): void; }
+
+-- A metatable factory passed uncalled is told to call it.
+local function makeMeta(): LuaMetatable<table>
+>makeMeta : () => LuaMetatable<table>
+
+    return { __index = {} }
+>{ __index = {} } : { __index: {}; }
+>__index : {}
+>{} : {}
+
+end
+local made = setmetatable({}, makeMeta)
+>made : {}
+>setmetatable({}, makeMeta) : {}
+>setmetatable : <T extends table>(value: T, metatable: LuaMetatable<NoInfer<T>> | nil) => T
+>{} : {}
+>makeMeta : () => LuaMetatable<table>
+
