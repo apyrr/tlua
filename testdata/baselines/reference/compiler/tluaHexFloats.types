@@ -1,0 +1,72 @@
+//// [tests/cases/compiler/tluaHexFloats.tlua] ////
+
+=== tluaHexFloats.tlua ===
+// Lua hexadecimal numerals carry an optional fraction and binary exponent:
+// 0xA.8p1 is (10 + 8/16) * 2^1.
+
+local exponent: 16 = 0x1p4
+>exponent : 16
+>0x1p4 : 16
+
+local both: 21 = 0xA.8p1
+>both : 21
+>0xA.8p1 : 21
+
+local fraction: 0.5 = 0x.8
+>fraction : 0.5
+>0x.8 : 0.5
+
+local negative: 0.25 = 0x1P-2
+>negative : 0.25
+>0x1P-2 : 0.25
+
+local positive: 4 = 0x1p+2
+>positive : 4
+>0x1p+2 : 4
+
+local trailingDot: 1 = 0x1.
+>trailingDot : 1
+>0x1. : 1
+
+local integer: 255 = 0xff
+>integer : 255
+>0xff : 255
+
+local concat = 0x10 .. "a"
+>concat : string
+>0x10 .. "a" : string
+>0x10 : 16
+>"a" : "a"
+
+local tightConcat = 0x10.."a"
+>tightConcat : string
+>0x10.."a" : string
+>0x10 : 16
+>"a" : "a"
+
+-- An identifier cannot follow a hexadecimal literal, integer or float.
+local afterInteger = 0x1g
+>afterInteger : number
+>0x1 : 1
+>g : any
+
+local afterFloat = 0x1.8g
+>afterFloat : number
+>0x1.8 : 1.5
+>g : any
+
+local afterLeadingZero = 012g
+>afterLeadingZero : number
+>012 : 12
+>g : any
+
+-- A binary exponent is exponent notation, not a digit run too long to be exact.
+local large = 0x1p60
+>large : number
+>0x1p60 : 1152921504606847000
+
+-- A binary exponent needs digits.
+local missing = 0x1p
+>missing : number
+>0x1p : 1
+

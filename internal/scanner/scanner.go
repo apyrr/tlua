@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"errors"
 	"fmt"
 	"iter"
 	"maps"
@@ -691,6 +692,12 @@ func (s *Scanner) Scan() ast.Kind {
 				start := s.pos
 				s.pos += 2
 				digits := s.scanHexDigits(1, true)
+				// `0x10..x` is the integer followed by the concatenation operator, as it
+				// always scanned, not a fraction.
+				if s.char() == '.' && s.charAt(1) != '.' || s.char() == 'p' || s.char() == 'P' {
+					s.token = s.scanHexFloat(digits)
+					break
+				}
 				if digits == "" {
 					s.error(diagnostics.Hexadecimal_digit_expected)
 					digits = "0"
@@ -711,6 +718,7 @@ func (s *Scanner) Scan() ast.Kind {
 				}
 				s.tokenFlags |= ast.TokenFlagsHexSpecifier
 				s.token = s.scanNumericValue()
+				s.reportIdentifierAfterNumericLiteral()
 				break
 			}
 			// Lua has hexadecimal literals (`0x`, handled above) but no binary
@@ -1920,6 +1928,7 @@ func (s *Scanner) scanNumber() ast.Kind {
 		// flag is kept only so the printer emits the canonical form rather than
 		// the original text.
 		s.tokenValue = jsnum.FromString(s.tokenValue).String()
+		s.reportIdentifierAfterNumericLiteral()
 		return ast.KindNumericLiteral
 	}
 	var result ast.Kind
@@ -1929,16 +1938,59 @@ func (s *Scanner) scanNumber() ast.Kind {
 		s.tokenValue = jsnum.FromString(s.tokenValue).String()
 		result = ast.KindNumericLiteral
 	}
+	s.reportIdentifierAfterNumericLiteral()
+	return result
+}
+
+// reportIdentifierAfterNumericLiteral reports an identifier that immediately
+// follows a numeric literal (including a lone `n`, the former bigint suffix);
+// the identifier itself is left to scan as the next token.
+func (s *Scanner) reportIdentifierAfterNumericLiteral() {
 	ch, _ := s.charAndSize()
 	if IsIdentifierStart(ch) {
-		// A trailing identifier (including a lone `n`, the former bigint suffix)
-		// is never valid immediately after a numeric literal.
 		idStart := s.pos
 		s.scanIdentifierParts()
 		s.errorAt(diagnostics.An_identifier_or_keyword_cannot_immediately_follow_a_numeric_literal, idStart, s.pos-idStart)
 		s.pos = idStart
 	}
-	return result
+}
+
+// scanHexFloat scans the rest of a Lua hexadecimal float after `0x` and its
+// integer digits: an optional `.` fraction and an optional `p` binary exponent,
+// so `0xA.8p1` is (10 + 8/16) * 2^1. Like a decimal literal, the value is kept
+// in canonical decimal form, which every Lua reads back exactly.
+func (s *Scanner) scanHexFloat(integerDigits string) ast.Kind {
+	fractionDigits := ""
+	if s.char() == '.' {
+		s.pos++
+		fractionDigits = s.scanHexDigits(1, true)
+	}
+	if integerDigits == "" && fractionDigits == "" {
+		s.error(diagnostics.Hexadecimal_digit_expected)
+	}
+	exponent := "0"
+	if s.char() == 'p' || s.char() == 'P' {
+		s.pos++
+		s.tokenFlags |= ast.TokenFlagsScientific
+		sign := ""
+		if s.char() == '+' || s.char() == '-' {
+			sign = string(s.char())
+			s.pos++
+		}
+		if digits := s.scanNumberFragment(); digits == "" {
+			s.error(diagnostics.Digit_expected)
+		} else {
+			exponent = sign + digits
+		}
+	}
+	// The text is well formed by construction; an out-of-range exponent yields
+	// an infinity, which is also the value Lua reads.
+	value, err := strconv.ParseFloat("0x"+core.IfElse(integerDigits == "", "0", integerDigits)+"."+core.IfElse(fractionDigits == "", "0", fractionDigits)+"p"+exponent, 64)
+	debug.Assert(err == nil || errors.Is(err, strconv.ErrRange), "hexadecimal float text is well formed by construction")
+	s.tokenValue = jsnum.Number(value).String()
+	s.tokenFlags |= ast.TokenFlagsHexSpecifier
+	s.reportIdentifierAfterNumericLiteral()
+	return ast.KindNumericLiteral
 }
 
 // scanNumberFragment scans a run of decimal digits. Lua has no numeric

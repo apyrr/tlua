@@ -1,0 +1,46 @@
+tluaHexFloats.tlua(14,25): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaHexFloats.tlua(14,25): error TLUA2304: Cannot find name 'g'.
+tluaHexFloats.tlua(15,25): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaHexFloats.tlua(15,25): error TLUA2304: Cannot find name 'g'.
+tluaHexFloats.tlua(16,29): error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+tluaHexFloats.tlua(16,29): error TLUA2304: Cannot find name 'g'.
+tluaHexFloats.tlua(21,21): error TLUA1124: Digit expected.
+
+
+==== tluaHexFloats.tlua (7 errors) ====
+    // Lua hexadecimal numerals carry an optional fraction and binary exponent:
+    // 0xA.8p1 is (10 + 8/16) * 2^1.
+    
+    local exponent: 16 = 0x1p4
+    local both: 21 = 0xA.8p1
+    local fraction: 0.5 = 0x.8
+    local negative: 0.25 = 0x1P-2
+    local positive: 4 = 0x1p+2
+    local trailingDot: 1 = 0x1.
+    local integer: 255 = 0xff
+    local concat = 0x10 .. "a"
+    local tightConcat = 0x10.."a"
+    -- An identifier cannot follow a hexadecimal literal, integer or float.
+    local afterInteger = 0x1g
+                            ~
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+                            ~
+!!! error TLUA2304: Cannot find name 'g'.
+    local afterFloat = 0x1.8g
+                            ~
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+                            ~
+!!! error TLUA2304: Cannot find name 'g'.
+    local afterLeadingZero = 012g
+                                ~
+!!! error TLUA1351: An identifier or keyword cannot immediately follow a numeric literal.
+                                ~
+!!! error TLUA2304: Cannot find name 'g'.
+    -- A binary exponent is exponent notation, not a digit run too long to be exact.
+    local large = 0x1p60
+    
+    -- A binary exponent needs digits.
+    local missing = 0x1p
+                        
+!!! error TLUA1124: Digit expected.
+    
